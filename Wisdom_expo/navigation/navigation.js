@@ -7,6 +7,7 @@ import { View, Text } from 'react-native'
 import React from 'react'
 import WelcomeVideoScreen from '../screens/WelcomeVideoScreen';
 import LoadingScreen from '../screens/LoadingScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 
 export default function Navigation() {
     return (
@@ -16,7 +17,9 @@ export default function Navigation() {
         }}>
           <Stack.Screen name="WelcomeVideo" component={WelcomeVideoScreen} />
           <Stack.Screen name="Loading" component={LoadingScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
         </Stack.Navigator>
       </NavigationContainer>
+      
     );
 }   
