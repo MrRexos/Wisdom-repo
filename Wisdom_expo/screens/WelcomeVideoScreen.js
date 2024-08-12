@@ -12,7 +12,7 @@ export default function WelcomeVideoScreen() {
     const navigation = useNavigation();
     return (
         <View className='flex-1 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626]'>
-          <Text className='text-[#272626] dark:text-[#f2f2f2]'>WelcomeVideoScreen</Text>
+          <Text className='text-[#272626] dark:text-[#f2f2f2] font-inter-medium'>WelcomeVideoScreen</Text>
           <Switch value={colorScheme==='dark'} onChange={toggleColorScheme}/>
           <Button title='Hola' onPress={() => navigation.navigate('Loading')} />
       </View>
