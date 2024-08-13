@@ -1,6 +1,7 @@
 {
     "translation": {
         "skip_intro": "Saltar intro",
-        "hello": "hola"
+        "hello": "hola",
+        "profile": "Perfil"
     }
 }

@@ -1,6 +1,7 @@
 {
     "translation": {
         "skip_intro": "跳过介绍",
-        "hello": "你好"
+        "hello": "你好",
+        "profile": "概况"
     }
 }

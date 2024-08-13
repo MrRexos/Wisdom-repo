@@ -1,11 +1,10 @@
 
 import React from 'react';
-import { Text, View, Button, Switch } from 'react-native';
+import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import i18n from '../languages/i18n';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { storeDataLocally } from '../utils/asyncStorage';
 import { useColorScheme } from 'nativewind'
+import i18n from '../languages/i18n';
 
 
 export default function SettingsScreen() {
@@ -24,16 +23,19 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] p-8'>
-      <Text>{t('hello')}</Text>
-      <Switch value={colorScheme==='dark'} onChange={handleToggleColorScheme}/>
-      <Button title="Español" onPress={() => changeLanguage('es')} />
-      <Button title="Inglés" onPress={() => changeLanguage('en')} />
-      <Button title="Català" onPress={() => changeLanguage('ca')} />
-      <Button title="Français" onPress={() => changeLanguage('fr')} />
-      <Button title="中文" onPress={() => changeLanguage('zh')} />
-      <Button title="العربية" onPress={() => changeLanguage('ar')} />
-      {/* Agrega más botones para otros idiomas */}
-    </View>
+    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] p-8'>
+      <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
+      <ScrollView>
+        <Text className='text-[#444343] dark:text-[#f2f2f2] text-3xl font-inter-bold px-6 pt-14'>{t('profile')}</Text>
+        <Switch value={colorScheme==='dark'} onChange={handleToggleColorScheme}/>
+        <Button title="Español" onPress={() => changeLanguage('es')} />
+        <Button title="Inglés" onPress={() => changeLanguage('en')} />
+        <Button title="Català" onPress={() => changeLanguage('ca')} />
+        <Button title="Français" onPress={() => changeLanguage('fr')} />
+        <Button title="中文" onPress={() => changeLanguage('zh')} />
+        <Button title="العربية" onPress={() => changeLanguage('ar')} />
+
+      </ScrollView>
+    </SafeAreaView>
   );
 }

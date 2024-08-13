@@ -17,7 +17,7 @@ export default function Navigation() {
         }}>
           <Stack.Screen name="WelcomeVideo" component={WelcomeVideoScreen} />
           <Stack.Screen name="Loading" component={LoadingScreen} />
-          <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} options={{ animation: 'none' }}/>
         </Stack.Navigator>
       </NavigationContainer>
       
