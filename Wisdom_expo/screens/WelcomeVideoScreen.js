@@ -24,13 +24,21 @@ export default function WelcomeVideoScreen() {
           i18n.changeLanguage(language);
         };
       };
+      const loadColorScheme = async () => {
+        let storedColorScheme = await getDataLocally('colorScheme');
+        if (storedColorScheme && storedColorScheme !== colorScheme) {
+          // Si el esquema de color almacenado es diferente del actual, lo alternamos
+          toggleColorScheme();
+        }
+      };
+
       loadLanguage()
+      loadColorScheme()
     },[])
 
     return (
         <View className='flex-1 justify-end items-center bg-[#f2f2f2] dark:bg-[#272626]'>
           <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
-          <Switch value={colorScheme==='dark'} onChange={toggleColorScheme}/>
           <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
             <Text className='text-[#272626] dark:text-[#f2f2f2] font-inter-semibold m-[75]'>{t('skip_intro')}</Text>
           </TouchableOpacity>
