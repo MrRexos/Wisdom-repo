@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import i18n from '../languages/i18n';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
+import { getDataLocally } from '../utils/asyncStorage';
 
 
 export default function WelcomeVideoScreen() {
@@ -17,17 +18,12 @@ export default function WelcomeVideoScreen() {
     const { t, i18n } = useTranslation()
 
     useEffect(()=>{
-      const loadLanguage = async ()=>{
-        try{
-          const selectedLanguage = await AsyncStorage.getItem('selectedLanguage');
-          if (selectedLanguage) {
-            i18n.changeLanguage(selectedLanguage);
-            console.log('data loaded')
-          }
-        }catch(err){
-          console.log(err)
-        }
-      }
+      const loadLanguage = async () => {
+        let language = await getDataLocally('selectedLanguage')
+        if (language) {
+          i18n.changeLanguage(language);
+        };
+      };
       loadLanguage()
     },[])
 

@@ -1,0 +1,20 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export const storeDataLocally = async (key, value) => {
+    try{
+      await AsyncStorage.setItem(key, value); 
+      console.log('data saved')
+    }catch(error){
+      console.log(`Saving data error: ${error}`)
+    }
+};
+
+export const getDataLocally = async (key)=>{
+    try{
+        const value = await AsyncStorage.getItem(key);
+        console.log('data loaded');
+        return value;
+    } catch (error){
+      console.log(`Getting data error: ${error}`)
+    }
+};
