@@ -2,6 +2,7 @@
     "translation": {
         "skip_intro": "Skip intro",
         "hello": "hello",
-        "profile": "Profile"
+        "profile": "Profile",
+        "get_started": "Get Started"
     }
 }

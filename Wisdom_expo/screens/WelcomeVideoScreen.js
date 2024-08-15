@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { getDataLocally } from '../utils/asyncStorage';
 import i18n from '../languages/i18n';
-import WisdomLogo from '../assets/wisdomLogo.svg'
+
 
 
 export default function WelcomeVideoScreen() {
@@ -37,8 +37,7 @@ export default function WelcomeVideoScreen() {
         <View className='flex-1 justify-end items-center bg-[#f2f2f2] dark:bg-[#272626]'>
           <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
           
-          <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-            <WisdomLogo width={100} height={100}/>
+          <TouchableOpacity onPress={() => navigation.navigate('Loading')}>
             <Text className='text-[#272626] dark:text-[#f2f2f2] font-inter-semibold m-[75]'>{t('skip_intro')}</Text>
           </TouchableOpacity>
       </View>
