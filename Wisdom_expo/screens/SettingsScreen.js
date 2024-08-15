@@ -23,7 +23,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] p-8'>
+    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
       <ScrollView>
         <Text className='text-[#444343] dark:text-[#f2f2f2] text-3xl font-inter-bold px-6 pt-14'>{t('profile')}</Text>
