@@ -17,7 +17,7 @@ export default function SettingsScreen() {
   useEffect(()=>{
     setTimeout(() => {
       navigation.navigate('GetStarted');
-    }, 2000);
+    }, 1000);
   },[])
 
   return (
