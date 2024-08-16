@@ -29,7 +29,7 @@ export default function GetStartedScreen() {
           </View>
           <View className="justify-center items-center">
               <TouchableOpacity className="bg-[#f2f2f2] w-[320] h-[55] rounded-full items-center justify-center" onPress={() => navigation.navigate('LogOption')}>
-                  <Text className="font-inter-semibold text-[15px]text-[#444343] ">{t('get_started')}</Text>
+                  <Text className="font-inter-semibold text-[15px] text-[#444343] ">{t('get_started')}</Text>
               </TouchableOpacity>
               <View className="w-[250]">
                   <Text className="pt-3 pb-5">

@@ -19,6 +19,8 @@ import EnterNameScreen from '../screens/EnterNameScreen';
 import CreateProfileScreen from '../screens/CreateProfileScreen';
 import ForgotPasswordScreen from '../screens/ForgotPassword';
 import HomeScreen from '../screens/HomeScreen';
+import { CardStyleInterpolators } from '@react-navigation/stack';
+
 
 
 export default function Navigation() {
@@ -28,7 +30,7 @@ export default function Navigation() {
             headerShown: false
         }}>
           <Stack.Screen name="WelcomeVideo" component={WelcomeVideoScreen} />
-          <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'none' }}/>
+          <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'none'  }}/>
           <Stack.Screen name="Settings" component={SettingsScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="GetStarted" component={GetStartedScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="Terms" component={TermsScreen}/>

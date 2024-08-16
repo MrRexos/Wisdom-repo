@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
   const titleColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const textColor = '#979797';
   const textStyle='mb-2 font-inter-medium';
-  
+  const iconColor = colorScheme === 'dark' ? '#f2f2f2': '#444343';
 
 
   return (
@@ -23,7 +23,7 @@ export default function PrivacyPolicy() {
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
       <View className="pl-5 py-3 ">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-            <ChevronLeftIcon size={26} color="#f2f2f2" strokeWidth="1.7" className="p-6"/>
+            <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6"/>
         </TouchableOpacity>
       </View>
       
