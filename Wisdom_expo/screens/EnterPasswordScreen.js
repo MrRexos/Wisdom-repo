@@ -11,11 +11,28 @@ export default function EnterPasswordScreen() {
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
-  const [isSecure, setIsSecure] = useState(true); // Estado para manejar la visibilidad del texto
+  const [password, setPassword] = useState('');
+  const [isSecure, setIsSecure] = useState(true);
+  const [showError, setShowError] = useState(false);
+  const [nextEnabled, setnextEnabled] = useState(false);
 
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const placeholderTextColorChange = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
+
+  const inputChanged = (event) => {
+    const newPassword = event.nativeEvent.text;
+    setPassword (newPassword);
+    setShowError(false);
+  }
+  const nextPressed = () =>{
+    if (password.length < 8){
+      setShowError(true);
+    }
+    else{
+      navigation.navigate('EnterName');
+    }
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between'>
@@ -34,6 +51,8 @@ export default function EnterPasswordScreen() {
             selectionColor={cursorColorChange}
             placeholderTextColor={placeholderTextColorChange}
             secureTextEntry={isSecure} // Controla la visibilidad del texto
+            onChange = {inputChanged} 
+            value={password}
             className="h-11 text-[15px] flex-1 text-[#444343] dark:text-[#f2f2f2]"
           />
           <TouchableOpacity onPress={() => setIsSecure(!isSecure)}>
@@ -44,10 +63,19 @@ export default function EnterPasswordScreen() {
             )}
           </TouchableOpacity>
         </View>
+        {
+            showError? (
+                <Text className="text-[#ff633e] text-[13px] pt-3">Password must be at least 8 characters</Text>
+            ):null
+        }
       </View>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View className="justify-center items-center pb-6">
-          <TouchableOpacity className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center" onPress={() => navigation.navigate('EnterPassword')}>
+          <TouchableOpacity 
+          disabled={password.length < 1}
+          onPress={nextPressed}
+          style={{opacity: password.length < 1 ? 0.5 : 1.0}}
+          className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center">
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Next</Text>
           </TouchableOpacity>
         </View>
