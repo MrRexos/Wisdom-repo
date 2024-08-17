@@ -20,6 +20,8 @@ import CreateProfileScreen from '../screens/CreateProfileScreen';
 import ForgotPasswordScreen from '../screens/ForgotPassword';
 import HomeScreen from '../screens/HomeScreen';
 import NotificationAllowScreen from '../screens/NotificationAllowScreen';
+import EmailSendedScreen from '../screens/EmailSendedScreen';
+import NewPasswordScreen from '../screens/NewPasswordScreen';
 
 
 
@@ -45,6 +47,8 @@ export default function Navigation() {
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="Home" component={HomeScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="NotificationAllow" component={NotificationAllowScreen} options={{ animation: 'none' }}/>
+          <Stack.Screen name="EmailSended" component={EmailSendedScreen} options={{ animation: 'none' }}/>
+          <Stack.Screen name="NewPassword" component={NewPasswordScreen} options={{ animation: 'none' }}/>
         </Stack.Navigator>
       </NavigationContainer>
       

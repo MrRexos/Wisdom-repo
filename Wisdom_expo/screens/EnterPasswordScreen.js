@@ -57,9 +57,9 @@ export default function EnterPasswordScreen() {
           />
           <TouchableOpacity onPress={() => setIsSecure(!isSecure)}>
             {isSecure ? (
-              <EyeSlashIcon size={20} color={placeholderTextColorChange} style={{ marginLeft: 10 }} />
+              <EyeSlashIcon size={20} color={placeholderTextColorChange} style={{ marginLeft: 10, transform: [{ scale: 1.15 }] }} />
             ) : (
-              <EyeIcon size={20} color={placeholderTextColorChange} style={{ marginLeft: 10 }} />
+              <EyeIcon size={20} color={placeholderTextColorChange} style={{ marginLeft: 10, transform: [{ scale: 1.15 }] }} />
             )}
           </TouchableOpacity>
         </View>

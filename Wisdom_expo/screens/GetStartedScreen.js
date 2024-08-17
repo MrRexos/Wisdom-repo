@@ -13,6 +13,8 @@ export default function GetStartedScreen() {
     const {colorScheme, toggleColorScheme} = useColorScheme();
     const { t, i18n } = useTranslation();
     const navigation = useNavigation();
+
+    
   
     return (
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-neutral-700 justify-between'>

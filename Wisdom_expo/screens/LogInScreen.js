@@ -92,11 +92,12 @@ export default function LogInScreen() {
             Welcome back
         </Text>
         <Text className="font-inter-semibold text-[15px] pt-10 text-[#444343] dark:text-[#f2f2f2]">
-              Email or username
+          Email or username
         </Text>
+        
         <View className="mt-3 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
             <TextInput 
-            placeholder='Email' 
+            placeholder='Email or username' 
             autoFocus={true} 
             selectionColor={cursorColorChange} 
             placeholderTextColor={placeHolderTextColorChange} 
@@ -110,7 +111,7 @@ export default function LogInScreen() {
         </Text>
         <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
           <TextInput
-            placeholder='8 characters or more'
+            placeholder='password'
             autoFocus={true}
             selectionColor={cursorColorChange}
             placeholderTextColor={placeHolderTextColorChange}
@@ -122,9 +123,9 @@ export default function LogInScreen() {
           />
           <TouchableOpacity onPress={() => setIsSecure(!isSecure)}>
             {isSecure ? (
-              <EyeSlashIcon size={20} color={placeHolderTextColorChange} style={{ marginLeft: 10 }} />
+              <EyeSlashIcon size={20} color={placeHolderTextColorChange} style={{ marginLeft: 10, transform: [{ scale: 1.15 }] }} />
             ) : (
-              <EyeIcon size={20} color={placeHolderTextColorChange} style={{ marginLeft: 10 }} />
+              <EyeIcon size={20} color={placeHolderTextColorChange} style={{ marginLeft: 10, transform: [{ scale: 1.15 }] }} />
             )}
           </TouchableOpacity>
           
