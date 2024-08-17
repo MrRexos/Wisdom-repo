@@ -60,7 +60,7 @@ export default function EmailSendedScreen() {
             </View>     
             <Text className="font-inter-medium text-center text-[12px] pt-4 pb-6 text-[#444343] dark:text-[#f2f2f2]">
               <Text>Need help? </Text>
-              <Text onPress={openMailApp} className="text-[#444343] dark:text-[#f2f2f2] opacity-60 text-center underline">Contact</Text>
+              <Text onPress={openMailApp} className="text-[#444343] dark:text-[#f2f2f2] opacity-60 text-center underline">Contact support</Text>
             </Text>
           </View>
       </SafeAreaView>
