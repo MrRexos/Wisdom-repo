@@ -4,7 +4,7 @@ import {View, StatusBar,SafeAreaView, Platform,Text, TouchableOpacity} from 'rea
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
-import WisdomLogo from '../assets/wisdomLogo.svg'
+import WisdomLogo from '../assets/wisdomLogo.tsx'
 import { useNavigation } from '@react-navigation/native';
 import {XMarkIcon} from 'react-native-heroicons/outline';
 

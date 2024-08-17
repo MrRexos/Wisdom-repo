@@ -14,7 +14,6 @@ export default function EnterPasswordScreen() {
   const [password, setPassword] = useState('');
   const [isSecure, setIsSecure] = useState(true);
   const [showError, setShowError] = useState(false);
-  const [nextEnabled, setnextEnabled] = useState(false);
 
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const placeholderTextColorChange = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
@@ -35,9 +34,9 @@ export default function EnterPasswordScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between'>
+    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1  bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <View className="px-5 py-3">
+      <View className="px-5 py-3 w-full">
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6" />
         </TouchableOpacity>
@@ -53,6 +52,7 @@ export default function EnterPasswordScreen() {
             secureTextEntry={isSecure} // Controla la visibilidad del texto
             onChange = {inputChanged} 
             value={password}
+            onSubmitEditing={nextPressed}
             className="h-11 text-[15px] flex-1 text-[#444343] dark:text-[#f2f2f2]"
           />
           <TouchableOpacity onPress={() => setIsSecure(!isSecure)}>

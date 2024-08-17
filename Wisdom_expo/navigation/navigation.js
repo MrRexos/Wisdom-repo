@@ -19,7 +19,8 @@ import EnterNameScreen from '../screens/EnterNameScreen';
 import CreateProfileScreen from '../screens/CreateProfileScreen';
 import ForgotPasswordScreen from '../screens/ForgotPassword';
 import HomeScreen from '../screens/HomeScreen';
-import { CardStyleInterpolators } from '@react-navigation/stack';
+import NotificationAllowScreen from '../screens/NotificationAllowScreen';
+
 
 
 
@@ -43,6 +44,7 @@ export default function Navigation() {
           <Stack.Screen name="CreateProfile" component={CreateProfileScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="Home" component={HomeScreen} options={{ animation: 'none' }}/>
+          <Stack.Screen name="NotificationAllow" component={NotificationAllowScreen} options={{ animation: 'none' }}/>
         </Stack.Navigator>
       </NavigationContainer>
       

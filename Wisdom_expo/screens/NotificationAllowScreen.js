@@ -1,29 +1,21 @@
 
+
 import React, { useEffect } from 'react'
-import {View, StatusBar} from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
-import WisdomLogo from '../assets/wisdomLogo.tsx'
 import { useNavigation } from '@react-navigation/native';
 
 
-
-export default function SettingsScreen() {
+export default function NotificationAllowScreen() {
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
-  
-  useEffect(()=>{
-    setTimeout(() => {
-      navigation.navigate('GetStarted');
-    }, 1000);
-  },[])
 
   return (
-    <View className='flex-1 flex-row bg-[#272626] justify-center items-center'>
+    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
-      <WisdomLogo  width={190} height={100}/>
-    </View>
+    </SafeAreaView>
   );
 }

@@ -6,7 +6,7 @@ import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
 import { useNavigation } from '@react-navigation/native';
 import {XMarkIcon} from 'react-native-heroicons/outline';
-import WisdomLogo from '../assets/wisdomLogo.svg'
+import WisdomLogo from '../assets/wisdomLogo.tsx'
 import GoogleLogo from '../assets/GoogleLogo.svg'
 import AppleLogo from '../assets/AppleLogo.svg'
 import FacebookLogo from '../assets/FacebookLogo.svg'
@@ -38,8 +38,8 @@ export default function LogOptionScreen() {
                       Register
                   </Text>
               </TouchableOpacity>
-              <TouchableOpacity>
-                  <View onPress={() => navigation.navigate('LogIn')} className="bg-[#f2f2f2]/20 w-[320] h-[55] rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
+              <TouchableOpacity onPress={() => navigation.navigate('LogIn')}>
+                  <View className="bg-[#f2f2f2]/20 w-[320] h-[55] rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
                     <Text className="font-inter-semibold text-[15px] text-[#f2f2f2]">
                         Log In
                     </Text>
