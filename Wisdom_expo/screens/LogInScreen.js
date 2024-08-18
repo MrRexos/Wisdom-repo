@@ -139,7 +139,7 @@ export default function LogInScreen() {
             ):null
         }
       </View>
-        <View className="justify-center items-center pb-6 pt-10">
+        <View className="justify-center items-center pb-6 pt-7">
           <TouchableOpacity 
           disabled={password.length < 1 || user.length < 1}
           onPress={nextPressed}

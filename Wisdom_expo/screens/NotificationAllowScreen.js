@@ -11,10 +11,12 @@ import NotificationAskWhite from '../assets/NotificationAskWhite.svg';
 import NotificationAskDark from '../assets/NotificationAskDark.svg';
 
 
+
 export default function NotificationAllowScreen() {
     const {colorScheme, toggleColorScheme} = useColorScheme();
     const { t, i18n } = useTranslation();
     const navigation = useNavigation();
+    const iconColor = colorScheme === 'dark' ? '#f2f2f2': '#444343';
 
     
   
@@ -30,7 +32,7 @@ export default function NotificationAllowScreen() {
             </View>
             <View className="flex-1 items-end opacity-50">
               <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-                <XMarkIcon size={30} color="#f2f2f2" strokeWidth="1.7" />
+                <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
               </TouchableOpacity>
             </View>
           </View>
