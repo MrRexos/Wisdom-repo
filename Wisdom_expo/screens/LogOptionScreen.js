@@ -47,17 +47,16 @@ export default function LogOptionScreen() {
                   
               </TouchableOpacity>
               <View className="flex-row justify-center items-center space-x-2.5  mx-[25]">
-                  <TouchableOpacity className="bg-[#f2f2f2]/20 h-[55] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
+                  <TouchableOpacity onPress={() => navigation.navigate('NotificationAllow')} className="bg-[#f2f2f2]/20 h-[55] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
                       <GoogleLogo width={25} height={26} color="#f2f2f2" />
                   </TouchableOpacity>
-                  <TouchableOpacity className="bg-[#f2f2f2]/20 h-[55] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
+                  <TouchableOpacity onPress={() => navigation.navigate('NotificationAllow')} className="bg-[#f2f2f2]/20 h-[55] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
                       <AppleLogo width={21} height={26} color="#f2f2f2"  />
                   </TouchableOpacity>
-                  <TouchableOpacity className="bg-[#f2f2f2]/20 h-[55] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
+                  <TouchableOpacity onPress={() => navigation.navigate('NotificationAllow')} className="bg-[#f2f2f2]/20 h-[55] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
                     <FacebookLogo width={15} height={26} color="#f2f2f2"  />
                   </TouchableOpacity>
               </View>
-              
           </View>
       </SafeAreaView>
     );
