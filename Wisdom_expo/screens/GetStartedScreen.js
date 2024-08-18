@@ -1,6 +1,6 @@
 
 import React from 'react';
-import {View, StatusBar,SafeAreaView, Platform,Text, TouchableOpacity} from 'react-native';
+import {View, StatusBar,SafeAreaView, Platform,Text, TouchableOpacity, Image, Dimensions} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
@@ -13,11 +13,14 @@ export default function GetStartedScreen() {
     const {colorScheme, toggleColorScheme} = useColorScheme();
     const { t, i18n } = useTranslation();
     const navigation = useNavigation();
+    const windowWidth = Dimensions.get('window').width;
+    const windowHeight = Dimensions.get('window').height;
 
     
   
     return (
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-neutral-700 justify-between'>
+        <Image source={require('../assets/LoadChair.png')}  style={{ height: windowHeight, width: windowWidth, position: 'absolute' }}/>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
           <View>
               <TouchableOpacity onPress={() => navigation.navigate('Home')}>
