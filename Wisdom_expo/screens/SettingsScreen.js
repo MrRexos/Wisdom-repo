@@ -8,7 +8,10 @@ import i18n from '../languages/i18n';
 
 import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram } from "react-native-feather";
 import {KeyIcon ,ChevronRightIcon, ArrowsRightLeftIcon} from 'react-native-heroicons/outline';
-import CashStackIcon from 'react-native-bootstrap-icons/icons/cash-stack';
+import GiftCardIcon from '../assets/GiftCard';
+import ExpertIcon from '../assets/Expert';
+import CashStackIcon from '../assets/CashStack';
+import SuticasePlusIcon from '../assets/SuitcasePlus';
 
 
 
@@ -24,14 +27,14 @@ const Sections = [
   },
   {
     items: [
-      {id: 'provideService', icon: Bell, label:'Provide service', type: 'select'},
+      {id: 'provideService', icon: SuticasePlusIcon, label:'Provide service', type: 'select'},
       {id: 'switchProfessionalVersion', icon: ArrowsRightLeftIcon, label:'Switch to professional version', type: 'select'},
-      {id: 'becomeExpert', icon: Bell, label:'Become an expert', type: 'select'},
+      {id: 'becomeExpert', icon: ExpertIcon, label:'Become an expert', type: 'select'},
     ]
   },
   {
     items: [
-      {id: 'giftCard', icon: Bell, label:'Gift card', type: 'select'},
+      {id: 'giftCard', icon: GiftCardIcon, label:'Gift card', type: 'select'},
       {id: 'inviteProfessionals', icon: UserPlus, label:'Invite professionals', type: 'select'},
     ]
   },
@@ -51,8 +54,8 @@ export default function SettingsScreen() {
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2': '#444343';
-  const {form, setForm} = useState({
-    notificationAllow: true
+  const [form, setForm] = useState({
+    notifications: true
   });
 
   const changeLanguage = async (language) => {
@@ -90,19 +93,31 @@ export default function SettingsScreen() {
           <Edit3 height={20} strokeWidth={1.7} color={iconColor}/>
         </View>
         
-        {Sections.map(({items}) => (
-          <View>
+        {Sections.map(({items}, sectionIndex) => (
+          <View key={sectionIndex} style={{borderRadius: 12, overflow: 'hidden'}}>
             {items.map(({label, id, type, icon: Icon}, index) => (
-              <View className="pl-5 border-[#e0e0e0] bg-[#fcfcfc] dark:border-[#3d3d3d] dark:bg-[#323131]" style={[{borderTopWidth: 1}, index===0 && {borderTopWidth: 0 }]}>
+              <View key={id} className="pl-5  bg-[#fcfcfc]  dark:bg-[#323131]" >
                 <TouchableOpacity onPress={() => {null}} >
-                  <View className="h-[45] flex-row items-center justify-start pr-4">
+                  <View className=" flex-row items-center justify-start ">
                     <Icon  color={iconColor} strokeWidth={1.5} className="mr-4" style={{ transform: [{ scale: 1 }]}} ></Icon>
-                    <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{label}</Text>
-                    <View className="flex-1"/>
-                    {type==='toggle' && <Switch value={form[id]} onValueChange={(value) => setForm({...form, [id]:value})} />}
-                    {['select', 'link'].includes(type) &&(
-                      <ChevronRightIcon color={colorScheme=='dark'? '#706f6e': '#b6b5b5'}/>
-                    )}
+                    <View className="h-[45] flex-1 flex-row items-center justify-start pr-[14] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{borderTopWidth: 1}, index===0 && {borderTopWidth: 0 }]}>                   
+                      <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{label}</Text>
+                      <View className="flex-1"/>
+                      
+                      {type==='toggle' && ( 
+                        <Switch 
+                          style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
+                          value={form[id]} 
+                          onValueChange={(value) => 
+                            setForm({...form, [id]:value})              
+                          } 
+                        />
+                      )}
+
+                      {['select', 'link'].includes(type) &&(
+                        <ChevronRightIcon size={23} strokeWidth={1.7} color={colorScheme=='dark'? '#706f6e': '#b6b5b5'}/>
+                      )}
+                    </View>
                   </View>
                 </TouchableOpacity>
                 
