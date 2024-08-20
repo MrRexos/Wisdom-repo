@@ -31,7 +31,7 @@ export default function NotificationAllowScreen() {
               <WisdomLogo color = {colorScheme === 'dark' ? '#f2f2f2' : '#444343'} width={70} height={40} />
             </View>
             <View className="flex-1 items-end opacity-50">
-              <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+              <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
                 <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
               </TouchableOpacity>
             </View>
@@ -53,7 +53,7 @@ export default function NotificationAllowScreen() {
           </View>
           <View className="justify-center items-center pb-4">
                 <TouchableOpacity 
-                onPress={() => navigation.navigate('Home')}
+                onPress={() => navigation.navigate('HomeScreen')}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">Allow</Text>
                 </TouchableOpacity>

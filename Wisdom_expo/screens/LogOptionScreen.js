@@ -28,7 +28,7 @@ export default function LogOptionScreen() {
         <Image source={require('../assets/LoadChair.png')}  style={{ height: windowHeight, width: windowWidth, position: 'absolute' }}/>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
           <View>
-              <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+              <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
                   <View className="flex-row justify-end pt-5 pr-6 opacity-50">
                       <XMarkIcon size={30} color="#f2f2f2" strokeWidth="1.7" />
                   </View> 

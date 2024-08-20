@@ -2,12 +2,15 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text } from 'react-native'
+import { useTranslation } from 'react-i18next';
+import { useColorScheme } from 'nativewind'
+import i18n from '../languages/i18n';
 
 import { Search, Heart, MessageSquare } from "react-native-feather";
-import HeartFill from "../assets/HeartFill.svg"
-import MessageSquareFill from "../assets/MessageSquareFill.svg"
-import Suitcase from "../assets/Suitcase.svg"
-import SuitcaseFill from "../assets/SuitcaseFill.svg"
+import HeartFill from "../assets/HeartFill.tsx"
+import MessageSquareFill from "../assets/MessageSquareFill.tsx"
+import Suitcase from "../assets/Suitcase.tsx"
+import SuitcaseFill from "../assets/SuitcaseFill.tsx"
 
 import React from 'react'
 import WelcomeVideoScreen from '../screens/WelcomeVideoScreen';
@@ -38,6 +41,7 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 
+
 export default function Navigation() {
     return (
         <NavigationContainer>
@@ -46,7 +50,7 @@ export default function Navigation() {
         }}>
           <Stack.Screen name="WelcomeVideo" component={WelcomeVideoScreen} />
           <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'none'  }}/>
-          <Stack.Screen name="Settings" component={TabNavigator} options={{ animation: 'none' }}/>
+          <Stack.Screen name="SettingsScreen" component={TabNavigator} options={{ animation: 'none' }}/>
           <Stack.Screen name="GetStarted" component={GetStartedScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="Terms" component={TermsScreen}/>
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
@@ -57,13 +61,13 @@ export default function Navigation() {
           <Stack.Screen name="EnterName" component={EnterNameScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="CreateProfile" component={CreateProfileScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="Home" component={TabNavigator} options={{ animation: 'none' }}/>
+          <Stack.Screen name="HomeScreen" component={TabNavigator} options={{ animation: 'none' }}/>
           <Stack.Screen name="NotificationAllow" component={NotificationAllowScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="EmailSended" component={EmailSendedScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="NewPassword" component={NewPasswordScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="Favorites" component={FavoritesScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="Services" component={ServicesScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="Chat" component={ChatScreen} options={{ animation: 'none' }}/>
+          <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} options={{ animation: 'none' }}/>
+          <Stack.Screen name="ServicesScreen" component={ServicesScreen} options={{ animation: 'none' }}/>
+          <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="Conversation" component={ConversationScreen} options={{ animation: 'none' }}/>
 
         </Stack.Navigator>
@@ -72,6 +76,8 @@ export default function Navigation() {
 }   
 
 function TabNavigator() {
+  const {colorScheme, toggleColorScheme} = useColorScheme();
+  const { t, i18n} = useTranslation();
   return (
       <Tab.Navigator initialRouteName="Home" screenOptions={({ route }) => ({
         headerShown: false,
@@ -95,12 +101,12 @@ function TabNavigator() {
               //IconName = focused ? 'settings' : 'settings-outline';
               //break;
           }
-          return <IconName stroke={color} strokeWidth={1.7} width={size} height={size} />;
+          return <IconName color={color} strokeWidth={1.7} width={size} height={size} />;
         },
-        tabBarActiveTintColor: '#444343', 
-        tabBarInactiveTintColor: '#B6B5B5',  
+        tabBarActiveTintColor: colorScheme=='dark' ? '#f2f2f2' : '#444343', 
+        tabBarInactiveTintColor: colorScheme=='dark' ? '#706f6e' : '#B6B5B5',  
         tabBarStyle: {
-          backgroundColor: '#fcfcfc',  
+          backgroundColor: colorScheme=='dark' ? '#323131' : '#fcfcfc',  
           paddingBottom: 38, 
           paddingTop: 15,
           height: 95,
@@ -132,7 +138,7 @@ function HomeStackNavigator() {
 function FavoritesStackNavigator() {
   return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Favorites" component={FavoritesScreen} />
+          <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} />
       </Stack.Navigator>
   );
 }
@@ -140,15 +146,15 @@ function FavoritesStackNavigator() {
 function ServicesStackNavigator() {
   return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Services" component={ServicesScreen} />
+          <Stack.Screen name="ServicesScreen" component={ServicesScreen} />
       </Stack.Navigator>
   );
 }
 
 function ChatStackNavigator() {
   return (
-      <Stack.Navigator initialRouteName="Chat" screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Chat" component={ChatScreen} />
+      <Stack.Navigator initialRouteName="ChatScreen" screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="ChatScreen" component={ChatScreen} />
           <Stack.Screen name="Conversation" component={ConversationScreen} />
 
       </Stack.Navigator>

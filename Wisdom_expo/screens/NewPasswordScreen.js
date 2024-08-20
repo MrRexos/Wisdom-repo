@@ -42,7 +42,7 @@ export default function LogInScreen() {
     setShowError(false);
   }
   const nextPressed = () =>{
-    navigation.navigate('Home');
+    navigation.navigate('HomeScreen');
   }
 
   useEffect(() => {
