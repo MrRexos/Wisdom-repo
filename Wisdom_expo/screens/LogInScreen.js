@@ -50,7 +50,7 @@ export default function LogInScreen() {
       setErrorMessage("Error");
     }
     else{
-      navigation.navigate('Home');
+      navigation.navigate('HomeScreen');
     }
   }
 
@@ -80,7 +80,7 @@ export default function LogInScreen() {
           <View className="flex-1">
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6" />
-          </TouchableOpacity>
+            </TouchableOpacity>
           </View>
           <View className="items-center pt-3">
             <WisdomLogo color = {colorScheme === 'dark' ? '#f2f2f2' : '#444343'} width={55} height={30} />

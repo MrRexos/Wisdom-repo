@@ -34,6 +34,8 @@ import FavoritesScreen from '../screens/FavoritesScreen';
 import ChatScreen from '../screens/ChatScreen';
 import ServicesScreen from '../screens/ServicesScreen';
 import ConversationScreen from '../screens/ConversationScreen';
+import PreferencesScreen  from '../screens/PreferencesScreen';
+import LanguageScreen from '../screens/LanguageScreen';
 
 
 
@@ -50,7 +52,7 @@ export default function Navigation() {
         }}>
           <Stack.Screen name="WelcomeVideo" component={WelcomeVideoScreen} />
           <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'none'  }}/>
-          <Stack.Screen name="SettingsScreen" component={TabNavigator} options={{ animation: 'none' }}/>
+          <Stack.Screen name="SettingsScreen" component={TabNavigator} options={{ animation: 'none'}}/>
           <Stack.Screen name="GetStarted" component={GetStartedScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="Terms" component={TermsScreen}/>
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
@@ -69,6 +71,9 @@ export default function Navigation() {
           <Stack.Screen name="ServicesScreen" component={ServicesScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="Conversation" component={ConversationScreen} options={{ animation: 'none' }}/>
+          <Stack.Screen name="Preferences" component={PreferencesScreen} options={{ animation: 'none'}}/>
+          <Stack.Screen name="Language" component={LanguageScreen} options={{ animation: 'none'}}/>
+          
 
         </Stack.Navigator>
       </NavigationContainer>
@@ -110,6 +115,10 @@ function TabNavigator() {
           paddingBottom: 38, 
           paddingTop: 15,
           height: 95,
+          borderTopWidth:0,
+          shadowColor: '#000000',
+          shadowOpacity: 0.07,
+          shadowRadius: 18,
         },
         tabBarLabelStyle: { 
           paddingTop: 10,
@@ -165,6 +174,8 @@ function SettingsStackNavigator() {
   return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
+          <Stack.Screen name="Preferences" component={PreferencesScreen} options={{ animation: 'none'}}/>
+          <Stack.Screen name="Language" component={LanguageScreen} options={{ animation: 'none'}}/>
       </Stack.Navigator>
   );
 }

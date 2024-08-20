@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { storeDataLocally } from '../utils/asyncStorage';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
+import { useNavigation } from '@react-navigation/native';
 
-import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram } from "react-native-feather";
+import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram, Link } from "react-native-feather";
 import {KeyIcon ,ChevronRightIcon, ArrowsRightLeftIcon} from 'react-native-heroicons/outline';
 import GiftCardIcon from '../assets/GiftCard';
 import ExpertIcon from '../assets/Expert';
@@ -19,7 +20,7 @@ const Sections = [
   {
     items: [
       {id: 'account', icon: KeyIcon, label:'Account', type: 'select'},
-      {id: 'preferences', icon: Settings, label:'Preferences', type: 'select'},
+      {id: 'preferences', icon: Settings, label:'Preferences', type: 'select', link: 'Preferences'},
       {id: 'notifications', icon: Bell, label:'Notifications', type: 'toggle'},
       {id: 'directions', icon: MapPin, label:'Directions', type: 'select'},
       {id: 'payments', icon: CashStackIcon, label:'Payments and refunds', type: 'select'},
@@ -53,6 +54,7 @@ export default function SettingsScreen() {
 
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
+  const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2': '#444343';
   const [form, setForm] = useState({
     notifications: true
@@ -61,10 +63,6 @@ export default function SettingsScreen() {
   const changeLanguage = async (language) => {
     await i18n.changeLanguage(language);
     storeDataLocally('selectedLanguage', language);
-  };
-  const handleToggleColorScheme = () => {
-    toggleColorScheme();
-    storeDataLocally('colorScheme', colorScheme === 'dark' ? 'light' : 'dark');
   };
 
   return (
@@ -95,9 +93,9 @@ export default function SettingsScreen() {
         
         {Sections.map(({items}, sectionIndex) => (
           <View key={sectionIndex} style={{borderRadius: 12, overflow: 'hidden'}}>
-            {items.map(({label, id, type, icon: Icon}, index) => (
+            {items.map(({label, id, type, link, icon: Icon}, index) => (
               <View key={id} className="pl-5  bg-[#fcfcfc]  dark:bg-[#323131]" >
-                <TouchableOpacity onPress={() => {null}} >
+                <TouchableOpacity onPress={() => {['select', 'link'].includes(type) && navigation.navigate(link)}} >
                   <View className=" flex-row items-center justify-start ">
                     <Icon  color={iconColor} strokeWidth={1.5} className="mr-4" style={{ transform: [{ scale: 1 }]}} ></Icon>
                     <View className="h-[45] flex-1 flex-row items-center justify-start pr-[14] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{borderTopWidth: 1}, index===0 && {borderTopWidth: 0 }]}>                   
@@ -129,8 +127,6 @@ export default function SettingsScreen() {
           </View>
         ))}
 
-
-        <Switch value={colorScheme==='dark'} onChange={handleToggleColorScheme}/>
         <Button title="Español" onPress={() => changeLanguage('es')} />
         <Button title="Inglés" onPress={() => changeLanguage('en')} />
         <Button title="Català" onPress={() => changeLanguage('ca')} />
