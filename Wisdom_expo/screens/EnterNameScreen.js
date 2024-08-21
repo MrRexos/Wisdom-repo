@@ -41,8 +41,8 @@ export default function EnterNameScreen() {
         setShowError(true);
       }
       else {
-        const firstName = nameSplited[0] ;
-        const surname = nameSplited[1];
+        const firstName = nameSplited[0].charAt(0).toUpperCase() + nameSplited[0].slice(1).toLowerCase();
+        const surname = nameSplited[1].charAt(0).toUpperCase() + nameSplited[1].slice(1).toLowerCase();
         const userData = await getDataLocally('user');
 
         if (userData) {
@@ -77,7 +77,7 @@ export default function EnterNameScreen() {
                 onChange = {inputChanged} 
                 value={name}
                 onSubmitEditing={nextPressed}
-                className="px-4 h-11 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
+                className="px-4 h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
             </View>
             {
             showError? (

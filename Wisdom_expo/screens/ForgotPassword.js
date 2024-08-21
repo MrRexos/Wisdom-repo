@@ -72,7 +72,7 @@ export default function ForgotPasswordScreen() {
                 onChange = {inputChanged} 
                 value={email}
                 onSubmitEditing={nextPressed}
-                className="px-4 h-11 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
+                className="px-4 h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
             </View>
             {
             showError? (

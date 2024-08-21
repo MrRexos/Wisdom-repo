@@ -8,6 +8,7 @@ import EyeIcon from 'react-native-bootstrap-icons/icons/eye';
 import EyeSlashIcon from 'react-native-bootstrap-icons/icons/eye-slash';
 import WisdomLogo from '../assets/wisdomLogo.tsx'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
 
 
 
@@ -17,7 +18,7 @@ export default function LogInScreen() {
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState('');
+  const [userEmail, setuser] = useState('');
   const [isSecure, setIsSecure] = useState(true);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -35,13 +36,13 @@ export default function LogInScreen() {
     setPassword (newPassword);
     setShowError(false);
   }
-  const inputUserChanged = (event) => {
-    const newUser = event.nativeEvent.text;
-    setUser (newUser);
+  const inputuserChanged = (event) => {
+    const newuser = event.nativeEvent.text;
+    setuser (newuser);
     setShowError(false);
   }
-  const nextPressed = () =>{
-    if (user.length < 1){
+  const nextPressed = async () =>{
+    if (userEmail.length < 1){
       setShowError(true);
       setErrorMessage("Email is missing");
     }
@@ -50,7 +51,21 @@ export default function LogInScreen() {
       setErrorMessage("Error");
     }
     else{
-      navigation.navigate('HomeScreen');
+      const userData = await getDataLocally('user');
+
+      if (userData) {
+        user = JSON.parse(userData);
+        if (userEmail.includes('@')){
+          user.email = userEmail; 
+        } else {
+          user.username = userEmail;
+        }
+        user.userToken = true;
+        await storeDataLocally('user', JSON.stringify(user));
+        navigation.navigate('HomeScreen');
+      } else {
+        console.log('Not user found in Asyncstorage')
+      }
     }
   }
 
@@ -101,8 +116,8 @@ export default function LogInScreen() {
             autoFocus={true} 
             selectionColor={cursorColorChange} 
             placeholderTextColor={placeHolderTextColorChange} 
-            onChange = {inputUserChanged} 
-            value={user}
+            onChange = {inputuserChanged} 
+            value={userEmail}
             onSubmitEditing={nextPressed}
             className="px-4 h-11 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
         </View>
@@ -112,7 +127,7 @@ export default function LogInScreen() {
         <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
           <TextInput
             placeholder='password'
-            autoFocus={true}
+            autoFocus={false}
             selectionColor={cursorColorChange}
             placeholderTextColor={placeHolderTextColorChange}
             secureTextEntry={isSecure} // Controla la visibilidad del texto
@@ -141,9 +156,9 @@ export default function LogInScreen() {
       </View>
         <View className="justify-center items-center pb-6 pt-7">
           <TouchableOpacity 
-          disabled={password.length < 1 || user.length < 1}
+          disabled={password.length < 1 || userEmail.length < 1}
           onPress={nextPressed}
-          style={{opacity: password.length < 1 || user.length < 1 ? 0.5 : 1.0}}
+          style={{opacity: password.length < 1 || userEmail.length < 1 ? 0.5 : 1.0}}
           className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center">
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Next</Text>
           </TouchableOpacity>

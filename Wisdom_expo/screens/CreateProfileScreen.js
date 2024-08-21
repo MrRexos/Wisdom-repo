@@ -59,12 +59,16 @@ export default function CreateProfileScreen() {
         if (username.split(" ").length > 1) {
             setErrorMessage("Username can't have spaces, use _");
             setShowError(true);
+        } else if (image===null) {
+            setErrorMessage("You must upload a profile picture.");
+            setShowError(true);
         } else {
           const userData = await getDataLocally('user');
           if (userData) {
               user = JSON.parse(userData);
               user.username = username;
               user.profileImage = image; 
+              user.userToken = true; 
               await storeDataLocally('user', JSON.stringify(user));
               navigation.navigate('NotificationAllow');
           } else {
@@ -92,7 +96,7 @@ export default function CreateProfileScreen() {
                         Add your profile picture and your username
                     </Text>
                 </View>
-                <View className="mt-8 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+                <View className="mt-8 mb-1 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
                     <Text className="pl-4 pr-2 text-[15px] text-[#444343] dark:text-[#f2f2f2]">
                         @
                     </Text>
@@ -104,11 +108,11 @@ export default function CreateProfileScreen() {
                         onChange={inputChanged}
                         value={username}
                         onSubmitEditing={nextPressed}
-                        className="pr-4 h-11 text-[15px] text-[#444343] dark:text-[#f2f2f2]" />
+                        className="pr-4  h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]" />
                 </View>
                 {
                     showError ? (
-                        <Text className="text-[#ff633e] text-[13px] pt-3">{errorMessage}</Text>
+                        <Text className="text-[#ff633e] text-[13px] pt-3 pb-2">{errorMessage}</Text>
                     ) : null
                 }
             </View>

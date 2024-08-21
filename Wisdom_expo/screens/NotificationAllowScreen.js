@@ -6,6 +6,7 @@ import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
 import WisdomLogo from '../assets/wisdomLogo.tsx'
 import { useNavigation } from '@react-navigation/native';
+import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
 import {XMarkIcon} from 'react-native-heroicons/outline';
 import NotificationAskWhite from '../assets/NotificationAskWhite.svg';
 import NotificationAskDark from '../assets/NotificationAskDark.svg';
@@ -18,7 +19,31 @@ export default function NotificationAllowScreen() {
     const navigation = useNavigation();
     const iconColor = colorScheme === 'dark' ? '#f2f2f2': '#444343';
 
-    
+    const notAllowPressed = async () =>{
+      const userData = await getDataLocally('user');
+
+      if (userData) {
+        user = JSON.parse(userData);
+        user.allowNotis = false; 
+        await storeDataLocally('user', JSON.stringify(user));
+        navigation.navigate('HomeScreen');
+      } else {
+        console.log('Not user found in Asyncstorage')
+      }
+    }
+
+    const allowPressed = async () =>{
+      const userData = await getDataLocally('user');
+
+      if (userData) {
+        user = JSON.parse(userData);
+        user.allowNotis = true; 
+        await storeDataLocally('user', JSON.stringify(user));
+        navigation.navigate('HomeScreen');
+      } else {
+        console.log('Not user found in Asyncstorage')
+      }
+    }
   
     return (
       <SafeAreaView style={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
@@ -31,7 +56,7 @@ export default function NotificationAllowScreen() {
               <WisdomLogo color = {colorScheme === 'dark' ? '#f2f2f2' : '#444343'} width={70} height={40} />
             </View>
             <View className="flex-1 items-end opacity-50">
-              <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
+              <TouchableOpacity onPress={notAllowPressed}>
                 <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
               </TouchableOpacity>
             </View>
@@ -53,7 +78,7 @@ export default function NotificationAllowScreen() {
           </View>
           <View className="justify-center items-center pb-4">
                 <TouchableOpacity 
-                onPress={() => navigation.navigate('HomeScreen')}
+                onPress={allowPressed}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">Allow</Text>
                 </TouchableOpacity>

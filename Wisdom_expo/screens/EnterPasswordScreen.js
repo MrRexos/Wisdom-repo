@@ -25,20 +25,13 @@ export default function EnterPasswordScreen() {
     setPassword (newPassword);
     setShowError(false);
   }
+
   const nextPressed = async () =>{
     if (password.length < 8){
       setShowError(true);
     }
     else {
-      const userData = await getDataLocally('user');
-      if (userData) {
-          user = JSON.parse(userData);
-          user.password = password; 
-          await storeDataLocally('user', JSON.stringify(user));
-          navigation.navigate('EnterName');
-      } else {
-          console.log('Not user found in Asyncstorage')
-      }
+      navigation.navigate('EnterName');
     }
   }
 
@@ -62,7 +55,7 @@ export default function EnterPasswordScreen() {
             onChange = {inputChanged} 
             value={password}
             onSubmitEditing={nextPressed}
-            className="h-11 text-[15px] flex-1 text-[#444343] dark:text-[#f2f2f2]"
+            className=" text-[15px] h-[55] flex-1 text-[#444343] dark:text-[#f2f2f2]"
           />
           <TouchableOpacity onPress={() => setIsSecure(!isSecure)}>
             {isSecure ? (

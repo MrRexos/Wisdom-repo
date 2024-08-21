@@ -20,13 +20,14 @@ export default function EnterEmailScreen() {
     const [email, setEmail] = useState('');
     const [showError, setShowError] = useState(false);
     const user = {
+        userToken: false,
         email: '',
-        password: '',
         name: '',
         surname: '',
         username: '',
         profileImage: '',
         selectedLanguage: '',
+        allowNotis: null,
     };
   
     const inputChanged = (event) => {
@@ -65,7 +66,8 @@ export default function EnterEmailScreen() {
                 onChange = {inputChanged} 
                 value={email}
                 onSubmitEditing={nextPressed}
-                className="px-4 h-11 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
+                
+                className="px-4 h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
             </View>
             {
             showError? (
