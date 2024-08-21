@@ -13,7 +13,8 @@ import { Search, Heart, MessageSquare } from "react-native-feather";
 export default function WelcomeVideoScreen() {
     const {colorScheme, toggleColorScheme} = useColorScheme();
     const navigation = useNavigation();
-    const { t, i18n } = useTranslation()
+    const { t, i18n } = useTranslation();
+  
 
     useEffect(()=>{
       const loadLanguage = async () => {
@@ -29,7 +30,7 @@ export default function WelcomeVideoScreen() {
           toggleColorScheme();
         }
       };
-
+      
       loadLanguage()
       loadColorScheme()
     },[])

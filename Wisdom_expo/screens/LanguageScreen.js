@@ -6,6 +6,7 @@ import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { MaterialIcons } from '@expo/vector-icons';
+import { Check } from "react-native-feather";
 
 const Sections = [
   {
@@ -66,7 +67,7 @@ export default function LanguageScreen() {
                     >
                       <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{label}</Text>
                       {selectedLanguage === id && (
-                        <MaterialIcons name="check" size={15} strokeWidth={3} color={iconColor} />
+                        <Check height={15} strokeWidth={3} color={iconColor} />
                       )}
                     </View>
                   </View>

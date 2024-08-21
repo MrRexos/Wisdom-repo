@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import EyeIcon from 'react-native-bootstrap-icons/icons/eye';
 import EyeSlashIcon from 'react-native-bootstrap-icons/icons/eye-slash';
+import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
 
 export default function EnterPasswordScreen() {
   const { colorScheme } = useColorScheme();
@@ -24,12 +25,20 @@ export default function EnterPasswordScreen() {
     setPassword (newPassword);
     setShowError(false);
   }
-  const nextPressed = () =>{
+  const nextPressed = async () =>{
     if (password.length < 8){
       setShowError(true);
     }
-    else{
-      navigation.navigate('EnterName');
+    else {
+      const userData = await getDataLocally('user');
+      if (userData) {
+          user = JSON.parse(userData);
+          user.password = password; 
+          await storeDataLocally('user', JSON.stringify(user));
+          navigation.navigate('EnterName');
+      } else {
+          console.log('Not user found in Asyncstorage')
+      }
     }
   }
 

@@ -6,6 +6,7 @@ import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
 import { useNavigation } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
+import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
 
 
 export default function EnterNameScreen() {
@@ -25,18 +26,35 @@ export default function EnterNameScreen() {
         setName (newName);
         setShowError(false);
       }
-    const nextPressed = () =>{
-    if (name.split(" ").length === 1){
-      setErrorMessage('Must enter your surname');
-      setShowError(true);
+
+    const nextPressed = async () =>{
+
+      const nameSplited = name.split(" ");
+
+      if (nameSplited.length === 1){
+        setErrorMessage('Must enter your surname');
+        setShowError(true);
+        
+      }
+      else if (nameSplited.length > 2) {
+        setErrorMessage('Must enter only your name and surname');
+        setShowError(true);
+      }
+      else {
+        const firstName = nameSplited[0] ;
+        const surname = nameSplited[1];
+        const userData = await getDataLocally('user');
+
+        if (userData) {
+          user = JSON.parse(userData);
+          user.name = firstName; 
+          user.surname = surname;
+          await storeDataLocally('user', JSON.stringify(user));
+          navigation.navigate('CreateProfile');
+        } else {
+          console.log('Not user found in Asyncstorage')
+        }
       
-    }
-    else if (name.split(" ").length > 2) {
-      setErrorMessage('Must enter only your name and surname');
-      setShowError(true);
-    }
-    else {
-      navigation.navigate('CreateProfile');
     }
     }
 

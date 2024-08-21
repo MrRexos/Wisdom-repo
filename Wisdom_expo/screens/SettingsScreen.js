@@ -1,8 +1,8 @@
 
-import React, {useState} from 'react';
-import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { storeDataLocally } from '../utils/asyncStorage';
+import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
 import { useNavigation } from '@react-navigation/native';
@@ -56,14 +56,31 @@ export default function SettingsScreen() {
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2': '#444343';
+  const [image, setImage] = useState(null);
+  const [name, setName] = useState('');
+  const [surname, setSurname] = useState('');
+  const [username, setUsername] = useState('');
   const [form, setForm] = useState({
     notifications: true
   });
+  
 
-  const changeLanguage = async (language) => {
-    await i18n.changeLanguage(language);
-    storeDataLocally('selectedLanguage', language);
+
+  const loadUserData = async () => {
+    const userData = await getDataLocally('user');
+    if (userData) {
+      user = JSON.parse(userData);
+      setImage({ uri: user.profileImage });
+      setName(user.name);
+      setSurname(user.surname);
+      setUsername(user.username);
+    }
   };
+
+
+  useEffect(() => {
+    loadUserData();
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
@@ -80,11 +97,12 @@ export default function SettingsScreen() {
         </View>
         <View className="justify-between flex-row items-center px-2">
           <View className="justify-start flex-row"> 
-            <TouchableOpacity className="h-[75] w-[75] rounded-full bg-slate-500">
+            <TouchableOpacity >
+              <Image source={image ? { uri: image.uri } : require('../assets/defaultProfilePic.jpg')} className="w-[75] h-[75] rounded-full bg-slate-500" />
             </TouchableOpacity>
-            <View className="justify-center px-2 gap-y-1 " >
-              <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Name Surname</Text>
-              <Text className="font-inter-medium text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">@username</Text>
+            <View className="justify-center px-3 gap-y-1 " >
+              <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{name} {surname}</Text>
+              <Text className="font-inter-medium text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">@{username}</Text>
             </View>
 
           </View>
@@ -126,14 +144,6 @@ export default function SettingsScreen() {
             ))}
           </View>
         ))}
-
-        <Button title="Español" onPress={() => changeLanguage('es')} />
-        <Button title="Inglés" onPress={() => changeLanguage('en')} />
-        <Button title="Català" onPress={() => changeLanguage('ca')} />
-        <Button title="Français" onPress={() => changeLanguage('fr')} />
-        <Button title="中文" onPress={() => changeLanguage('zh')} />
-        <Button title="العربية" onPress={() => changeLanguage('ar')} />
-
       </ScrollView>
     </SafeAreaView>
   );
