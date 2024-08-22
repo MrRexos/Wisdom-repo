@@ -18,11 +18,21 @@ export default function SettingsScreen() {
   const [token, setToken] = useState(false);
   
   useEffect(() => {
+    const loadColorScheme = async () => {
+      let storedColorScheme = await getDataLocally('colorScheme');
+      if (storedColorScheme && storedColorScheme !== colorScheme) {
+        toggleColorScheme();
+      }
+    };
     const loadUserData = async () => {
       const userData = await getDataLocally('user');
       if (userData) {
         const user = JSON.parse(userData);
         setToken(user.userToken);
+        let language = user.selectedLanguage;
+        if (language) {
+          i18n.changeLanguage(language);
+        };
         setTimeout(() => {
           if (user.userToken) {
             navigation.navigate('HomeScreen');
@@ -32,6 +42,7 @@ export default function SettingsScreen() {
         }, 1000);
       }
     };
+    loadColorScheme();
     loadUserData();
   }, []);
 

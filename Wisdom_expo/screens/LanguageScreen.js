@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Text, View, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { storeDataLocally } from '../utils/asyncStorage';
+import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
@@ -31,7 +31,14 @@ export default function LanguageScreen() {
   const changeLanguage = async (language) => {
     setSelectedLanguage(language);  // Cambiar el estado localmente
     await i18n.changeLanguage(language);
-    storeDataLocally('selectedLanguage', language);
+    const userData = await getDataLocally('user')
+    if (userData) {
+      user = JSON.parse(userData);
+      user.selectedLanguage = language; 
+      await storeDataLocally('user', JSON.stringify(user));
+    } else {
+      console.log('Not user found in Asyncstorage')
+    }
   };
 
   return (

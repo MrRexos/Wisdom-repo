@@ -60,8 +60,9 @@ export default function SettingsScreen() {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [username, setUsername] = useState('');
+  const [allowNotis, setAllowNotis] = useState(null);
   const [form, setForm] = useState({
-    notifications: true
+    notifications: false,
   });
   const userObject = {
     userToken: false,
@@ -69,7 +70,7 @@ export default function SettingsScreen() {
     name: '',
     surname: '',
     username: '',
-    profileImage: '',
+    profileImage: null,
     selectedLanguage: '',
     allowNotis: null,
   };
@@ -78,6 +79,19 @@ export default function SettingsScreen() {
     await storeDataLocally('user', JSON.stringify(userObject));
     navigation.navigate('GetStarted');
   };
+
+  const handleToggleAllowNotis = async (value) => {
+    const userData = await getDataLocally('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      user.allowNotis = value; 
+      await storeDataLocally('user', JSON.stringify(user));
+      setAllowNotis(value);
+      setForm({...form, notifications: value});
+    } else {
+      console.log('No user found in AsyncStorage');
+    }
+  }
   
   const loadUserData = async () => {
     const userData = await getDataLocally('user');
@@ -87,6 +101,8 @@ export default function SettingsScreen() {
       setName(user.name);
       setSurname(user.surname);
       setUsername(user.username);
+      setAllowNotis(user.allowNotis);
+      setForm({ notifications: user.allowNotis });
     }
   };
 
@@ -136,9 +152,10 @@ export default function SettingsScreen() {
                         <Switch 
                           style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
                           value={form[id]} 
-                          onValueChange={(value) => 
-                            setForm({...form, [id]:value})              
-                          } 
+                          onValueChange={(value) => {
+                            setForm({...form, [id]:value});
+                            handleToggleAllowNotis(value);             
+                          }} 
                         />
                       )}
 

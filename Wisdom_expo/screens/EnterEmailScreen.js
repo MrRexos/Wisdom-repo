@@ -25,7 +25,7 @@ export default function EnterEmailScreen() {
         name: '',
         surname: '',
         username: '',
-        profileImage: '',
+        profileImage: null,
         selectedLanguage: '',
         allowNotis: null,
     };
