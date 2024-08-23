@@ -26,6 +26,7 @@ export default function SettingsScreen() {
     };
     const loadUserData = async () => {
       const userData = await getDataLocally('user');
+      
       if (userData) {
         const user = JSON.parse(userData);
         setToken(user.userToken);
