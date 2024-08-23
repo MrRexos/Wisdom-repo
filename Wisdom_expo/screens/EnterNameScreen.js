@@ -4,7 +4,7 @@ import {View, StatusBar,SafeAreaView, Platform,Text, TouchableOpacity, TextInput
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
 import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
 
@@ -19,6 +19,8 @@ export default function EnterNameScreen() {
     const [name, setName] = useState('');
     const [showError, setShowError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const route = useRoute();
+    const {email, password} = route.params;
 
   
     const inputChanged = (event) => {
@@ -43,17 +45,8 @@ export default function EnterNameScreen() {
       else {
         const firstName = nameSplited[0].charAt(0).toUpperCase() + nameSplited[0].slice(1).toLowerCase();
         const surname = nameSplited[1].charAt(0).toUpperCase() + nameSplited[1].slice(1).toLowerCase();
-        const userData = await getDataLocally('user');
-
-        if (userData) {
-          user = JSON.parse(userData);
-          user.name = firstName; 
-          user.surname = surname;
-          await storeDataLocally('user', JSON.stringify(user));
-          navigation.navigate('CreateProfile');
-        } else {
-          console.log('Not user found in Asyncstorage')
-        }
+        
+        navigation.navigate('CreateProfile', {email, password, firstName, surname});
       
     }
     }

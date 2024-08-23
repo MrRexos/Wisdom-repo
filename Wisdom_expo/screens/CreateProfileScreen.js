@@ -4,7 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
 
@@ -20,6 +20,19 @@ export default function CreateProfileScreen() {
     const [showError, setShowError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [image, setImage] = useState(null);
+
+    const route = useRoute();
+    const {email, password, firstName, surname} = route.params;
+    const userObject = {
+        userToken: true,
+        email: '',
+        name: '',
+        surname: '',
+        username: '',
+        profileImage: null,
+        selectedLanguage: 'es',
+        allowNotis: null,
+      };
 
     const handleImagePicker = async () => {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -63,17 +76,16 @@ export default function CreateProfileScreen() {
             setErrorMessage("You must upload a profile picture.");
             setShowError(true);
         } else {
-          const userData = await getDataLocally('user');
-          if (userData) {
-              user = JSON.parse(userData);
-              user.username = username;
-              user.profileImage = image; 
-              user.userToken = true; 
-              await storeDataLocally('user', JSON.stringify(user));
-              navigation.navigate('NotificationAllow');
-          } else {
-              console.log('Not user found in Asyncstorage')
-          }
+
+            userObject.email = email;
+            userObject.name = firstName;
+            userObject.surname = surname;
+            userObject.username = username;
+            userObject.profileImage = image;
+
+            await storeDataLocally('user', JSON.stringify(userObject));
+            navigation.navigate('NotificationAllow');
+          
         }
     };
 

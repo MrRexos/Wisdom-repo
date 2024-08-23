@@ -4,7 +4,7 @@ import {View, StatusBar,SafeAreaView, Platform,Text, TouchableOpacity, TextInput
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
 import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
 
@@ -19,16 +19,6 @@ export default function EnterEmailScreen() {
     const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2': '#444343';
     const [email, setEmail] = useState('');
     const [showError, setShowError] = useState(false);
-    const user = {
-        userToken: false,
-        email: '',
-        name: '',
-        surname: '',
-        username: '',
-        profileImage: null,
-        selectedLanguage: '',
-        allowNotis: null,
-    };
   
     const inputChanged = (event) => {
         const newEmail = event.nativeEvent.text;
@@ -38,9 +28,7 @@ export default function EnterEmailScreen() {
 
     const nextPressed = async () =>{
         if (email.includes('@')){
-            user.email = email; 
-            await storeDataLocally('user', JSON.stringify(user));
-            navigation.navigate('EnterPassword');
+            navigation.navigate('EnterPassword', {email});
         }
         else{
             setShowError(true);

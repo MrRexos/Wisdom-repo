@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import EyeIcon from 'react-native-bootstrap-icons/icons/eye';
 import EyeSlashIcon from 'react-native-bootstrap-icons/icons/eye-slash';
@@ -15,6 +15,8 @@ export default function EnterPasswordScreen() {
   const [password, setPassword] = useState('');
   const [isSecure, setIsSecure] = useState(true);
   const [showError, setShowError] = useState(false);
+  const route = useRoute();
+  const email = route.params;
 
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const placeholderTextColorChange = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
@@ -31,7 +33,7 @@ export default function EnterPasswordScreen() {
       setShowError(true);
     }
     else {
-      navigation.navigate('EnterName');
+      navigation.navigate('EnterName', {email, password});
     }
   }
 
