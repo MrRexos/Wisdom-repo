@@ -7,6 +7,9 @@ import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
+import api from '../utils/api';
+
+
 
 export default function CreateProfileScreen() {
     const { colorScheme, toggleColorScheme } = useColorScheme();
@@ -68,6 +71,40 @@ export default function CreateProfileScreen() {
         setShowError(false);
     };
 
+    const createUser = async () => {
+
+        const userData = {
+            first_name: firstName,
+            last_name: surname,
+            username: username,
+            email: "2appa",
+            password: password,
+            profile_picture: 'url_to_picture',
+            language: 'en',
+            allowNotis: true
+          };
+
+        try {
+          const response = await api.post('/api/users', userData);
+          console.log('User created:', response.data);
+        } catch (error) {
+            if (error.response) {
+                // El servidor respondió con un código de estado fuera del rango de 2xx
+                console.error('Error response:', error.response.data);
+                console.error('Error status:', error.response.status);
+                console.error('Error headers:', error.response.headers);
+                console.log(userData);
+            } else if (error.request) {
+                // La solicitud fue hecha pero no hubo respuesta
+                console.error('Error request:', error.request);
+            } else {
+                // Ocurrió un error al configurar la solicitud
+                console.error('Error message:', error.message);
+            }
+            setApiError('Failed to create user');
+        }
+      };
+
     const nextPressed = async () => {
         if (username.split(" ").length > 1) {
             setErrorMessage("Username can't have spaces, use _");
@@ -84,8 +121,8 @@ export default function CreateProfileScreen() {
             userObject.profileImage = image;
 
             await storeDataLocally('user', JSON.stringify(userObject));
+            createUser();
             navigation.navigate('NotificationAllow');
-          
         }
     };
 

@@ -5,7 +5,6 @@ import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { getDataLocally } from '../utils/asyncStorage';
-import api from '../utils/api';
 
 export default function WelcomeVideoScreen() {
   const { colorScheme } = useColorScheme();
@@ -33,37 +32,6 @@ export default function WelcomeVideoScreen() {
       }
     };
 
-    const fetchUsers = async () => {
-      try {
-        const response = await api.get('/api/users');
-        setUsers(response.data);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-        setApiError('Failed to load users');
-      }
-    };
-
-    const createUser = async () => {
-      try {
-        const response = await api.post('/api/users', {
-          first_name: 'John',
-          last_name: 'Doe',
-          username: 'odddddcddier',
-          email: 'john.dode@eqddddddc.com',
-          password: 'securepassword',
-          profile_picture: 'url_to_picture',
-          language: 'en',
-          allowNotis: true
-        });
-        console.log('User created:', response.data);
-      } catch (error) {
-        console.error('Error creating user:', error);
-        setApiError('Failed to create user');
-      }
-    };
-
-    fetchUsers();
-    createUser();
     loadUserData();
     
   }, []);
