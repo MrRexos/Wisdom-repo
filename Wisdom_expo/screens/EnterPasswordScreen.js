@@ -16,7 +16,7 @@ export default function EnterPasswordScreen() {
   const [isSecure, setIsSecure] = useState(true);
   const [showError, setShowError] = useState(false);
   const route = useRoute();
-  const email = route.params;
+  const {email} = route.params;
 
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const placeholderTextColorChange = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';

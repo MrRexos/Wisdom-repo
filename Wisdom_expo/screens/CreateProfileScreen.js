@@ -23,6 +23,8 @@ export default function CreateProfileScreen() {
     const [showError, setShowError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [image, setImage] = useState(null);
+    const [apiError, setApiError] = useState(null);
+
 
     const route = useRoute();
     const {email, password, firstName, surname} = route.params;
@@ -81,7 +83,7 @@ export default function CreateProfileScreen() {
             password: password,
             profile_picture: 'url_to_picture',
             language: 'en',
-            allowNotis: true
+            allowNotis: 0
           };
 
         try {
