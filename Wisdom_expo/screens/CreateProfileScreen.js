@@ -76,14 +76,8 @@ export default function CreateProfileScreen() {
     const createUser = async () => {
 
         const userData = {
-            first_name: firstName,
-            last_name: surname,
-            username: username,
-            email: "2appa",
+            email: email,
             password: password,
-            profile_picture: 'url_to_picture',
-            language: 'en',
-            allowNotis: 0
           };
 
         try {
@@ -94,8 +88,6 @@ export default function CreateProfileScreen() {
                 // El servidor respondió con un código de estado fuera del rango de 2xx
                 console.error('Error response:', error.response.data);
                 console.error('Error status:', error.response.status);
-                console.error('Error headers:', error.response.headers);
-                console.log(userData);
             } else if (error.request) {
                 // La solicitud fue hecha pero no hubo respuesta
                 console.error('Error request:', error.request);
