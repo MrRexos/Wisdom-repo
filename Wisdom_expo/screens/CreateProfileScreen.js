@@ -28,6 +28,7 @@ export default function CreateProfileScreen() {
 
     const route = useRoute();
     const {email, password, firstName, surname} = route.params;
+
     const userObject = {
         userToken: true,
         email: '',
@@ -73,32 +74,6 @@ export default function CreateProfileScreen() {
         setShowError(false);
     };
 
-    const createUser = async () => {
-
-        const userData = {
-            email: email,
-            password: password,
-          };
-
-        try {
-          const response = await api.post('/api/users', userData);
-          console.log('User created:', response.data);
-        } catch (error) {
-            if (error.response) {
-                // El servidor respondió con un código de estado fuera del rango de 2xx
-                console.error('Error response:', error.response.data);
-                console.error('Error status:', error.response.status);
-            } else if (error.request) {
-                // La solicitud fue hecha pero no hubo respuesta
-                console.error('Error request:', error.request);
-            } else {
-                // Ocurrió un error al configurar la solicitud
-                console.error('Error message:', error.message);
-            }
-            setApiError('Failed to create user');
-        }
-      };
-
     const nextPressed = async () => {
         if (username.split(" ").length > 1) {
             setErrorMessage("Username can't have spaces, use _");
@@ -107,7 +82,6 @@ export default function CreateProfileScreen() {
             setErrorMessage("You must upload a profile picture.");
             setShowError(true);
         } else {
-
             userObject.email = email;
             userObject.name = firstName;
             userObject.surname = surname;
@@ -115,8 +89,7 @@ export default function CreateProfileScreen() {
             userObject.profileImage = image;
 
             await storeDataLocally('user', JSON.stringify(userObject));
-            createUser();
-            navigation.navigate('NotificationAllow');
+            navigation.navigate('NotificationAllow', {email, password, firstName, surname, username, image});
         }
     };
 

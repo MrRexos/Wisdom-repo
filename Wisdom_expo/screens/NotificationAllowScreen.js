@@ -5,11 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
 import WisdomLogo from '../assets/wisdomLogo.tsx'
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
 import {XMarkIcon} from 'react-native-heroicons/outline';
 import NotificationAskWhite from '../assets/NotificationAskWhite.svg';
 import NotificationAskDark from '../assets/NotificationAskDark.svg';
+import api from '../utils/api';
+
 
 
 
@@ -18,6 +20,35 @@ export default function NotificationAllowScreen() {
     const { t, i18n } = useTranslation();
     const navigation = useNavigation();
     const iconColor = colorScheme === 'dark' ? '#f2f2f2': '#444343';
+    const route = useRoute();
+
+    const {email, password, firstName, surname, username, profileImage} = route.params;
+
+    const createUser = async (allowNotis) => {
+
+      try {
+        const response = await api.post('/api/signup', {
+          email: email,
+          username: username,
+          password: password,
+          first_name: firstName,
+          surname: surname, 
+          language: 'es',
+          allow_notis: allowNotis
+        });
+        console.log('User created:', response.data);
+      } catch (error) {
+          if (error.response) {
+              console.error('Error response:', error.response.data);
+              console.error('Error status:', error.response.status);
+          } else if (error.request) {
+              console.error('Error request:', error.request);
+          } else {
+              console.error('Error message:', error.message);
+          }
+          setApiError('Failed to create user');
+      }
+    };
 
     const notAllowPressed = async () =>{
       const userData = await getDataLocally('user');
@@ -26,6 +57,7 @@ export default function NotificationAllowScreen() {
         user = JSON.parse(userData);
         user.allowNotis = false; 
         await storeDataLocally('user', JSON.stringify(user));
+        createUser(false);
         navigation.navigate('HomeScreen');
       } else {
         console.log('Not user found in Asyncstorage')
@@ -39,6 +71,7 @@ export default function NotificationAllowScreen() {
         user = JSON.parse(userData);
         user.allowNotis = true; 
         await storeDataLocally('user', JSON.stringify(user));
+        createUser(true);
         navigation.navigate('HomeScreen');
       } else {
         console.log('Not user found in Asyncstorage')
