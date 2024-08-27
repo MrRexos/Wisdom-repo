@@ -33,7 +33,7 @@ export default function NotificationAllowScreen() {
           password: password,
           first_name: firstName,
           surname: surname, 
-          language: 'es',
+          language: i18n.language,
           allow_notis: allowNotis
         });
         console.log('User created:', response.data);

@@ -7,7 +7,6 @@ import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
-import api from '../utils/api';
 
 
 
@@ -23,7 +22,6 @@ export default function CreateProfileScreen() {
     const [showError, setShowError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [image, setImage] = useState(null);
-    const [apiError, setApiError] = useState(null);
 
 
     const route = useRoute();
@@ -70,7 +68,7 @@ export default function CreateProfileScreen() {
 
     const inputChanged = (event) => {
         const newUsername = event.nativeEvent.text;
-        setUsername(newUsername);
+        setUsername(newUsername.trim());
         setShowError(false);
     };
 

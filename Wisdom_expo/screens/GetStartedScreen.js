@@ -15,8 +15,6 @@ export default function GetStartedScreen() {
     const navigation = useNavigation();
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
-
-    
   
     return (
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-neutral-700 justify-between'>

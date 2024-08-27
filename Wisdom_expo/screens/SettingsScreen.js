@@ -74,6 +74,7 @@ export default function SettingsScreen() {
     selectedLanguage: '',
     allowNotis: null,
   };
+  
 
   const logOut = async () => {
     await storeDataLocally('user', JSON.stringify(userObject));

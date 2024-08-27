@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Platform, NativeModules } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
@@ -12,11 +12,23 @@ export default function WelcomeVideoScreen() {
   const { t } = useTranslation();
   const [token, setToken] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [apiError, setApiError] = useState(null);
-
-  const [users, setUsers] = useState([]);
+  const { i18n } = useTranslation();
 
   useEffect(() => {
+
+    const changeDefaultLanguage = () => {
+      const deviceLanguage =
+          Platform.OS === 'ios'
+            ? NativeModules.SettingsManager.settings.AppleLocale ||
+              NativeModules.SettingsManager.settings.AppleLanguages[0] //iOS 13
+            : NativeModules.I18nManager.localeIdentifier;
+  
+      const language = deviceLanguage.split(/[_-]/)[0];
+      i18n.changeLanguage(language);
+  
+      console.log(language);
+    };
+
     const loadUserData = async () => {
       const userData = await getDataLocally('user');
       if (userData) {
@@ -25,13 +37,14 @@ export default function WelcomeVideoScreen() {
         if (user.userToken) {
           navigation.navigate('Loading');
         } else {
+          changeDefaultLanguage();
           setIsLoading(false);
         }
       } else {
         setIsLoading(false);
       }
     };
-
+    
     loadUserData();
     
   }, []);
