@@ -7,6 +7,8 @@ import i18n from '../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
 import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
+import api from '../utils/api';
+
 
 
 
@@ -19,18 +21,42 @@ export default function EnterEmailScreen() {
     const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2': '#444343';
     const [email, setEmail] = useState('');
     const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [apiError, setApiError] = useState('');
   
     const inputChanged = (event) => {
         const newEmail = event.nativeEvent.text;
         setEmail (newEmail);
         setShowError(false);
-      }
+    };
+
+    const checkEmailExists = async (email) => {
+        try {
+          const response = await api.get('/api/check-email', {
+            params: {
+              email: email,  // Pasas el email como parámetro de consulta
+            },
+          });
+      
+          if (response.data.exists) {
+            setErrorMessage('Email already in use');
+            setShowError(true);
+          } else {
+            navigation.navigate('EnterPassword', {email});
+          }
+        } catch (error) {
+          console.error('Error al verificar el email:', error);
+        }
+    };
 
     const nextPressed = async () =>{
+        setEmail(email.trim().toLowerCase());
+
         if (email.includes('@')){
-            navigation.navigate('EnterPassword', {email});
+            checkEmailExists(email);
         }
         else{
+            setErrorMessage('Email not valid');
             setShowError(true);
         }
     }
@@ -54,12 +80,13 @@ export default function EnterEmailScreen() {
                 onChange = {inputChanged} 
                 value={email}
                 onSubmitEditing={nextPressed}
+                keyboardType="email-address"
                 
                 className="px-4 h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
             </View>
             {
             showError? (
-                <Text className="text-[#ff633e] text-[13px] pt-3">Email not valid</Text>
+                <Text className="text-[#ff633e] text-[13px] pt-3">{errorMessage}</Text>
             ):null
             }
         </View>

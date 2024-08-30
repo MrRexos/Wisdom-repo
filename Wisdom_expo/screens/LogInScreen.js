@@ -9,6 +9,7 @@ import EyeSlashIcon from 'react-native-bootstrap-icons/icons/eye-slash';
 import WisdomLogo from '../assets/wisdomLogo.tsx'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
+import api from '../utils/api';
 
 
 
@@ -22,6 +23,8 @@ export default function LogInScreen() {
   const [isSecure, setIsSecure] = useState(true);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [apiError, setApiError] = useState('');
+  
 
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
@@ -36,38 +39,76 @@ export default function LogInScreen() {
     setPassword (newPassword);
     setShowError(false);
   }
+
   const inputuserChanged = (event) => {
     const newuser = event.nativeEvent.text;
     setuser (newuser);
     setShowError(false);
   }
-  const nextPressed = async () =>{
-    if (userEmail.length < 1){
-      setShowError(true);
-      setErrorMessage("Email is missing");
-    }
-    else if (password.length < 8) {
-      setShowError(true);
-      setErrorMessage("Error");
-    }
-    else{
-      const userData = await getDataLocally('user');
 
-      if (userData) {
-        user = JSON.parse(userData);
-        if (userEmail.includes('@')){
-          user.email = userEmail; 
+  const createUser = async (allowNotis) => {
+
+    try {
+      const response = await api.post('/api/signup', {
+        email: email,
+        username: username,
+        password: password,
+        first_name: firstName,
+        surname: surname, 
+        language: i18n.language,
+        allow_notis: allowNotis
+      });
+      console.log('User created:', response.data);
+    } catch (error) {
+        if (error.response) {
+            console.error('Error response:', error.response.data);
+            console.error('Error status:', error.response.status);
+        } else if (error.request) {
+            console.error('Error request:', error.request);
         } else {
-          user.username = userEmail;
+            console.error('Error message:', error.message);
         }
-        user.userToken = true;
-        await storeDataLocally('user', JSON.stringify(user));
-        navigation.navigate('HomeScreen');
-      } else {
-        console.log('Not user found in Asyncstorage')
+        setApiError('Failed to create user');
+    }
+  };
+
+  const nextPressed = async () => {
+    if (userEmail.length < 1) {
+      setShowError(true);
+      setErrorMessage("Email or username is missing");
+    } else if (password.length < 8) {
+      setShowError(true);
+      setErrorMessage("Password must be at least 8 characters long");
+    } else {
+      try {
+        const response = await api.post('/api/login', {
+          usernameOrEmail: userEmail,
+          password: password,
+        });
+  
+        if (response.data.success) {
+          let user = response.data.user;
+          user.userToken = true;
+          
+          // Almacena la información del usuario en AsyncStorage
+          await storeDataLocally('user', JSON.stringify(user));
+  
+          // Navega a la pantalla de inicio
+          navigation.navigate('HomeScreen');
+        } else if (response.data.success===false) {
+          setShowError(true);
+          setErrorMessage('Password incorrect.');
+        } else {
+          setShowError(true);
+          setErrorMessage('Wrong user or password.');
+        };
+      } catch (error) {
+        console.error('Login error:', error);
+        setApiError('Failed to log in');
       }
     }
-  }
+  };
+  
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -119,6 +160,7 @@ export default function LogInScreen() {
             onChange = {inputuserChanged} 
             value={userEmail}
             onSubmitEditing={nextPressed}
+            keyboardType="email-address"
             className="px-4 h-11 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
         </View>
         <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">

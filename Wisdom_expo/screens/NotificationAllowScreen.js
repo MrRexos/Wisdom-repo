@@ -1,6 +1,6 @@
 
-import React from 'react';
-import {View, StatusBar,SafeAreaView, Platform, Text, TouchableOpacity, ScrollView} from 'react-native';
+import React, {useState} from 'react';
+import {View, StatusBar,SafeAreaView, Platform, Text, Alert, TouchableOpacity, ScrollView} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
@@ -11,6 +11,7 @@ import {XMarkIcon} from 'react-native-heroicons/outline';
 import NotificationAskWhite from '../assets/NotificationAskWhite.svg';
 import NotificationAskDark from '../assets/NotificationAskDark.svg';
 import api from '../utils/api';
+import axios from 'axios';
 
 
 
@@ -21,11 +22,57 @@ export default function NotificationAllowScreen() {
     const navigation = useNavigation();
     const iconColor = colorScheme === 'dark' ? '#f2f2f2': '#444343';
     const route = useRoute();
+    const [apiError, setApiError] = useState('');
 
-    const {email, password, firstName, surname, username, profileImage} = route.params;
+    let user = {
+        userToken:true,
+        id: "", //FALTAAAA
+        email: "",
+        username: "",
+        first_name: "",
+        surname: "",
+        profile_picture: null,
+        joined_datetime: "", 
+        is_professional: false,
+        language: "", 
+        allow_notis: true, 
+        money_in_wallet: "0.00",
+        professional_started_datetime: null,
+        is_expert: false,
+        is_verified: false,
+        strikes_num: false,
+        hobbies: null
+    };
 
-    const createUser = async (allowNotis) => {
+    const {email, password, firstName, surname, username, image} = route.params;
 
+    const uploadImage = async () => {
+      if (!image) {
+        Alert.alert('Por favor selecciona una imagen primero');
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append('file', {
+        uri: image.uri,
+        type: image.type,
+        name: image.fileName,
+      });
+  
+      try {
+        const res = await axios.post('https://wisdom-app-34b3fb420f18.herokuapp.com/api/upload-image', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        return res.data.url
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const createUser = async (allowNotis, imageURL) => {
+      console.log(imageURL);
       try {
         const response = await api.post('/api/signup', {
           email: email,
@@ -34,9 +81,12 @@ export default function NotificationAllowScreen() {
           first_name: firstName,
           surname: surname, 
           language: i18n.language,
-          allow_notis: allowNotis
+          allow_notis: allowNotis,
+          profile_picture: imageURL
         });
         console.log('User created:', response.data);
+        
+
       } catch (error) {
           if (error.response) {
               console.error('Error response:', error.response.data);
@@ -50,32 +100,38 @@ export default function NotificationAllowScreen() {
       }
     };
 
-    const notAllowPressed = async () =>{
-      const userData = await getDataLocally('user');
+    
 
-      if (userData) {
-        user = JSON.parse(userData);
-        user.allowNotis = false; 
+    const notAllowPressed = async () =>{
+        user.email = email;
+        user.first_name = firstName;
+        user.surname = surname;
+        user.username = username;
+        user.language =  i18n.language;
+        user.joined_datetime = new Date().toISOString();
+        user.allow_notis = false; 
+        user.profile_picture = image;
         await storeDataLocally('user', JSON.stringify(user));
-        createUser(false);
+        const imageURL = await uploadImage();
+        await createUser(false, imageURL);
         navigation.navigate('HomeScreen');
-      } else {
-        console.log('Not user found in Asyncstorage')
-      }
+      
     }
 
     const allowPressed = async () =>{
-      const userData = await getDataLocally('user');
-
-      if (userData) {
-        user = JSON.parse(userData);
-        user.allowNotis = true; 
+        user.email = email;
+        user.first_name = firstName;
+        user.surname = surname;
+        user.username = username;
+        user.language =  i18n.language;
+        user.joined_datetime = new Date().toISOString();
+        user.allow_notis = true; 
+        user.profile_picture = image.uri;
         await storeDataLocally('user', JSON.stringify(user));
-        createUser(true);
+        const imageURL = await uploadImage();
+        await createUser(true, imageURL);
         navigation.navigate('HomeScreen');
-      } else {
-        console.log('Not user found in Asyncstorage')
-      }
+      
     }
   
     return (

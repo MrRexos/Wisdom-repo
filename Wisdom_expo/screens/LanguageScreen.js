@@ -34,7 +34,7 @@ export default function LanguageScreen() {
     const userData = await getDataLocally('user')
     if (userData) {
       user = JSON.parse(userData);
-      user.selectedLanguage = language; 
+      user.language = language; 
       await storeDataLocally('user', JSON.stringify(user));
     } else {
       console.log('Not user found in Asyncstorage')

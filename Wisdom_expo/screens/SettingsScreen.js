@@ -64,20 +64,11 @@ export default function SettingsScreen() {
   const [form, setForm] = useState({
     notifications: false,
   });
-  const userObject = {
-    userToken: false,
-    email: '',
-    name: '',
-    surname: '',
-    username: '',
-    profileImage: null,
-    selectedLanguage: '',
-    allowNotis: null,
-  };
   
 
   const logOut = async () => {
-    await storeDataLocally('user', JSON.stringify(userObject));
+    let emptyUser = { userToken: false}
+    await storeDataLocally('user', JSON.stringify(emptyUser));
     navigation.navigate('GetStarted');
   };
 
@@ -85,7 +76,7 @@ export default function SettingsScreen() {
     const userData = await getDataLocally('user');
     if (userData) {
       const user = JSON.parse(userData);
-      user.allowNotis = value; 
+      user.allow_notis = value; 
       await storeDataLocally('user', JSON.stringify(user));
       setAllowNotis(value);
       setForm({...form, notifications: value});
@@ -96,14 +87,15 @@ export default function SettingsScreen() {
   
   const loadUserData = async () => {
     const userData = await getDataLocally('user');
+    
     if (userData) {
       user = JSON.parse(userData);
-      setImage({ uri: user.profileImage });
-      setName(user.name);
+      setImage({ uri: user.profile_picture });
+      setName(user.first_name);
       setSurname(user.surname);
       setUsername(user.username);
-      setAllowNotis(user.allowNotis);
-      setForm({ notifications: user.allowNotis });
+      setAllowNotis(user.allow_notis);
+      setForm({ notifications: user.allow_notis });
     }
   };
 
