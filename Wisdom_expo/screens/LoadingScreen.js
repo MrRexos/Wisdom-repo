@@ -41,7 +41,11 @@ export default function SettingsScreen() {
             navigation.navigate('GetStarted');
           }
         }, 1000);
-      }
+      } else {
+        setTimeout(() => {
+            navigation.navigate('GetStarted');
+        }, 1000);
+      };
     };
     loadColorScheme();
     loadUserData();

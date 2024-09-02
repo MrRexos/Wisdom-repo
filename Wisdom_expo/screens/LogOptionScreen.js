@@ -9,10 +9,8 @@ import {XMarkIcon} from 'react-native-heroicons/outline';
 import WisdomLogo from '../assets/wisdomLogo.tsx'
 import GoogleLogo from '../assets/GoogleLogo.svg'
 import AppleLogo from '../assets/AppleLogo.svg'
-import FacebookLogo from '../assets/FacebookLogo.svg'
-
-
-
+import FacebookLogo from '../assets/FacebookLogo.svg';
+import axios from 'axios';
 
 
 export default function LogOptionScreen() {
@@ -21,6 +19,7 @@ export default function LogOptionScreen() {
     const navigation = useNavigation();
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
+
     
     return (
         
@@ -44,7 +43,7 @@ export default function LogOptionScreen() {
                   </Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate('LogIn')}>
-                  <View className="bg-[#f2f2f2]/20 w-[320] h-[55] rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
+                  <View className="bg-[#f2f2f2]/10 w-[320] h-[55] rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
                     <Text className="font-inter-semibold text-[15px] text-[#f2f2f2]">
                         Log In
                     </Text>
@@ -52,15 +51,19 @@ export default function LogOptionScreen() {
                   
               </TouchableOpacity>
               <View className="flex-row justify-center items-center space-x-2.5  mx-[25]">
-                  <TouchableOpacity onPress={() => navigation.navigate('NotificationAllow')} className="bg-[#f2f2f2]/20 h-[55] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
-                      <GoogleLogo width={25} height={26} color="#f2f2f2" />
+                  <TouchableOpacity onPress={() => navigation.navigate('NotificationAllow')} className="bg-[#f2f2f2]/10 h-[55] flex-1 rounded-full flex-row items-center justify-center border-[1px] border-[#f2f2f2]/50">
+                      <GoogleLogo width={14} height={14} color="#f2f2f2"/>  
+                      <Text className="font-inter-semibold text-[15px] text-[#f2f2f2] ml-3">
+                        Continue with Google -{'>'}
+                      </Text>
+
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => navigation.navigate('NotificationAllow')} className="bg-[#f2f2f2]/20 h-[55] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
+                  {/* <TouchableOpacity onPress={() => navigation.navigate('NotificationAllow')} className="bg-[#f2f2f2]/20 h-[55] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
                       <AppleLogo width={21} height={26} color="#f2f2f2"  />
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => navigation.navigate('NotificationAllow')} className="bg-[#f2f2f2]/20 h-[55] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
                     <FacebookLogo width={15} height={26} color="#f2f2f2"  />
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
               </View>
           </View>
       </SafeAreaView>
