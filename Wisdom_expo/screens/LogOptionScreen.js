@@ -11,6 +11,8 @@ import GoogleLogo from '../assets/GoogleLogo.svg'
 import AppleLogo from '../assets/AppleLogo.svg'
 import FacebookLogo from '../assets/FacebookLogo.svg';
 import axios from 'axios';
+import * as Google from 'expo-auth-session/providers/google';
+
 
 
 export default function LogOptionScreen() {
@@ -19,6 +21,28 @@ export default function LogOptionScreen() {
     const navigation = useNavigation();
     const windowWidth = Dimensions.get('window').width;
     const windowHeight = Dimensions.get('window').height;
+
+    const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+        clientId: Platform.select({
+          ios: '232292898356-o6jj43dnn8uqg139udlvtptcaj8551rp.apps.googleusercontent.com',
+          android: '232292898356-i7q895e9nin3cj2aedhlos954c3f95p0.apps.googleusercontent.com',
+        }),
+      });
+
+    useEffect(() => {
+    if (response?.type === 'success') {
+        const { id_token } = response.params;
+        // Aquí puedes enviar el token al backend para su verificación
+        axios.post('YOUR_BACKEND_URL/auth/google', { id_token })
+        .then(res => {
+            console.log(res.data);
+            // Maneja la respuesta del backend (por ejemplo, almacena el token en el almacenamiento local)
+        })
+        .catch(err => {
+            console.error(err);
+        });
+    }
+    }, [response]);
 
     
     return (
@@ -51,7 +75,7 @@ export default function LogOptionScreen() {
                   
               </TouchableOpacity>
               <View className="flex-row justify-center items-center space-x-2.5  mx-[25]">
-                  <TouchableOpacity onPress={() => navigation.navigate('NotificationAllow')} className="bg-[#f2f2f2]/10 h-[55] flex-1 rounded-full flex-row items-center justify-center border-[1px] border-[#f2f2f2]/50">
+                  <TouchableOpacity onPress={() => promptAsync()} className="bg-[#f2f2f2]/10 h-[55] flex-1 rounded-full flex-row items-center justify-center border-[1px] border-[#f2f2f2]/50">
                       <GoogleLogo width={14} height={14} color="#f2f2f2"/>  
                       <Text className="font-inter-semibold text-[15px] text-[#f2f2f2] ml-3">
                         Continue with Google -{'>'}
