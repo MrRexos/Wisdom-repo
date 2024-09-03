@@ -1,7 +1,42 @@
 import { StyleSheet } from 'react-native';
 import Navigation from './navigation/navigation';
+import React, { useEffect, useState } from 'react';
+import * as Font from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+
 
 export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  // Prevenir que la pantalla de splash se oculte automáticamente
+  useEffect(() => {
+    SplashScreen.preventAutoHideAsync();
+    loadFonts();
+  }, []);
+
+  const loadFonts = async () => {
+    try {
+      await Font.loadAsync({
+        'Inter-Medium': require('./assets/fonts/Inter-Medium.ttf'),
+        'Inter-SemiBold': require('./assets/fonts/Inter-SemiBold.ttf'),
+        'Inter-Bold': require('./assets/fonts/Inter-Bold.ttf'),
+      });
+      setFontsLoaded(true);
+    } catch (e) {
+      console.warn(e);
+    }
+  };
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync(); // Ocultar la pantalla de splash cuando las fuentes estén cargadas
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null; // Puedes mostrar un componente de carga aquí si lo deseas
+  }
+  
   return (
     <Navigation/>
   );

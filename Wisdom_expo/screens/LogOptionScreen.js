@@ -27,6 +27,11 @@ export default function LogOptionScreen() {
           ios: '232292898356-o6jj43dnn8uqg139udlvtptcaj8551rp.apps.googleusercontent.com',
           android: '232292898356-i7q895e9nin3cj2aedhlos954c3f95p0.apps.googleusercontent.com',
         }),
+        redirectUri: Platform.select({
+            ios: 'https://wisdom-app-34b3fb420f18.herokuapp.com/',
+            android: 'https://auth.expo.io/@your-username/your-app-name',
+            // web: 'https://auth.expo.io/@your-username/your-app-name',
+          }),
       });
 
     useEffect(() => {

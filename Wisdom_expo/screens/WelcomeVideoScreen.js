@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { getDataLocally } from '../utils/asyncStorage';
+import * as Font from 'expo-font';
 
 export default function WelcomeVideoScreen() {
   const { colorScheme } = useColorScheme();
@@ -13,6 +14,7 @@ export default function WelcomeVideoScreen() {
   const [token, setToken] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { i18n } = useTranslation();
+  
 
   useEffect(() => {
 
