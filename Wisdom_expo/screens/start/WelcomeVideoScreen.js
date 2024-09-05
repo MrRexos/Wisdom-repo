@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { getDataLocally } from '../utils/asyncStorage';
+import { getDataLocally } from '../../utils/asyncStorage';
 import * as Font from 'expo-font';
 
 export default function WelcomeVideoScreen() {

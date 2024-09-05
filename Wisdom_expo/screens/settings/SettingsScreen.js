@@ -2,17 +2,17 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
+import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import { useColorScheme } from 'nativewind'
-import i18n from '../languages/i18n';
+import i18n from '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram, Link } from "react-native-feather";
 import {KeyIcon ,ChevronRightIcon, ArrowsRightLeftIcon} from 'react-native-heroicons/outline';
-import GiftCardIcon from '../assets/GiftCard';
-import ExpertIcon from '../assets/Expert';
-import CashStackIcon from '../assets/CashStack';
-import SuticasePlusIcon from '../assets/SuitcasePlus';
+import GiftCardIcon from '../../assets/GiftCard';
+import ExpertIcon from '../../assets/Expert';
+import CashStackIcon from '../../assets/CashStack';
+import SuticasePlusIcon from '../../assets/SuitcasePlus';
 
 
 
@@ -121,7 +121,7 @@ export default function SettingsScreen() {
         <View className="justify-between flex-row items-center px-2">
           <View className="justify-start flex-row"> 
             <TouchableOpacity >
-              <Image source={image ? {uri: image} : require('../assets/defaultProfilePic.jpg')} style={{resizeMode: 'cover', width: 75, height: 75 }} className="rounded-full bg-slate-500" />
+              <Image source={image ? {uri: image} : require('../../assets/defaultProfilePic.jpg')} style={{resizeMode: 'cover', width: 75, height: 75 }} className="rounded-full bg-slate-500" />
             </TouchableOpacity>
             <View className="justify-center px-3 gap-y-1 " >
               <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{name} {surname}</Text>

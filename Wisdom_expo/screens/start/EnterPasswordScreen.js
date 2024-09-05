@@ -6,7 +6,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import EyeIcon from 'react-native-bootstrap-icons/icons/eye';
 import EyeSlashIcon from 'react-native-bootstrap-icons/icons/eye-slash';
-import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
+import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 
 export default function EnterPasswordScreen() {
   const { colorScheme } = useColorScheme();

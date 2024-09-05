@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
-import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
-import api from '../utils/api';
+import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
+import api from '../../utils/api';
 import { CheckCircleIcon, XCircleIcon } from 'react-native-heroicons/solid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
@@ -148,7 +148,7 @@ export default function CreateProfileScreen() {
                 <View>
                     <View className="items-center pt-6">
                         <TouchableOpacity onPress={handleImagePicker}>
-                            <Image source={image ? { uri: image.uri } : require('../assets/defaultProfilePic.jpg')} className="w-[120] h-[120] rounded-full bg-slate-500" />
+                            <Image source={image ? { uri: image.uri } : require('../../assets/defaultProfilePic.jpg')} className="w-[120] h-[120] rounded-full bg-slate-500" />
                         </TouchableOpacity>
                     </View>
                 </View>

@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react'
 import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, Dimensions, Image} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import i18n from '../languages/i18n';
+import i18n from '../../languages/i18n.js';
 import { useNavigation } from '@react-navigation/native';
 import {XMarkIcon} from 'react-native-heroicons/outline';
-import WisdomLogo from '../assets/wisdomLogo.tsx'
-import GoogleLogo from '../assets/GoogleLogo.svg'
-import AppleLogo from '../assets/AppleLogo.svg'
-import FacebookLogo from '../assets/FacebookLogo.svg';
+import WisdomLogo from '../../assets/wisdomLogo.tsx'
+import GoogleLogo from '../../assets/GoogleLogo.svg'
+import AppleLogo from '../../assets/AppleLogo.svg'
+import FacebookLogo from '../../assets/FacebookLogo.svg';
 import axios from 'axios';
 // import * as Google from 'expo-auth-session/providers/google';
 // import * as WebBrowser from "expo-web-browser";
@@ -73,7 +73,7 @@ export default function LogOptionScreen() {
     return (
         
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-neutral-700 justify-between'>
-        <Image source={require('../assets/LoadChair.png')}  style={{ height: windowHeight, width: windowWidth, position: 'absolute' }}/>
+        <Image source={require('../../assets/LoadChair.png')}  style={{ height: windowHeight, width: windowWidth, position: 'absolute' }}/>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
           <View>
               <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>

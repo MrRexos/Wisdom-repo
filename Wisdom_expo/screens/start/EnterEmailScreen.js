@@ -3,11 +3,11 @@ import React, {useState } from 'react';
 import {View, StatusBar,SafeAreaView, Platform,Text, TouchableOpacity, TextInput, KeyboardAvoidingView, Animated} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import i18n from '../languages/i18n';
+import i18n from '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
-import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
-import api from '../utils/api';
+import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
+import api from '../../utils/api';
 
 
 

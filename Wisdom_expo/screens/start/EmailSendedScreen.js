@@ -4,10 +4,10 @@ import React from 'react';
 import {View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, Linking} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import i18n from '../languages/i18n';
+import i18n from '../../languages/i18n';
 import { useNavigation } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
-import WisdomLogo from '../assets/wisdomLogo.tsx'
+import WisdomLogo from '../../assets/wisdomLogo.tsx'
 
 
 export default function EmailSendedScreen() {

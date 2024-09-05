@@ -3,14 +3,14 @@ import React, {useState} from 'react';
 import {View, StatusBar,SafeAreaView, Platform, Text, Alert, TouchableOpacity, ScrollView} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import i18n from '../languages/i18n';
-import WisdomLogo from '../assets/wisdomLogo.tsx'
+import i18n from '../../languages/i18n.js';
+import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { storeDataLocally, getDataLocally } from '../utils/asyncStorage';
+import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage.js';
 import {XMarkIcon} from 'react-native-heroicons/outline';
-import NotificationAskWhite from '../assets/NotificationAskWhite.svg';
-import NotificationAskDark from '../assets/NotificationAskDark.svg';
-import api from '../utils/api';
+import NotificationAskWhite from '../../assets/NotificationAskWhite.svg';
+import NotificationAskDark from '../../assets/NotificationAskDark.svg';
+import api from '../../utils/api.js';
 import axios from 'axios';
 
 

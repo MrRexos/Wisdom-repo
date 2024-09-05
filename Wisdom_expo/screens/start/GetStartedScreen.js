@@ -3,8 +3,8 @@ import React from 'react';
 import {View, StatusBar,SafeAreaView, Platform,Text, TouchableOpacity, Image, Dimensions} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import i18n from '../languages/i18n';
-import WisdomLogo from '../assets/wisdomLogo.tsx'
+import i18n from '../../languages/i18n';
+import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import { useNavigation } from '@react-navigation/native';
 import {XMarkIcon} from 'react-native-heroicons/outline';
 
@@ -18,7 +18,7 @@ export default function GetStartedScreen() {
   
     return (
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-neutral-700 justify-between'>
-        <Image source={require('../assets/LoadChair.png')}  style={{ height: windowHeight, width: windowWidth, position: 'absolute' }}/>
+        <Image source={require('../../assets/LoadChair.png')}  style={{ height: windowHeight, width: windowWidth, position: 'absolute' }}/>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
           <View>
               <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>

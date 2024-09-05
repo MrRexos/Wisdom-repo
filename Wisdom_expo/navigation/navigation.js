@@ -13,29 +13,29 @@ import Suitcase from "../assets/Suitcase.tsx"
 import SuitcaseFill from "../assets/SuitcaseFill.tsx"
 
 import React from 'react'
-import WelcomeVideoScreen from '../screens/WelcomeVideoScreen';
-import LoadingScreen from '../screens/LoadingScreen';
-import SettingsScreen from '../screens/SettingsScreen';
-import GetStartedScreen from '../screens/GetStartedScreen';
-import TermsScreen from '../screens/TermsScreen';
-import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
-import LogOptionScreen from '../screens/LogOptionScreen';
-import LogInScreen from '../screens/LogInScreen';
-import EnterEmailScreen from '../screens/EnterEmailScreen';
-import EnterPasswordScreen from '../screens/EnterPasswordScreen';
-import EnterNameScreen from '../screens/EnterNameScreen';
-import CreateProfileScreen from '../screens/CreateProfileScreen';
-import ForgotPasswordScreen from '../screens/ForgotPassword';
-import HomeScreen from '../screens/HomeScreen';
-import NotificationAllowScreen from '../screens/NotificationAllowScreen';
-import EmailSendedScreen from '../screens/EmailSendedScreen';
-import NewPasswordScreen from '../screens/NewPasswordScreen';
-import FavoritesScreen from '../screens/FavoritesScreen';
-import ChatScreen from '../screens/ChatScreen';
-import ServicesScreen from '../screens/ServicesScreen';
-import ConversationScreen from '../screens/ConversationScreen';
-import PreferencesScreen  from '../screens/PreferencesScreen';
-import LanguageScreen from '../screens/LanguageScreen';
+import WelcomeVideoScreen from '../screens/start/WelcomeVideoScreen';
+import LoadingScreen from '../screens/start/LoadingScreen';
+import SettingsScreen from '../screens/settings/SettingsScreen';
+import GetStartedScreen from '../screens/start/GetStartedScreen';
+import TermsScreen from '../screens/start/TermsScreen';
+import PrivacyPolicyScreen from '../screens/start/PrivacyPolicyScreen';
+import LogOptionScreen from '../screens/start/LogOptionScreen';
+import LogInScreen from '../screens/start/LogInScreen';
+import EnterEmailScreen from '../screens/start/EnterEmailScreen';
+import EnterPasswordScreen from '../screens/start/EnterPasswordScreen';
+import EnterNameScreen from '../screens/start/EnterNameScreen';
+import CreateProfileScreen from '../screens/start/CreateProfileScreen';
+import ForgotPasswordScreen from '../screens/start/ForgotPassword';
+import HomeScreen from '../screens/home/HomeScreen';
+import NotificationAllowScreen from '../screens/start/NotificationAllowScreen';
+import EmailSendedScreen from '../screens/start/EmailSendedScreen';
+import NewPasswordScreen from '../screens/start/NewPasswordScreen';
+import FavoritesScreen from '../screens/favorites/FavoritesScreen';
+import ChatScreen from '../screens/chat/ChatScreen';
+import ServicesScreen from '../screens/services/ServicesScreen';
+import ConversationScreen from '../screens/chat/ConversationScreen';
+import PreferencesScreen  from '../screens/settings/PreferencesScreen';
+import LanguageScreen from '../screens/settings/LanguageScreen';
 
 
 

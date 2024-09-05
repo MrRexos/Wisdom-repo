@@ -2,9 +2,9 @@
 import React, { useState, useCallback } from 'react';
 import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { storeDataLocally } from '../utils/asyncStorage';
+import { storeDataLocally } from '../../utils/asyncStorage';
 import { useColorScheme } from 'nativewind'
-import i18n from '../languages/i18n';
+import i18n from '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import {ChevronRightIcon, ChevronLeftIcon} from 'react-native-heroicons/outline';
 
