@@ -102,7 +102,9 @@ export default function NotificationAllowScreen() {
 
     
 
-    const notAllowPressed = async () =>{
+    const notAllowPressed = async () =>{    
+        const imageURL = await uploadImage();
+        await createUser(false, imageURL);
         user.email = email;
         user.first_name = firstName;
         user.surname = surname;
@@ -110,15 +112,15 @@ export default function NotificationAllowScreen() {
         user.language =  i18n.language;
         user.joined_datetime = new Date().toISOString();
         user.allow_notis = false; 
-        user.profile_picture = image;
+        user.profile_picture = imageURL;
         await storeDataLocally('user', JSON.stringify(user));
-        const imageURL = await uploadImage();
-        await createUser(false, imageURL);
         navigation.navigate('HomeScreen');
       
     }
 
     const allowPressed = async () =>{
+        const imageURL = await uploadImage();
+        await createUser(true, imageURL);
         user.email = email;
         user.first_name = firstName;
         user.surname = surname;
@@ -126,10 +128,8 @@ export default function NotificationAllowScreen() {
         user.language =  i18n.language;
         user.joined_datetime = new Date().toISOString();
         user.allow_notis = true; 
-        user.profile_picture = image.uri;
+        user.profile_picture = imageURL;
         await storeDataLocally('user', JSON.stringify(user));
-        const imageURL = await uploadImage();
-        await createUser(true, imageURL);
         navigation.navigate('HomeScreen');
       
     }

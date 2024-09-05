@@ -51,7 +51,7 @@ const Sections = [
 
 
 export default function SettingsScreen() {
-
+  
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
@@ -90,7 +90,7 @@ export default function SettingsScreen() {
     
     if (userData) {
       user = JSON.parse(userData);
-      setImage({ uri: user.profile_picture });
+      setImage(user.profile_picture);
       setName(user.first_name);
       setSurname(user.surname);
       setUsername(user.username);
@@ -121,7 +121,7 @@ export default function SettingsScreen() {
         <View className="justify-between flex-row items-center px-2">
           <View className="justify-start flex-row"> 
             <TouchableOpacity >
-              <Image source={image ? { uri: image.uri } : require('../assets/defaultProfilePic.jpg')} className="w-[75] h-[75] rounded-full bg-slate-500" />
+              <Image source={image ? {uri: image} : require('../assets/defaultProfilePic.jpg')} style={{resizeMode: 'cover', width: 75, height: 75 }} className="rounded-full bg-slate-500" />
             </TouchableOpacity>
             <View className="justify-center px-3 gap-y-1 " >
               <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{name} {surname}</Text>

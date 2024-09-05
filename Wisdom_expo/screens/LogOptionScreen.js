@@ -31,7 +31,7 @@ import axios from 'axios';
 //     firebase.initializeApp(firebaseConfig);
 // }
 
-WebBrowser.maybeCompleteAuthSession();
+// WebBrowser.maybeCompleteAuthSession();
 
 export default function LogOptionScreen() {
     const {colorScheme, toggleColorScheme} = useColorScheme();

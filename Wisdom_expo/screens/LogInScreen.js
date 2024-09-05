@@ -46,32 +46,6 @@ export default function LogInScreen() {
     setShowError(false);
   }
 
-  const createUser = async (allowNotis) => {
-
-    try {
-      const response = await api.post('/api/signup', {
-        email: email,
-        username: username,
-        password: password,
-        first_name: firstName,
-        surname: surname, 
-        language: i18n.language,
-        allow_notis: allowNotis
-      });
-      console.log('User created:', response.data);
-    } catch (error) {
-        if (error.response) {
-            console.error('Error response:', error.response.data);
-            console.error('Error status:', error.response.status);
-        } else if (error.request) {
-            console.error('Error request:', error.request);
-        } else {
-            console.error('Error message:', error.message);
-        }
-        setApiError('Failed to create user');
-    }
-  };
-
   const nextPressed = async () => {
     if (userEmail.length < 1) {
       setShowError(true);
