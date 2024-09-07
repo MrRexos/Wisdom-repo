@@ -49,7 +49,6 @@ const Sections = [
   },
 ];
 
-
 export default function SettingsScreen() {
   
   const {colorScheme, toggleColorScheme} = useColorScheme();
@@ -64,7 +63,6 @@ export default function SettingsScreen() {
   const [form, setForm] = useState({
     notifications: false,
   });
-  
 
   const logOut = async () => {
     let emptyUser = { userToken: false}
