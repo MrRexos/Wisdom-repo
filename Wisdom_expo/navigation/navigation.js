@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Text } from 'react-native'
+import { View, Text, Image } from 'react-native'
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
@@ -39,11 +39,8 @@ import PreferencesScreen  from '../screens/settings/PreferencesScreen';
 import LanguageScreen from '../screens/settings/LanguageScreen';
 
 
-
-
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
 
 
 export default function Navigation() {

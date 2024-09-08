@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, FlatList, TextInput, Image } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import i18n from '../../languages/i18n';
@@ -8,6 +8,7 @@ import { ChevronRightIcon, ChevronLeftIcon } from 'react-native-heroicons/outlin
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
 import api from '../../utils/api.js';
 import {EllipsisHorizontalIcon} from 'react-native-heroicons/outline';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 export default function ListScreen() {
   const { colorScheme } = useColorScheme();
@@ -19,6 +20,7 @@ export default function ListScreen() {
   const route = useRoute();
   const { listId, listTitle, itemCount } = route.params;
   const [items, setItems] = useState([]);
+  const sheet = useRef();
   const currencySymbols = {
     EUR: '€',
     USD: '$',
@@ -39,11 +41,12 @@ export default function ListScreen() {
   };
 
   const options = async () => {
-    
+    null
   };
 
   useEffect(() => {
     fetchItems();
+    
   }, []);
   
   useEffect(() => {
@@ -147,6 +150,24 @@ export default function ListScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+      <RBSheet
+        height={310}
+        openDuration={250}
+        closeDuration={250}
+        draggable={true}
+        ref={sheet}
+        customStyles={{
+          container: {
+            borderTopRightRadius: 25,
+            borderTopLeftRadius: 25,
+            backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+          },
+        }}>     
+          <View>
+            <View className=" mx-5 my-3 bg-[#f2f2f2] dark:bg-[#272626] flex-1 rounded-xl"></View>
+            <Text>a</Text>
+          </View>
+      </RBSheet>
       <TouchableOpacity onPress={() => navigation.goBack()} className="pl-4 pt-2">
         <ChevronLeftIcon size={24} strokeWidth={1.7} color={iconColor} />
       </TouchableOpacity>
@@ -155,7 +176,7 @@ export default function ListScreen() {
           <Text className="font-inter-semibold text-[24px] text-[#444343] dark:text-[#f2f2f2]">
             {listTitle}
           </Text>
-          <TouchableOpacity onPress={() => options()}>
+          <TouchableOpacity onPress={() =>sheet.current.open()}>
             <EllipsisHorizontalIcon size={25} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}/>
           </TouchableOpacity>
         </View>
@@ -172,3 +193,10 @@ export default function ListScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  sheet: {
+    borderTopRightRadius: 14,
+    borderTopLeftRadius: 14,
+  }
+})

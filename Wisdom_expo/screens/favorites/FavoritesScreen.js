@@ -5,7 +5,6 @@
   import i18n from '../../languages/i18n';
   import { useNavigation } from '@react-navigation/native';
   import { Edit2, X, Check } from "react-native-feather"; 
-  import {XMarkIcon} from 'react-native-heroicons/outline';
   import { getDataLocally } from '../../utils/asyncStorage';
   import api from '../../utils/api.js';
   import { formatDistanceToNowStrict } from 'date-fns';

@@ -16,6 +16,7 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "@react-navigation/stack": "^6.4.1",
+    "@types/jest": "^29.5.12",
     "@types/react": "~18.2.79",
     "axios": "^1.7.4",
     "bootstrap-icons": "^1.11.3",
@@ -54,6 +55,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@react-native/typescript-config": "^0.75.2",
     "tailwindcss": "^3.3.2"
   },
   "private": true
