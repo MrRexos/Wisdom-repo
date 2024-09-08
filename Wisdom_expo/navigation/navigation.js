@@ -31,11 +31,13 @@ import NotificationAllowScreen from '../screens/start/NotificationAllowScreen';
 import EmailSendedScreen from '../screens/start/EmailSendedScreen';
 import NewPasswordScreen from '../screens/start/NewPasswordScreen';
 import FavoritesScreen from '../screens/favorites/FavoritesScreen';
+import ListScreen from '../screens/favorites/ListScreen';
 import ChatScreen from '../screens/chat/ChatScreen';
 import ServicesScreen from '../screens/services/ServicesScreen';
 import ConversationScreen from '../screens/chat/ConversationScreen';
 import PreferencesScreen  from '../screens/settings/PreferencesScreen';
 import LanguageScreen from '../screens/settings/LanguageScreen';
+
 
 
 
@@ -73,6 +75,7 @@ export default function Navigation() {
           <Stack.Screen name="Conversation" component={ConversationScreen} options={{ animation: 'none' }}/>
           <Stack.Screen name="Preferences" component={PreferencesScreen} options={{ animation: 'none'}}/>
           <Stack.Screen name="Language" component={LanguageScreen} options={{ animation: 'none'}}/>
+          <Stack.Screen name="List" component={ListScreen} options={{ animation: 'none'}}/>
           
 
         </Stack.Navigator>
@@ -127,11 +130,11 @@ function TabNavigator() {
         },
       })}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Favorites" component={FavoritesScreen} />
-        <Tab.Screen name="Services" component={ServicesScreen} />
+        <Tab.Screen name="Home" component={HomeStackNavigator} />
+        <Tab.Screen name="Favorites" component={FavoritesStackNavigator} />
+        <Tab.Screen name="Services" component={ServicesStackNavigator} />
         <Tab.Screen name="Chat" component={ChatStackNavigator} />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
+        <Tab.Screen name="Settings" component={SettingsStackNavigator} />
       </Tab.Navigator>
   );
 }
@@ -148,6 +151,7 @@ function FavoritesStackNavigator() {
   return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} />
+          <Stack.Screen name="List" component={ListScreen} />
       </Stack.Navigator>
   );
 }
