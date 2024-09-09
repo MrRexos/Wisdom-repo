@@ -5,6 +5,8 @@ import { View, Text, Image } from 'react-native'
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
+import { getDataLocally } from '../utils/asyncStorage';
+import { useEffect, useState } from 'react';
 
 import { Search, Heart, MessageSquare } from "react-native-feather";
 import HeartFill from "../assets/HeartFill.tsx"
@@ -83,6 +85,24 @@ export default function Navigation() {
 function TabNavigator() {
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n} = useTranslation();
+  const [profileImage, setProfileImage] = useState(null);
+
+  useEffect(() => {
+    // Función para obtener la imagen de perfil guardada en AsyncStorage
+    const getProfileImage = async () => {
+      try {
+        const userData = await getDataLocally('user');
+        const user = JSON.parse(userData);
+        if (user.profile_picture) {
+          setProfileImage(user.profile_picture);
+        }
+      } catch (error) {
+        console.log('Error al cargar la imagen de perfil:', error);
+      }
+    };
+
+    getProfileImage();
+  }, []);
   return (
       <Tab.Navigator initialRouteName="Home" screenOptions={({ route }) => ({
         headerShown: false,
@@ -102,9 +122,26 @@ function TabNavigator() {
             case 'Chat':
               IconName = focused? MessageSquareFill: MessageSquare;
               break;
-            //case 'Settings':
-              //IconName = focused ? 'settings' : 'settings-outline';
-              //break;
+            case 'Settings':
+              return (
+                <View
+                  style={{
+                    padding: 1, // Espacio entre la imagen y el borde
+                    borderRadius: 27, // Un radio un poco mayor para el borde externo
+                    borderColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343', // Color del borde
+                    borderWidth: focused ? 1 : 0, // Borde condicional
+                  }}
+                >
+                  <Image
+                    source={profileImage ? { uri: profileImage } : require('../assets/defaultProfilePic.jpg')}
+                    style={{ 
+                      width: 25, 
+                      height: 25, 
+                      borderRadius: 25, // Mantiene la imagen redondeada
+                    }}
+                  />
+                </View>
+              );
           }
           return <IconName color={color} strokeWidth={1.7} width={size} height={size} />;
         },
