@@ -1,9 +1,9 @@
-  import React, { useEffect, useState } from 'react'
+  import React, { useEffect, useState, useCallback } from 'react'
   import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, ScrollView, FlatList, Alert, Image } from 'react-native';
   import { useTranslation } from 'react-i18next';
   import { useColorScheme } from 'nativewind'
   import i18n from '../../languages/i18n';
-  import { useNavigation } from '@react-navigation/native';
+  import { useNavigation, useFocusEffect } from '@react-navigation/native';
   import { Edit2, X, Check } from "react-native-feather"; 
   import { getDataLocally } from '../../utils/asyncStorage';
   import api from '../../utils/api.js';
@@ -21,16 +21,16 @@
 
     const deleteList = async (listId) => {
       Alert.alert(
-        '¿Estás seguro de que quieres eliminar esta lista?',
-        'Esta lista no se podra recuperar y desaparecera para todo el mundo',
+        'Are you sure you want to delete this list?',
+        'This list will not be recoverable and will disappear for everyone.',
         [
           {
-            text: 'Cancelar',
+            text: 'Cancel',
             onPress: null,
             style: 'cancel',
           },
           {
-            text: 'Eliminar',
+            text: 'Delete',
             onPress: async () => {
               try {
                 const response = await api.delete(`/api/lists/${listId}`);
@@ -48,24 +48,25 @@
       );
     };
 
-    useEffect(() => {
-      const fetchLists = async () => {
-        const userData = await getDataLocally('user');
-        const user = JSON.parse(userData);
-        setUserId(user.id);
-        try {
-          const response = await api.get(`/api/user/${user.id}/lists`);  // Usa userData.id directamente
-          setLists(response.data);        
-        } catch (error) {
-          console.error('Error fetching lists:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
-    
-      fetchLists();
-      
-    }, []);
+    const fetchLists = async () => {
+      const userData = await getDataLocally('user');
+      const user = JSON.parse(userData);
+      setUserId(user.id);
+      try {
+        const response = await api.get(`/api/user/${user.id}/lists`);  // Usa userData.id directamente
+        setLists(response.data);        
+      } catch (error) {
+        console.error('Error fetching lists:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    useFocusEffect(
+      useCallback(() => {
+        fetchLists();
+      }, [])
+    );
 
     if (loading) {
       return <Text>Loading...</Text>;
