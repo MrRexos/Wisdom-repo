@@ -39,6 +39,20 @@ import ServicesScreen from '../screens/services/ServicesScreen';
 import ConversationScreen from '../screens/chat/ConversationScreen';
 import PreferencesScreen  from '../screens/settings/PreferencesScreen';
 import LanguageScreen from '../screens/settings/LanguageScreen';
+import CreateService1Screen from '../screens/settings/CreateService1Screen';
+import CreateService2Screen from '../screens/settings/CreateService2Screen';
+import CreateService3Screen from '../screens/settings/CreateService3Screen';
+import CreateService4Screen from '../screens/settings/CreateService4Screen';
+import CreateService5Screen from '../screens/settings/CreateService5Screen';
+import CreateService6Screen from '../screens/settings/CreateService6Screen';
+import CreateService7Screen from '../screens/settings/CreateService7Screen';
+import CreateService8Screen from '../screens/settings/CreateService8Screen';
+import CreateService9Screen from '../screens/settings/CreateService9Screen';
+import CreateService10Screen from '../screens/settings/CreateService10Screen';
+import CreateService11Screen from '../screens/settings/CreateService11Screen';
+import CreateService12Screen from '../screens/settings/CreateService12Screen';
+import CreateService13Screen from '../screens/settings/CreateService13Screen';
+
 
 
 const Stack = createNativeStackNavigator();
@@ -51,31 +65,43 @@ export default function Navigation() {
         <Stack.Navigator screenOptions={{
             headerShown: false
         }}>
-          <Stack.Screen name="WelcomeVideo" component={WelcomeVideoScreen} />
-          <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'none'  }}/>
-          <Stack.Screen name="SettingsScreen" component={TabNavigator} options={{ animation: 'none'}}/>
-          <Stack.Screen name="GetStarted" component={GetStartedScreen} options={{ animation: 'none' }}/>
+          <Stack.Screen name="WelcomeVideo" component={WelcomeVideoScreen} options={{ gestureEnabled: false }} />
+          <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="SettingsScreen" component={TabNavigator} options={{ animation: 'none', gestureEnabled: false}}/>
+          <Stack.Screen name="GetStarted" component={GetStartedScreen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="Terms" component={TermsScreen}/>
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
-          <Stack.Screen name="LogOption" component={LogOptionScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="LogIn" component={LogInScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="EnterEmail" component={EnterEmailScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="EnterPassword" component={EnterPasswordScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="EnterName" component={EnterNameScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="CreateProfile" component={CreateProfileScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="HomeScreen" component={TabNavigator} options={{ animation: 'none' }}/>
-          <Stack.Screen name="NotificationAllow" component={NotificationAllowScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="EmailSended" component={EmailSendedScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="NewPassword" component={NewPasswordScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="ServicesScreen" component={ServicesScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ animation: 'none' }}/>
+          <Stack.Screen name="LogOption" component={LogOptionScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="LogIn" component={LogInScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="EnterEmail" component={EnterEmailScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="EnterPassword" component={EnterPasswordScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="EnterName" component={EnterNameScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="CreateProfile" component={CreateProfileScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          <Stack.Screen name="HomeScreen" component={TabNavigator} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="NotificationAllow" component={NotificationAllowScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="EmailSended" component={EmailSendedScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="NewPassword" component={NewPasswordScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="ServicesScreen" component={ServicesScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="Conversation" component={ConversationScreen} options={{ animation: 'none' }}/>
-          <Stack.Screen name="Preferences" component={PreferencesScreen} options={{ animation: 'none'}}/>
-          <Stack.Screen name="Language" component={LanguageScreen} options={{ animation: 'none'}}/>
-          <Stack.Screen name="List" component={ListScreen} options={{ animation: 'none'}}/>
-          
+          <Stack.Screen name="Preferences" component={PreferencesScreen}/>
+          <Stack.Screen name="Language" component={LanguageScreen}/>
+          <Stack.Screen name="List" component={ListScreen}/>
+          <Stack.Screen name="CreateService1" component={CreateService1Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="CreateService2" component={CreateService2Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="CreateService3" component={CreateService3Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="CreateService4" component={CreateService4Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="CreateService5" component={CreateService5Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="CreateService6" component={CreateService6Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="CreateService7" component={CreateService7Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="CreateService8" component={CreateService8Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="CreateService9" component={CreateService9Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="CreateService10" component={CreateService10Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="CreateService11" component={CreateService11Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
+          <Stack.Screen name="CreateService12" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
+          <Stack.Screen name="CreateService13" component={CreateService13Screen} options={{ animation: 'none', gestureEnabled: false }}/>                
 
         </Stack.Navigator>
       </NavigationContainer>
