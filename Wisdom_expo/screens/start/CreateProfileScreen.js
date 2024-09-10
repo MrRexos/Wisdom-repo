@@ -169,6 +169,7 @@ export default function CreateProfileScreen() {
                         onChange={inputChanged}
                         value={username}
                         onSubmitEditing={nextPressed}
+                        keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                         className="pr-4 h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]" />
 
                     {isLoading ? (

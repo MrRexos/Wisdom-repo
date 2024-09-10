@@ -70,6 +70,7 @@ export default function EnterNameScreen() {
                 onChange = {inputChanged} 
                 value={name}
                 onSubmitEditing={nextPressed}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                 className="px-4 h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
             </View>
             {

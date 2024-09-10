@@ -229,6 +229,7 @@ export default function ListScreen() {
               onChangeText={(text) => handleNoteChange(item.item_id, text)}
               value={notes[item.item_id] || ''}
               onSubmitEditing={() => updateNote(item.item_id)}
+              keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
               className="px-4 h-[32] w-[300] flex-1 text-[13px] text-[#515150] dark:text-[#d4d4d3]"
             />
             </View>
@@ -290,6 +291,7 @@ export default function ListScreen() {
                     onChange = {inputOptionsChanged} 
                     value={optionsText}
                     onSubmitEditing={submitOptions}
+                    keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                     style={{ flex: 1, padding: 10}}  
                     className="px-5 flex-1 text-[14px] text-[#444343] dark:text-[#f2f2f2]"
                                  

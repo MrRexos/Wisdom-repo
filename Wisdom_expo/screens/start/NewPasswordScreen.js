@@ -96,6 +96,7 @@ export default function LogInScreen() {
             onChange = {inputNewPasswordChanged} 
             value={password}
             onSubmitEditing={nextPressed}
+            keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
             className=" text-[15px] h-[55] flex-1 text-[#444343] dark:text-[#f2f2f2]"/>
                         
             <TouchableOpacity onPress={() => setIsSecurePassword(!isSecurePassword)}>
@@ -119,6 +120,7 @@ export default function LogInScreen() {
             onChange = {inputConfirmPasswordChanged} 
             value={confirmPassword}
             onSubmitEditing={nextPressed}
+            keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
             className="h-[55] flex-1 text-[15px]  text-[#444343] dark:text-[#f2f2f2]"
           />
           <TouchableOpacity onPress={() => setIsSecureConfirmation(!isSecureConfirmation)}>

@@ -80,6 +80,7 @@ export default function EnterEmailScreen() {
                 onChange = {inputChanged} 
                 value={email}
                 onSubmitEditing={nextPressed}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                 keyboardType="email-address"
                 
                 className="px-4 h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
