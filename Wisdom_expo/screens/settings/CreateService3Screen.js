@@ -141,7 +141,7 @@ export default function CreateService3Screen() {
               disabled={false}
               onPress={() => navigation.goBack()}
               style={{opacity: 1}}
-              className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[50] rounded-full items-center justify-center" >
+              className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
                   <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
               </TouchableOpacity>
 
@@ -149,7 +149,7 @@ export default function CreateService3Screen() {
               disabled={!family && !category}
               onPress={() => navigation.navigate('CreateService4', {title, family, category})}
               style={{opacity: family && category? 1.0: 0.5}}
-              className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[50] rounded-full items-center justify-center" >
+              className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
                   <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
               </TouchableOpacity>
 

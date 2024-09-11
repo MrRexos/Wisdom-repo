@@ -53,14 +53,14 @@ export default function CreateService2Screen() {
               disabled={false}
               onPress={() => navigation.goBack()}
               style={{opacity: 1}}
-              className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[50] rounded-full items-center justify-center" >
+              className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
                   <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
               </TouchableOpacity>
               <TouchableOpacity 
               disabled={title.length < 1}
               onPress={() => navigation.navigate('CreateService3', title)}
               style={{opacity: title.length < 1 ? 0.5 : 1.0}}
-              className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[50] rounded-full items-center justify-center" >
+              className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
                   <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
               </TouchableOpacity>
             </View>

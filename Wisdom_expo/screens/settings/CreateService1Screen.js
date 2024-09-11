@@ -33,7 +33,7 @@ export default function CreateService1Screen() {
                 disabled={false}
                 onPress={() => navigation.navigate('CreateService2')}
                 style={{opacity: 1}}
-                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[50] rounded-full items-center justify-center" >
+                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Start</Text>
                 </TouchableOpacity>
             </View>

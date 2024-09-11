@@ -105,7 +105,7 @@ export default function CreateService4Screen() {
 
         {/* Botones fijos abajo */}
         <View className="flex-row justify-center items-center pt-4 pb-6 px-6">
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[50] rounded-full items-center justify-center">
+          <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center">
             <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
           </TouchableOpacity>
 
@@ -113,7 +113,7 @@ export default function CreateService4Screen() {
             disabled={!description}
             onPress={() => navigation.navigate('CreateService5', { title, family, category, description })}
             style={{ opacity: description ? 1.0 : 0.5 }}
-            className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[50] rounded-full items-center justify-center"
+            className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center"
           >
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
           </TouchableOpacity>
