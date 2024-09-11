@@ -28,7 +28,7 @@ const Sections = [
   },
   {
     items: [
-      {id: 'provideService', icon: SuticasePlusIcon, label:'Provide service', type: 'select'},
+      {id: 'provideService', icon: SuticasePlusIcon, label:'Provide service', type: 'select', link: 'CreateService1'},
       {id: 'switchProfessionalVersion', icon: ArrowsRightLeftIcon, label:'Switch to professional version', type: 'select'},
       {id: 'becomeExpert', icon: ExpertIcon, label:'Become an expert', type: 'select'},
     ]

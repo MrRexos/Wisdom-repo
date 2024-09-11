@@ -62,9 +62,7 @@ const Tab = createBottomTabNavigator();
 export default function Navigation() {
     return (
         <NavigationContainer>
-        <Stack.Navigator screenOptions={{
-            headerShown: false
-        }}>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="WelcomeVideo" component={WelcomeVideoScreen} options={{ gestureEnabled: false }} />
           <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="SettingsScreen" component={TabNavigator} options={{ animation: 'none', gestureEnabled: false}}/>
@@ -89,6 +87,7 @@ export default function Navigation() {
           <Stack.Screen name="Preferences" component={PreferencesScreen}/>
           <Stack.Screen name="Language" component={LanguageScreen}/>
           <Stack.Screen name="List" component={ListScreen}/>
+          <Stack.Screen name="CreateServiceStack" component={CreateServiceStackNavigator} options={{ animation: 'none', gestureEnabled: false }} />
           <Stack.Screen name="CreateService1" component={CreateService1Screen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="CreateService2" component={CreateService2Screen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="CreateService3" component={CreateService3Screen} options={{ animation: 'none', gestureEnabled: false }}/>
@@ -101,8 +100,7 @@ export default function Navigation() {
           <Stack.Screen name="CreateService10" component={CreateService10Screen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="CreateService11" component={CreateService11Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
           <Stack.Screen name="CreateService12" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
-          <Stack.Screen name="CreateService13" component={CreateService13Screen} options={{ animation: 'none', gestureEnabled: false }}/>                
-
+          <Stack.Screen name="CreateService13" component={CreateService13Screen} options={{ animation: 'none', gestureEnabled: false }}/>           
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -241,5 +239,25 @@ function SettingsStackNavigator() {
           <Stack.Screen name="Preferences" component={PreferencesScreen} options={{ animation: 'none'}}/>
           <Stack.Screen name="Language" component={LanguageScreen} options={{ animation: 'none'}}/>
       </Stack.Navigator>
+  );
+}
+
+function CreateServiceStackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="CreateService1" component={CreateService1Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CreateService2" component={CreateService2Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CreateService3" component={CreateService3Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CreateService4" component={CreateService4Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CreateService5" component={CreateService5Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CreateService6" component={CreateService6Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CreateService7" component={CreateService7Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CreateService8" component={CreateService8Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CreateService9" component={CreateService9Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CreateService10" component={CreateService10Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CreateService11" component={CreateService11Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
+        <Stack.Screen name="CreateService12" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
+        <Stack.Screen name="CreateService13" component={CreateService13Screen} options={{ animation: 'none', gestureEnabled: false }}/>  
+    </Stack.Navigator>
   );
 }
