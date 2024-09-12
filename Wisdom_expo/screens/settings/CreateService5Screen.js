@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList} from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Keyboard} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
@@ -22,44 +22,109 @@ export default function CreateService5Screen() {
   const [showAboutYou, setShowAboutYou] = useState(false);
   const [showTags, setShowTags] = useState(false); 
   const [selectedLanguages, setSelectedLanguages] = useState([]);
+  const [isIndividual, setIsIndividual] = useState(true); 
+  const [hobbies, setHobbies] = useState('');
+  const [tagsText, setTagsText] = useState('');
+  const [tags, setTags] = useState([]);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   const languages = [
-    { id: 1, label: 'Català', abreviation: 'cat' },
-    { id: 2, label: 'Castellà', abreviation: 'es' },
-    { id: 3, label: 'Anglès', abreviation: 'en' },
-    { id: 4, label: 'Francès', abreviation: 'fr' },
+    { id: 1, label: 'Catalan', abbreviation: 'cat' },
+    { id: 2, label: 'Spanish', abbreviation: 'es' },
+    { id: 3, label: 'English', abbreviation: 'en' },
+    { id: 4, label: 'French', abbreviation: 'fr' },
+    { id: 5, label: 'Arabic', abbreviation: 'ar' },
+    { id: 6, label: 'German', abbreviation: 'de' },
+    { id: 7, label: 'Chinese', abbreviation: 'zh' },
+    { id: 8, label: 'Japanese', abbreviation: 'ja' },
+    { id: 9, label: 'Korean', abbreviation: 'ko' },
+    { id: 10, label: 'Portuguese', abbreviation: 'pt' },
+    { id: 11, label: 'Russian', abbreviation: 'ru' },
+    { id: 12, label: 'Italian', abbreviation: 'it' },
+    { id: 13, label: 'Dutch', abbreviation: 'nl' },
+    { id: 14, label: 'Turkish', abbreviation: 'tr' },
+    { id: 15, label: 'Swedish', abbreviation: 'sv' }
+    
   ];
 
-  const inputChanged = (text) => {
-    setTitle(text);
+  const inputHobbiesChanged = (text) => {
+    setHobbies(text);
+  };
+
+  const inputTagsChanged = (text) => {
+    setTagsText(text);
+  };
+
+  const handleClearText = () => {
+    setHobbies('');
   };
 
   const handleLanguagesPress = () => {
     setShowLanguages(!showLanguages);
+    setShowAboutYou(false);
+    setShowTags(false);
   };
 
   const handleAboutYouPress = () => {
     setShowAboutYou(!showAboutYou);
+    setShowLanguages(false);
+    setShowTags(false);
   };
 
   const handleTagsPress = () => {
     setShowTags(!showTags);
+    setShowLanguages(false);
+    setShowAboutYou(false);
   };
 
-  const toggleLanguage = (abreviation) => {
-    if (selectedLanguages.includes(abreviation)) {
-      setSelectedLanguages(selectedLanguages.filter((lang) => lang !== abreviation));
+  const toggleLanguage = (abbreviation) => {
+    if (selectedLanguages.includes(abbreviation)) {
+      setSelectedLanguages(selectedLanguages.filter((lang) => lang !== abbreviation));
     } else {
-      setSelectedLanguages([...selectedLanguages, abreviation]);
+      setSelectedLanguages([...selectedLanguages, abbreviation]);
     }
   };
 
-  const isSelected = (id) => selectedLanguages.includes(id);
+  const handleAddTag = () => {
+    if (tagsText.trim() !== '') {
+      setTags([...tags, tagsText.trim()]);
+      setTagsText('');
+    }
+  };
+
+  const handleDeleteTag = (index) => {
+    const newTags = [...tags];
+    newTags.splice(index, 1);
+    setTags(newTags);
+  };
+
+  const isSelectedLanguages = (abbreviation) => selectedLanguages.includes(abbreviation);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true); // Si el teclado se abre
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false); // Si el teclado se cierra
+      }
+    );
+
+    // Limpia los listeners cuando el componente se desmonta
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
-        <View className="flex-1 px-6 pt-5 pb-6">
+        <ScrollView className="flex-1 px-6 pt-5 pb-6">
 
             <TouchableOpacity onPress={() => navigation.pop(5)}>
                 <View className="flex-row justify-start">
@@ -68,82 +133,187 @@ export default function CreateService5Screen() {
             </TouchableOpacity>
 
             <View className=" justify-center items-start ">
-              <Text className="pl-5 mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">Give some information</Text>
+              <Text className="pl-2 mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">Give some information</Text>
             </View>
 
-            <View className="mt-[65] flex-1 pl-[40] pr-8 justify-start items-start">
+            {/* Languages */}
+
+            <View className="mt-[60] flex-1 pl-[30] pr-5 justify-start items-start">
               
-              <View className="flex-row justify-between items-center ">
-                <TouchableOpacity onPress={() => handleLanguagesPress()} className="w-full">
-                  <Text className="font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">Languages</Text>
-                </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleLanguagesPress()} className="flex-row w-full justify-between items-center">
+                <Text className="font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">Languages</Text>                
                 {showLanguages? (                  
-                  <ChevronUpIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2" />
+                  <ChevronUpIcon size={20} color={colorScheme=='dark'? '#b6b5b5': '#706f6e'} strokeWidth="2" />
                 ): null }
-              </View>
+              </TouchableOpacity>
+
               {showLanguages? (
-                  <View>                  
+                  <ScrollView className="pr-12 pl-1 mt-4" style={{ maxHeight: 200 }} showsVerticalScrollIndicator={false}>                  
                     {languages.map((language) => (
                       <TouchableOpacity
                         key={language.id}                        
-                        onPress={() => toggleLanguage(language.abreviation)}
+                        onPress={() => toggleLanguage(language.abbreviation)}
                         className="flex-row w-full justify-between mt-5 ml-6"
                       >
-                        <Text className="font-inter-medium text-[15px] text-[#706f6e] dark:text-[#b6b5b5]">{language.label}</Text>
+                        <Text className="font-inter-medium text-[15px] text-[#706f6e] dark:text-[#b6b5b5]">
+                          {language.label}
+                        </Text>
                         <View 
-                        style={[styles.checkbox, 
-                        {borderColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E'}, 
-                        isSelected(language.id) && { backgroundColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131', borderWidth:0 }]}>
-                          {isSelected(language.id) && <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5}/>}
+                          style={[
+                            styles.checkbox, 
+                            { borderColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E' }, 
+                            isSelectedLanguages(language.abbreviation) && { 
+                              backgroundColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131', 
+                              borderWidth: 0 
+                            }
+                          ]}
+                        >
+                          {isSelectedLanguages(language.abbreviation) && (
+                            <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5} />
+                          )}
                         </View>
                       </TouchableOpacity>
                     ))}
+                  </ScrollView>
+                ): null }
+              
+              {/* About you */}
+
+              <View className="mt-8 justify-start items-start w-full">
+                
+                <TouchableOpacity onPress={() => handleAboutYouPress()} className="flex-row w-full justify-between items-center ">
+                  <Text className="font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">About you</Text>                 
+                  {showAboutYou? (
+                    <ChevronUpIcon size={20} color={colorScheme=='dark'? '#b6b5b5': '#706f6e'} strokeWidth="2" />
+                  ): null }
+                </TouchableOpacity>
+
+                {showAboutYou? (
+                  <View className="w-full justify-center items-center">   
+
+                    <TouchableOpacity onPress={() => setIsIndividual(!isIndividual)} className="flex-row w-full justify-between mt-5 pl-6">
+                      <Text className="font-inter-medium text-[15px] text-[#706f6e] dark:text-[#b6b5b5]">Are you an individual?</Text>
+                      <View 
+                        style={[
+                          styles.checkbox, 
+                          { borderColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E' }, 
+                          isIndividual && { 
+                            backgroundColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131', 
+                            borderWidth: 0 
+                          }
+                        ]}
+                      >
+                        {isIndividual && (
+                          <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5} />
+                        )}
+                      </View>
+                    </TouchableOpacity>                                    
+                    
+                    <View className="min-h-[100] bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl py-3 px-4 mt-8 w-full" >
+                      
+                      {hobbies.length > 0 ? (
+                      <View className="flex-row justify-end">
+                        <TouchableOpacity onPress={handleClearText} className="">
+                          <Text className="mb-1 font-inter-medium text-[13px] text-[#d4d4d3] dark:text-[#474646]">Clear</Text>
+                        </TouchableOpacity>
+                      </View>
+                      ) : null }
+
+                      <TextInput
+                        placeholder='Hobbies (optional)...'
+                        selectionColor={cursorColorChange}
+                        placeholderTextColor={placeholderTextColorChange}
+                        onChangeText={inputHobbiesChanged}
+                        value={hobbies}
+                        keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                        className="w-full text-[14px] text-[#515150] dark:text-[#d4d4d3]"
+                        multiline
+                        maxLength={300}
+                        style={{ textAlignVertical: 'top' }}
+                      />
+                    </View>
+                     
                   </View>
                 ): null }
 
-              <View className="flex-row justify-between items-center mt-8">
-                
-                <TouchableOpacity onPress={() => handleAboutYouPress()} className="w-full">
-                  <Text className=" font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">About you</Text>
-                </TouchableOpacity> 
-                <View className="justify-center items-center ">
-                {showAboutYou? (
-                  <ChevronUpIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2" />
-                ): null }
-                </View>
               </View>
 
-              <View className="flex-row justify-between items-center mt-8">
-                <TouchableOpacity onPress={() => handleTagsPress()} className="w-full">
+              {/* Tags */}
+
+              <View className="mt-8 justify-start items-start w-full">
+
+                <TouchableOpacity onPress={() => handleTagsPress()} className="flex-row w-full justify-between items-center">
                   <Text className="font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">Tags</Text>    
+                  {showTags? (
+                    <ChevronUpIcon size={20} color={colorScheme=='dark'? '#b6b5b5': '#706f6e'} strokeWidth="2" />
+                  ): null }
                 </TouchableOpacity> 
-                {showTags? (
-                  <ChevronUpIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2" />
-                ): null }
+
+                {showTags ? (
+                  <View className="w-full justify-center items-center">                                     
+                    <View className="min-h-[150] bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl py-3 px-4 mt-8 w-full" >
+
+                      {/* Display existing tags */}
+
+                      <View className="flex-row justify-start items-center flex-wrap"> 
+                        {tags.map((tag, index) => (
+                          <View key={index} className="flex-row p-[8] pl-3 bg-[#f2f2f2] dark:bg-[#272626] rounded-full mr-1 mb-1">
+                            <Text className="font-inter-semibold text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">{tag}</Text>
+                            <TouchableOpacity onPress={() => handleDeleteTag(index)} className="ml-1">
+                              <XMarkIcon size={15} color={iconColor} strokeWidth={2} />
+                            </TouchableOpacity>
+                          </View>
+                        ))}
+
+                        <TextInput
+                          placeholder= {tags.length > 14? 'Maximum 15 tags': 'Add a tag... ' }
+                          selectionColor={cursorColorChange}
+                          placeholderTextColor={placeholderTextColorChange}
+                          onChangeText={inputTagsChanged}
+                          value={tagsText}
+                          onSubmitEditing={handleAddTag} // Handle adding tag on Enter press
+                          keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                          disabled={tags.length > 14}
+                          className="text-[14px] text-[#515150] dark:text-[#d4d4d3] max-w-full min-w-10 ml-1 mt-3"
+                          style={{ textAlignVertical: 'top' }}
+                        />
+
+                      </View>                  
+
+                      
+                    </View>
+                  </View>
+                ) : null }
+
               </View>
 
             </View>
+            {isKeyboardVisible && (
+              <View className="h-[250]"></View>
+            )}
             
+            
+        </ScrollView>
+        {/* Buttons */}
 
-            <View className="flex-row justify-center items-center">
+        <View className="flex-row justify-center items-center pt-4 pb-6 px-6">
               
-              <TouchableOpacity 
-              disabled={false}
-              onPress={() => navigation.goBack()}
-              style={{opacity: 1}}
-              className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
-                  <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
-              </TouchableOpacity>
+          <TouchableOpacity 
+          disabled={false}
+          onPress={() => navigation.goBack()}
+          style={{opacity: 1}}
+          className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
+              <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
+          </TouchableOpacity>
 
-              <TouchableOpacity 
-              disabled={false}
-              onPress={() => navigation.navigate('CreateService6', {title, family, category, description})}
-              style={{opacity: 1.0}}
-              className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
-                  <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
-              </TouchableOpacity>
+          <TouchableOpacity 
+          disabled={selectedLanguages.length<1 || tags.length<1}
+          onPress={() => navigation.navigate('CreateService6', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags})}
+          style={{opacity: (selectedLanguages.length>0 && tags.length>0)? 1 : 0.5}}
+          className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
+              <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
+          </TouchableOpacity>
 
-            </View>
         </View>
     </SafeAreaView>
   ); 
@@ -158,13 +328,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight:25,
     borderRadius: 4,
-  },
-  checkboxSelected: {
-    backgroundColor: '#444343',
-  },
-  checkboxTick: {
-    width: 4,
-    height: 4,
-    backgroundColor: '#fff',
   },
 });
