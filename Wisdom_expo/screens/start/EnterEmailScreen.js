@@ -64,6 +64,7 @@ export default function EnterEmailScreen() {
     return (
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
+        
         <View className="px-5 py-3  w-full">
             <TouchableOpacity onPress={() => navigation.goBack()}>
                 <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6"/>

@@ -7,7 +7,7 @@ import i18n from '../../languages/i18n';
 import { useNavigation } from '@react-navigation/native';
 
 
-export default function HomeScreen() {
+export default function ConfirmDirectionScreen() {
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
