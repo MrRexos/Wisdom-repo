@@ -18,12 +18,19 @@ export default function SearchDirectionScreen() {
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
-  const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e ' : '#b6b5b5';
+  const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const [searchText, setSearchText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [placeDetails, setPlaceDetails] = useState([]);
+  const [country, setCountry] = useState('');
+  const [street, setStreet] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [postalCode, setPostalCode] = useState('');
   const [streetNumber, setStreetNumber] = useState('');
+  const [address2, setAddress2] = useState('');
+  const [location, setLocation] = useState();
   const sheet = useRef();
 
   const handleClearText = () => {
@@ -34,8 +41,32 @@ export default function SearchDirectionScreen() {
     setSearchText(text);
   };
 
+  const inputCountryChanged = (text) => {
+    setCountry(text);
+  };
+
+  const inputCityChanged = (text) => {
+    setCity(text);
+  };
+
+  const inputStateChanged = (text) => {
+    setState(text);
+  };
+
+  const inputStreetChanged = (text) => {
+    setStreet(text);
+  };
+
+  const inputPostalCodeChanged = (text) => {
+    setPostalCode(text);
+  };
+
   const inputStreetNumberChanged = (text) => {
     setStreetNumber(text);
+  };
+
+  const inputAddress2Changed = (text) => {
+    setAddress2(text);
   };
 
   const fetchSuggestions = async (input) => {
@@ -61,7 +92,62 @@ export default function SearchDirectionScreen() {
     }
   };
 
-  const fetchPlaceDetailsWithInput = async (input) => {
+  const fetchPlaceDetails = async (placeId) => {
+    try {
+      const placeDetailsResponse = await axios.get(
+        `https://maps.googleapis.com/maps/api/place/details/json`, {
+          params: {
+            place_id: placeId, 
+            key: 'AIzaSyA9IKAf2YvpjiyNfDpPUUsv_Xz-flkJFCY',
+            language: 'en',
+          },
+        }
+      );
+
+      const result = placeDetailsResponse.data.result;
+      const addressComponents = result.address_components;
+
+      // Obtener latitud y longitud (location.lat i location.lng)
+      setLocation(result.geometry.location);
+
+      // Mapea los valores correspondientes
+      const country = addressComponents.find(component => component.types.includes('country'))?.long_name || '';
+      const state = addressComponents.find(component => component.types.includes('administrative_area_level_1'))?.long_name || '';
+      const city = addressComponents.find(component => component.types.includes('locality'))?.long_name || '';
+      const street = addressComponents.find(component => component.types.includes('route'))?.long_name || '';
+      const streetNumber = addressComponents.find(component => component.types.includes('street_number'))?.long_name || '';
+      const postalCode = addressComponents.find(component => component.types.includes('postal_code'))?.long_name || '';
+      const sublocality = addressComponents.find(component => component.types.includes('sublocality'))?.long_name || '';
+      const premise = addressComponents.find(component => component.types.includes('premise'))?.long_name || '';
+      const subpremise = addressComponents.find(component => component.types.includes('subpremise'))?.long_name || '';
+
+      // Construir address2 con los componentes adicionales
+      let address2 = [];
+
+      if (sublocality) address2.push(sublocality);
+      if (premise) address2.push(premise);
+      if (subpremise) address2.push(subpremise);
+
+      address2 = address2.join(', ');
+
+
+      // Actualiza los estados con los valores obtenidos
+      setCountry(country);
+      setState(state);
+      setCity(city);
+      setStreet(street);
+      setStreetNumber(streetNumber);
+      setPostalCode(postalCode);
+      setAddress2(address2);
+
+      sheet.current.open();
+
+    } catch (error) {
+      console.error('Error fetching place details with input:', error);
+    }
+  }
+
+  const fetchPlaceWithInput = async (input) => {
     try {
       const response = await axios.get(
         `https://maps.googleapis.com/maps/api/place/textsearch/json`, {
@@ -72,9 +158,8 @@ export default function SearchDirectionScreen() {
           },
         }
       );
-      setPlaceDetails(response.data.results[0]);
+      fetchPlaceDetails(response.data.results[0].place_id);
       console.log(placeDetails);
-      sheet.current.open();
     } catch (error) {
       console.error('Error fetching place details with input:', error);
     }
@@ -98,16 +183,17 @@ export default function SearchDirectionScreen() {
         `https://maps.googleapis.com/maps/api/place/nearbysearch/json`, {
           params: {
             location: `${latitude},${longitude}`,
-            radius: 100,  // Radio de búsqueda en metros
+            radius: 10,  // Radio de búsqueda en metros
             key: 'AIzaSyA9IKAf2YvpjiyNfDpPUUsv_Xz-flkJFCY',
             language: 'en',
           },
         }
       );
+
+      console.log(response.data.results[0])
   
-      setPlaceDetails(response.data.results[0]);  // El primer lugar cercano
-      console.log(placeDetails);
-      sheet.current.open();
+      fetchPlaceDetails(response.data.results[0].place_id);  // El primer lugar cercano
+      
     } catch (error) {
       console.error('Error fetching location details:', error);
     }
@@ -128,7 +214,7 @@ export default function SearchDirectionScreen() {
       if (item.description==='Your location') {
         fetchPlaceDetailsWithLocation();
       } else {
-        fetchPlaceDetailsWithLocation(item.description);
+        fetchPlaceDetails(item.place_id);
       }
     }}>
         <View className="flex-row justify-start items-center">
@@ -150,7 +236,7 @@ export default function SearchDirectionScreen() {
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
 
       <RBSheet
-        height={400}
+        height={630}
         openDuration={300}
         closeDuration={300}
         onClose={() => null}
@@ -166,33 +252,137 @@ export default function SearchDirectionScreen() {
         }}>     
           
                           
-              <View className="flex-1 w-full justify-start items-center pt-3 pb-5 px-5"> 
-                <View className="flex-row justify-between items-center mb-10">
-                  <View className="flex-1 justify-center">
-                    <TouchableOpacity onPress={() => openSheetWithInput(null)} >
-                        <ChevronLeftIcon size={25} strokeWidth={1.7} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
-                    </TouchableOpacity>
-                  </View>
-                  <View className="flex-1 justify-center items-center">
-                    <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">Change name</Text>
-                  </View>
-                </View>
-                  
-                <View className="w-full mx-2 py-2 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
-                  <TextInput
-                    placeholder='Change name...'
-                    selectionColor={cursorColorChange}
-                    placeholderTextColor={placeHolderTextColorChange}
-                    autoFocus={true}
-                    onChange = {inputStreetNumberChanged} 
-                    value={streetNumber}
-                    keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                    style={{ flex: 1, padding: 10}}  
-                    className="px-5 flex-1 text-[14px] text-[#444343] dark:text-[#f2f2f2]"
-                                 
-                  />
-                </View>
-              </View>   
+          <View className="flex-1 w-full justify-start items-center pt-3 pb-5 px-5"> 
+
+            <View className="justify-between items-center mb-10">                  
+                <Text className="text-center font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Confirm your direction</Text>
+            </View>
+              
+            <View className="w-full h-[55] mx-2 mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              {country.length>0? (
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Country/region</Text>
+              ) : null}              
+              <TextInput
+                placeholder='Country/region...'
+                selectionColor={cursorColorChange}
+                placeholderTextColor={placeHolderTextColorChange}
+                autoFocus={true}
+                onChangeText={inputCountryChanged} 
+                value={country}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+              />            
+            </View>
+
+            <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              {state.length>0? (
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">State</Text>
+              ) : null}              
+              <TextInput
+                placeholder='State...'
+                selectionColor={cursorColorChange}
+                placeholderTextColor={placeHolderTextColorChange}
+                autoFocus={true}
+                onChangeText={inputStateChanged} 
+                value={state}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+              />
+            </View>
+
+            <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              {city.length>0? (
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">City/town</Text>
+              ) : null}              
+              <TextInput
+                placeholder='City/town...'
+                selectionColor={cursorColorChange}
+                placeholderTextColor={placeHolderTextColorChange}
+                autoFocus={true}
+                onChangeText={inputCityChanged} 
+                value={city}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+              />
+            </View>
+
+            <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              {street.length>0? (
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Street</Text>
+              ) : null}              
+              <TextInput
+                placeholder='Street...'
+                selectionColor={cursorColorChange}
+                placeholderTextColor={placeHolderTextColorChange}
+                autoFocus={true}
+                onChangeText={inputStreetChanged} 
+                value={street}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+              />
+            </View>
+            <View className="flex-row w-full justify-between items-center">
+
+              <View className="flex-1 h-[55] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                {postalCode.length>0? (
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Postal code</Text>
+                ) : null}              
+                <TextInput
+                  placeholder='Postal code...'
+                  selectionColor={cursorColorChange}
+                  placeholderTextColor={placeHolderTextColorChange}
+                  autoFocus={true}
+                  onChangeText={inputPostalCodeChanged} 
+                  value={postalCode}
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+                />
+              </View>
+
+              <View className="flex-1 h-[55] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                {streetNumber.length>0? (
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Street number</Text>
+                ) : null}              
+                <TextInput
+                  placeholder='Street number...'
+                  selectionColor={cursorColorChange}
+                  placeholderTextColor="#ff633e"
+                  autoFocus={true}
+                  onChangeText={inputStreetNumberChanged} 
+                  value={streetNumber}
+                  keyboardType="number-pad"
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+                />
+              </View>
+
+            </View>
+
+            <View className="w-full h-[55] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              {address2.length>0? (
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Floor, door, stair (optional)</Text>
+              ) : null}              
+              <TextInput
+                placeholder='Floor, door, stair (optional)...'
+                selectionColor={cursorColorChange}
+                placeholderTextColor={placeHolderTextColorChange}
+                autoFocus={true}
+                onChangeText={inputAddress2Changed} 
+                value={address2}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+              />
+            </View>
+
+            <TouchableOpacity 
+                disabled={streetNumber.length<1}
+                onPress={() => {navigation.setParams({location, country, state, city, street, streetNumber, postalCode, address2}); navigation.goBack()}}
+                style={{opacity: streetNumber.length<1? 0.5: 1}}
+                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Confirm</Text>
+                </TouchableOpacity>
+
+          </View>   
       </RBSheet>
 
       <View className="px-5 pt-4 flex-1">
@@ -213,7 +403,7 @@ export default function SearchDirectionScreen() {
                 placeholderTextColor={placeHolderTextColorChange} 
                 onChangeText={handleSearch} 
                 value={searchText}
-                onSubmitEditing={() => fetchPlaceDetailsWithInput(searchText)}
+                onSubmitEditing={() => fetchPlaceWithInput(searchText)}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}             
                 className="flex-1 px-3 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]"/>
 

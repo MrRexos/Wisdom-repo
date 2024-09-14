@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/outline';
 import { Search, Check } from "react-native-feather";
 import MapView, { Marker } from 'react-native-maps';
@@ -19,9 +19,10 @@ export default function CreateService6Screen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags} = route.params;
+  const {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, country, state, city, street, streetNumber, postalCode, address2} = route.params;
   const [isOnline, setIsOnline] = useState(false); 
   const [direction, setDirection] = useState('');
+  const [currentLocation, setCurrentLocation] = useState(location || { lat: 41.5421100, lng: 2.4445000 });
 
 
   const inputChanged = (text) => {
@@ -32,6 +33,15 @@ export default function CreateService6Screen() {
     setFamily(option);
     setShowFamilyDropdown(false);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      // Al ganar foco, reseteamos los valores
+      setDirection(street);
+      setCurrentLocation(location || { lat: 41.5421100, lng: 2.4445000 });
+
+    }, [location])
+  );
 
 
   return (
@@ -62,21 +72,27 @@ export default function CreateService6Screen() {
                       numberOfLines={1}
                       ellipsizeMode="tail"
                     >
-                      Search a direction...
+                      {direction || 'Search a direction...'}
                     </Text>
                 </View>
               </TouchableOpacity>
 
+              
               <MapView
-                style={{height:250, width:300, borderRadius:12, marginTop:25}}
+                style={{ height: 250, width: 300, borderRadius: 12, marginTop: 25 }}
                 initialRegion={{
-                  latitude: 37.78825, // Latitud inicial
-                  longitude: -122.4324, // Longitud inicial
+                  latitude:  currentLocation.lat, // Latitud inicial
+                  longitude: currentLocation.lng, // Longitud inicial
                   latitudeDelta: 0.0922, // Zoom en la latitud
                   longitudeDelta: 0.0421, // Zoom en la longitud
                 }}
               >
-                <Marker coordinate={{ latitude: 37.78825, longitude: -122.4324 }}/>
+                {/* Solo renderizar el marcador si 'location' existe */}
+                {location && (
+                  <Marker
+                    coordinate={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}
+                  />
+                )}
               </MapView>
 
               <TouchableOpacity onPress={() => setIsOnline(!isOnline)} className="flex-row w-full justify-start mt-5 pl-6 items-center">
@@ -112,9 +128,9 @@ export default function CreateService6Screen() {
               </TouchableOpacity>
 
               <TouchableOpacity 
-              disabled={!isOnline || direction.length>0}
+              disabled={!isOnline || !direction}
               onPress={() => navigation.navigate('CreateService7', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags})}
-              style={{opacity: isOnline || direction.length>0? 1.0: 0.5}}
+              style={{opacity: isOnline || direction? 1.0: 0.5}}
               className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
                   <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
               </TouchableOpacity>
