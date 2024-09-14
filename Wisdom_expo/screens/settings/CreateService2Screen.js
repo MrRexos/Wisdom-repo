@@ -58,7 +58,7 @@ export default function CreateService2Screen() {
               </TouchableOpacity>
               <TouchableOpacity 
               disabled={title.length < 1}
-              onPress={() => navigation.navigate('CreateService3', title)}
+              onPress={() => navigation.navigate('CreateService3', {title})}
               style={{opacity: title.length < 1 ? 0.5 : 1.0}}
               className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
                   <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>

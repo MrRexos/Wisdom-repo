@@ -3,10 +3,12 @@ import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInp
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
-import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect, useIsFocused } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/outline';
 import { Search, Check } from "react-native-feather";
 import MapView, { Marker } from 'react-native-maps';
+import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -19,30 +21,81 @@ export default function CreateService6Screen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, country, state, city, street, streetNumber, postalCode, address2} = route.params;
+  const {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags} = route.params;
   const [isOnline, setIsOnline] = useState(false); 
+
   const [direction, setDirection] = useState('');
-  const [currentLocation, setCurrentLocation] = useState(location || { lat: 41.5421100, lng: 2.4445000 });
+  const [currentLocation, setCurrentLocation] = useState({ lat: 41.5421100, lng: 2.4445000 });
+  const isFocused = useIsFocused();
 
+  const [country, setCountry] = useState('');
+  const [street, setStreet] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [streetNumber, setStreetNumber] = useState('');
+  const [address2, setAddress2] = useState('');
+  const [location, setLocation] = useState();
 
-  const inputChanged = (text) => {
-    setTitle(text);
+  const loadSearchedDirection = async () => {
+    
+    const searchedDirectionData = await getDataLocally('searchedDirection');
+    if (searchedDirectionData) {
+      searchedDirection = JSON.parse(searchedDirectionData);
+      setCountry(searchedDirection.country)
+      setState(searchedDirection.state)
+      setCity(searchedDirection.city)
+      setStreet(searchedDirection.street)
+      setPostalCode(searchedDirection.postalCode)
+      setStreetNumber(searchedDirection.streetNumber)
+      setAddress2(searchedDirection.address2)
+      setLocation(searchedDirection.location)  
+    }
   };
 
-  const handleFamilyPress = (option) => {
-    setFamily(option);
-    setShowFamilyDropdown(false);
+  const removeSearchedDirection = async () => {
+    try {
+      await AsyncStorage.removeItem('searchedDirection');
+      console.log('searchedDirection eliminado de AsyncStorage');
+    } catch (error) {
+      console.error('Error al eliminar searchedDirection:', error);
+    }
+  };
+
+  useEffect(() => {
+    console.log(currentLocation)
+    removeSearchedDirection();
+  },[]);
+
+  const buildAddressString = () => {
+    const parts = [];
+  
+    if (street) parts.push(street);
+    if (streetNumber) parts.push(streetNumber);
+    if (address2) parts.push(address2);
+    if (city) parts.push(city);
+    if (postalCode) parts.push(postalCode);
+    if (state) parts.push(state);
+    if (country) parts.push(country);
+  
+    return parts.join(', ');
   };
 
   useFocusEffect(
     useCallback(() => {
-      // Al ganar foco, reseteamos los valores
-      setDirection(street);
-      setCurrentLocation(location || { lat: 41.5421100, lng: 2.4445000 });
-
-    }, [location])
+        loadSearchedDirection();
+    }, [isFocused])
   );
 
+  useFocusEffect(
+    useCallback(() => {
+      if (location) {
+        setDirection(buildAddressString());
+        setCurrentLocation(location);
+        console.log(location)
+      }
+    }, [location])
+  );
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
@@ -80,17 +133,18 @@ export default function CreateService6Screen() {
               
               <MapView
                 style={{ height: 250, width: 300, borderRadius: 12, marginTop: 25 }}
-                initialRegion={{
+                region={{
                   latitude:  currentLocation.lat, // Latitud inicial
                   longitude: currentLocation.lng, // Longitud inicial
-                  latitudeDelta: 0.0922, // Zoom en la latitud
-                  longitudeDelta: 0.0421, // Zoom en la longitud
+                  latitudeDelta: 0.005, // Zoom en la latitud
+                  longitudeDelta: 0.003, // Zoom en la longitud
                 }}
               >
                 {/* Solo renderizar el marcador si 'location' existe */}
                 {location && (
                   <Marker
                     coordinate={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}
+                    image={require('../../assets/MapMarker.png')}
                   />
                 )}
               </MapView>

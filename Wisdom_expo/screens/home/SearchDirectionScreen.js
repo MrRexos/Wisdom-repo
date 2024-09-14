@@ -1,15 +1,16 @@
 
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList} from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, MapPinIcon, ChevronRightIcon} from 'react-native-heroicons/outline';
 import {Search} from "react-native-feather";
 import axios from 'axios';
 import * as Location from 'expo-location';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 
 
 
@@ -20,6 +21,7 @@ export default function SearchDirectionScreen() {
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
+  const route = useRoute();
   const [searchText, setSearchText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [placeDetails, setPlaceDetails] = useState([]);
@@ -165,6 +167,12 @@ export default function SearchDirectionScreen() {
     }
   };
 
+  const handleConfirm = async () => {
+    const searchedDirection = {location, country, state, city, street, streetNumber, postalCode, address2}
+    await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
+    navigation.goBack();
+  };
+
   const fetchPlaceDetailsWithLocation = async () => {
     try {
       // Solicitar permisos
@@ -183,7 +191,7 @@ export default function SearchDirectionScreen() {
         `https://maps.googleapis.com/maps/api/place/nearbysearch/json`, {
           params: {
             location: `${latitude},${longitude}`,
-            radius: 10,  // Radio de búsqueda en metros
+            radius: 50,  // Radio de búsqueda en metros
             key: 'AIzaSyA9IKAf2YvpjiyNfDpPUUsv_Xz-flkJFCY',
             language: 'en',
           },
@@ -230,7 +238,6 @@ export default function SearchDirectionScreen() {
   );
   
 
-
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
@@ -251,7 +258,7 @@ export default function SearchDirectionScreen() {
           draggableIcon: {backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'}
         }}>     
           
-                          
+          <ScrollView>                
           <View className="flex-1 w-full justify-start items-center pt-3 pb-5 px-5"> 
 
             <View className="justify-between items-center mb-10">                  
@@ -376,13 +383,14 @@ export default function SearchDirectionScreen() {
 
             <TouchableOpacity 
                 disabled={streetNumber.length<1}
-                onPress={() => {navigation.setParams({location, country, state, city, street, streetNumber, postalCode, address2}); navigation.goBack()}}
+                onPress={() => handleConfirm()}
                 style={{opacity: streetNumber.length<1? 0.5: 1}}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Confirm</Text>
                 </TouchableOpacity>
 
           </View>   
+          </ScrollView>
       </RBSheet>
 
       <View className="px-5 pt-4 flex-1">
