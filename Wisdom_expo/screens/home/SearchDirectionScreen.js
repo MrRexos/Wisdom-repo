@@ -4,9 +4,9 @@ import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInp
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, MapPinIcon, ChevronRightIcon} from 'react-native-heroicons/outline';
-import {Search} from "react-native-feather";
+import {Search, Clock} from "react-native-feather";
 import axios from 'axios';
 import * as Location from 'expo-location';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -33,6 +33,7 @@ export default function SearchDirectionScreen() {
   const [streetNumber, setStreetNumber] = useState('');
   const [address2, setAddress2] = useState('');
   const [location, setLocation] = useState();
+  const [historySearchedDirections, setHistorySearchedDirections] = useState([]);
   const sheet = useRef();
 
   const handleClearText = () => {
@@ -161,9 +162,43 @@ export default function SearchDirectionScreen() {
         }
       );
       fetchPlaceDetails(response.data.results[0].place_id);
-      console.log(placeDetails);
     } catch (error) {
       console.error('Error fetching place details with input:', error);
+    }
+  };
+
+  const saveHistorySearchedDirection = async (newDirection) => {
+    try {
+        let history = await getDataLocally('historySearchedDirections');
+        history = history ? JSON.parse(history) : [];
+
+        // Verificar si la dirección ya existe en el historial
+        const exists = history.some(direction => JSON.stringify(direction) === JSON.stringify(newDirection));
+
+        if (!exists) {
+            if (history.length >= 5) {
+                history.shift(); // Eliminar la dirección más antigua
+            }
+
+            history.push(newDirection);
+            await storeDataLocally('historySearchedDirections', JSON.stringify(history));
+        }
+    } catch (error) {
+        console.error('Error saving direction history:', error);
+    }
+};
+
+  const getHistorySearchedDirections = async () => {
+    try {
+      const history = await getDataLocally('historySearchedDirections');  
+      const locationSuggestion = {
+        description: 'Your location',
+        place_id: 'your_location',
+      };
+      const parsedHistory = history ? JSON.parse(history) : [];
+      setHistorySearchedDirections([locationSuggestion, ...parsedHistory]);
+    } catch (error) {
+      console.error('Error retrieving direction history:', error);
     }
   };
 
@@ -171,6 +206,11 @@ export default function SearchDirectionScreen() {
     const searchedDirection = {location, country, state, city, street, streetNumber, postalCode, address2}
     await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
     navigation.goBack();
+  };
+
+  const clearHistory = async () => {
+    await storeDataLocally('historySearchedDirections', JSON.stringify([]));
+    getHistorySearchedDirections();
   };
 
   const fetchPlaceDetailsWithLocation = async () => {
@@ -197,8 +237,6 @@ export default function SearchDirectionScreen() {
           },
         }
       );
-
-      console.log(response.data.results[0])
   
       fetchPlaceDetails(response.data.results[0].place_id);  // El primer lugar cercano
       
@@ -214,22 +252,35 @@ export default function SearchDirectionScreen() {
         }, 300);
 
         return () => clearTimeout(timer);
+    } else {
+      getHistorySearchedDirections();
     }
   }, [searchText]);
 
   const renderSuggestions = ({ item }) => (
     <TouchableOpacity className="pb-7 flex-row justify-between items-center" onPress={() => {
-      if (item.description==='Your location') {
-        fetchPlaceDetailsWithLocation();
+      if (searchText.length>0) {
+
+        if (item.place_id==='your_location') {
+          fetchPlaceDetailsWithLocation();
+        } else {
+          saveHistorySearchedDirection(item);
+          fetchPlaceDetails(item.place_id);
+        }
       } else {
-        fetchPlaceDetails(item.place_id);
+        if (item.place_id==='your_location') {
+          fetchPlaceDetailsWithLocation();
+        } else {
+          fetchPlaceDetails(item.place_id);
+        }
       }
     }}>
         <View className="flex-row justify-start items-center">
           <View className="w-11 h-11 items-center justify-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
-            {item.description==='Your location'? 
+            {item.place_id==='your_location'? 
             <MapPinIcon height={21} color={iconColor} strokeWidth="1.7"/> : 
-            <Search height={17} color={iconColor} strokeWidth="2"/>}
+            searchText.length>0? <Search height={17} color={iconColor} strokeWidth="2"/> : 
+            <Clock height={19} color={iconColor} strokeWidth="2"/>}
           </View>
           <Text className="ml-4 text-[15px] text-[#444343] dark:text-[#f2f2f2]">{item.description}</Text>
         </View>  
@@ -426,19 +477,22 @@ export default function SearchDirectionScreen() {
             </View>  
         </View>
 
-        {searchText.length<1 ? (
+        {searchText.length<1  ? (
           
             <View className="mb-6 flex-row justify-between items-center">
                 <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Recent searches</Text>
-                <View className="px-3 py-2 rounded-full justify-center items-center bg-[#E0E0E0] dark:bg-[#3D3D3D]">
-                    <Text className="font-inter-semibold text-[10px] text-[#706f6e] dark:text-[#b6b5b5]">CLEAR</Text>
-                </View>
+                {historySearchedDirections.length>1? (
+                <TouchableOpacity onPress={() => clearHistory()} className="px-3 py-2 rounded-full justify-center items-center bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                  <Text className="font-inter-semibold text-[10px] text-[#706f6e] dark:text-[#b6b5b5]">CLEAR</Text>
+                </TouchableOpacity>)
+                : null}
+                
             </View>
      
         ) : null }
 
         <FlatList
-          data={suggestions}
+          data={searchText.length<1 ? historySearchedDirections : suggestions}
           keyExtractor={(item) => item.place_id}
           renderItem={renderSuggestions}
         />

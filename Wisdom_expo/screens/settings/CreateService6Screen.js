@@ -142,9 +142,11 @@ export default function CreateService6Screen() {
               >
                 {/* Solo renderizar el marcador si 'location' existe */}
                 {location && (
-                  <Marker
+                  <Marker 
                     coordinate={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}
                     image={require('../../assets/MapMarker.png')}
+                    anchor={{ x: 0.5, y: 1 }}
+                    centerOffset={{ x: 0.5, y: -20 }}
                   />
                 )}
               </MapView>
