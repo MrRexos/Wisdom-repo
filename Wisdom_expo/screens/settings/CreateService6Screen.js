@@ -1,14 +1,18 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList} from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, Image} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect, useIsFocused } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/outline';
 import { Search, Check } from "react-native-feather";
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Circle } from 'react-native-maps';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Slider from '@react-native-community/slider';
+import SliderThumbDark from '../../assets/SliderThumbDark.png';
+import SliderThumbLight from '../../assets/SliderThumbLight.png';
+
 
 
 
@@ -22,7 +26,7 @@ export default function CreateService6Screen() {
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
   const {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags} = route.params;
-  const [isOnline, setIsOnline] = useState(false); 
+  const [isUnlocated, setIsUnlocated] = useState(false); 
 
   const [direction, setDirection] = useState('');
   const [currentLocation, setCurrentLocation] = useState({ lat: 41.5421100, lng: 2.4445000 });
@@ -36,6 +40,9 @@ export default function CreateService6Screen() {
   const [streetNumber, setStreetNumber] = useState('');
   const [address2, setAddress2] = useState('');
   const [location, setLocation] = useState();
+  const [actionRate, setActionRate] = useState(1);
+
+  const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
 
   const loadSearchedDirection = async () => {
     
@@ -56,14 +63,12 @@ export default function CreateService6Screen() {
   const removeSearchedDirection = async () => {
     try {
       await AsyncStorage.removeItem('searchedDirection');
-      console.log('searchedDirection eliminado de AsyncStorage');
     } catch (error) {
       console.error('Error al eliminar searchedDirection:', error);
     }
   };
 
   useEffect(() => {
-    console.log(currentLocation)
     removeSearchedDirection();
   },[]);
 
@@ -92,7 +97,6 @@ export default function CreateService6Screen() {
       if (location) {
         setDirection(buildAddressString());
         setCurrentLocation(location);
-        console.log(location)
       }
     }, [location])
   );
@@ -116,7 +120,7 @@ export default function CreateService6Screen() {
 
             <View className="flex-1 pb-[80] justify-start items-center ">
 
-              <TouchableOpacity onPress={() => navigation.navigate('SearchDirection')} className="mt-7 px-3 justify-center items-center w-full">
+              <TouchableOpacity onPress={() => navigation.navigate('SearchDirection')} className="mt-5 px-3 justify-center items-center w-full">
                 <View className="mt-7 h-[50] px-4 w-full flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                     <Search height={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2"/>
                     <Text 
@@ -130,40 +134,80 @@ export default function CreateService6Screen() {
                 </View>
               </TouchableOpacity>
 
-              
-              <MapView
-                style={{ height: 250, width: 300, borderRadius: 12, marginTop: 25 }}
-                region={{
-                  latitude:  currentLocation.lat, // Latitud inicial
-                  longitude: currentLocation.lng, // Longitud inicial
-                  latitudeDelta: 0.005, // Zoom en la latitud
-                  longitudeDelta: 0.003, // Zoom en la longitud
-                }}
-              >
-                {/* Solo renderizar el marcador si 'location' existe */}
-                {location && (
-                  <Marker 
-                    coordinate={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}
-                    image={require('../../assets/MapMarker.png')}
-                    anchor={{ x: 0.5, y: 1 }}
-                    centerOffset={{ x: 0.5, y: -20 }}
-                  />
-                )}
-              </MapView>
+              <View className="mb-2 justify-center items-center">
+                <MapView
+                  style={{ height: 250, width: 300, borderRadius: 12, marginTop: 20 }}
+                  region={{
+                    latitude:  currentLocation.lat, // Latitud inicial
+                    longitude: currentLocation.lng, // Longitud inicial
+                    latitudeDelta: 0.02, // Zoom en la latitud
+                    longitudeDelta: 0.01, // Zoom en la longitud
+                  }}
+                >
+                  {/* Solo renderizar el marcador si 'location' existe */}
+                  {location && (
+                    <View>
+                    <Marker 
+                      coordinate={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}
+                      image={require('../../assets/MapMarker.png')}
+                      anchor={{ x: 0.5, y: 1 }}
+                      centerOffset={{ x: 0.5, y: -20 }}
+                    />
+                    {actionRate<100 && (
+                    <Circle
+                      center={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}
+                      radius={actionRate*1000}
+                      strokeColor="rgba(182,181,181,0.8)"
+                      fillColor="rgba(182,181,181,0.5)"
+                      strokeWidth={2}
+                    />
+                    )}
+                    </View>
+                  )}
+                </MapView>
+              </View>
 
-              <TouchableOpacity onPress={() => setIsOnline(!isOnline)} className="flex-row w-full justify-start mt-5 pl-6 items-center">
-                <Text className="mr-4 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Online service</Text>
+              {direction? (
+                <View className="w-full px-4 flex-row justify-start items-center">
+                  <View className="flex-1 justify-center items-start">
+                  <Text className="mr-2">
+                    <Text className="font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Action rate - </Text>
+                    <Text className="font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">
+                      {actionRate === 100 ? 'full' : `${actionRate} km`}
+                    </Text>
+                  </Text>
+
+                  </View>
+                  
+                  <View className="flex-1 justify-center items-end">
+                  <Slider
+                    style={{ width: '100%', height:10 }} 
+                    minimumValue={0}
+                    maximumValue={100}
+                    step={1}
+                    value={actionRate}
+                    thumbImage={thumbImage}
+                    minimumTrackTintColor="#b6b5b5"
+                    maximumTrackTintColor="#474646"
+                    onValueChange={value => setActionRate(value)}
+                  />
+                  </View>
+                </View>
+              ) : null}
+
+              <TouchableOpacity onPress={() => setIsUnlocated(!isUnlocated)} className="flex-row w-full justify-start pl-4 items-center">
+                <Text className="mr-6 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Unlocated service</Text>
                 <View 
                   style={[
                     styles.checkbox, 
                     { borderColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E' }, 
-                    isOnline && { 
+                    isUnlocated && { 
                       backgroundColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131', 
                       borderWidth: 0 
                     }
                   ]}
                 >
-                  {isOnline && (
+                  {isUnlocated && (
                     <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5} />
                   )}
                 </View>
@@ -184,9 +228,9 @@ export default function CreateService6Screen() {
               </TouchableOpacity>
 
               <TouchableOpacity 
-              disabled={!isOnline || !direction}
-              onPress={() => navigation.navigate('CreateService7', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags})}
-              style={{opacity: isOnline || direction? 1.0: 0.5}}
+              disabled={!isUnlocated && !direction}
+              onPress={() => navigation.navigate('CreateService7', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate})}
+              style={{opacity: isUnlocated || direction? 1.0: 0.5}}
               className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
                   <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
               </TouchableOpacity>

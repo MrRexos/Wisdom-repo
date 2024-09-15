@@ -324,7 +324,6 @@ export default function SearchDirectionScreen() {
                 placeholder='Country/region...'
                 selectionColor={cursorColorChange}
                 placeholderTextColor={placeHolderTextColorChange}
-                autoFocus={true}
                 onChangeText={inputCountryChanged} 
                 value={country}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
@@ -340,7 +339,6 @@ export default function SearchDirectionScreen() {
                 placeholder='State...'
                 selectionColor={cursorColorChange}
                 placeholderTextColor={placeHolderTextColorChange}
-                autoFocus={true}
                 onChangeText={inputStateChanged} 
                 value={state}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
@@ -356,7 +354,6 @@ export default function SearchDirectionScreen() {
                 placeholder='City/town...'
                 selectionColor={cursorColorChange}
                 placeholderTextColor={placeHolderTextColorChange}
-                autoFocus={true}
                 onChangeText={inputCityChanged} 
                 value={city}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
@@ -372,7 +369,6 @@ export default function SearchDirectionScreen() {
                 placeholder='Street...'
                 selectionColor={cursorColorChange}
                 placeholderTextColor={placeHolderTextColorChange}
-                autoFocus={true}
                 onChangeText={inputStreetChanged} 
                 value={street}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
@@ -389,7 +385,6 @@ export default function SearchDirectionScreen() {
                   placeholder='Postal code...'
                   selectionColor={cursorColorChange}
                   placeholderTextColor={placeHolderTextColorChange}
-                  autoFocus={true}
                   onChangeText={inputPostalCodeChanged} 
                   value={postalCode}
                   keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
@@ -405,7 +400,6 @@ export default function SearchDirectionScreen() {
                   placeholder='Street number...'
                   selectionColor={cursorColorChange}
                   placeholderTextColor="#ff633e"
-                  autoFocus={true}
                   onChangeText={inputStreetNumberChanged} 
                   value={streetNumber}
                   keyboardType="number-pad"
@@ -424,7 +418,6 @@ export default function SearchDirectionScreen() {
                 placeholder='Floor, door, stair (optional)...'
                 selectionColor={cursorColorChange}
                 placeholderTextColor={placeHolderTextColorChange}
-                autoFocus={true}
                 onChangeText={inputAddress2Changed} 
                 value={address2}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
@@ -438,7 +431,7 @@ export default function SearchDirectionScreen() {
                 style={{opacity: streetNumber.length<1? 0.5: 1}}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Confirm</Text>
-                </TouchableOpacity>
+            </TouchableOpacity>
 
           </View>   
           </ScrollView>
