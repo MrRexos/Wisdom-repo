@@ -234,7 +234,7 @@ export default function CreateService8Screen() {
 
         <TouchableOpacity
           disabled={!description}
-          onPress={() => navigation.navigate('CreateService9', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences})}
+          onPress={() => navigation.navigate('CreateService9_0', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages})}
           style={{ opacity: description ? 1.0 : 0.5 }}
           className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center"
         >

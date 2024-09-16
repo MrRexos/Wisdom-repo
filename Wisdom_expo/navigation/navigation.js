@@ -47,6 +47,7 @@ import CreateService5Screen from '../screens/settings/CreateService5Screen';
 import CreateService6Screen from '../screens/settings/CreateService6Screen';
 import CreateService7Screen from '../screens/settings/CreateService7Screen';
 import CreateService8Screen from '../screens/settings/CreateService8Screen';
+import CreateService9_0Screen from '../screens/settings/CreateService9_0Screen';
 import CreateService9Screen from '../screens/settings/CreateService9Screen';
 import CreateService10Screen from '../screens/settings/CreateService10Screen';
 import CreateService11Screen from '../screens/settings/CreateService11Screen';
@@ -54,7 +55,6 @@ import CreateService12Screen from '../screens/settings/CreateService12Screen';
 import CreateService13Screen from '../screens/settings/CreateService13Screen';
 import ConfirmDirectionScreen from '../screens/home/ConfirmDirectionScreen';
 import SearchDirectionScreen from '../screens/home/SearchDirectionScreen';
-
 
 
 const Stack = createNativeStackNavigator();
@@ -99,6 +99,7 @@ export default function Navigation() {
           <Stack.Screen name="CreateService7" component={CreateService7Screen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="CreateService8" component={CreateService8Screen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="CreateService9" component={CreateService9Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="CreateService9_0" component={CreateService9_0Screen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="CreateService10" component={CreateService10Screen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="CreateService11" component={CreateService11Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
           <Stack.Screen name="CreateService12" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
@@ -260,6 +261,7 @@ function CreateServiceStackNavigator() {
         <Stack.Screen name="CreateService7" component={CreateService7Screen} options={{ animation: 'none', gestureEnabled: false }}/>
         <Stack.Screen name="CreateService8" component={CreateService8Screen} options={{ animation: 'none', gestureEnabled: false }}/>
         <Stack.Screen name="CreateService9" component={CreateService9Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CreateService9_0" component={CreateService9_0Screen} options={{ animation: 'none', gestureEnabled: false }}/>
         <Stack.Screen name="CreateService10" component={CreateService10Screen} options={{ animation: 'none', gestureEnabled: false }}/>
         <Stack.Screen name="CreateService11" component={CreateService11Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
         <Stack.Screen name="CreateService12" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }}/> 

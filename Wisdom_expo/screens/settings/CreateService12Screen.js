@@ -19,7 +19,7 @@ export default function CreateService12Screen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         <View className="flex-1 px-6 pt-5 pb-6">
-            <TouchableOpacity onPress={() => navigation.pop(12)}>
+            <TouchableOpacity onPress={() => navigation.pop(13)}>
                 <View className="flex-row justify-start">
                     <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
                 </View> 
