@@ -277,6 +277,7 @@ export default function CreateService7Screen() {
 
                   <TouchableOpacity
                     disabled={endDate && endDate < startDate || position.length === 0} 
+                    style={{ opacity: endDate && endDate < startDate || position.length === 0 ? 0.2 : 1 }}
                     className={`mt-3 justify-center items-center`}
                     onPress={() => handleSave()}
                   >
@@ -301,7 +302,7 @@ export default function CreateService7Screen() {
 
           <TouchableOpacity
             disabled={!description}
-            onPress={() => navigation.navigate('CreateService8', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate})}
+            onPress={() => navigation.navigate('CreateService8', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences})}
             style={{ opacity: description ? 1.0 : 0.5 }}
             className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center"
           >
