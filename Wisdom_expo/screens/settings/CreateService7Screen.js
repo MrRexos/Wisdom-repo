@@ -19,7 +19,7 @@ export default function CreateService7Screen() {
   const [position, setPosition] = useState('');
   const [place, setPlace] = useState('');
   const [experiences, setExperiences] = useState([]);
-  const [experienceItem, setExperienceItem] = useState([]);
+  const [experienceId, setExperienceId] = useState(1);
   const [showAddExperience, setShowAddExperience] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState();
@@ -85,11 +85,12 @@ export default function CreateService7Screen() {
   };
 
   const handleSave = () => {
-    experiences.push({position: position, place: place, startDate: startDate, endDate: endDate})
+    experiences.push({id: experienceId, position: position, place: place, startDate: startDate, endDate: endDate})
     setPosition('');
     setPlace('');
     setStartDate(new Date());
     setEndDate();
+    setExperienceId(experienceId+1);
     setShowAddExperience(false);
   };
 
@@ -99,6 +100,10 @@ export default function CreateService7Screen() {
     setStartDate(new Date());
     setEndDate();
     setShowAddExperience(false);
+  };
+
+  const deleteExperience = (experienceId) => {
+    setExperiences(experiences.filter(item => item.id !== experienceId))
   };
 
 
@@ -122,18 +127,36 @@ export default function CreateService7Screen() {
             </View>
 
             {experiences.length>0? (
-              <View className="flex-1 justify-center items-center">
+              <View className="flex-1 justify-center items-center mt-10">
 
                 {experiences.map((exp, index) => (
-                  <View key={index} className="w-full py-3 px-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl mb-3">
-                    <Text className="font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2]">{exp.position}</Text>
-                    <View className="mt-3 flex-row justify-between items-center">
-                      <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{exp.place}</Text>
-                      <Text>
-                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{exp.startDate.toLocaleDateString()} </Text>
-                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]"> - </Text>
-                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{exp.endDate ? exp.endDate.toLocaleDateString() : 'Still here'}</Text>
-                      </Text>
+                  <View key={index} className="flex-row w-full justify-center items-center">
+
+                    <View className="w-[30] h-full items-center pr-5">
+                      <View className={`flex-1  bg-[#b6b5b5] dark:bg-[#706F6E] ${index>0 && 'w-[2]'}`}/>
+                      <View className={`w-4 h-4 rounded-full border-2 border-[#444343] dark:border-[#f2f2f2] ${exp.endDate? null : colorScheme == 'dark' ? 'bg-[#f2f2f2]' : 'bg-[#444343]'}`}>
+                      </View>
+                      <View className={`flex-1 w-[2] bg-[#b6b5b5] dark:bg-[#706F6E] ${index===experiences.length-1 ? 'w-[0]' : 'w-[2]'}`}/>
+                    </View>
+
+                    <View className="flex-1 py-3 px-5 mb-3 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
+
+                      <View className="mt-1 flex-row justify-between">
+                        <Text className="font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2]">{exp.position}</Text>
+                        <TouchableOpacity onPress={() => deleteExperience(exp.id)} className="justify-center items-end">
+                          <XMarkIcon size={21} color={iconColor} strokeWidth="2" />
+                        </TouchableOpacity>
+                      </View>
+
+                      <View className="mt-3 flex-row justify-between items-center mb-[6]">
+                        <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{exp.place}</Text>
+                        <Text>
+                          <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{exp.startDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</Text>
+                          <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]"> - </Text>
+                          <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{exp.endDate ? exp.endDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Still here'}</Text>
+                        </Text>
+                      </View>
+                      
                     </View>
                   </View>
                 ))}
@@ -151,7 +174,7 @@ export default function CreateService7Screen() {
 
             ): (
               <View className="flex-1 justify-center items-center">
-                <View className="w-full mt-7 py-4 px-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
+                <View className="w-full mt-7 mb-7 py-4 px-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
 
                   <TouchableOpacity onPress={() => handleCloseAddExperience()} className="justify-center items-end">
                     <XMarkIcon size={23} color={iconColor} strokeWidth="2" />
