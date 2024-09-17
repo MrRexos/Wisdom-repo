@@ -53,7 +53,6 @@ import CreateService10Screen from '../screens/settings/CreateService10Screen';
 import CreateService11Screen from '../screens/settings/CreateService11Screen';
 import CreateService12Screen from '../screens/settings/CreateService12Screen';
 import CreateService13Screen from '../screens/settings/CreateService13Screen';
-import ConfirmDirectionScreen from '../screens/home/ConfirmDirectionScreen';
 import SearchDirectionScreen from '../screens/home/SearchDirectionScreen';
 
 
@@ -104,7 +103,6 @@ export default function Navigation() {
           <Stack.Screen name="CreateService11" component={CreateService11Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
           <Stack.Screen name="CreateService12" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
           <Stack.Screen name="CreateService13" component={CreateService13Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
-          <Stack.Screen name="ConfirmDirection" component={ConfirmDirectionScreen}/>  
           <Stack.Screen name="SearchDirection" component={SearchDirectionScreen}/>           
         </Stack.Navigator>
       </NavigationContainer>
@@ -206,7 +204,6 @@ function HomeStackNavigator() {
   return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
-          <Stack.Screen name="ConfirmDirection" component={ConfirmDirectionScreen}/>  
           <Stack.Screen name="SearchDirection" component={SearchDirectionScreen}/> 
       </Stack.Navigator>
   );
@@ -266,7 +263,6 @@ function CreateServiceStackNavigator() {
         <Stack.Screen name="CreateService11" component={CreateService11Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
         <Stack.Screen name="CreateService12" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
         <Stack.Screen name="CreateService13" component={CreateService13Screen} options={{ animation: 'none', gestureEnabled: false }}/>
-        <Stack.Screen name="ConfirmDirection" component={ConfirmDirectionScreen}/>  
         <Stack.Screen name="SearchDirection" component={SearchDirectionScreen}/> 
     </Stack.Navigator>
   );
