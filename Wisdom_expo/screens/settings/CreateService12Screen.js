@@ -3,8 +3,8 @@ import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text} from 'r
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
-import { useNavigation } from '@react-navigation/native';
-import {XMarkIcon} from 'react-native-heroicons/outline';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import {XMarkIcon, ChevronLeftIcon} from 'react-native-heroicons/outline';
 
 
 
@@ -13,20 +13,24 @@ export default function CreateService12Screen() {
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
-
+  const route = useRoute();
+  const {
+    title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate,
+    experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia
+  } = route.params;
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         <View className="flex-1 px-6 pt-5 pb-6">
-            <TouchableOpacity onPress={() => navigation.pop(13)}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
                 <View className="flex-row justify-start">
-                    <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
+                    <ChevronLeftIcon size={25} color={iconColor} strokeWidth="2" />
                 </View> 
             </TouchableOpacity>
             <View className="flex-1 justify-center items-start  ">
               <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">Remember</Text>
-              <Text className="font-inter- bold text-[24px] text-[#b6b5b5] dark:text-[#706f6e]">all communications and payments must be made through the application, otherwise, you will get strikes that can lead to account suspension and legal violations.</Text>
+              <Text className="font-inter-bold text-[24px] text-[#b6b5b5] dark:text-[#706f6e]">all communications and payments must be made through the application, otherwise, you will get strikes that can lead to account suspension and legal violations.</Text>
             </View>
             <View className="justify-center items-center">
                 <Text className="pb-5">
@@ -36,7 +40,7 @@ export default function CreateService12Screen() {
                 </Text>
                 <TouchableOpacity 
                 disabled={false}
-                onPress={() => navigation.navigate('CreateService13')}
+                onPress={() => navigation.navigate('CreateService13', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia})}
                 style={{opacity: 1}}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[50] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Accept Wisdom terms</Text>
