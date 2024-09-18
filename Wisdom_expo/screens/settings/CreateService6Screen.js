@@ -195,7 +195,7 @@ export default function CreateService6Screen() {
                 </View>
               ) : null}
 
-              <TouchableOpacity onPress={() => setIsUnlocated(!isUnlocated)} className="flex-row w-full justify-start pl-4 items-center">
+              <TouchableOpacity onPress={() => setIsUnlocated(!isUnlocated)} className="flex-row w-full justify-start pl-4 items-center mt-1">
                 <Text className="mr-6 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Unlocated service</Text>
                 <View 
                   style={[

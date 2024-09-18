@@ -16,12 +16,28 @@ export default function CreateService10Screen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages} = route.params;
-  const [a, seta] = useState();
+  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice} = route.params;
+  const [typeSelected, setTypeSelected] = useState(1);
+  const [allowDiscounts, setAllowDiscounts] = useState(true);
+  const [discountRate, setDiscountRate] = useState(10);
+  const [discountRateText, setDiscountRateText] = useState('10');
+
+
+  const options  = [
+    {
+        label: 'Don’t add discounts',
+        value: false,
+    },
+    {
+        label: 'Add discounts for recurrent bookings',
+        value: true,
+    },
+  ]
   
 
   const inputChanged = (text) => {
-    setTitle(text);
+    setDiscountRateText(text);
+    setDiscountRate(parseInt(text));
   };
 
 
@@ -38,10 +54,49 @@ export default function CreateService10Screen() {
             </TouchableOpacity>
 
             <View className=" justify-center items-center ">
-              <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">What family and category does it belong to?</Text>
+              <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">Allow discounts</Text>
             </View>
 
-            <View className="flex-1 px-9 pb-[80] justify-center items-center">
+            <View className="flex-1 px-5 pt-[80] justify-start items-start">
+
+                {options.map(({label, value}, index) => {
+                    const isActive = typeSelected === index;
+                    return (
+                        <TouchableOpacity
+                            key={index}
+                            onPress={() => {setTypeSelected(index); setAllowDiscounts(value)}}
+                            className={isActive? `mb-5 p-5 pr-7 w-full justify-start items-start rounded-xl bg-[#e0e0e0] dark:bg-[#3d3d3d] border-[1px] border-[#b6b5b5] dark:border-[#706f6e]` : `mb-5 p-5 pr-7 justify-start items-start w-full rounded-xl border-[1px] border-[#b6b5b5] dark:border-[#706f6e]`}
+                            >
+                            <View className="flex-row w-full items-center">
+                                <View className="mr-5 p-[3] h-5 w-5 rounded-full border-[1px] border-[#b6b5b5] dark:border-[#706f6e]">
+                                    {isActive && (<View className="flex-1 rounded-full bg-[#515150] dark:bg-[#d4d4d3]"/>)}
+                                </View>
+                                <Text className={isActive? `font-inter-medium text-[14px] text-[#515150] dark:text-[#d4d4d3]`: `font-inter-medium text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>{label}</Text>
+                            </View>
+
+                            {index===1 && (
+                              <View className="ml-10 mt-3 flex-row">
+                                <Text className={isActive? `font-inter-bold text-[14px] text-[#323131] dark:text-[#fcfcfc]`: `font-inter-bold text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>-</Text>
+                                <TextInput
+                                  placeholder="X"
+                                  selectionColor={cursorColorChange}
+                                  placeholderTextColor={placeholderTextColorChange}
+                                  onChangeText={inputChanged}
+                                  editable={false}
+                                  value={discountRateText}
+                                  keyboardType="numeric"
+                                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                                  className={isActive? `font-inter-bold text-[14px] text-[#323131] dark:text-[#fcfcfc]`: `font-inter-bold text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}
+                                />
+                                <Text className={isActive? `font-inter-bold text-[14px] text-[#323131] dark:text-[#fcfcfc]`: `font-inter-bold text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>%</Text>
+                                <Text numberOfLines={1} className={isActive? `font-inter-medium flex-1 text-[14px] text-[#979797] `: `font-inter-medium flex-1 text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>{'.'.repeat(80)}</Text>
+                                <Text className={isActive? `font-inter-semibold text-[14px] text-[#979797] `: `font-inter-semibold text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>{finalPrice-(finalPrice*0.1).toFixed(1)} €</Text>
+                              </View>
+                            )}
+                             
+                        </TouchableOpacity>
+                    );
+                })}
 
             </View>
 
@@ -57,7 +112,7 @@ export default function CreateService10Screen() {
 
               <TouchableOpacity 
               disabled={!family && !category}
-              onPress={() => navigation.navigate('CreateService11', {title, family, category})}
+              onPress={() => {navigation.navigate('CreateService11', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate})}}
               style={{opacity: family && category? 1.0: 0.5}}
               className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
                   <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
