@@ -1,5 +1,5 @@
-import React, { useState, useEffect  } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, ScrollView, Keyboard } from 'react-native';
+import React, { useState, useEffect, useRef  } from 'react';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, ScrollView, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -17,6 +17,7 @@ export default function CreateService4Screen() {
   const [description, setDescription] = useState('');
   const maxLength = 2000;
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const inputRef = useRef(null);
 
   const inputChanged = (text) => {
     setDescription(text);
@@ -67,6 +68,7 @@ export default function CreateService4Screen() {
             </View>
 
             <View className="flex-1 w-full mt-[50]">
+              <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
               <View className="w-full min-h-[300] bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl py-4 px-5 ">
 
                 {description.length > 0 ? (
@@ -83,6 +85,7 @@ export default function CreateService4Screen() {
                   placeholderTextColor={placeholderTextColorChange}
                   onChangeText={inputChanged}
                   value={description}
+                  ref={inputRef}
                   keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                   className="w-full text-[15px] text-[#515150] dark:text-[#d4d4d3]"
                   multiline
@@ -90,6 +93,7 @@ export default function CreateService4Screen() {
                   style={{ textAlignVertical: 'top' }}
                 />
               </View>
+              </TouchableWithoutFeedback>
               
               {/* Contador de palabras */}
               <View className="w-full flex-row justify-end">

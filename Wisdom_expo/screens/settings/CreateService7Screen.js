@@ -182,7 +182,7 @@ export default function CreateService7Screen() {
 
                   <View className="mb-5 w-full justify-center items-start">
                     <Text className="mb-2 font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Position or study...</Text>
-                    <View className="w-full py-3 px-5 justify-center items-start rounded-full bg-[#f2f2f2] dark:bg-[#272626]">           
+                    <View className="w-full  px-5 justify-center items-start rounded-full bg-[#f2f2f2] dark:bg-[#272626]">           
                       <TextInput
                         placeholder='Position or study...'
                         selectionColor={cursorColorChange}
@@ -190,14 +190,14 @@ export default function CreateService7Screen() {
                         onChangeText={inputPositionChanged} 
                         value={position}
                         keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                        className="font-inter-medium w-full text-[13px] text-[#444343] dark:text-[#f2f2f2]"           
+                        className="py-3 font-inter-medium w-full text-[13px] text-[#444343] dark:text-[#f2f2f2]"           
                       />
                     </View>
                   </View>
 
                   <View className="mb-7 w-full justify-center items-start">
                     <Text className="mb-2 font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Place or company...</Text>
-                    <View className="w-full py-3 px-5 justify-center items-start rounded-full bg-[#f2f2f2] dark:bg-[#272626]">           
+                    <View className="w-full px-5 justify-center items-start rounded-full bg-[#f2f2f2] dark:bg-[#272626]">           
                       <TextInput
                         placeholder='Place or company...'
                         selectionColor={cursorColorChange}
@@ -205,7 +205,7 @@ export default function CreateService7Screen() {
                         onChangeText={inputPlaceChanged} 
                         value={place}
                         keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                        className="font-inter-medium w-full text-[13px] text-[#444343] dark:text-[#f2f2f2]"           
+                        className="py-3 font-inter-medium w-full text-[13px] text-[#444343] dark:text-[#f2f2f2]"           
                       />
                     </View>
                   </View>

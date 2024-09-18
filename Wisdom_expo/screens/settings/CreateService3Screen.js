@@ -6,6 +6,8 @@ import i18n from '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/outline';
 import Triangle from '../../assets/triangle';
+import api from '../../utils/api.js';
+
 
 
 
@@ -22,18 +24,39 @@ export default function CreateService3Screen() {
   const [category, setCategory] = useState(null);
   const [showFamilyDropdown, setShowFamilyDropdown] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [families, setFamilies] = useState([]);
+  const [categories, setCategories] = useState([]);
   
 
-  const families = ['Online', 'Traditional', 'Educational', 'Design', 'Home'];
-  const categories = ['Programer', 'Web', 'Image', 'AI'];
 
-  const inputChanged = (text) => {
-    setTitle(text);
+  const getFamilies = async () => {
+    try {
+      const response = await api.get(`/api/service-family`);
+      setFamilies(response.data)
+      console.log(response.data)
+    } catch (error) {
+      console.error('Error al obtener los items:', error);
+    }
   };
 
-  const handleFamilyPress = (option) => {
+  const getCategories= async (familyId) => {
+    try {
+      const response = await api.get(`/api/service-family/${familyId}/categories`);
+      setCategories(response.data)
+      console.log(response.data)
+    } catch (error) {
+      console.error('Error al obtener los items:', error);
+    }
+  };
+
+  useEffect(() => {
+    getFamilies();
+  }, []);
+
+  const handleFamilyPress = (option, familyId) => {
     setFamily(option);
     setShowFamilyDropdown(false);
+    getCategories(familyId);
   };
 
   const handleCategoryPress = (option) => {
@@ -42,16 +65,17 @@ export default function CreateService3Screen() {
   };
 
   const renderFamilyItem = ({ item }) => (
-    <TouchableOpacity className="my-3" onPress={() => handleFamilyPress(item)}>
-      <Text className="ml-6 text-[15px] text-[#444343] dark:text-[#f2f2f2]">{item}</Text>
+    <TouchableOpacity className="py-3" onPress={() => handleFamilyPress(item.service_family, item.id)}>
+      <Text className="ml-6 text-[15px] text-[#444343] dark:text-[#f2f2f2]">{item.service_family}</Text>
     </TouchableOpacity>
   );
 
   const renderCategoryItem = ({ item }) => (
-    <TouchableOpacity className="my-3" onPress={() => handleCategoryPress(item)}>
-      <Text className="ml-6 text-[15px] text-[#444343] dark:text-[#f2f2f2]">{item}</Text>
+    <TouchableOpacity className="py-3" onPress={() => handleCategoryPress(item.service_category_name)}>
+      <Text className="ml-6 text-[15px] text-[#444343] dark:text-[#f2f2f2]">{item.service_category_name}</Text>
     </TouchableOpacity>
   );
+
 
 
   return (

@@ -44,7 +44,7 @@ export default function CreateService2Screen() {
                 onChangeText={inputChanged}
                 value={title}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                className="h-[32] w-full flex-1 font-inter-medium text-[18px] text-[#515150] dark:text-[#d4d4d3]"
+                className="h-[50] w-full flex-1 font-inter-medium text-[18px] text-[#515150] dark:text-[#d4d4d3]"
                 />
               </View>
             </View>

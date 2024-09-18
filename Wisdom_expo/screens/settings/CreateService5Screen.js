@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Keyboard} from 'react-native';
+import React, { useEffect, useState, useRef } from 'react'
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Keyboard, TouchableWithoutFeedback} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
@@ -27,6 +27,8 @@ export default function CreateService5Screen() {
   const [tagsText, setTagsText] = useState('');
   const [tags, setTags] = useState([]);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const inputRef = useRef(null);
+  const input2Ref = useRef(null);
 
   const languages = [
     { id: 1, label: 'Catalan', abbreviation: 'cat' },
@@ -208,7 +210,7 @@ export default function CreateService5Screen() {
                         )}
                       </View>
                     </TouchableOpacity>                                    
-                    
+                    <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
                     <View className="min-h-[100] bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl py-3 px-4 mt-8 w-full" >
                       
                       {hobbies.length > 0 ? (
@@ -225,6 +227,7 @@ export default function CreateService5Screen() {
                         placeholderTextColor={placeholderTextColorChange}
                         onChangeText={inputHobbiesChanged}
                         value={hobbies}
+                        ref={inputRef}
                         keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                         className="w-full text-[14px] text-[#515150] dark:text-[#d4d4d3]"
                         multiline
@@ -232,6 +235,7 @@ export default function CreateService5Screen() {
                         style={{ textAlignVertical: 'top' }}
                       />
                     </View>
+                    </TouchableWithoutFeedback>
                      
                   </View>
                 ): null }
@@ -250,7 +254,8 @@ export default function CreateService5Screen() {
                 </TouchableOpacity> 
 
                 {showTags ? (
-                  <View className="w-full justify-center items-center">                                     
+                  <View className="w-full justify-center items-center">  
+                    <TouchableWithoutFeedback onPress={() => input2Ref.current?.focus()}>                                
                     <View className="min-h-[150] bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl py-3 px-4 mt-8 w-full" >
 
                       {/* Display existing tags */}
@@ -271,6 +276,7 @@ export default function CreateService5Screen() {
                           placeholderTextColor={placeholderTextColorChange}
                           onChangeText={inputTagsChanged}
                           value={tagsText}
+                          ref={input2Ref}
                           onSubmitEditing={handleAddTag} // Handle adding tag on Enter press
                           keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                           disabled={tags.length > 14}
@@ -279,9 +285,9 @@ export default function CreateService5Screen() {
                         />
 
                       </View>                  
-
                       
                     </View>
+                    </TouchableWithoutFeedback>   
                   </View>
                 ) : null }
 
