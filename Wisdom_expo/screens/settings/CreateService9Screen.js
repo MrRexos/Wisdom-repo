@@ -63,34 +63,42 @@ export default function CreateService9Screen() {
             </View>
           </View>
 
-          <View className="pb-7 px-8 justify-center items-center">
-            <TouchableOpacity onPress={() => setShowDetails(!showDetails)} className="flex-row justify-center items-center">
-              <Text className="mr-3 font-inter-semibold text-center text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">The client pays {finalPrice} €</Text>
-              <ChevronDownIcon size={15} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} strokeWidth="2.5" />
-            </TouchableOpacity>
-            {showDetails && (
-              <View className="justify-center items-start w-full">
-                <Text className="mt-10 font-inter-medium  text-[14px] ">
-                  <Text className="text-[#b6b5b5] dark:text-[#706f6e]">You recibes</Text>
-                  <Text className="text-[#b6b5b5] dark:text-[#706f6e]">.............</Text>
-                  <Text className="font-inter-semibold text-[#323131] dark:text-[#fcfcfc]">{priceValue} €</Text>
-                </Text>
-                <View className="mt-6 flex-row items-end ">
-                  <Text className=" font-inter-medium  text-[14px]text-[#b6b5b5] dark:text-[#706f6e]">Quality commission</Text>
-                  <View className="flex-1  h-[1] bg-red-300"></View>
-                  <Text className="text-[14px]  font-inter-semibold text-[#74a450]">+{finalPrice-priceValue} €</Text>
+          {priceValue && (
+            <View className="pb-7 px-8 justify-center items-center">
+              <TouchableOpacity onPress={() => setShowDetails(!showDetails)} className="flex-row justify-center items-center">
+                <Text className="mr-3 font-inter-semibold text-center text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">The client pays {finalPrice} €</Text>
+                {showDetails? (
+                  <ChevronUpIcon size={15} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} strokeWidth="2.5" />
+                ) : (
+                  <ChevronDownIcon size={15} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} strokeWidth="2.5" />
+                )}
+              </TouchableOpacity>
+              {showDetails && (
+                <View className="justify-center items-start w-full">
+
+                  <View className="mt-8 flex-row">
+                    <Text className="font-inter-medium  text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">You recibes</Text>
+                    <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
+                    <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">{priceValue} €</Text>
+                  </View>
+
+                  <View className="mt-6 flex-row">
+                    <Text className="font-inter-medium  text-[14px]text-[#b6b5b5] dark:text-[#706f6e]">Quality commission</Text>
+                    <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
+                    <Text className="text-[14px] font-inter-semibold text-[#74a450]">+{finalPrice-priceValue} €</Text>
+                  </View>
+                  
+                  
+                  <View className="mt-6 mb-6 flex-row">
+                    <Text className="font-inter-medium  text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">Client final price</Text>
+                    <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
+                    <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">{finalPrice} €</Text>
+                  </View>
+                  
                 </View>
-                
-                
-                <Text className="mt-6 font-inter-medium  text-[14px] ">
-                  <Text className="text-[#b6b5b5] dark:text-[#706f6e]">Client final price</Text>
-                  <Text className="text-[#b6b5b5] dark:text-[#706f6e]">.............</Text>
-                  <Text className="font-inter-semibold text-[#323131] dark:text-[#fcfcfc]">{finalPrice} €</Text>
-                </Text>
-                
-              </View>
-            )}
-          </View>
+              )}
+            </View>
+          )}
 
           <View className="flex-row justify-center items-center">
             <TouchableOpacity
