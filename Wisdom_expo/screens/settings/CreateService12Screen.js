@@ -16,7 +16,7 @@ export default function CreateService12Screen() {
   const route = useRoute();
   const {
     title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate,
-    experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia
+    experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk
   } = route.params;
 
   return (
@@ -40,9 +40,9 @@ export default function CreateService12Screen() {
                 </Text>
                 <TouchableOpacity 
                 disabled={false}
-                onPress={() => navigation.navigate('CreateService13', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia})}
+                onPress={() => navigation.navigate('CreateService13', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk})}
                 style={{opacity: 1}}
-                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[50] rounded-full items-center justify-center" >
+                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Accept Wisdom terms</Text>
                 </TouchableOpacity>
             </View>

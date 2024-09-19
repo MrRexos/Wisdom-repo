@@ -1,10 +1,14 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {XMarkIcon, ChevronLeftIcon} from 'react-native-heroicons/outline';
+import api from '../../utils/api.js';
+import { getDataLocally } from '../../utils/asyncStorage';
+import axios from 'axios';
+
 
 
 
@@ -16,8 +20,102 @@ export default function CreateService13Screen() {
   const route = useRoute();
   const {
     title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate,
-    experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia
+    experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk
   } = route.params;
+  const [userId, setUserId] = useState();
+
+  const getUserId = async () => {
+    const userData = await getDataLocally('user');
+    const user = JSON.parse(userData);
+    setUserId(user.id);
+  }
+
+  const transformedExperiences = experiences.map(exp => ({
+    experience_title: exp.position,
+    place_name: exp.place,
+    experience_started_date: exp.startDate,
+    experience_end_date: exp.endDate || null  // Convertir `undefined` a `null`
+  }));
+
+  useEffect( () => {
+    getUserId();
+  },[]);
+
+  const uploadImages = async (images) => {
+  
+    const formData = new FormData();
+
+    images.forEach((image, index) => {
+      formData.append('files', {
+        uri: image.uri,
+        type: image.type,
+        name: `image${index + 1}.jpg`,
+      });
+    });
+
+    console.log(formData)
+  
+    try {
+      const res = await axios.post('https://wisdom-app-34b3fb420f18.herokuapp.com/api/upload-images', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return res.data
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const createService = async (imagesURLS=[]) => {
+    
+    try {
+
+      const response = await api.post('/api/service', {
+        service_title:title,
+        user_id:userId,
+        description:description,
+        service_category_id:category.service_category_id,
+        price:finalPrice,
+        price_type:priceType,
+        latitude:location? location.lat: null,
+        longitude:location? location.lng: null,
+        action_rate:actionRate,
+        user_can_ask:allowAsk,
+        user_can_consult:allowConsults,
+        price_consult:consultPrice,
+        consult_via_provide:consultVia,
+        consult_via_username:null,
+        consult_via_url:null,
+        is_individual:isIndividual,
+        allow_discounts: allowDiscounts,
+        discount_rate: discountRate,
+        languages: selectedLanguages,      
+        tags: tags,           
+        experiences: transformedExperiences,    
+        images: imagesURLS,
+        hobbies: hobbies
+      });
+
+      console.log('User created:', response.data);
+      navigation.pop(15)
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const publish = async () => {
+    try {
+      let imageURLS = [];
+      if (serviceImages.length > 0) {
+        imageURLS = await uploadImages(serviceImages);
+      }
+      await createService(imageURLS);
+    } catch (error) {
+      console.error('Error publishing service:', error);
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
@@ -40,7 +138,7 @@ export default function CreateService13Screen() {
             <View className="justify-center items-center">
                 <TouchableOpacity 
                 disabled={false}
-                onPress={() => navigation.navigate('CreateService13', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia})}
+                onPress={() => publish()}
                 style={{
                   opacity: 1,
                   shadowColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131',

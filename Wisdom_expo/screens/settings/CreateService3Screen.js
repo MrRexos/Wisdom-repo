@@ -33,7 +33,6 @@ export default function CreateService3Screen() {
     try {
       const response = await api.get(`/api/service-family`);
       setFamilies(response.data)
-      console.log(response.data)
     } catch (error) {
       console.error('Error al obtener los items:', error);
     }
@@ -43,7 +42,6 @@ export default function CreateService3Screen() {
     try {
       const response = await api.get(`/api/service-family/${familyId}/categories`);
       setCategories(response.data)
-      console.log(response.data)
     } catch (error) {
       console.error('Error al obtener los items:', error);
     }
@@ -65,13 +63,13 @@ export default function CreateService3Screen() {
   };
 
   const renderFamilyItem = ({ item }) => (
-    <TouchableOpacity className="py-3" onPress={() => handleFamilyPress(item.service_family, item.id)}>
+    <TouchableOpacity className="py-3" onPress={() => handleFamilyPress(item, item.id)}>
       <Text className="ml-6 text-[15px] text-[#444343] dark:text-[#f2f2f2]">{item.service_family}</Text>
     </TouchableOpacity>
   );
 
   const renderCategoryItem = ({ item }) => (
-    <TouchableOpacity className="py-3" onPress={() => handleCategoryPress(item.service_category_name)}>
+    <TouchableOpacity className="py-3" onPress={() => handleCategoryPress(item)}>
       <Text className="ml-6 text-[15px] text-[#444343] dark:text-[#f2f2f2]">{item.service_category_name}</Text>
     </TouchableOpacity>
   );
@@ -95,7 +93,7 @@ export default function CreateService3Screen() {
 
               <TouchableOpacity onPress={() => {setShowFamilyDropdown(!showFamilyDropdown); setShowCategoryDropdown(false);}} className="w-full px-6 py-4 bg-[#fcfcfc] dark:bg-[#323131] rounded-xl flex-row justify-between items-center">
                 <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">
-                  {family ? family : "Choose family"}
+                  {family ? family.service_family : "Choose family"}
                 </Text>
                 {showFamilyDropdown? (
                   <ChevronUpIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2" />
@@ -127,7 +125,7 @@ export default function CreateService3Screen() {
 
               <TouchableOpacity onPress={() => {setShowCategoryDropdown(!showCategoryDropdown); setShowFamilyDropdown(false);}} disabled={!family} style={{opacity: family ? 1.0 : 0.4}} className="mt-8 w-full px-6 py-4 bg-[#fcfcfc] dark:bg-[#323131] rounded-xl flex-row justify-between items-center">
                 <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">                  
-                  {category ? category : "Choose category"}
+                  {category ? category.service_category_name : "Choose category"}
                 </Text>
                 {showCategoryDropdown? (
                   <ChevronUpIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2" />

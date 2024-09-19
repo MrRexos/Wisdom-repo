@@ -31,7 +31,7 @@ export default function CreateService5Screen() {
   const input2Ref = useRef(null);
 
   const languages = [
-    { id: 1, label: 'Catalan', abbreviation: 'cat' },
+    { id: 1, label: 'Catalan', abbreviation: 'ca' },
     { id: 2, label: 'Spanish', abbreviation: 'es' },
     { id: 3, label: 'English', abbreviation: 'en' },
     { id: 4, label: 'French', abbreviation: 'fr' },

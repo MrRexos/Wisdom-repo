@@ -36,7 +36,7 @@ export default function CreateService2Screen() {
               <Text className="mt-5 font-inter-bold text-[16px] text-center text-[#b6b5b5] dark:text-[#706f6e]">This will be the public title</Text>
             </View>
             <View className="flex-1 px-4 pb-[60] justify-center items-center">
-              <View className="w-full h-8 p-2 border-b-[1px] border-[#444343] dark:border-[#f2f2f2]">
+              <View className="w-full h-10 p-2 border-b-[1px] border-[#444343] dark:border-[#f2f2f2]">
                 <TextInput
                 placeholder='Service title...'
                 selectionColor={cursorColorChange}

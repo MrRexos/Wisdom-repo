@@ -17,7 +17,7 @@ export default function CreateService11Screen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate} = route.params;
+  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowAsk} = route.params;
   const [typeSelected, setTypeSelected] = useState(1);
   const [allowConsults, setAllowConsults] = useState(true);
   const [consultPriceText, setConsultPriceText] = useState('5');
@@ -56,7 +56,7 @@ export default function CreateService11Screen() {
           
           <View className="flex-1 px-6 pt-5 pb-6">
 
-              <TouchableOpacity onPress={() => navigation.pop(12)}>
+              <TouchableOpacity onPress={() => navigation.pop(13)}>
                   <View className="flex-row justify-start">
                       <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
                   </View> 
@@ -154,7 +154,7 @@ export default function CreateService11Screen() {
 
                 <TouchableOpacity 
                 disabled={allowConsults? consultVia.length<1 || !consultPrice? true : false: false}
-                onPress={() => {navigation.navigate('CreateService12', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia})}}
+                onPress={() => {navigation.navigate('CreateService12', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk})}}
                 style={{opacity: allowConsults? consultVia.length<1 || !consultPrice? 0.5 : 1: 1}}
                 className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
