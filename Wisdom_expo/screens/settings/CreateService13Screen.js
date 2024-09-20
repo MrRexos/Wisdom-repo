@@ -70,7 +70,6 @@ export default function CreateService13Screen() {
   const createService = async (imagesURLS=[]) => {
     
     try {
-
       const response = await api.post('/api/service', {
         service_title:title,
         user_id:userId,
@@ -97,6 +96,8 @@ export default function CreateService13Screen() {
         hobbies: hobbies
       });
 
+      console.log(transformedExperiences)
+
       console.log('User created:', response.data);
       navigation.pop(15)
 
@@ -109,8 +110,9 @@ export default function CreateService13Screen() {
     try {
       let imageURLS = [];
       if (serviceImages.length > 0) {
-        imageURLS = await uploadImages(serviceImages);
+        imageURLS = await uploadImages(serviceImages);       
       }
+      console.log(imageURLS)
       await createService(imageURLS);
     } catch (error) {
       console.error('Error publishing service:', error);
