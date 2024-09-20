@@ -56,7 +56,7 @@ import CreateService10Screen from '../screens/settings/CreateService10Screen';
 import CreateService11Screen from '../screens/settings/CreateService11Screen';
 import CreateService12Screen from '../screens/settings/CreateService12Screen';
 import CreateService13Screen from '../screens/settings/CreateService13Screen';
-
+import SearchDirectionScreen from '../screens/home/SearchDirectionScreen';
 import BookingScreen from '../screens/home/BookingScreen';
 import ConfirmPaymentScreen from '../screens/home/ConfirmPaymentScreen';
 import PaymentMethodScreen from '../screens/home/PaymentMethodScreen';
