@@ -15,6 +15,8 @@ import Suitcase from "../assets/Suitcase.tsx"
 import SuitcaseFill from "../assets/SuitcaseFill.tsx"
 
 import React from 'react'
+
+
 import WelcomeVideoScreen from '../screens/start/WelcomeVideoScreen';
 import LoadingScreen from '../screens/start/LoadingScreen';
 import SettingsScreen from '../screens/settings/SettingsScreen';
@@ -54,7 +56,15 @@ import CreateService10Screen from '../screens/settings/CreateService10Screen';
 import CreateService11Screen from '../screens/settings/CreateService11Screen';
 import CreateService12Screen from '../screens/settings/CreateService12Screen';
 import CreateService13Screen from '../screens/settings/CreateService13Screen';
-import SearchDirectionScreen from '../screens/home/SearchDirectionScreen';
+
+import BookingScreen from '../screens/home/BookingScreen';
+import ConfirmPaymentScreen from '../screens/home/ConfirmPaymentScreen';
+import PaymentMethodScreen from '../screens/home/PaymentMethodScreen';
+import ResultsScreen from '../screens/home/ResultsScreen';
+import SearchScreen from '../screens/home/SearchScreen';
+import SearchServiceScreen from '../screens/home/SearchServiceScreen';
+import ServiceProfileScreen from '../screens/home/ServiceProfileScreen';
+
 
 
 const Stack = createNativeStackNavigator();
@@ -105,7 +115,13 @@ export default function Navigation() {
           <Stack.Screen name="CreateService11" component={CreateService11Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
           <Stack.Screen name="CreateService12" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
           <Stack.Screen name="CreateService13" component={CreateService13Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
-          <Stack.Screen name="SearchDirection" component={SearchDirectionScreen}/>           
+          <Stack.Screen name="Booking" component={BookingScreen}/>
+          <Stack.Screen name="ConfirmPayment" component={ConfirmPaymentScreen}/>
+          <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen}/> 
+          <Stack.Screen name="Results" component={ResultsScreen}/> 
+          <Stack.Screen name="Search" component={SearchScreen}/> 
+          <Stack.Screen name="SearchService" component={SearchServiceScreen}/> 
+          <Stack.Screen name="ServiceProfile" component={ServiceProfileScreen}/> 
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -206,6 +222,13 @@ function HomeStackNavigator() {
   return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
+          <Stack.Screen name="Booking" component={BookingScreen}/>
+          <Stack.Screen name="ConfirmPayment" component={ConfirmPaymentScreen}/>
+          <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen}/> 
+          <Stack.Screen name="Results" component={ResultsScreen}/> 
+          <Stack.Screen name="Search" component={SearchScreen}/> 
+          <Stack.Screen name="SearchService" component={SearchServiceScreen}/> 
+          <Stack.Screen name="ServiceProfile" component={ServiceProfileScreen}/> 
           <Stack.Screen name="SearchDirection" component={SearchDirectionScreen}/> 
       </Stack.Navigator>
   );
