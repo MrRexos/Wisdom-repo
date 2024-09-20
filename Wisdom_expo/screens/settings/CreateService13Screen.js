@@ -95,12 +95,8 @@ export default function CreateService13Screen() {
         images: imagesURLS,
         hobbies: hobbies
       });
-
-      console.log(transformedExperiences)
-
       console.log('User created:', response.data);
-      navigation.pop(15)
-
+      
     } catch (error) {
       console.error(error);
     }
@@ -114,6 +110,7 @@ export default function CreateService13Screen() {
       }
       console.log(imageURLS)
       await createService(imageURLS);
+      navigation.pop(15);
     } catch (error) {
       console.error('Error publishing service:', error);
     }
@@ -123,7 +120,7 @@ export default function CreateService13Screen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         <View className="flex-1 px-6 pt-5 pb-6">
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => navigation.pop(15)}>
                 <View className="flex-row justify-start">
                     <ChevronLeftIcon size={25} color={iconColor} strokeWidth="2" />
                 </View> 

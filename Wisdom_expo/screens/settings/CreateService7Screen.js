@@ -85,7 +85,7 @@ export default function CreateService7Screen() {
   };
 
   const handleSave = () => {
-    experiences.push({id: experienceId, position: position, place: place, startDate: startDate, endDate: endDate})
+    experiences.push({id: experienceId, position: position, place: place, startDate: startDate.getTime(), endDate: endDate ? endDate.getTime() : null})
     setPosition('');
     setPlace('');
     setStartDate(new Date());
@@ -151,9 +151,9 @@ export default function CreateService7Screen() {
                       <View className="mt-3 flex-row justify-between items-center mb-[6]">
                         <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{exp.place}</Text>
                         <Text>
-                          <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{exp.startDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</Text>
+                          <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(exp.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</Text>
                           <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]"> - </Text>
-                          <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{exp.endDate ? exp.endDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Still here'}</Text>
+                          <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{exp.endDate ? new Date(exp.endDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Still here'}</Text>
                         </Text>
                       </View>
                       
