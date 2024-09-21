@@ -85,6 +85,7 @@ export default function NotificationAllowScreen() {
           profile_picture: imageURL
         });
         console.log('User created:', response.data);
+        return response.data.userId;
         
 
       } catch (error) {
@@ -104,7 +105,10 @@ export default function NotificationAllowScreen() {
 
     const notAllowPressed = async () =>{    
         const imageURL = await uploadImage();
-        await createUser(false, imageURL);
+        const userId = await createUser(false, imageURL);
+
+        console.log(userId)
+        user.id = userId;
         user.email = email;
         user.first_name = firstName;
         user.surname = surname;
@@ -113,6 +117,7 @@ export default function NotificationAllowScreen() {
         user.joined_datetime = new Date().toISOString();
         user.allow_notis = false; 
         user.profile_picture = imageURL;
+        
         await storeDataLocally('user', JSON.stringify(user));
         navigation.navigate('HomeScreen');
       
@@ -120,7 +125,9 @@ export default function NotificationAllowScreen() {
 
     const allowPressed = async () =>{
         const imageURL = await uploadImage();
-        await createUser(true, imageURL);
+        const userId = await createUser(true, imageURL);
+        console.log(userId)
+        user.id = userId;
         user.email = email;
         user.first_name = firstName;
         user.surname = surname;
@@ -129,6 +136,7 @@ export default function NotificationAllowScreen() {
         user.joined_datetime = new Date().toISOString();
         user.allow_notis = true; 
         user.profile_picture = imageURL;
+
         await storeDataLocally('user', JSON.stringify(user));
         navigation.navigate('HomeScreen');
       

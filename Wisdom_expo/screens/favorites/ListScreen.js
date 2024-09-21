@@ -47,8 +47,7 @@ export default function ListScreen() {
   };
 
   useEffect(() => {
-    fetchItems();
-    
+    fetchItems();  
   }, []);
   
   useEffect(() => {
@@ -219,6 +218,7 @@ export default function ListScreen() {
             </View>
           </View>
         </View>
+        
         <View className="px-5">
           <View className="px-[14] py-4 border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{ borderBottomWidth: 1 }, index === items.length - 1 && { borderBottomWidth: 0 }]}>
             <View className="h-9 bg-[#D4D4D3] dark:bg-[#474646] rounded-md justify-center items-start">
@@ -351,10 +351,10 @@ export default function ListScreen() {
         <View className="pb-7"></View>
         <View className="absolute bottom-0 left-0 w-[700] h-1 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]"/>
         </View>
-      {items.empty ? (
+      {!items || items.empty ? (
       // Si la lista está vacía, muestra este mensaje
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <BookMarksFillIcon height={60} width={60} color={'#3695ff'} />
+        <BookMarksFillIcon height={60} width={60} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
         <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
           Empty list
         </Text>

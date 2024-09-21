@@ -89,7 +89,7 @@
           <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2] ml-2 mt-2">{item.title}</Text>
           <View className="flex-row mt-2">
             <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5] ml-2 ">{item.item_count === 0 ? 'empty' : item.item_count === 1 ? `${item.item_count} service` : `${item.item_count} services`}</Text>
-            <Text className="font-inter-medium text-[12px] text-[#B6B5B5] dark:text-[#706F6E] ml-3">{formatDistanceToNowStrict(new Date(item.last_item_date), { addSuffix: false})}</Text>
+            <Text className="font-inter-medium text-[12px] text-[#B6B5B5] dark:text-[#706F6E] ml-3">{item.last_item_date? formatDistanceToNowStrict(new Date(item.last_item_date), { addSuffix: false}): null}</Text>
           </View>
         </TouchableOpacity>
         {editing && (

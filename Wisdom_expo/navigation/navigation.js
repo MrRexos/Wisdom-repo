@@ -119,7 +119,7 @@ export default function Navigation() {
           <Stack.Screen name="ConfirmPayment" component={ConfirmPaymentScreen}/>
           <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen}/> 
           <Stack.Screen name="Results" component={ResultsScreen}/> 
-          <Stack.Screen name="Search" component={SearchScreen}/> 
+          <Stack.Screen name="Search" component={SearchScreen} options={{ animation: 'none' }}/> 
           <Stack.Screen name="SearchService" component={SearchServiceScreen}/> 
           <Stack.Screen name="ServiceProfile" component={ServiceProfileScreen}/> 
         </Stack.Navigator>
@@ -226,7 +226,7 @@ function HomeStackNavigator() {
           <Stack.Screen name="ConfirmPayment" component={ConfirmPaymentScreen}/>
           <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen}/> 
           <Stack.Screen name="Results" component={ResultsScreen}/> 
-          <Stack.Screen name="Search" component={SearchScreen}/> 
+          <Stack.Screen name="Search" component={SearchScreen} options={{ animation: 'none' }}/> 
           <Stack.Screen name="SearchService" component={SearchServiceScreen}/> 
           <Stack.Screen name="ServiceProfile" component={ServiceProfileScreen}/> 
           <Stack.Screen name="SearchDirection" component={SearchDirectionScreen}/> 

@@ -31,7 +31,7 @@ export default function EnterNameScreen() {
 
     const nextPressed = async () =>{
 
-      const nameSplited = name.split(" ");
+      const nameSplited = name.trim().split(" ");
 
       if (nameSplited.length === 1){
         setErrorMessage('Must enter your surname');
