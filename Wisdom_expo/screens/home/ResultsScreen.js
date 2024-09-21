@@ -7,11 +7,12 @@ import i18n from '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon} from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import {Search, Sliders, Heart} from "react-native-feather";
+import {Search, Sliders, Heart, Plus} from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import HeartFill from "../../assets/HeartFill.tsx"
 import api from '../../utils/api.js';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 
 export default function ResultsScreen() {
@@ -24,6 +25,11 @@ export default function ResultsScreen() {
   const [selectedOrderBy, setSelectedOrderBy] = useState('recommend');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [results, setResults] = useState();
+  const [userId, setUserId] = useState();
+  const [showAddList, setShowAddList] = useState(false);
+  const [lists, setLists] = useState([]);
+  const [listName, setListName] = useState();
+  const sheet = useRef();
 
   const orderByOptions = [
     { label: 'Recommend', type: 'recommend' },
@@ -50,9 +56,58 @@ export default function ResultsScreen() {
     }
   };
 
+  const fetchLists = async () => {
+    const userData = await getDataLocally('user');
+    const user = JSON.parse(userData);
+    setUserId(user.id);
+    try {
+      const response = await api.get(`/api/user/${user.id}/lists`);
+      return response.data;        
+    } catch (error) {
+      console.error('Error fetching lists:', error);
+    } 
+  };
+
   useEffect(() => {
     fetchResults();  
   }, []);
+
+  const heartClicked = async () => {
+    const fetchedLists = await fetchLists();
+    if (fetchedLists) {
+      setLists(fetchedLists); // Aquí se asignan las listas obtenidas
+    }
+    sheet.current.open();   
+  };
+
+  const createList = async () => { 
+    try {
+      const response = await api.post('/api/lists', {
+        user_id: userId,
+        list_name: listName,
+       
+      });
+      console.log('List created:', response.data);
+
+    } catch (error) {
+      console.error('Error fetching lists:', error);
+    } 
+  };
+
+  const addItemList = async (listId) => { 
+    try {
+      const response = await api.post(`/api/lists/${listId}/items`, {
+        service_id: '',
+        list_id: '',
+       
+      });
+      console.log('Item added:', response.data);
+
+    } catch (error) {
+      console.error('Error fetching lists:', error);
+    } 
+  };
+
 
 
   const renderItem = ({ item, index }) => {
@@ -83,7 +138,7 @@ export default function ResultsScreen() {
 
         <View className="flex-row justify-between items-center mt-5">
           <Text className="ml-5 mt-1 font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => heartClicked()}>
             <Heart height={23} width={23} strokeWidth={1.7} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} style={{ marginRight: 20 }} />
           </TouchableOpacity>
         </View>
@@ -157,6 +212,101 @@ export default function ResultsScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
+
+      <RBSheet
+        height={400}
+        openDuration={300}
+        closeDuration={300}
+        draggable={true}
+        ref={sheet}
+        customStyles={{
+          container: {
+            borderTopRightRadius: 25,
+            borderTopLeftRadius: 25,
+            backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+          },
+          draggableIcon: {backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'}
+        }}>
+
+          {showAddList? (
+
+            <View className="flex-1 justify-center items-center">
+
+              <View className="mt-3 mb-10 flex-row justify-center items-center">
+
+                <View className="flex-1 items-start">
+                  <TouchableOpacity onPress={() => setShowAddList(true)} className="mr-5">
+                      <ChevronLeftIcon height={27} width={27} strokeWidth={1.7} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+                  </TouchableOpacity>
+                </View>
+
+                <View className="flex-row justify-center items-center">
+                  <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">New list</Text>
+                </View>
+
+                <View className="flex-1 items-end"/>
+              </View>
+
+            
+
+            </View>
+
+            ) : (
+
+            <View className="flex-1 justify-center items-center">
+
+              <View className="mt-3 mb-10 flex-row justify-center items-center">
+                <View className="flex-1"/>
+
+                <View className="flex-row justify-center items-center">
+                  <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">Add to a list</Text>
+                </View>
+
+                <View className="flex-1 items-end">
+                  <TouchableOpacity onPress={() => setShowAddList(true)} className="mr-5">
+                      <Plus height={27} width={27} strokeWidth={1.7} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View className="flex-1 w-full px-7">
+                {lists.map((list, index) => (
+                  <View key={index} className="justify-center items-center" >
+
+                    <TouchableOpacity className="mb-4 flex-row justify-between items-center w-full">
+
+                      <View className="flex-row justify-start items-center">
+                        <Image source={list.services[0]? list.services[0].image_url? { uri: list.services[0].image_url } : null : null} className="h-[50] w-[50] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-lg mr-4"/>
+                        <View className="justify-center items-start">
+                          <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{list.title}</Text>
+                          <Text className="text-center font-inter-medium text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{list.item_count === 0 ? '0 services' : list.item_count === 1 ? `${list.item_count} service` : `${list.item_count} services`}</Text>
+                        </View>
+                      </View>
+
+                      <View className="p-[5] rounded-full border-[1.8px] border-[#b6b5b5] dark:border-[#706f6e]">
+                        <Plus height={15} width={15} strokeWidth={2.5} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} />
+                      </View>
+
+                    </TouchableOpacity>
+                  </View>
+                ))}
+
+                <TouchableOpacity className="flex-row justify-start items-center w-full ">
+                  <View className="h-[50] w-[50] bg-[#444343] dark:bg-[#f2f2f2] rounded-lg mr-4 justify-center items-center">
+                    <Plus height={23} width={23} strokeWidth={2.5} color={colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'} />
+                  </View>
+                  <View className="justify-center items-start">
+                    <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">New list</Text>
+                  </View>
+                </TouchableOpacity>
+
+              </View>
+
+            </View>
+          )}
+
+
+      </RBSheet>
 
       <View className="flex-row items-center justify-center pt-8">
 
