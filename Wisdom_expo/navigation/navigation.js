@@ -228,7 +228,6 @@ function HomeStackNavigator() {
           <Stack.Screen name="Results" component={ResultsScreen}/> 
           <Stack.Screen name="Search" component={SearchScreen} options={{ animation: 'none' }}/> 
           <Stack.Screen name="SearchService" component={SearchServiceScreen}/> 
-          <Stack.Screen name="ServiceProfile" component={ServiceProfileScreen}/> 
           <Stack.Screen name="SearchDirection" component={SearchDirectionScreen}/> 
       </Stack.Navigator>
   );
