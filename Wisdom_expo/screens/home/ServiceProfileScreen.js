@@ -141,7 +141,7 @@ export default function ServiceProfileScreen() {
 
         {/* Galery */}
 
-        <View className="mt-9 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+        <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
           <View className="w-full flex-row justify-between items-center">
             <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Galery</Text>
@@ -152,6 +152,76 @@ export default function ServiceProfileScreen() {
           
           <View className="mr-3 h-[110] w-[100] bg-[#d4d4d3] dark:bg-[#474646] rounded-2xl"/>
           
+        </View>
+
+        {/* Service data */}
+
+        <View className="mt-8 pl-6 justify-center items-center pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+
+          <View className="flex-row justify-center items-start">
+
+            <View className="flex-1 justify-start items-start">
+
+              <View className="mb-6 justify-start items-start">
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Earned money</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">1000 €</Text>
+              </View>
+              <View className="mb-6 justify-start items-start">
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Hores totals</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">85 h</Text>
+              </View>
+              <View className="justify-start items-start">
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Repeted</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">6</Text>
+              </View>
+
+            </View>
+
+            <View className="flex-1 justify-start items-start">
+
+              <View className="mb-6 justify-start items-start">
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Success rate</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">1000 %</Text>
+              </View>
+              <View className="mb-6 justify-start items-start">
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Total services</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">12</Text>
+              </View>
+              <View className="justify-start items-start">
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Response time</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{'<'}30 min</Text>
+              </View>
+
+            </View>
+
+          </View>
+
+        </View>
+
+        {/* Tags and habilities */}
+
+        <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+
+          <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Tags and habilities</Text>
+
+          <View className="flex-row justify-start items-center flex-wrap">
+            <View className="flex-row py-2 px-3 bg-[#f2f2f2] dark:bg-[#272626] rounded-full mr-1 mb-1">
+              <Text className="font-inter-semibold text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">Modernista</Text>
+            </View>
+          </View>
+
+        </View>
+
+        {/* Personal information */}
+
+        <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+
+          <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Personal information</Text>
+
+          <Text>
+            <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Languages: </Text>
+          </Text>
+
         </View>
 
         <View className="h-[50]"/>
