@@ -445,7 +445,7 @@ export default function SearchDirectionScreen() {
                 <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6"/>
             </TouchableOpacity>
 
-            <View className="h-[55] ml-4  px-3 flex-1 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+            <View className="h-[55] ml-4 px-3 flex-1 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 
                 <Search height={20} color={iconColor} strokeWidth="2"/>
                 <TextInput 

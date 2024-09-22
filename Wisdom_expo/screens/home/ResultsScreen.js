@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image} from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
@@ -28,8 +28,11 @@ export default function ResultsScreen() {
   const [userId, setUserId] = useState();
   const [showAddList, setShowAddList] = useState(false);
   const [lists, setLists] = useState([]);
-  const [listName, setListName] = useState();
+  const [listName, setListName] = useState('');
+  const [selectedServiceId, setSelectedServiceId] = useState();
   const sheet = useRef();
+  const [sheetHeight, setSheetHeight] = useState(450);
+  const [addedServices, setAddedServices] = useState([]);
 
   const orderByOptions = [
     { label: 'Recommend', type: 'recommend' },
@@ -46,6 +49,16 @@ export default function ResultsScreen() {
     MAD: 'د.م.',
     RMB: '¥',
   };
+
+  const inputListNameChanged  = (text) => {
+    setListName(text);
+  };
+
+  const handleClearText = () => {
+    setListName('');
+  };
+
+
 
   const fetchResults = async () => {
     try {
@@ -72,12 +85,28 @@ export default function ResultsScreen() {
     fetchResults();  
   }, []);
 
-  const heartClicked = async () => {
+  const heartClicked = async (serviceId) => {
+    console.log(serviceId);
+    setSelectedServiceId(serviceId);
     const fetchedLists = await fetchLists();
     if (fetchedLists) {
       setLists(fetchedLists); // Aquí se asignan las listas obtenidas
     }
     sheet.current.open();   
+  };
+
+  const addItemList = async (listId) => { 
+    try {
+      const response = await api.post(`/api/lists/${listId}/items`, {
+        service_id: selectedServiceId,   
+      });
+      console.log('Item added:', response.data);
+      setAddedServices((prevServices) => [...prevServices, selectedServiceId]);
+      sheet.current.close();
+
+    } catch (error) {
+      console.error('Error fetching lists:', error);
+    } 
   };
 
   const createList = async () => { 
@@ -88,29 +117,32 @@ export default function ResultsScreen() {
        
       });
       console.log('List created:', response.data);
+      return response.data.listId
 
     } catch (error) {
       console.error('Error fetching lists:', error);
     } 
   };
 
-  const addItemList = async (listId) => { 
-    try {
-      const response = await api.post(`/api/lists/${listId}/items`, {
-        service_id: '',
-        list_id: '',
-       
-      });
-      console.log('Item added:', response.data);
+  const handleDone = async () => {
+    const listId = createList();
+    addItemList(listId)
+    sheet.current.close();
+  }
 
-    } catch (error) {
-      console.error('Error fetching lists:', error);
-    } 
+  const openSheetWithInput = (height) => {
+    
+    setSheetHeight(height);
+    setTimeout(() => {
+      sheet.current.open();
+    }, 0);
+    
   };
 
 
 
   const renderItem = ({ item, index }) => {
+    const isServiceAdded = addedServices.includes(item.service_id);
     const getFormattedPrice = () => {
       const numericPrice = parseFloat(item.price);
       const formattedPrice = numericPrice % 1 === 0 ? numericPrice.toFixed(0) : numericPrice.toFixed(1);
@@ -138,8 +170,13 @@ export default function ResultsScreen() {
 
         <View className="flex-row justify-between items-center mt-5">
           <Text className="ml-5 mt-1 font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
-          <TouchableOpacity onPress={() => heartClicked()}>
-            <Heart height={23} width={23} strokeWidth={1.7} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} style={{ marginRight: 20 }} />
+          <TouchableOpacity onPress={() => heartClicked(item.service_id)}>
+            {isServiceAdded? (
+              <HeartFill height={23} width={23} strokeWidth={1.7} color={'#ff633e'} style={{ marginRight: 20 }} />
+            ) :(
+              <Heart height={23} width={23} strokeWidth={1.7} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} style={{ marginRight: 20 }} />
+            )}
+            
           </TouchableOpacity>
         </View>
 
@@ -214,9 +251,10 @@ export default function ResultsScreen() {
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
 
       <RBSheet
-        height={400}
+        height={sheetHeight}
         openDuration={300}
         closeDuration={300}
+        onClose={() => setShowAddList(false)}
         draggable={true}
         ref={sheet}
         customStyles={{
@@ -228,15 +266,17 @@ export default function ResultsScreen() {
           draggableIcon: {backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'}
         }}>
 
+          
+
           {showAddList? (
 
-            <View className="flex-1 justify-center items-center">
+            <View className="flex-1 justify-start items-center">
 
-              <View className="mt-3 mb-10 flex-row justify-center items-center">
+              <View className="mt-3 mb-12 flex-row justify-center items-center">
 
                 <View className="flex-1 items-start">
-                  <TouchableOpacity onPress={() => setShowAddList(true)} className="mr-5">
-                      <ChevronLeftIcon height={27} width={27} strokeWidth={1.7} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+                  <TouchableOpacity onPress={() => {setShowAddList(false); setListName(''); openSheetWithInput(450)}} className="ml-5">
+                      <ChevronLeftIcon height={21} width={21} strokeWidth={2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
                   </TouchableOpacity>
                 </View>
 
@@ -244,7 +284,40 @@ export default function ResultsScreen() {
                   <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">New list</Text>
                 </View>
 
-                <View className="flex-1 items-end"/>
+                <View className="flex-1 items-end"> 
+                  {listName.length>0 ? (
+                    <TouchableOpacity onPress={handleDone}>
+                        <Text className="mr-7 text-center font-inter-medium text-[14px] text-[#979797]">Done</Text>
+                    </TouchableOpacity>
+                  ) : null }
+                </View>
+              </View>
+
+              <View className="w-full px-5">
+
+                <View className="w-full h-[55] px-4  bg-[#f2f2f2] dark:bg-[#272626] rounded-full flex-row justify-start items-center">
+         
+                <TextInput
+                  placeholder='Name*'
+                  autoFocus={true} 
+                  selectionColor={cursorColorChange}
+                  placeholderTextColor={placeHolderTextColorChange}
+                  onChangeText={inputListNameChanged} 
+                  value={listName}
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="font-inter-medium flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+                />
+
+                {listName.length>0 ? (
+                  <TouchableOpacity onPress={handleClearText}>
+                      <View className='h-[23] w-[23] justify-center items-center rounded-full bg-[#fcfcfc] dark:bg-[#323131]'>
+                          <XMarkIcon height={13} color={iconColor} strokeWidth="2.6"/>
+                      </View>
+                  </TouchableOpacity>
+                ) : null }
+
+                </View>
+
               </View>
 
             
@@ -255,7 +328,7 @@ export default function ResultsScreen() {
 
             <View className="flex-1 justify-center items-center">
 
-              <View className="mt-3 mb-10 flex-row justify-center items-center">
+              <View className="mt-3 mb-12 flex-row justify-center items-center">
                 <View className="flex-1"/>
 
                 <View className="flex-row justify-center items-center">
@@ -263,17 +336,17 @@ export default function ResultsScreen() {
                 </View>
 
                 <View className="flex-1 items-end">
-                  <TouchableOpacity onPress={() => setShowAddList(true)} className="mr-5">
+                  <TouchableOpacity onPress={() => {setShowAddList(true), openSheetWithInput(250)}} className="mr-5">
                       <Plus height={27} width={27} strokeWidth={1.7} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
                   </TouchableOpacity>
                 </View>
               </View>
 
-              <View className="flex-1 w-full px-7">
+              <ScrollView className="flex-1 w-full px-7">
                 {lists.map((list, index) => (
                   <View key={index} className="justify-center items-center" >
 
-                    <TouchableOpacity className="mb-4 flex-row justify-between items-center w-full">
+                    <TouchableOpacity onPress={() => addItemList(list.id)} className="mb-4 flex-row justify-between items-center w-full">
 
                       <View className="flex-row justify-start items-center">
                         <Image source={list.services[0]? list.services[0].image_url? { uri: list.services[0].image_url } : null : null} className="h-[50] w-[50] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-lg mr-4"/>
@@ -291,7 +364,7 @@ export default function ResultsScreen() {
                   </View>
                 ))}
 
-                <TouchableOpacity className="flex-row justify-start items-center w-full ">
+                <TouchableOpacity onPress={() => {setShowAddList(true), openSheetWithInput(250)}} className="flex-row justify-start items-center w-full ">
                   <View className="h-[50] w-[50] bg-[#444343] dark:bg-[#f2f2f2] rounded-lg mr-4 justify-center items-center">
                     <Plus height={23} width={23} strokeWidth={2.5} color={colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'} />
                   </View>
@@ -300,7 +373,7 @@ export default function ResultsScreen() {
                   </View>
                 </TouchableOpacity>
 
-              </View>
+              </ScrollView>
 
             </View>
           )}
