@@ -166,7 +166,7 @@ export default function ResultsScreen() {
     };
 
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile')} className="mt-5 mx-5 rounded-3xl bg-[#fcfcfc] dark:bg-[#323131] ">
+      <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', {serviceId: item.service_id})} className="mt-5 mx-5 rounded-3xl bg-[#fcfcfc] dark:bg-[#323131] ">
 
         <View className="flex-row justify-between items-center mt-5">
           <Text className="ml-5 mt-1 font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
@@ -266,8 +266,7 @@ export default function ResultsScreen() {
           draggableIcon: {backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'}
         }}>
 
-          
-
+        
           {showAddList? (
 
             <View className="flex-1 justify-start items-center">
