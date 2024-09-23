@@ -11,6 +11,7 @@ import {Search, Sliders, Heart, Plus} from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import HeartFill from "../../assets/HeartFill.tsx"
+import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
