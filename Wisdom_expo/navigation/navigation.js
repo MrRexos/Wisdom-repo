@@ -122,6 +122,7 @@ export default function Navigation() {
           <Stack.Screen name="Search" component={SearchScreen} options={{ animation: 'none' }}/> 
           <Stack.Screen name="SearchService" component={SearchServiceScreen}/> 
           <Stack.Screen name="ServiceProfile" component={ServiceProfileScreen}/> 
+          <Stack.Screen name="SearchDirectionCreateService" component={SearchDirectionScreen}/>
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -288,7 +289,7 @@ function CreateServiceStackNavigator() {
         <Stack.Screen name="CreateService11" component={CreateService11Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
         <Stack.Screen name="CreateService12" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
         <Stack.Screen name="CreateService13" component={CreateService13Screen} options={{ animation: 'none', gestureEnabled: false }}/>
-        <Stack.Screen name="SearchDirection" component={SearchDirectionScreen}/> 
+        <Stack.Screen name="SearchDirectionCreateService" component={SearchDirectionScreen}/> 
     </Stack.Navigator>
   );
 }

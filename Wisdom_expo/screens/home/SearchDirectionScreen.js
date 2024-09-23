@@ -133,7 +133,6 @@ export default function SearchDirectionScreen() {
 
       address2 = address2.join(', ');
 
-
       // Actualiza los estados con los valores obtenidos
       setCountry(country);
       setState(state);

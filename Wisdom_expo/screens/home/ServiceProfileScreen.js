@@ -29,6 +29,25 @@ export default function ServiceProfileScreen() {
   const [serviceData, setServiceData] = useState([]);
   const [isServiceAdded, setIsServiceAdded] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [showMoreButton, setShowMoreButton] = useState(false);
+  const languagesMap = {
+    es: 'Spanish',
+    en: 'English',
+    ca: 'Catalan',
+    fr: 'French',
+    ar: 'Arabic',
+    de: 'German',
+    zh: 'Chinese',
+    ja: 'Japanese',
+    ko: 'Korean',
+    pt: 'Portuguese',
+    ru: 'Russian',
+    it: 'Italian',
+    nl: 'Dutch',
+    tr: 'Turkish',
+    sv: 'Swedish'
+};
+
 
   const getServiceInfo = async () => {
     try {
@@ -42,9 +61,45 @@ export default function ServiceProfileScreen() {
   };
 
   useEffect(() => {
-    //getServiceInfo(); 
-    console.log('loaded') 
+    getServiceInfo(); 
+    console.log(serviceId)
+    console.log(serviceData)
+     
   }, []);
+
+  const formatLanguages = (languagesArray) => {
+    const languageNames = languagesArray.map(lang => languagesMap[lang] || lang);
+    if (languageNames.length > 1) {
+      return `${languageNames.slice(0, -1).join(', ')} and ${languageNames[languageNames.length - 1]}`;
+    }
+    return languageNames[0];
+  };
+
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    
+    // Opciones para el formato de la fecha
+    const options = {
+        year: 'numeric',
+        month: 'long', // Puedes usar 'numeric' para obtener el mes como número
+        day: 'numeric',
+    };
+    
+    // Formatea la fecha a una cadena legible
+    return date.toLocaleString('en-US', options);
+  };
+
+  const onTextLayout = useCallback(
+    (e) => {
+      console.log(e.nativeEvent.lines.length);
+      if (e.nativeEvent.lines.length > 3 ) {
+        setShowMoreButton(true);
+      } else {
+        setShowMoreButton(false);
+      }
+    },
+    []
+  );
 
 
 
@@ -54,7 +109,7 @@ export default function ServiceProfileScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false} className="px-5 pt-6 flex-1">
 
-        {/* Top */}
+        {/* Top FALTA */}
 
         <View className="flex-row justify-between items-center">
           
@@ -84,14 +139,14 @@ export default function ServiceProfileScreen() {
 
         <View className="justify-start items-center mt-10"> 
 
-          <View className="h-[100] w-[100] bg-[#d4d4d3] dark:bg-[#474646] rounded-full"></View>
+          <Image source={serviceData.profile_picture ? {uri: serviceData.profile_picture} : require('../../assets/defaultProfilePic.jpg')} className="h-[100] w-[100] bg-[#d4d4d3] dark:bg-[#474646] rounded-full"/>
 
-          <Text className="mt-3 font-inter-bold text-center text-[23px] text-[#444343] dark:text-[#f2f2f2]">Name Surname</Text>
+          <Text className="mt-3 font-inter-bold text-center text-[23px] text-[#444343] dark:text-[#f2f2f2]">{serviceData.first_name} {serviceData.surname}</Text>
 
           <Text className="mt-2 font-inter-medium text-center text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">
-            <Text>@name</Text>
+            <Text>@{serviceData.username}</Text>
             <Text> • </Text>
-            <Text>Service</Text>
+            <Text>{serviceData.service_title}</Text>
           </Text>
 
           {/* Service facts */}
@@ -126,22 +181,31 @@ export default function ServiceProfileScreen() {
 
           <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">About the service</Text>
 
-          <Text numberOfLines={isDescriptionExpanded ? null : 4} className="break-all text-[14px] text-[#515150] dark:text-[#d4d4d3]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod t empor incididunt ut labore et dolore magna aliqua Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod t empor incididunt ut labore et dolore magna aliqua</Text>
+          <Text onTextLayout={onTextLayout} numberOfLines={isDescriptionExpanded ? null : 4} className="break-all text-[14px] text-[#515150] dark:text-[#d4d4d3]">{serviceData.description}</Text>
           
-          {!isDescriptionExpanded && (
-            <TouchableOpacity onPress={() => setIsDescriptionExpanded(true)}>
-              <Text className="mt-2 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2] ">Read more...</Text>
-            </TouchableOpacity>
-          )}
-          {isDescriptionExpanded && (
-            <TouchableOpacity onPress={() => setIsDescriptionExpanded(false)}>
-              <Text className="mt-2 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Show less</Text>
-            </TouchableOpacity>
-          )}
+          {showMoreButton && (
+          
+            <View>
+              {!isDescriptionExpanded && (
+                <TouchableOpacity onPress={() => setIsDescriptionExpanded(true)}>
+                  <Text  className="mt-2 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2] ">Read more...</Text>
+                </TouchableOpacity>
+              )}
+              {isDescriptionExpanded && (
+                <TouchableOpacity onPress={() => setIsDescriptionExpanded(false)}>
+                  <Text className="mt-2 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Show less</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+          )}      
+          
 
         </View>
 
-        {/* Galery */}
+        {/* Galery FALTA */}
+
+        {serviceData.images && (
 
         <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
@@ -151,12 +215,22 @@ export default function ServiceProfileScreen() {
               <ChevronRightIcon size={20} color={colorScheme === 'dark' ? '#b6b5b5' : '#706F6E'} strokeWidth="2.1" className="p-6"/>
             </TouchableOpacity>
           </View>
-          
-          <View className="mr-3 h-[110] w-[100] bg-[#d4d4d3] dark:bg-[#474646] rounded-2xl"/>
+
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="w-full">
+
+            {serviceData.images.map((image, index) => (
+            
+              <Image key={index} source={{uri: image.image_url}} className="mr-3 h-[110] w-[100] bg-[#d4d4d3] dark:bg-[#474646] rounded-2xl"/>
+
+            ))}
+
+          </ScrollView>
           
         </View>
 
-        {/* Service data */}
+        )}
+
+        {/* Service data FALTA */}
 
         <View className="mt-8 pl-6 justify-center items-center pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
@@ -202,17 +276,23 @@ export default function ServiceProfileScreen() {
 
         {/* Tags and habilities */}
 
+        {serviceData.tags && (
+
         <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
           <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Tags and habilities</Text>
 
           <View className="flex-row justify-start items-center flex-wrap">
-            <View className="flex-row py-2 px-3 bg-[#f2f2f2] dark:bg-[#272626] rounded-full mr-1 mb-1">
-              <Text className="font-inter-semibold text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">Modernista</Text>
-            </View>
+            {serviceData.tags.map((tag, index) => (
+              <View key={index} className="flex-row py-2 px-3 bg-[#f2f2f2] dark:bg-[#272626] rounded-full mr-1 mb-1">
+                <Text className="font-inter-semibold text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">{tag}</Text>
+              </View>
+            ))}
           </View>
 
         </View>
+
+        )}
 
         {/* Personal information */}
 
@@ -220,59 +300,71 @@ export default function ServiceProfileScreen() {
 
           <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Personal information</Text>
 
-          <Text>
-            <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Languages: </Text>
-            <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">English</Text>
-          </Text>
 
+          {serviceData.languages && (
+            <Text>
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Languages: </Text>
+              <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{formatLanguages(serviceData.languages)}</Text>
+            </Text>
+          )}
+
+          {serviceData.hobbies && (
           <Text className="mt-4">
             <Text className="mt-2 font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Hobbies: </Text>
-            <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">Skying</Text>
+            <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{serviceData.hobbies}</Text>
           </Text>
+          )}
 
           <Text className="mt-4">
             <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Verified: </Text>
-            <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">Identity and telephone</Text>
+            <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">Identity</Text>
           </Text>
 
           <Text className="mt-4">
             <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Creation date: </Text>
-            <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">21 d'abril, 2024</Text>
+            <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{formatDate(serviceData.service_created_datetime)}</Text>
           </Text>
 
           {/* Experiences */}
 
-          <View className="mt-8 mb-8 flex-row w-full justify-between items-center">
-            <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Experience</Text>
-            <Text className="mr-3 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">2 years experience</Text>
-          </View>
+          {serviceData.experiences && (
+          
+          <View>
 
-          <View className="flex-row w-full justify-center items-center">
-
-            <View className="w-[30] h-full items-center pr-5">
-              <View className={`flex-1  bg-[#b6b5b5] dark:bg-[#706F6E] ${serviceId>0 && 'w-[2]'}`}/>
-              <View className={`w-4 h-4 rounded-full border-2 border-[#444343] dark:border-[#f2f2f2] ${serviceId? null : colorScheme == 'dark' ? 'bg-[#f2f2f2]' : 'bg-[#444343]'}`}>
-              </View>
-              <View className={`flex-1 w-[2] bg-[#b6b5b5] dark:bg-[#706F6E] ${serviceId===serviceId-1 ? 'w-[0]' : 'w-[2]'}`}/>
+            <View className="mt-8 mb-8 flex-row w-full justify-between items-center">
+              <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Experience</Text>
+              <Text className="mr-3 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">2 years experience</Text>
             </View>
 
-            <View className="flex-1 py-3 px-5 mb-3 bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
+            <View className="flex-row w-full justify-center items-center">
 
-              <View className="mt-1 flex-row justify-between">
-                <Text className="font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2]">Position</Text>
+              <View className="w-[30] h-full items-center pr-5">
+                <View className={`flex-1  bg-[#b6b5b5] dark:bg-[#706F6E] ${serviceId>0 && 'w-[2]'}`}/>
+                <View className={`w-4 h-4 rounded-full border-2 border-[#444343] dark:border-[#f2f2f2] ${serviceId? null : colorScheme == 'dark' ? 'bg-[#f2f2f2]' : 'bg-[#444343]'}`}>
+                </View>
+                <View className={`flex-1 w-[2] bg-[#b6b5b5] dark:bg-[#706F6E] ${serviceId===serviceId-1 ? 'w-[0]' : 'w-[2]'}`}/>
               </View>
 
-              <View className="mt-3 flex-row justify-between items-center mb-[6]">
-                <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">Place</Text>
-                <Text>
-                  <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(serviceId).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</Text>
-                  <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]"> - </Text>
-                  <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{serviceId ? new Date(serviceId).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Still there'}</Text>
-                </Text>
+              <View className="flex-1 py-3 px-5 mb-3 bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
+
+                <View className="mt-1 flex-row justify-between">
+                  <Text className="font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2]">Position</Text>
+                </View>
+
+                <View className="mt-3 flex-row justify-between items-center mb-[6]">
+                  <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">Place</Text>
+                  <Text>
+                    <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(serviceId).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</Text>
+                    <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]"> - </Text>
+                    <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{serviceId ? new Date(serviceId).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Still there'}</Text>
+                  </Text>
+                </View>
+                
               </View>
-              
             </View>
           </View>
+
+          )}  
 
         </View>
 

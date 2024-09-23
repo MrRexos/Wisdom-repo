@@ -120,7 +120,7 @@ export default function CreateService6Screen() {
 
             <View className="flex-1 pb-[80] justify-start items-center ">
 
-              <TouchableOpacity onPress={() => navigation.navigate('SearchDirection')} className="mt-5 px-3 justify-center items-center w-full">
+              <TouchableOpacity onPress={() => navigation.navigate('SearchDirectionCreateService')} className="mt-5 px-3 justify-center items-center w-full">
                 <View className="mt-7 h-[50] px-4 w-full flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                     <Search height={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2"/>
                     <Text 
