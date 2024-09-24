@@ -121,6 +121,7 @@ export default function CreateService8Screen() {
     }
   };
 
+
   const handlePickImages = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 

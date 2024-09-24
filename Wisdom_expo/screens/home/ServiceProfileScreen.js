@@ -15,6 +15,8 @@ import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import MapView, { Marker, Circle } from 'react-native-maps';
+import axios from 'axios';
+
 
 
 export default function ServiceProfileScreen() {
@@ -30,6 +32,7 @@ export default function ServiceProfileScreen() {
   const [isServiceAdded, setIsServiceAdded] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [showMoreButton, setShowMoreButton] = useState(false);
+  const [address, setAddress] = useState('');
   const languagesMap = {
     es: 'Spanish',
     en: 'English',
@@ -60,10 +63,40 @@ export default function ServiceProfileScreen() {
     }
   };
 
+  const getAddressFromCoordinates = async (latitude, longitude) => {
+    try {
+        const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
+            params: {
+                latlng: `${latitude},${longitude}`,
+                key: 'AIzaSyA9IKAf2YvpjiyNfDpPUUsv_Xz-flkJFCY',
+            },
+        });
+
+        if (response.data.status === "OK") {
+            const addressComponents = response.data.results[0].address_components;
+            const postcode = addressComponents.find(component => component.types.includes("postal_code"))?.long_name;
+            const city = addressComponents.find(component => component.types.includes("locality"))?.long_name;
+            const country = addressComponents.find(component => component.types.includes("country"))?.long_name;
+            return `${postcode} ${city}, ${country}`;
+        } else {
+            console.error("Error en la geocodificación:", response.data.status);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error al obtener la dirección:", error);
+        return null;
+    }
+  };  
+
   useEffect(() => {
+    
+    const fetchAddress = async () => {
+      const addr = await getAddressFromCoordinates(serviceData.latitude, serviceData.longitude);
+      setAddress(addr);
+    };
+    
     getServiceInfo(); 
-    console.log(serviceId)
-    console.log(serviceData)
+    fetchAddress();
      
   }, []);
 
@@ -100,6 +133,8 @@ export default function ServiceProfileScreen() {
     },
     []
   );
+
+
 
 
 
@@ -240,7 +275,7 @@ export default function ServiceProfileScreen() {
 
               <View className="mb-6 justify-start items-start">
                 <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Earned money</Text>
-                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">1000 €</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">100 €</Text>
               </View>
               <View className="mb-6 justify-start items-start">
                 <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Hores totals</Text>
@@ -257,7 +292,7 @@ export default function ServiceProfileScreen() {
 
               <View className="mb-6 justify-start items-start">
                 <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Success rate</Text>
-                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">1000 %</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">100 %</Text>
               </View>
               <View className="mb-6 justify-start items-start">
                 <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Total services</Text>
@@ -328,41 +363,49 @@ export default function ServiceProfileScreen() {
           {/* Experiences */}
 
           {serviceData.experiences && (
-          
-          <View>
+        
+            <View >
 
-            <View className="mt-8 mb-8 flex-row w-full justify-between items-center">
-              <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Experience</Text>
-              <Text className="mr-3 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">2 years experience</Text>
-            </View>
-
-            <View className="flex-row w-full justify-center items-center">
-
-              <View className="w-[30] h-full items-center pr-5">
-                <View className={`flex-1  bg-[#b6b5b5] dark:bg-[#706F6E] ${serviceId>0 && 'w-[2]'}`}/>
-                <View className={`w-4 h-4 rounded-full border-2 border-[#444343] dark:border-[#f2f2f2] ${serviceId? null : colorScheme == 'dark' ? 'bg-[#f2f2f2]' : 'bg-[#444343]'}`}>
-                </View>
-                <View className={`flex-1 w-[2] bg-[#b6b5b5] dark:bg-[#706F6E] ${serviceId===serviceId-1 ? 'w-[0]' : 'w-[2]'}`}/>
+              <View className="mt-8 mb-8 flex-row w-full justify-between items-center">
+                <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Experience</Text>
+                <Text className="mr-3 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">
+                  {serviceData.experiences.length} {serviceData.experiences.length === 1 ? "experience" : "experiences"}
+                </Text>
               </View>
 
-              <View className="flex-1 py-3 px-5 mb-3 bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
+              {serviceData.experiences.map((experience, index) => (
 
-                <View className="mt-1 flex-row justify-between">
-                  <Text className="font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2]">Position</Text>
+              <View key={index} className="flex-row w-full justify-center items-center">
+
+                <View className="w-[30] h-full items-center pr-5">
+                  <View className={`flex-1  bg-[#b6b5b5] dark:bg-[#706F6E] ${index>0 && 'w-[2]'}`}/>
+                  <View className={`w-4 h-4 rounded-full border-2 border-[#444343] dark:border-[#f2f2f2] ${experience.experience_end_date? null : colorScheme == 'dark' ? 'bg-[#f2f2f2]' : 'bg-[#444343]'}`}>
+                  </View>
+                  <View className={`flex-1 w-[2] bg-[#b6b5b5] dark:bg-[#706F6E] ${index===serviceData.experiences.length-1 ? 'w-[0]' : 'w-[2]'}`}/>
                 </View>
 
-                <View className="mt-3 flex-row justify-between items-center mb-[6]">
-                  <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">Place</Text>
-                  <Text>
-                    <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(serviceId).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</Text>
-                    <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]"> - </Text>
-                    <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{serviceId ? new Date(serviceId).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Still there'}</Text>
-                  </Text>
+                <View className="flex-1 py-3 px-5 mb-3 bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
+
+                  <View className="mt-1 flex-row justify-between">
+                    <Text className="font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2]">{experience.experience_title}</Text>
+                  </View>
+
+                  <View className="mt-3 flex-row justify-between items-center mb-[6]">
+                    <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{experience.place_name}</Text>
+                    <Text>
+                      <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(experience.experience_started_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</Text>
+                      <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]"> - </Text>
+                      <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{experience.experience_end_date ? new Date(experience.experience_end_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Still there'}</Text>
+                    </Text>
+                  </View>
+                  
                 </View>
-                
               </View>
+              ))}
             </View>
-          </View>
+
+            
+
 
           )}  
 
@@ -374,7 +417,7 @@ export default function ServiceProfileScreen() {
 
           <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Location</Text>       
 
-          {!serviceId? (
+          {!serviceData.latitude? (
 
             <View className="justify-center items-center w-full">
               <GlobeAltIcon height={80} width={80} strokeWidth={1.2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
@@ -397,7 +440,7 @@ export default function ServiceProfileScreen() {
               </MapView>
 
               <View className="mt-3 px-3 w-full flex-row justify-between items-center">
-                <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">08304 Mataró, Espanya</Text>
+                <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{address ? address : 'Loading...'}</Text>
                 <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">13:45 local hour</Text>
               </View>
 

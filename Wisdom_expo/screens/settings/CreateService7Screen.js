@@ -53,7 +53,6 @@ export default function CreateService7Screen() {
     
   };
 
-
   const handleEndDateChange = (event, date) => {
     if (date !== undefined) {
       setTempDate(date); 

@@ -33,9 +33,11 @@ export default function CreateService13Screen() {
   const transformedExperiences = experiences.map(exp => ({
     experience_title: exp.position,
     place_name: exp.place,
-    experience_started_date: exp.startDate,
-    experience_end_date: exp.endDate || null  // Convertir `undefined` a `null`
+    experience_started_date: new Date(exp.startDate).toISOString(),
+    experience_end_date: exp.endDate? new Date(exp.endDate).toISOString(): null  // Convertir `undefined` a `null`
   }));
+
+  console.log(transformedExperiences)
 
   useEffect( () => {
     getUserId();
@@ -120,7 +122,7 @@ export default function CreateService13Screen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         <View className="flex-1 px-6 pt-5 pb-6">
-            <TouchableOpacity onPress={() => navigation.pop(15)}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
                 <View className="flex-row justify-start">
                     <ChevronLeftIcon size={25} color={iconColor} strokeWidth="2" />
                 </View> 

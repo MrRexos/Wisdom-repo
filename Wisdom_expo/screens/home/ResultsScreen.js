@@ -150,7 +150,7 @@ export default function ResultsScreen() {
       if (item.price_type === 'hour') {
         return (
           <>
-            <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols[item.currency]}</Text>
+            <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols[item.currency]} €</Text>
             <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">/hour</Text>
           </>
         );
@@ -158,7 +158,7 @@ export default function ResultsScreen() {
         return (
           <>
             <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">Fixed Price: </Text>
-            <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols[item.currency]}</Text>
+            <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols[item.currency]} €</Text>
           </>
         );
       } else {
@@ -167,7 +167,7 @@ export default function ResultsScreen() {
     };
 
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', {serviceId: item.service_id})} className="mt-5 mx-5 rounded-3xl bg-[#fcfcfc] dark:bg-[#323131] ">
+      <TouchableOpacity style={{zIndex:10}} onPress={() => navigation.navigate('ServiceProfile', {serviceId: item.service_id})} className="mt-5 mx-5 z-10 rounded-3xl bg-[#fcfcfc] dark:bg-[#323131] ">
 
         <View className="flex-row justify-between items-center mt-5">
           <Text className="ml-5 mt-1 font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
@@ -381,7 +381,7 @@ export default function ResultsScreen() {
 
       </RBSheet>
 
-      <View className="flex-row items-center justify-center pt-8">
+      <View className="flex-row items-center justify-center pt-8 relative">
 
         <View className="w-10 justify-center items-center">
           <TouchableOpacity onPress={() => navigation.goBack()} >
@@ -437,7 +437,7 @@ export default function ResultsScreen() {
                 top: 50, // Ajusta según el espacio que necesites
                 left: 0, 
                 right: 0,
-                zIndex: 999, // Asegura que esté encima de otros elementos
+                zIndex: 1000, // Asegura que esté encima de otros elementos
                 backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#e0e0e0',
                 borderRadius: 15,
               }}
@@ -476,15 +476,17 @@ export default function ResultsScreen() {
         </Text>
       </View>
       ) : (
-
-        <FlatList
-          data={results}
-          keyExtractor={(item) => item.service_id.toString()}
-          renderItem={renderItem}
-          contentContainerStyle={{
-            justifyContent: 'space-between',
-          }}
-        />
+        <View style={{zIndex:1}}>
+          <FlatList
+            data={results}
+            keyExtractor={(item) => item.service_id.toString()}
+            renderItem={renderItem}
+            contentContainerStyle={{
+              justifyContent: 'space-between',
+              paddingBottom:200,
+            }}
+          />
+        </View>
       )}
 
       
