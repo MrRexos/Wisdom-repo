@@ -33,6 +33,8 @@ export default function ServiceProfileScreen() {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [showMoreButton, setShowMoreButton] = useState(false);
   const [address, setAddress] = useState('');
+  const [localHour, setLocalHour] = useState('');
+  const [filteredReviews, setFilteredReviews] = useState();
   const languagesMap = {
     es: 'Spanish',
     en: 'English',
@@ -86,19 +88,54 @@ export default function ServiceProfileScreen() {
         console.error("Error al obtener la dirección:", error);
         return null;
     }
-  };  
+  }; 
+  
+  const getTimeZoneFromCoordinates = async (latitude, longitude) => {
+    const timestamp = Math.floor(Date.now() / 1000); // Tiempo actual en segundos
+    const url = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${timestamp}&key=AIzaSyA9IKAf2YvpjiyNfDpPUUsv_Xz-flkJFCY`;
+    try {
+        const response = await axios.get(url);
+        if (response.data.status === "OK") {
+            const { dstOffset, rawOffset } = response.data;
+            const localTime = new Date((timestamp + dstOffset + rawOffset) * 1000);
+            return localTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC', hour12: false }); // Devuelve la hora local como una cadena legible
+        } else {
+            console.error("Error en la respuesta de la API:", response.data);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error al obtener la zona horaria:", error);
+        return null;
+    }
+};
 
   useEffect(() => {
-    
-    const fetchAddress = async () => {
-      const addr = await getAddressFromCoordinates(serviceData.latitude, serviceData.longitude);
-      setAddress(addr);
-    };
-    
     getServiceInfo(); 
-    fetchAddress();
-     
   }, []);
+
+  useEffect(() => {
+
+    const fetchAddress = async () => {
+      if (serviceData.latitude && serviceData.longitude) {
+        const addr = await getAddressFromCoordinates(serviceData.latitude, serviceData.longitude);
+        setAddress(addr);
+
+        const hour = await getTimeZoneFromCoordinates(serviceData.latitude, serviceData.longitude);
+        setLocalHour(hour); 
+      }
+    };
+
+    const getCommentedReviews = () => {
+      if (serviceData.reviews) {
+      const filteredCommentReviews = serviceData.reviews.filter(review => review.comment);
+      setFilteredReviews(filteredCommentReviews)
+      }
+    }
+
+    getCommentedReviews();
+    fetchAddress(); 
+
+  }, [serviceData]);
 
   const formatLanguages = (languagesArray) => {
     const languageNames = languagesArray.map(lang => languagesMap[lang] || lang);
@@ -124,7 +161,6 @@ export default function ServiceProfileScreen() {
 
   const onTextLayout = useCallback(
     (e) => {
-      console.log(e.nativeEvent.lines.length);
       if (e.nativeEvent.lines.length > 3 ) {
         setShowMoreButton(true);
       } else {
@@ -253,7 +289,7 @@ export default function ServiceProfileScreen() {
 
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="w-full">
 
-            {serviceData.images.map((image, index) => (
+            {serviceData.images.slice(0, 10).map((image, index) => (
             
               <Image key={index} source={{uri: image.image_url}} className="mr-3 h-[110] w-[100] bg-[#d4d4d3] dark:bg-[#474646] rounded-2xl"/>
 
@@ -413,9 +449,7 @@ export default function ServiceProfileScreen() {
 
         {/* Location */}
 
-        <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-
-          <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Location</Text>       
+        <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">      
 
           {!serviceData.latitude? (
 
@@ -426,25 +460,40 @@ export default function ServiceProfileScreen() {
 
           ) : (
 
-            <View className="justify-center items-center w-full">
-              <MapView
-                style={{ height: 160, width: 280, borderRadius: 12 }}
-                region={{
-                  latitude:  1, // Latitud inicial
-                  longitude: 1, // Longitud inicial
-                  latitudeDelta: 0.02, // Zoom en la latitud
-                  longitudeDelta: 0.01, // Zoom en la longitud
-                }}
-              >
-                
-              </MapView>
+            serviceData.action_rate===100 ? (
 
-              <View className="mt-3 px-3 w-full flex-row justify-between items-center">
-                <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{address ? address : 'Loading...'}</Text>
-                <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">13:45 local hour</Text>
+              <View className="justify-center items-center w-full">
+                <GlobeEuropeAfricaIcon height={80} width={80} strokeWidth={1.2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+                <Text className="mt-3 font-inter-semibold text-[18px] text-[#706F6E] dark:text-[#b6b5b5]">Unlimited radius of action</Text>  
               </View>
 
+            ) : (
+            <View>
+
+            <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Location</Text> 
+
+              <View className="justify-center items-center w-full">
+                <MapView
+                  style={{ height: 160, width: 280, borderRadius: 12 }}
+                  region={{
+                    latitude:  1, // Latitud inicial
+                    longitude: 1, // Longitud inicial
+                    latitudeDelta: 0.02, // Zoom en la latitud
+                    longitudeDelta: 0.01, // Zoom en la longitud
+                  }}
+                >
+                  
+                </MapView>
+
+                <View className="mt-3 px-3 w-full flex-row justify-between items-center">
+                  <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{address ? address : 'Loading...'}</Text>
+                  <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">{localHour ? `${localHour} local hour` : ''}</Text>
+                </View>
+
+              </View>
             </View>
+
+            )
 
           )}
 
@@ -452,12 +501,15 @@ export default function ServiceProfileScreen() {
 
         {/* Rating and reviews */}
 
+        
+        {serviceData.reviews && (
+
         <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
           <Text className="mb-8 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Rating and reviews</Text>
 
           <View className="flex-row w-full justify-between items-center">
-            <Text className="font-inter-bold text-[55px] text-[#444343] dark:text-[#f2f2f2]">4,5</Text>
+            <Text className="font-inter-bold text-[55px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.average_rating).toFixed(1)}</Text>
 
             <View className="justify-start items-end">
 
@@ -468,7 +520,7 @@ export default function ServiceProfileScreen() {
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
                 <View className="w-[170] h-[4] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
-                  <View className={`h-full w-[80%] bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
+                  <View className={`h-full ${serviceData.rating_5_count? `w-[${Math.min((serviceData.rating_5_count / serviceData.reviews.length) * 100, 100)}%]` : 'w-[0%]'} bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
                 </View>
               </View>
               <View className="mb-[-5] flex-row justify-end items-center">
@@ -477,7 +529,7 @@ export default function ServiceProfileScreen() {
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
                 <View className="w-[170] h-[4] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
-                  <View className={`h-full w-[60%] bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
+                  <View style={{ width: `${serviceData.rating_3_count ? Math.min((serviceData.rating_3_count / serviceData.reviews.length) * 100, 100) : 0}%` }} className={`h-full  bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
                 </View>
               </View>
               <View className="mb-[-5] flex-row justify-end items-center">
@@ -485,20 +537,20 @@ export default function ServiceProfileScreen() {
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
                 <View className="w-[170] h-[4] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
-                  <View className={`h-full w-[30%] bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
+                  <View className={`h-full ${serviceData.rating_3_count? `w-[${Math.min((serviceData.rating_3_count / serviceData.reviews.length) * 100, 100)}%]` : 'w-[0%]'} bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
                 </View>
               </View>
               <View className="mb-[-5] flex-row justify-end items-center">
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
                 <View className="w-[170] h-[4] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
-                  <View className={`h-full w-[40%] bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
+                  <View className={`h-full ${serviceData.rating_2_count? `w-[${Math.min((serviceData.rating_2_count / serviceData.reviews.length) * 100, 100)}%]` : 'w-[0%]'} bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
                 </View>
               </View>
               <View className="flex-row justify-end items-center">
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
                 <View className="w-[170] h-[4] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
-                  <View className={`h-full w-[10%] bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
+                  <View className={`h-full ${serviceData.rating_1_count? `w-[${Math.min((serviceData.rating_1_count / serviceData.reviews.length) * 100, 100)}%]` : 'w-[0%]'} bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
                 </View>
               </View>
 
@@ -506,50 +558,67 @@ export default function ServiceProfileScreen() {
           </View>
 
           <View className="w-full justify-center items-end">
-            <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">5 ratings</Text>
+            <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">{serviceData.reviews.length} ratings</Text>
           </View>
 
           {/* Reviews */}
 
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="mt-5 w-full">
+          
+          {filteredReviews? ( 
+          <View className="w-full ">
 
-            <View className="mr-2 py-5 px-4 w-[300] bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}  className="mt-5 w-full">
 
-              <View className="flex-row justify-start items-center">
+              {filteredReviews.slice(0, 10).map((review, index) => (
+                <View key={index} className="mr-2 py-5 px-4 w-[300] bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
 
-                <View className="mr-3 h-10 w-10 rounded-full bg-[#706F6E] dark:bg-[#b6b5b5]"/>
+                  <View className="flex-row justify-between items-center">
 
-                <View className="justify-center items-start">
-                  <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Name Surname</Text>
-                  <Text className="mt-1 font-inter-medium text-[9px] text-[#706F6E] dark:text-[#b6b5b5]">27 february 2024</Text>                
-                </View>
+                    <View className="flex-row justify-start items-center">
+                      <Image source={{uri: review.user.profile_picture}} className="mr-3 h-10 w-10 rounded-full bg-[#706F6E] dark:bg-[#b6b5b5]"/>
 
-                <View className="flex-row justify-end items-center">
-                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 1 }], marginLeft: 70 }}/>
-                  <Text className="ml-1 mr-2 font-inter-bold text-[15px] text-[#444343] dark:text-[#f2f2f2]">4,6</Text>                
-                </View>
+                      <View className="justify-center items-start">
+                        <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{review.user.first_name} {review.user.surname}</Text>
+                        <Text className="mt-1 font-inter-medium text-[9px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(review.review_datetime).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</Text>                
+                      </View>
+                    </View>
 
-              </View>
+                    <View className="flex-row justify-end items-center">
+                      <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 1 }]}}/>
+                      <Text className="ml-1 mr-2 font-inter-bold text-[15px] text-[#444343] dark:text-[#f2f2f2]">{review.rating}</Text>                
+                    </View>
 
-              <Text className="mt-5 mb-3 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Name Surname</Text>
-              <Text numberOfLines={3}  className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod t empor incididunt ut labore et dolore magna aliqua Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod t empor incididunt ut labore et dolore magna aliqua</Text>
+                  </View>
 
-              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="mt-5 w-full">
-                <View className="mr-1 w-12 h-12 bg-[#D4D4D3] dark:bg-[#474646] rounded-md" />
-              </ScrollView>
+                  <Text className="mt-5 mb-3 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{review.rating}</Text>
+                  <Text numberOfLines={3} className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{review.comment}</Text>
 
-            </View>            
-          </ScrollView>
+                  {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="mt-5 w-full">
+                    <View className="mr-1 w-12 h-12 bg-[#D4D4D3] dark:bg-[#474646] rounded-md" />
+                  </ScrollView> */}
 
-          <TouchableOpacity
-            onPress={() => null }
-            style={{ opacity: 1 }}
-            className="mt-6 bg-[#F2F2F2] dark:bg-[#272626] w-full h-[45] rounded-full items-center justify-center"
-          >
-            <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">See all reviews</Text>
-          </TouchableOpacity>
+                </View>      
+              ))}      
+            </ScrollView>
+
+            <TouchableOpacity
+              onPress={() => null }
+              style={{ opacity: 1 }}
+              className="mt-6 bg-[#F2F2F2] dark:bg-[#272626] w-full h-[45] rounded-full items-center justify-center"
+            >
+              <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">See all reviews</Text>
+            </TouchableOpacity>
+
+          </View>
+          ) : null}
+          
+          
 
         </View>
+
+      )}
+
+          
 
         {/* Consult */}
 
