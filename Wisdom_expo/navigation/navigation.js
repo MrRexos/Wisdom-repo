@@ -64,6 +64,9 @@ import ResultsScreen from '../screens/home/ResultsScreen';
 import SearchScreen from '../screens/home/SearchScreen';
 import SearchServiceScreen from '../screens/home/SearchServiceScreen';
 import ServiceProfileScreen from '../screens/home/ServiceProfileScreen';
+import DisplayImagesScreen from '../screens/home/DisplayImagesScreen';
+import DisplayReviewsScreen from '../screens/home/DisplayReviewsScreen';
+import EnlargedImageScreen from '../screens/home/EnlargedImageScreen';
 
 
 
@@ -123,6 +126,9 @@ export default function Navigation() {
           <Stack.Screen name="SearchService" component={SearchServiceScreen}/> 
           <Stack.Screen name="ServiceProfile" component={ServiceProfileScreen}/> 
           <Stack.Screen name="SearchDirectionCreateService" component={SearchDirectionScreen}/>
+          <Stack.Screen name="DisplayImages" component={DisplayImagesScreen}/> 
+          <Stack.Screen name="DisplayReviews" component={DisplayReviewsScreen}/>
+          <Stack.Screen name="EnlargedImage" component={EnlargedImageScreen}/>
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -230,6 +236,9 @@ function HomeStackNavigator() {
           <Stack.Screen name="Search" component={SearchScreen} options={{ animation: 'none' }}/> 
           <Stack.Screen name="SearchService" component={SearchServiceScreen}/> 
           <Stack.Screen name="SearchDirection" component={SearchDirectionScreen}/> 
+          <Stack.Screen name="DisplayImages" component={DisplayImagesScreen}/> 
+          <Stack.Screen name="DisplayReviews" component={DisplayReviewsScreen}/>
+          <Stack.Screen name="EnlargedImage" component={EnlargedImageScreen}/>
       </Stack.Navigator>
   );
 }
