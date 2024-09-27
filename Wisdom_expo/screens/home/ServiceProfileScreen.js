@@ -791,9 +791,9 @@ const openSheetWithInput = (height) => {
             </View >
           </View>
 
-          <View className="w-full justify-center items-end">
+          <TouchableOpacity onPress={() => navigation.navigate('DisplayReviews', {reviews:filteredReviews})} className="w-full justify-center items-end">
             <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">{serviceData.reviews.length} ratings</Text>
-          </View>
+          </TouchableOpacity>
 
           {/* Reviews */}
 
@@ -804,7 +804,7 @@ const openSheetWithInput = (height) => {
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}  className="mt-5 w-full">
 
               {filteredReviews.slice(0, 10).map((review, index) => (
-                <View key={index} className="mr-2 py-5 px-4 w-[300] bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
+                <TouchableOpacity onPress={() => navigation.navigate('DisplayReviews', {reviews:filteredReviews}) } key={index} className="mr-2 py-5 px-4 w-[300] bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
 
                   <View className="flex-row justify-between items-center">
 
@@ -831,7 +831,7 @@ const openSheetWithInput = (height) => {
                     <View className="mr-1 w-12 h-12 bg-[#D4D4D3] dark:bg-[#474646] rounded-md" />
                   </ScrollView> */}
 
-                </View>      
+                </TouchableOpacity>      
               ))}      
             </ScrollView>
 
@@ -974,7 +974,7 @@ const openSheetWithInput = (height) => {
         <TouchableOpacity
           onPress={() => null }
           style={{ opacity: 1 }}
-          className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center"
+          className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center"
         >
           <Text>
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
