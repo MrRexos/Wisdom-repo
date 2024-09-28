@@ -34,6 +34,8 @@ export default function ResultsScreen() {
   const sheet = useRef();
   const [sheetHeight, setSheetHeight] = useState(450);
   const [addedServices, setAddedServices] = useState([]);
+  const route = useRoute();
+  const { category } = route.params;
 
   const orderByOptions = [
     { label: 'Recommend', type: 'recommend' },
@@ -63,7 +65,7 @@ export default function ResultsScreen() {
 
   const fetchResults = async () => {
     try {
-      const response = await api.get(`/api/category/1/services`); //CAMBIAR ESTO MAS ADELANTE
+      const response = await api.get(`/api/category/${category}/services`); //CAMBIAR ESTO MAS ADELANTE
       setResults(response.data);
     } catch (error) {
       console.error('Error al obtener los items:', error);

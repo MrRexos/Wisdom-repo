@@ -62,7 +62,7 @@ export default function ServiceProfileScreen() {
     nl: 'Dutch',
     tr: 'Turkish',
     sv: 'Swedish'
-};
+  };
 
 
   const getServiceInfo = async () => {
@@ -118,7 +118,7 @@ export default function ServiceProfileScreen() {
         console.error("Error al obtener la zona horaria:", error);
         return null;
     }
-};
+  };
 
   const fetchLists = async () => {
     const userData = await getDataLocally('user');
@@ -132,58 +132,58 @@ export default function ServiceProfileScreen() {
     } 
   };
 
-const heartClicked = async (serviceId) => {
+  const heartClicked = async (serviceId) => {
 
-  const fetchedLists = await fetchLists();
-  if (fetchedLists) {
-    setLists(fetchedLists); // Aquí se asignan las listas obtenidas
-  }
-  sheet.current.open();   
-};
+    const fetchedLists = await fetchLists();
+    if (fetchedLists) {
+      setLists(fetchedLists); // Aquí se asignan las listas obtenidas
+    }
+    sheet.current.open();   
+  };
 
-const addItemList = async (listId) => { 
-  try {
-    const response = await api.post(`/api/lists/${listId}/items`, {
-      service_id: serviceId,   
-    });
-    console.log('Item added:', response.data);
-    setIsServiceLiked(true);
+  const addItemList = async (listId) => { 
+    try {
+      const response = await api.post(`/api/lists/${listId}/items`, {
+        service_id: serviceId,   
+      });
+      console.log('Item added:', response.data);
+      setIsServiceLiked(true);
+      sheet.current.close();
+
+    } catch (error) {
+      console.error('Error fetching lists:', error);
+    } 
+  };
+
+  const createList = async () => { 
+    try {
+      const response = await api.post('/api/lists', {
+        user_id: userId,
+        list_name: listName,
+      
+      });
+      console.log('List created:', response.data);
+      return response.data.listId
+
+    } catch (error) {
+      console.error('Error fetching lists:', error);
+    } 
+  };
+
+  const handleDone = async () => {
+    const listId = createList();
+    addItemList(listId)
     sheet.current.close();
+  }
 
-  } catch (error) {
-    console.error('Error fetching lists:', error);
-  } 
-};
-
-const createList = async () => { 
-  try {
-    const response = await api.post('/api/lists', {
-      user_id: userId,
-      list_name: listName,
-     
-    });
-    console.log('List created:', response.data);
-    return response.data.listId
-
-  } catch (error) {
-    console.error('Error fetching lists:', error);
-  } 
-};
-
-const handleDone = async () => {
-  const listId = createList();
-  addItemList(listId)
-  sheet.current.close();
-}
-
-const openSheetWithInput = (height) => {
-  
-  setSheetHeight(height);
-  setTimeout(() => {
-    sheet.current.open();
-  }, 0);
-  
-};
+  const openSheetWithInput = (height) => {
+    
+    setSheetHeight(height);
+    setTimeout(() => {
+      sheet.current.open();
+    }, 0);
+    
+  };
 
   useEffect(() => {
     getServiceInfo(); 
