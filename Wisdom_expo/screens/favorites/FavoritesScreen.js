@@ -70,7 +70,7 @@
 
     if (loading) {
       return <Text>Loading...</Text>;
-    }
+    } // ESTILIZAR
 
     const renderItem = ({ item }) => (
       <View className="mb-7">
