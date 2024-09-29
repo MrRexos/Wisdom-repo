@@ -98,7 +98,7 @@ export default function ServicesScreen() {
         </View>
 
         <View className="pb-5 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="ml-6">
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="pl-6">
             {suggestions.map((item, index) => (
               <View key={index} className="pr-2">
                 <TouchableOpacity

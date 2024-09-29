@@ -277,17 +277,21 @@ export default function HomeScreen() {
 
     <View>
 
-    {index===1? (
+    {index===1 ? (
 
-    <View className="mb-6">
-      <Text className="mb-3 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{item.family}</Text>
-      <FlatList
-        data={suggestedProfessionals}
-        horizontal
-        renderItem={renderProfile}
-        keyExtractor={(category) => category.service_id.toString()}
-        showsHorizontalScrollIndicator={false}
-      />
+    <View>
+      {suggestedProfessionals && (
+        <View className="mb-6">
+          <Text className="mb-3 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{item.family}</Text>
+          <FlatList
+            data={suggestedProfessionals}
+            horizontal
+            renderItem={renderProfile}
+            keyExtractor={(category) => category.service_id.toString()}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+      )}
     </View>
 
     ) : (
