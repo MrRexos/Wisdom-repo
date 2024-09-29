@@ -46,6 +46,7 @@
     "react-i18next": "^15.0.1",
     "react-native": "0.74.5",
     "react-native-bootstrap-icons": "^1.5.0",
+    "react-native-calendars": "^1.1286.0",
     "react-native-date-picker": "^5.0.7",
     "react-native-feather": "^1.1.2",
     "react-native-gesture-handler": "^2.20.0",

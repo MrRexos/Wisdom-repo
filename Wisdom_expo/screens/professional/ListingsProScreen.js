@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView } from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon} from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import {Search, Sliders, Heart, Plus} from "react-native-feather";
+import {Plus} from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import api from '../../utils/api.js';
@@ -140,9 +140,9 @@ export default function ListingsProScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
-      <View className="flex-1 justify-between pt-[55]">
+      <View className="flex-1 justify-start items-center pt-[55]">
         
-        <View className="px-6 flex-row justify-between items-center">
+        <View className="px-6 w-full flex-row justify-between items-center">
           <Text className=" mb-2 font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2]">
               Your listings
           </Text>

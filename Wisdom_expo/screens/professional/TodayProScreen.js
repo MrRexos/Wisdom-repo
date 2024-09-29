@@ -94,7 +94,7 @@ export default function TodayProScreen() {
     );
   };
 
-  const filteredBookings = bookings.filter((booking) => booking.booking_status === selectedStatus);
+  const filteredBookings = bookings? bookings.filter((booking) => booking.booking_status === selectedStatus) : null;
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
