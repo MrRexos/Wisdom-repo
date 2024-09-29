@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import i18n from '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
-import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon } from 'react-native-heroicons/outline';
+import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIco, CalendarDaysIcon } from 'react-native-heroicons/outline';
 import { Calendar } from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
@@ -91,10 +91,14 @@ export default function ServicesScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
       <View className="flex-1 pt-[55] pb-3">
-        <View className="ml-6 flex-row justify-between mb-8">
-          <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
+
+        <View className="mb-4 px-6 w-full flex-row justify-between items-center">
+          <Text className="mb-2 font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
             Services
           </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('CreateService1')} className="p-[10] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+            <CalendarDaysIcon height={21} width={21} color={iconColor} strokeWidth={1.7}/>
+          </TouchableOpacity>
         </View>
 
         <View className="pb-5 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">

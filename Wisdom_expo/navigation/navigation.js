@@ -78,6 +78,13 @@ import ListingsProScreen from '../screens/professional/ListingsProScreen';
 import SettingsProScreen from '../screens/professional/SettingsProScreen';
 import TodayProScreen from '../screens/professional/TodayProScreen';
 
+import CalendarScreen from '../screens/services/CalendarScreen';
+import DirectionsScreen from '../screens/settings/DirectionsScreen';
+import EditAccountScreen from '../screens/settings/EditAccountScreen';
+import HelpScreen from '../screens/settings/HelpScreen';
+import TurnExpertScreen from '../screens/settings/TurnExpertScreen';
+import WalletScreen from '../screens/settings/WalletScreen';
+
 
 
 const Stack = createNativeStackNavigator();
@@ -144,6 +151,12 @@ export default function Navigation() {
           <Stack.Screen name="SettingsPro" component={SettingsProScreen} options={{ animation: 'none', gestureEnabled: false }}/> 
           <Stack.Screen name="TodayPro" component={TodayProScreen} options={{ animation: 'none', gestureEnabled: false }}/> 
           <Stack.Screen name="Professional" component={ProTabNavigator} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="Calendar" component={CalendarScreen}/> 
+          <Stack.Screen name="Directions" component={DirectionsScreen}/> 
+          <Stack.Screen name="EditAccount" component={EditAccountScreen}/> 
+          <Stack.Screen name="Help" component={HelpScreen} /> 
+          <Stack.Screen name="TurnExpert" component={TurnExpertScreen}/> 
+          <Stack.Screen name="Wallet" component={WalletScreen}/> 
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -363,6 +376,7 @@ function ServicesStackNavigator() {
   return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="ServicesScreen" component={ServicesScreen} />
+          <Stack.Screen name="Calendar" component={CalendarScreen}/> 
       </Stack.Navigator>
   );
 }
@@ -381,8 +395,12 @@ function SettingsStackNavigator() {
   return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="SettingsScreen" component={SettingsScreen} />
-          <Stack.Screen name="Preferences" component={PreferencesScreen} options={{ animation: 'none'}}/>
-          <Stack.Screen name="Language" component={LanguageScreen} options={{ animation: 'none'}}/>
+          <Stack.Screen name="Preferences" component={PreferencesScreen}/>
+          <Stack.Screen name="Language" component={LanguageScreen} />
+          <Stack.Screen name="EditAccount" component={EditAccountScreen}/> 
+          <Stack.Screen name="Help" component={HelpScreen} /> 
+          <Stack.Screen name="TurnExpert" component={TurnExpertScreen}/> 
+          <Stack.Screen name="Wallet" component={WalletScreen}/> 
       </Stack.Navigator>
   );
 }
