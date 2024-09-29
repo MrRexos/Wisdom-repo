@@ -85,7 +85,7 @@ export default function ServicesScreen() {
   };
 
   // Filtrar las reservas por estado seleccionado
-  const filteredBookings = bookings.filter((booking) => booking.booking_status === selectedStatus);
+  const filteredBookings = bookings ? bookings.filter((booking) => booking.booking_status === selectedStatus) : null;
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
@@ -114,7 +114,7 @@ export default function ServicesScreen() {
           </ScrollView>
         </View>
 
-        {filteredBookings.length === 0 ? (
+        {( !filteredBookings || filteredBookings.length === 0 ) ? (
           <View className="flex-1 justify-center items-center">
             <Clipboard height={55} width={60} fill={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
             <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
@@ -139,7 +139,7 @@ export default function ServicesScreen() {
             <FlatList
               data={filteredBookings}
               renderItem={renderBooking}
-              keyExtractor={(booking) => booking.id}
+              keyExtractor={(booking, index) => index.toString()}
               showsVerticalScrollIndicator={false}
               className="p-5"
             />

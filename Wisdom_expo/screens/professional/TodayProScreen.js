@@ -162,7 +162,7 @@ export default function TodayProScreen() {
                 <FlatList
                   data={filteredBookings}
                   renderItem={renderBooking}
-                  keyExtractor={(booking) => booking.id}
+                  keyExtractor={(booking, index) => index.toString()}
                   showsVerticalScrollIndicator={false}
                   className="p-2"
                 />
