@@ -15,22 +15,21 @@ import CashStackIcon from '../../assets/CashStack';
 import SuticasePlusIcon from '../../assets/SuitcasePlus';
 
 
-
 const Sections = [
   {
     items: [
       {id: 'account', icon: KeyIcon, label:'Account', type: 'select'},
       {id: 'preferences', icon: Settings, label:'Preferences', type: 'select', link: 'Preferences'},
       {id: 'notifications', icon: Bell, label:'Notifications', type: 'toggle'},
-      {id: 'directions', icon: MapPin, label:'Directions', type: 'select'},
-      {id: 'payments', icon: CashStackIcon, label:'Payments and refunds', type: 'select'},
+      {id: 'directions', icon: MapPin, label:'Directions', type: 'select', link: 'Directions'},
+      {id: 'payments', icon: CashStackIcon, label:'Payments and refunds', type: 'select', link: 'Wallet'},
     ]
   },
   {
     items: [
       {id: 'provideService', icon: SuticasePlusIcon, label:'Provide service', type: 'select', link: 'CreateService1'},
       {id: 'switchProfessionalVersion', icon: ArrowsRightLeftIcon, label:'Switch to professional version', type: 'select', link: 'Professional'},
-      {id: 'becomeExpert', icon: ExpertIcon, label:'Become an expert', type: 'select'},
+      {id: 'becomeExpert', icon: ExpertIcon, label:'Become an expert', type: 'select', link: 'TurnExpert'},
     ]
   },
   {
@@ -41,10 +40,10 @@ const Sections = [
   },
   {
     items: [
-      {id: 'help', icon: Info, label:'Help', type: 'select'},
+      {id: 'help', icon: Info, label:'Help', type: 'select', link: 'Help'},
       {id: 'rateUs', icon: Star, label:'Rate us', type: 'select'},
       {id: 'shareApp', icon: Share, label:'Share app', type: 'select'},
-      {id: 'followInsta', icon: Instagram, label:'Follow us in Instagram', type: 'select'},
+      {id: 'followInsta', icon: Instagram, label:'Follow us in Instagram', type: 'select', link: 'XXX'},
     ]
   },
 ];
