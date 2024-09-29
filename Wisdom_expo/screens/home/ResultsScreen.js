@@ -203,7 +203,7 @@ export default function ResultsScreen() {
 
         </View>
 
-        <View className="flex-row justify-between items-end mx-5 mt-4">
+        <View className="flex-row justify-between items-end mx-5 mt-4 mb-6">
 
             <View className="flex-row justify-start items-center">
               <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[45] w-[45] bg-[#706B5B] rounded-lg" />
@@ -226,9 +226,8 @@ export default function ResultsScreen() {
 
         </View>
 
-        <View className="p-6">
-
-          {item.images && (
+        {item.images && (
+        <View className="px-6 pb-6">
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="flex-1 roundex-lg">
               {item.images.map((image, index) => (
                 <View key={index} className="pr-[6]">
@@ -239,9 +238,8 @@ export default function ResultsScreen() {
                 </View>
               ))}
             </ScrollView>
-          )}
-
         </View>
+        )}
 
         
       </TouchableOpacity>
@@ -481,7 +479,7 @@ export default function ResultsScreen() {
         <View style={{zIndex:1}}>
           <FlatList
             data={results}
-            keyExtractor={(item) => item.service_id.toString()}
+            keyExtractor={(item, index) => index.toString()}
             renderItem={renderItem}
             contentContainerStyle={{
               justifyContent: 'space-between',
