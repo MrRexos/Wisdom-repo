@@ -8,11 +8,16 @@ import i18n from '../languages/i18n';
 import { getDataLocally } from '../utils/asyncStorage';
 import { useEffect, useState } from 'react';
 
-import { Search, Heart, MessageSquare } from "react-native-feather";
+import { Search, Heart, MessageSquare, Calendar } from "react-native-feather";
+import {BookOpenIcon as OutlineBookOpenIcon} from 'react-native-heroicons/outline';
+import { BookOpenIcon as SolidBookOpenIcon } from 'react-native-heroicons/solid';
 import HeartFill from "../assets/HeartFill.tsx"
 import MessageSquareFill from "../assets/MessageSquareFill.tsx"
 import Suitcase from "../assets/Suitcase.tsx"
 import SuitcaseFill from "../assets/SuitcaseFill.tsx"
+import BriefcaseIcon from "../assets/BriefCase"
+import BriefcaseFillIcon from "../assets/BriefCaseFill"
+import CalendarFillIcon from "../assets/CalendarFill"
 
 import React from 'react'
 
@@ -67,6 +72,11 @@ import ServiceProfileScreen from '../screens/home/ServiceProfileScreen';
 import DisplayImagesScreen from '../screens/home/DisplayImagesScreen';
 import DisplayReviewsScreen from '../screens/home/DisplayReviewsScreen';
 import EnlargedImageScreen from '../screens/home/EnlargedImageScreen';
+
+import CalendarProScreen from '../screens/professional/CalendarProScreen';
+import ListingsProScreen from '../screens/professional/ListingsProScreen';
+import SettingsProScreen from '../screens/professional/SettingsProScreen';
+import TodayProScreen from '../screens/professional/TodayProScreen';
 
 
 
@@ -129,6 +139,11 @@ export default function Navigation() {
           <Stack.Screen name="DisplayImages" component={DisplayImagesScreen}/> 
           <Stack.Screen name="DisplayReviews" component={DisplayReviewsScreen}/>
           <Stack.Screen name="EnlargedImage" component={EnlargedImageScreen}/>
+          <Stack.Screen name="CalendarPro" component={CalendarProScreen} options={{ animation: 'none', gestureEnabled: false }}/> 
+          <Stack.Screen name="ListingsPro" component={ListingsProScreen} options={{ animation: 'none', gestureEnabled: false }}/> 
+          <Stack.Screen name="SettingsPro" component={SettingsProScreen} options={{ animation: 'none', gestureEnabled: false }}/> 
+          <Stack.Screen name="TodayPro" component={TodayProScreen} options={{ animation: 'none', gestureEnabled: false }}/> 
+          <Stack.Screen name="Professional" component={ProTabNavigator} options={{ animation: 'none', gestureEnabled: false }}/>
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -221,6 +236,98 @@ function TabNavigator() {
         <Tab.Screen name="Services" component={ServicesStackNavigator} />
         <Tab.Screen name="Chat" component={ChatStackNavigator} />
         <Tab.Screen name="Settings" component={SettingsStackNavigator} />
+      </Tab.Navigator>
+  );
+}
+
+function ProTabNavigator() {
+  const {colorScheme, toggleColorScheme} = useColorScheme();
+  const { t, i18n} = useTranslation();
+  const [profileImage, setProfileImage] = useState(null);
+
+  useEffect(() => {
+    // Función para obtener la imagen de perfil guardada en AsyncStorage
+    const getProfileImage = async () => {
+      try {
+        const userData = await getDataLocally('user');
+        const user = JSON.parse(userData);
+        if (user.profile_picture) {
+          setProfileImage(user.profile_picture);
+        }
+      } catch (error) {
+        console.log('Error al cargar la imagen de perfil:', error);
+      }
+    };
+
+    getProfileImage();
+  }, []);
+  return (
+      <Tab.Navigator initialRouteName="Today" screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarIcon: ({ focused, color, size }) => {
+
+          switch (route.name) {
+
+            case 'Today':
+              IconName = focused? SolidBookOpenIcon :  OutlineBookOpenIcon;
+              break;
+            case 'Calendar':
+              IconName = focused? CalendarFillIcon : Calendar;
+              break;
+            case 'Listings':
+              IconName = focused ? BriefcaseFillIcon : BriefcaseIcon;
+              break;
+            case 'Chat':
+              IconName = focused? MessageSquareFill: MessageSquare;
+              break;
+            case 'Settings':
+              return (
+                <View
+                  style={{
+                    padding: 1, // Espacio entre la imagen y el borde
+                    borderRadius: 27, // Un radio un poco mayor para el borde externo
+                    borderColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343', // Color del borde
+                    borderWidth: focused ? 1 : 0, // Borde condicional
+                  }}
+                >
+                  <Image
+                    source={profileImage ? { uri: profileImage } : require('../assets/defaultProfilePic.jpg')}
+                    style={{ 
+                      width: 25, 
+                      height: 25, 
+                      borderRadius: 25, // Mantiene la imagen redondeada
+                    }}
+                  />
+                </View>
+              );
+          }
+          return <IconName color={color} strokeWidth={1.7} width={size} height={size} />;
+        },
+        tabBarActiveTintColor: colorScheme=='dark' ? '#f2f2f2' : '#444343', 
+        tabBarInactiveTintColor: colorScheme=='dark' ? '#706f6e' : '#B6B5B5',  
+        tabBarStyle: {
+          backgroundColor: colorScheme=='dark' ? '#323131' : '#fcfcfc',  
+          paddingBottom: 38, 
+          paddingTop: 15,
+          height: 95,
+          borderTopWidth:0,
+          shadowColor: '#000000',
+          shadowOpacity: 0.07,
+          shadowRadius: 18,
+        },
+        tabBarLabelStyle: { 
+          paddingTop: 10,
+          fontSize: 10, 
+          fontFamily: 'inter-medium'
+        },
+      })}
+      >
+        <Tab.Screen name="Today" component={TodayProScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Tab.Screen name="Calendar" component={CalendarProScreen} options={{ animation: 'none', gestureEnabled: false }}/> 
+        <Tab.Screen name="Listings" component={ListingsProScreen} options={{ animation: 'none', gestureEnabled: false }}/> 
+        <Tab.Screen name="Chat" component={ChatStackNavigator} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Tab.Screen name="Settings" component={SettingsProScreen} options={{ animation: 'none', gestureEnabled: false }}/> 
+        
       </Tab.Navigator>
   );
 }
