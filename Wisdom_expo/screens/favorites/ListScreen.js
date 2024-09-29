@@ -333,10 +333,12 @@ export default function ListScreen() {
             )}          
           
       </RBSheet>
-      <TouchableOpacity onPress={() => navigation.goBack()} className="pl-4 pt-2">
+
+      <TouchableOpacity onPress={() => navigation.goBack()} className="pl-4 pt-4">
         <ChevronLeftIcon size={24} strokeWidth={1.7} color={iconColor} />
       </TouchableOpacity>
-      <View className="px-6 pt-8 mb-9">
+
+      <View className="px-6 pt-5 mb-9">
         <View  className="flex-row justify-between items-center">
           <Text className="font-inter-semibold text-[24px] text-[#444343] dark:text-[#f2f2f2]">
             {currentTitle}

@@ -96,7 +96,7 @@ export default function ServicesScreen() {
           <Text className="mb-2 font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
             Services
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('CreateService1')} className="p-[10] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+          <TouchableOpacity onPress={() => navigation.navigate('Calendar')} className="p-[10] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
             <CalendarDaysIcon height={21} width={21} color={iconColor} strokeWidth={1.7}/>
           </TouchableOpacity>
         </View>

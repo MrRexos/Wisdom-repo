@@ -166,6 +166,7 @@ export default function CalendarProScreen() {
           <Calendar
             onDayPress={onDayPress}
             markedDates={markedDates}
+            firstDay={1}
             theme={{
               todayTextColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
               monthTextColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
