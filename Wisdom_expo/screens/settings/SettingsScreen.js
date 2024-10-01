@@ -6,6 +6,8 @@ import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import api from '../../utils/api.js';
+
 
 import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram, Link } from "react-native-feather";
 import {KeyIcon ,ChevronRightIcon, ArrowsRightLeftIcon} from 'react-native-heroicons/outline';
@@ -69,18 +71,41 @@ export default function SettingsScreen() {
     navigation.navigate('GetStarted');
   };
 
+  const changeAllowNotis = async (userId, allowNotis) => {
+    try {
+      const response = await api.put(`/api/user/${userId}/allow_notis`, {
+        allow_notis: allowNotis,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error al llamar a la API:', error.message);
+    }
+  };
+
   const handleToggleAllowNotis = async (value) => {
+  try {
     const userData = await getDataLocally('user');
     if (userData) {
       const user = JSON.parse(userData);
       user.allow_notis = value; 
+      
+      // Actualizar AsyncStorage
       await storeDataLocally('user', JSON.stringify(user));
+      
+      // Actualizar el estado local
       setAllowNotis(value);
       setForm({...form, notifications: value});
+      
+      // Llamar a la API para actualizar en el backend
+      await changeAllowNotis(user.id, value);
+      
     } else {
       console.log('No user found in AsyncStorage');
     }
+  } catch (error) {
+    console.error('Error al actualizar las notificaciones:', error);
   }
+};
   
   const loadUserData = async () => {
     const userData = await getDataLocally('user');
@@ -101,6 +126,8 @@ export default function SettingsScreen() {
       loadUserData();
     }, [])
   );
+
+  
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
