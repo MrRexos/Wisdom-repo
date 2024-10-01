@@ -53,10 +53,12 @@ export default function EditProfileScreen() {
 
   const inputUsernameChanged = (text) => {
     setUsername(text);
+    setShowError(false);
   };
 
   const inputNameChanged = (text) => {
     setName(text);
+    setShowError(false);
   };
 
   const uploadImage = async () => {
