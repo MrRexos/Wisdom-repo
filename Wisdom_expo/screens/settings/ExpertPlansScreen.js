@@ -63,6 +63,7 @@ export default function ExpertPlansScreen() {
 
         <View className="flex-1 px-10 pt-[80] justify-start items-start">
 
+
             {options.map(({label, value, price}, index) => {
                 const isActive = typeSelected === index;
                 return (
@@ -71,6 +72,14 @@ export default function ExpertPlansScreen() {
                         onPress={() => {setTypeSelected(index); setPlanType(value)}}
                         className={isActive? `mb-3 p-4 pr-7 w-full justify-start items-start rounded-xl bg-[#e0e0e0] dark:bg-[#3d3d3d] border-[1px] border-[#b6b5b5] dark:border-[#706f6e]` : `mb-3 p-4 pr-7 justify-start items-start w-full rounded-xl border-[1px] border-[#b6b5b5] dark:border-[#706f6e]`}
                         >
+                        { value === 'yearly' && (
+                            <View 
+                                style={{ position: 'absolute', top: -15, left: '46%'}}
+                                className="bg-[#74a450] rounded-full p-[7]"
+                            >
+                                <Text className="font-inter-medium text-[11px] text-[#d4d4d3]">Save 25%</Text>
+                            </View>
+                        )}
                         <View className="flex-row w-full justify-between items-center">
                             <View className="flex-row  items-center">
                                 <View className="mr-5 p-[3] h-5 w-5 rounded-full border-[1px] border-[#b6b5b5] dark:border-[#706f6e]">
@@ -84,6 +93,7 @@ export default function ExpertPlansScreen() {
                     </TouchableOpacity>
                 );
             })}
+
 
             {planType==='yearly'? (
 

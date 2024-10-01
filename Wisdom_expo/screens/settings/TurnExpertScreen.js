@@ -77,10 +77,6 @@ export default function TurnExpertScreen() {
 
         </View>
 
-
-
-
-
         <View className="mb-3 justify-center items-center">
             <TouchableOpacity 
               onPress={() => navigation.navigate('ExpertPlans')} 

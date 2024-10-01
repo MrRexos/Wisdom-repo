@@ -85,6 +85,7 @@ import HelpScreen from '../screens/settings/HelpScreen';
 import TurnExpertScreen from '../screens/settings/TurnExpertScreen';
 import WalletScreen from '../screens/settings/WalletScreen';
 import ExpertPlansScreen from '../screens/settings/ExpertPlansScreen';
+import FAQScreen from '../screens/settings/FAQScreen';
 
 
 
@@ -159,6 +160,7 @@ export default function Navigation() {
           <Stack.Screen name="TurnExpert" component={TurnExpertScreen}/> 
           <Stack.Screen name="Wallet" component={WalletScreen}/>  
           <Stack.Screen name="ExpertPlans" component={ExpertPlansScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+          <Stack.Screen name="FAQ" component={FAQScreen}/>  
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -402,6 +404,7 @@ function SettingsStackNavigator() {
           <Stack.Screen name="EditAccount" component={EditAccountScreen}/> 
           <Stack.Screen name="Help" component={HelpScreen} /> 
           <Stack.Screen name="Wallet" component={WalletScreen}/> 
+          <Stack.Screen name="FAQ" component={FAQScreen}/>  
       </Stack.Navigator>
   );
 }

@@ -1,6 +1,6 @@
 
 import React, {useState, useEffect, useCallback} from 'react';
-import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Image, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import { useColorScheme } from 'nativewind'
@@ -43,7 +43,7 @@ const Sections = [
       {id: 'help', icon: Info, label:'Help', type: 'select', link: 'Help'},
       {id: 'rateUs', icon: Star, label:'Rate us', type: 'select'},
       {id: 'shareApp', icon: Share, label:'Share app', type: 'select'},
-      {id: 'followInsta', icon: Instagram, label:'Follow us in Instagram', type: 'select', link: 'XXX'},
+      {id: 'followInsta', icon: Instagram, label:'Follow us in Instagram', type: 'link', link: 'https://www.instagram.com/wisdom__app/'},
     ]
   },
 ];
@@ -133,10 +133,18 @@ export default function SettingsScreen() {
           <View key={sectionIndex} style={{borderRadius: 12, overflow: 'hidden'}}>
             {items.map(({label, id, type, link, icon: Icon}, index) => (
               <View key={id} className="pl-5  bg-[#fcfcfc]  dark:bg-[#323131]" >
-                <TouchableOpacity onPress={() => {['select', 'link'].includes(type) && navigation.navigate(link)}} >
+                <TouchableOpacity 
+                  onPress={() => {
+                    if (type === 'link') {
+                      Linking.openURL(link); // Reemplaza 'yourpage' por tu página de Instagram
+                    } else if (type === 'select') {
+                      navigation.navigate(link);
+                    }
+                  }}
+                >
                   <View className=" flex-row items-center justify-start ">
                     <Icon  color={iconColor} strokeWidth={1.5} className="mr-4" style={{ transform: [{ scale: 1 }]}} ></Icon>
-                    <View className="h-[45] flex-1 flex-row items-center justify-start pr-[14] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{borderTopWidth: 1}, index===0 && {borderTopWidth: 0 }]}>                   
+                    <View className="py-[10] flex-1 flex-row items-center justify-start pr-[14] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{borderTopWidth: 1}, index===0 && {borderTopWidth: 0 }]}>                   
                       <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{label}</Text>
                       <View className="flex-1"/>
                       
