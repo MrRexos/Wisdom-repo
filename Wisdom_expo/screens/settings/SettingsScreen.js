@@ -18,7 +18,7 @@ import SuticasePlusIcon from '../../assets/SuitcasePlus';
 const Sections = [
   {
     items: [
-      {id: 'account', icon: KeyIcon, label:'Account', type: 'select'},
+      {id: 'account', icon: KeyIcon, label:'Account', type: 'select', link: 'EditAccount'},
       {id: 'preferences', icon: Settings, label:'Preferences', type: 'select', link: 'Preferences'},
       {id: 'notifications', icon: Bell, label:'Notifications', type: 'toggle'},
       {id: 'directions', icon: MapPin, label:'Directions', type: 'select', link: 'Directions'},
@@ -115,18 +115,25 @@ export default function SettingsScreen() {
             <Share height={22} strokeWidth={1.7} color={iconColor}/>
           </TouchableOpacity>
         </View>
+
         <View className="justify-between flex-row items-center px-2">
           <View className="justify-start flex-row"> 
-            <TouchableOpacity >
+            <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}>
               <Image source={image ? {uri: image} : require('../../assets/defaultProfilePic.jpg')} style={{resizeMode: 'cover', width: 75, height: 75 }} className="rounded-full bg-slate-500" />
             </TouchableOpacity>
             <View className="justify-center px-3 gap-y-1 " >
-              <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{name} {surname}</Text>
-              <Text className="font-inter-medium text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">@{username}</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}> 
+                <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{name} {surname}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}>
+                <Text className="font-inter-medium text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">@{username}</Text>
+              </TouchableOpacity>
             </View>
 
           </View>
-          <Edit3 height={20} strokeWidth={1.7} color={iconColor}/>
+          <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}>
+            <Edit3 height={20} strokeWidth={1.7} color={iconColor}/>
+          </TouchableOpacity>
         </View>
         
         {Sections.map(({items}, sectionIndex) => (

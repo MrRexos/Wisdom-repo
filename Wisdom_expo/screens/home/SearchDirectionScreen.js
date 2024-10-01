@@ -487,7 +487,7 @@ export default function SearchDirectionScreen() {
           data={searchText.length<1 ? historySearchedDirections : suggestions}
           keyExtractor={(item) => item.place_id}
           renderItem={renderSuggestions}
-        />
+        /> 
 
       </View>
     </SafeAreaView>
