@@ -407,7 +407,9 @@ function SettingsStackNavigator() {
           <Stack.Screen name="Help" component={HelpScreen} /> 
           <Stack.Screen name="Wallet" component={WalletScreen}/> 
           <Stack.Screen name="FAQ" component={FAQScreen}/>  
-          <Stack.Screen name="EditProfile" component={EditProfileScreen}/>  
+          <Stack.Screen name="EditProfile" component={EditProfileScreen}/> 
+          <Stack.Screen name="Directions" component={DirectionsScreen}/>   
+          <Stack.Screen name="AddDirection" component={SearchDirectionScreen}/>  
       </Stack.Navigator>
   );
 }
