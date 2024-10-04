@@ -43,6 +43,9 @@ export default function SearchDirectionScreen() {
   const [sheetHeight, setSheetHeight] = useState(630);
   const [directions, setDirections] = useState([]);
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [addressId, setAddressId] = useState();
+
   const handleClearText = () => {
     setSearchText('');
   };
@@ -214,28 +217,54 @@ export default function SearchDirectionScreen() {
     const user = JSON.parse(userData);
     setUserId(user.id);
 
-    try {
-      const response = await api.post(`/api/directions`,{
-        user_id:user.id, 
-        address_type:address2 ? 'flat' : 'house', 
-        street_number:streetNumber, 
-        address_1:street, 
-        address_2:address2, 
-        postal_code:postalCode, 
-        city:city, 
-        state:state, 
-        country:country
-      });
-      
-      console.log('hola')
+    if (isEditing) {
 
-      const searchedDirection = {location, country, state, city, street, streetNumber, postalCode, address2}
-      await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
-      navigation.goBack();
+      console.log('editando')
 
-    } catch (error) {
-      console.error('Error fetching directions:', error);
-    }
+      try {
+        const response = await api.put(`/api/address/${addressId}`,{
+          address_type:address2 ? 'flat' : 'house', 
+          street_number:streetNumber, 
+          address_1:street, 
+          address_2:address2, 
+          postal_code:postalCode, 
+          city:city, 
+          state:state, 
+          country:country
+        });
+
+        const searchedDirection = {location, country, state, city, street, streetNumber, postalCode, address2}
+        await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
+        navigation.goBack();
+
+      } catch (error) {
+        console.error('Error updating address:', error);
+      }
+
+    } else {
+
+      try {
+        const response = await api.post(`/api/directions`,{
+          user_id:user.id, 
+          address_type:address2 ? 'flat' : 'house', 
+          street_number:streetNumber, 
+          address_1:street, 
+          address_2:address2, 
+          postal_code:postalCode, 
+          city:city, 
+          state:state, 
+          country:country
+        });
+
+        const searchedDirection = {location, country, state, city, street, streetNumber, postalCode, address2}
+        await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
+        navigation.goBack();
+
+      } catch (error) {
+        console.error('Error fetching directions:', error);
+      }
+
+    };
     
   };
 
@@ -420,6 +449,9 @@ export default function SearchDirectionScreen() {
                             setStreetNumber(direction.street_number);
                             setPostalCode(direction.postal_code);
                             setAddress2(direction.address_2);
+                            setIsEditing(true);
+                            setAddressId(direction.address_id);
+                            console.log(direction.street_number)
                       
                             openSheetWithInput(false);}}>
 
@@ -518,15 +550,15 @@ export default function SearchDirectionScreen() {
               </View>
 
               <View className="flex-1 h-[55] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
-                {streetNumber && streetNumber.length>0? (
+                {streetNumber && String(streetNumber).length>0? (
                   <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Street number</Text>
-                ) : null}              
+                ) : null}   
                 <TextInput
                   placeholder='Street number...'
                   selectionColor={cursorColorChange}
                   placeholderTextColor="#ff633e"
                   onChangeText={inputStreetNumberChanged} 
-                  value={streetNumber || ''}
+                  value={streetNumber ? String(streetNumber) : ''}
                   keyboardType="number-pad"
                   keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                   className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
@@ -534,6 +566,8 @@ export default function SearchDirectionScreen() {
               </View>
 
             </View>
+
+            
 
             <View className="w-full h-[55] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               { address2 && address2.length>0? (
