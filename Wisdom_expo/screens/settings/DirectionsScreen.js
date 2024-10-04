@@ -17,10 +17,22 @@ export default function DirectionsScreen() {
   const { colorScheme } = useColorScheme();
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
+  const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
+  const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const [userId, setUserId] = useState();
   const [directions, setDirections] = useState([]);
   const sheet = useRef();
   const [selectedAddressId, setSelectedAddressId] = useState(null);
+
+  const [country, setCountry] = useState('');
+  const [street, setStreet] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [streetNumber, setStreetNumber] = useState('');
+  const [address2, setAddress2] = useState('');
+  const [sheetHeight, setSheetHeight] = useState(230);
+  const [isEditing, setIsEditing] = useState(false);
 
   const EditButtons = [
     {
@@ -44,13 +56,15 @@ export default function DirectionsScreen() {
     }
   };
 
-  useEffect(() => {
-    const loadDirections = async () => {
-      const directionList = await fetchDirections();
-      setDirections(directionList);
-    };
-    loadDirections();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const loadDirections = async () => {
+        const directionList = await fetchDirections();
+        setDirections(directionList);
+      };
+      loadDirections();
+    }, [])
+  );
 
   const deleteDirection = async (addressId) => {
     console.log(addressId)
@@ -62,14 +76,90 @@ export default function DirectionsScreen() {
      }
   };
 
+  const openSheetWithInput = async (mode) => {
+
+    if (mode===false) {
+      setIsEditing(false)
+      await fetchDirections();
+      setSheetHeight(230);
+    } else {
+      setIsEditing(true)
+      setSheetHeight(630)
+    };
+    setTimeout(() => {
+      sheet.current.open();
+    }, 0);
+    
+  };
+
+  const handleConfirm = async () => {
+
+    try {
+      const response = await api.put(`/api/address/${selectedAddressId}`,{
+        address_type:address2 ? 'flat' : 'house', 
+        street_number:streetNumber, 
+        address_1:street, 
+        address_2:address2, 
+        postal_code:postalCode, 
+        city:city, 
+        state:state, 
+        country:country
+      });
+
+      sheet.current.close()
+
+      const directionList = await fetchDirections();
+      setDirections(directionList);
+
+
+    } catch (error) {
+      console.error('Error updating address:', error);
+    }
+    
+  };
+
+  const inputCountryChanged = (text) => {
+    setCountry(text);
+  };
+
+  const inputCityChanged = (text) => {
+    setCity(text);
+  };
+
+  const inputStateChanged = (text) => {
+    setState(text);
+  };
+
+  const inputStreetChanged = (text) => {
+    setStreet(text);
+  };
+
+  const inputPostalCodeChanged = (text) => {
+    setPostalCode(text);
+  };
+
+  const inputStreetNumberChanged = (text) => {
+    setStreetNumber(text);
+  };
+
+  const inputAddress2Changed = (text) => {
+    setAddress2(text);
+  };
+
+
+
+
+
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]">
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
       <RBSheet
-        height={250}
+        height={sheetHeight}
         openDuration={300}
         closeDuration={300}
+        onClose={() => setIsEditing(false)}
+        draggable={true}
         ref={sheet}
         customStyles={{
           container: {
@@ -80,6 +170,140 @@ export default function DirectionsScreen() {
           draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
         }}
       >
+
+        {isEditing? (
+
+          <ScrollView>      
+            <View className="flex-1 w-full justify-start items-center pt-3 pb-5 px-5"> 
+
+            <View className="justify-between items-center mb-10">                  
+                <Text className="text-center font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Confirm your direction</Text>
+            </View>
+              
+            <View className="w-full h-[55] mx-2 mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              {country && country.length>0? (
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Country/region</Text>
+              ) : null}              
+              <TextInput
+                placeholder='Country/region...'
+                selectionColor={cursorColorChange}
+                placeholderTextColor={placeHolderTextColorChange}
+                onChangeText={inputCountryChanged} 
+                value={country || ''}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+              />            
+            </View>
+
+            <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              {state && state.length>0? (
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">State</Text>
+              ) : null}              
+              <TextInput
+                placeholder='State...'
+                selectionColor={cursorColorChange}
+                placeholderTextColor={placeHolderTextColorChange}
+                onChangeText={inputStateChanged} 
+                value={state || ''}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+              />
+            </View>
+
+            <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              {city && city.length>0? (
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">City/town</Text>
+              ) : null}              
+              <TextInput
+                placeholder='City/town...'
+                selectionColor={cursorColorChange}
+                placeholderTextColor={placeHolderTextColorChange}
+                onChangeText={inputCityChanged} 
+                value={city || ''}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+              />
+            </View>
+
+            <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              {street && street.length>0? (
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Street</Text>
+              ) : null}              
+              <TextInput
+                placeholder='Street...'
+                selectionColor={cursorColorChange}
+                placeholderTextColor={placeHolderTextColorChange}
+                onChangeText={inputStreetChanged} 
+                value={street || ''}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+              />
+            </View>
+            <View className="flex-row w-full justify-between items-center">
+
+              <View className="flex-1 h-[55] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                {postalCode && postalCode.length>0? (
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Postal code</Text>
+                ) : null}              
+                <TextInput
+                  placeholder='Postal code...'
+                  selectionColor={cursorColorChange}
+                  placeholderTextColor={placeHolderTextColorChange}
+                  onChangeText={inputPostalCodeChanged} 
+                  value={postalCode || ''}
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+                />
+              </View>
+
+              <View className="flex-1 h-[55] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                {streetNumber && String(streetNumber).length>0? (
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Street number</Text>
+                ) : null}   
+                <TextInput
+                  placeholder='Street number...'
+                  selectionColor={cursorColorChange}
+                  placeholderTextColor="#ff633e"
+                  onChangeText={inputStreetNumberChanged} 
+                  value={streetNumber ? String(streetNumber) : ''}
+                  keyboardType="number-pad"
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+                />
+              </View>
+
+            </View>
+
+
+
+            <View className="w-full h-[55] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              { address2 && address2.length>0? (
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Floor, door, stair (optional)</Text>
+              ) : null}              
+              <TextInput
+                placeholder='Floor, door, stair (optional)...'
+                selectionColor={cursorColorChange}
+                placeholderTextColor={placeHolderTextColorChange}
+                onChangeText={inputAddress2Changed} 
+                value={address2 || ''}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+              />
+            </View>
+
+            <TouchableOpacity 
+                disabled={streetNumber.length<1}
+                onPress={() => handleConfirm()}
+                style={{opacity: streetNumber.length<1? 0.5: 1}}
+                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Confirm</Text>
+            </TouchableOpacity>
+
+            </View> 
+          </ScrollView>  
+
+        ) : (
+ 
         <View className="flex-1 w-full justify-start items-center mt-6 pb-5 px-5">
           {EditButtons.map(({ items }, sectionIndex) => (
             <View key={sectionIndex} style={{ borderRadius: 12, overflow: 'hidden' }} className="w-full">
@@ -91,8 +315,7 @@ export default function DirectionsScreen() {
                         deleteDirection(selectedAddressId);
                         sheet.current.close();
                       } else if (type === 'select') {
-                        navigation.navigate(link);
-                        sheet.current.close();
+                        openSheetWithInput(true);
                       }
                     }}
                   >
@@ -112,6 +335,9 @@ export default function DirectionsScreen() {
             </View>
           ))}
         </View>
+
+        )}
+
       </RBSheet>
 
       <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[90] w-full z-10 justify-end">
@@ -161,7 +387,17 @@ export default function DirectionsScreen() {
             </View>
 
             <View className="h-full justify-start items-center">
-              <TouchableOpacity onPress={() => { setSelectedAddressId(direction.address_id); sheet.current.open(); }}>
+              <TouchableOpacity onPress={() => {
+                setSelectedAddressId(direction.address_id); 
+                setCountry(direction.country);
+                setState(direction.state);
+                setCity(direction.city);
+                setStreet(direction.address_1);
+                setStreetNumber(direction.street_number);
+                setPostalCode(direction.postal_code);
+                setAddress2(direction.address_2);
+                setIsEditing(true);
+                openSheetWithInput(false) }}>
                 <MoreHorizontal height={20} width={20} strokeWidth={1.7} color={iconColor} />
               </TouchableOpacity>
             </View>

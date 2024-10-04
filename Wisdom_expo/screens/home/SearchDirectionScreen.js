@@ -451,7 +451,6 @@ export default function SearchDirectionScreen() {
                             setAddress2(direction.address_2);
                             setIsEditing(true);
                             setAddressId(direction.address_id);
-                            console.log(direction.street_number)
                       
                             openSheetWithInput(false);}}>
 
@@ -467,7 +466,7 @@ export default function SearchDirectionScreen() {
             </View>
           ) : (        
             <ScrollView>      
-          <View className="flex-1 w-full justify-start items-center pt-3 pb-5 px-5"> 
+            <View className="flex-1 w-full justify-start items-center pt-3 pb-5 px-5"> 
 
             <View className="justify-between items-center mb-10">                  
                 <Text className="text-center font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Confirm your direction</Text>
