@@ -190,7 +190,7 @@ export default function ListScreen() {
     };
 
     return (
-      <TouchableOpacity onPress={null} className="h-[170]">
+      <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', {serviceId: item.service_id})} className="h-[170]">
         <View className="flex-row">
           <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[85] w-[85] bg-[#706B5B] rounded-xl ml-6" />
           <View className="flex-1">

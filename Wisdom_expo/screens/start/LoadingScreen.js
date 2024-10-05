@@ -52,9 +52,9 @@ export default function SettingsScreen() {
   }, []);
 
   return (
-    <View className='flex-1 flex-row bg-[#272626] justify-center items-center'>
+    <View className='flex-1 flex-row bg-[#111111] justify-center items-center'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
-      <WisdomLogo  width={190} height={100}/>
+      <WisdomLogo  width={100} height={70}/>
     </View>
   );
 }

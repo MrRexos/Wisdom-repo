@@ -401,10 +401,6 @@ export default function ServiceProfileScreen() {
   
 
 
-
-
-
-
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
@@ -519,7 +515,7 @@ export default function ServiceProfileScreen() {
 
                 <TouchableOpacity
                   disabled={!(selectedDay && selectedTime && duration) && !timeUndefined}
-                  onPress={() => {sheet.current.close(); navigation.navigate('Booking', {location, bookingStartDate:selectedDay, bookingStartTime:selectedTime, bookingDuration:duration, bookingDateUndefined:timeUndefined})} }
+                  onPress={() => {sheet.current.close(); navigation.navigate('Booking', { serviceData, location, bookingStartDate:selectedDay, bookingStartTime:selectedTime, bookingDuration:duration, bookingDateUndefined:timeUndefined})} }
                   style={{ opacity: !(selectedDay && selectedTime && duration) && !timeUndefined? 0.5 : 1 }}
                   className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17] rounded-full items-center justify-center"
                 >
