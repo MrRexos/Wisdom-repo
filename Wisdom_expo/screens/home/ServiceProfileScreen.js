@@ -60,7 +60,7 @@ export default function ServiceProfileScreen() {
   const [tempDate, setTempDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState('');
   const [duration, setDuration] = useState(60);
-  const [sliderValue, setSliderValue] = useState(0);
+  const [sliderValue, setSliderValue] = useState(12);
   const sliderTimeoutId = useRef(null);
   const [timeUndefined, setTimeUndefined] = useState(false); 
   

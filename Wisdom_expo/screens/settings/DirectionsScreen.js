@@ -67,10 +67,10 @@ export default function DirectionsScreen() {
   );
 
   const deleteDirection = async (addressId) => {
-    console.log(addressId)
      try {
        await api.delete(`/api/address/${addressId}`);
-       setDirections(directions.filter((direction) => direction.id !== addressId)); // Actualiza la lista localmente
+       const newDirections = await fetchDirections();
+       setDirections(newDirections); // Actualiza la lista localmente
      } catch (error) {
        console.error('Error deleting address:', error);
      }

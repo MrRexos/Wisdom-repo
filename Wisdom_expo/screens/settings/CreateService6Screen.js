@@ -52,15 +52,16 @@ export default function CreateService6Screen() {
       setCountry(searchedDirection.country)
       setState(searchedDirection.state)
       setCity(searchedDirection.city)
-      setStreet(searchedDirection.street)
-      setPostalCode(searchedDirection.postalCode)
-      setStreetNumber(searchedDirection.streetNumber)
-      setAddress2(searchedDirection.address2)
+      setStreet(searchedDirection.address_1)
+      setPostalCode(searchedDirection.postal_code)
+      setStreetNumber(searchedDirection.street_number)
+      setAddress2(searchedDirection.address_2)
       setLocation(searchedDirection.location)  
     }
   };
 
   const removeSearchedDirection = async () => {
+    
     try {
       await AsyncStorage.removeItem('searchedDirection');
     } catch (error) {
@@ -68,9 +69,7 @@ export default function CreateService6Screen() {
     }
   };
 
-  useEffect(() => {
-    removeSearchedDirection();
-  },[]);
+
 
   const buildAddressString = () => {
     const parts = [];

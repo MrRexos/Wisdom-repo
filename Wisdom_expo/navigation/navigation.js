@@ -146,6 +146,7 @@ export default function Navigation() {
           <Stack.Screen name="SearchService" component={SearchServiceScreen}/> 
           <Stack.Screen name="ServiceProfile" component={ServiceProfileScreen}/> 
           <Stack.Screen name="SearchDirectionCreateService" component={SearchDirectionScreen}/>
+          <Stack.Screen name="SearchDirectionAlone" component={SearchDirectionScreen}/>
           <Stack.Screen name="DisplayImages" component={DisplayImagesScreen}/> 
           <Stack.Screen name="DisplayReviews" component={DisplayReviewsScreen}/>
           <Stack.Screen name="EnlargedImage" component={EnlargedImageScreen}/>

@@ -7,7 +7,7 @@ import i18n from '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect, useIsFocused } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon, GlobeAltIcon, GlobeEuropeAfricaIcon, XCircleIcon} from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import {Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X, Check, Calendar as CalendarIcon, Edit3} from "react-native-feather";
+import {Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X, Check, Calendar as CalendarIcon, Edit3, Clock, MapPin, Edit2} from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
@@ -33,13 +33,8 @@ export default function BookingScreen() {
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
-  const [country, setCountry] = useState('');
-  const [street, setStreet] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [streetNumber, setStreetNumber] = useState('');
-  const [address2, setAddress2] = useState('');
+  const [direction, setDirection] = useState({});
+  const [directions, setDirections] = useState({});
   const isFocused = useIsFocused();
   const sheet = useRef();
   const [sheetHeight, setSheetHeight] = useState(450);
@@ -48,10 +43,29 @@ export default function BookingScreen() {
   const [selectedDay, setSelectedDay] = useState(null);
   const [tempDate, setTempDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState('');
-  const [duration, setDuration] = useState(60);
-  const [sliderValue, setSliderValue] = useState(0);
+  const [selectedDuration, setSelectedDuration] = useState(60);
+  const [sliderValue, setSliderValue] = useState(12);
   const sliderTimeoutId = useRef(null);
-  const [timeUndefined, setTimeUndefined] = useState(false); 
+  const [selectedTimeUndefined, setSelectedTimeUndefined] = useState(false); 
+
+  const [startDate, setStartDate] = useState();
+  const [duration, setDuration] = useState();
+  const [startTime, setStartTime] = useState();
+  const [timeUndefined, setTimeUndefined] = useState();
+
+  const [sheetOption, setSheetOption] = useState('date');
+  const [userId, setUserId] = useState();
+
+  const [country, setCountry] = useState('');
+  const [street, setStreet] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [streetNumber, setStreetNumber] = useState('');
+  const [address2, setAddress2] = useState('');
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+
+
 
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
 
@@ -66,10 +80,17 @@ export default function BookingScreen() {
 
   useEffect(() => {
 
-    selectedDay(bookingStartDate);
-    setSelectedDate(bookingStartDate);
-    setSelectedTime(bookingStartTime);
+    setStartDate(bookingStartDate);
+    setDuration(bookingDuration);
+    setStartTime(bookingStartTime);
     setTimeUndefined(bookingDateUndefined);
+
+    setSelectedDay(bookingStartDate);
+    setSelectedDate({bookingStartDate});
+    setSelectedTime(bookingStartTime);
+    setSelectedTimeUndefined(bookingDateUndefined);
+
+    fetchDirections();
 
   }, []);
 
@@ -143,7 +164,7 @@ export default function BookingScreen() {
     sliderTimeoutId.current = setTimeout(() => {
       const adjustedValue = sliderValueToMinutes(value); // Convertimos el valor del slider a minutos reales
       setSliderValue(value);
-      setDuration(adjustedValue); // Actualizamos la duración basada en minutos reales
+      setSelectedDuration(adjustedValue); // Actualizamos la duración basada en minutos reales
     }, 100); // Esperamos 100ms antes de actualizar el estado
   };
   
@@ -160,9 +181,9 @@ export default function BookingScreen() {
     }
   };
   
-  const formatDuration = () => {
-    const hours = Math.floor(duration / 60);
-    const minutes = duration % 60;
+  const formatDuration = (durationTime) => {
+    const hours = Math.floor(durationTime / 60);
+    const minutes = durationTime % 60;
   
     if (hours > 0 && minutes > 0) {
       return `${hours} h ${minutes} min`;
@@ -173,54 +194,10 @@ export default function BookingScreen() {
     }
   };
 
-  const formatBookingMessage = () => {
-    // Validaciones para mostrar mensajes cuando no hay valores seleccionados
-
-    if (timeUndefined===true) {
-      return "Book without date";
-    } 
-    if (!selectedDay && !selectedTime && !duration) {
-      return "Select a date, time, and duration";
-    } 
-    if (!selectedDay) {
-      return "Select a date";
-    }
-    if (!selectedTime) {
-      return "Select a time";
-    }
-    if (!duration) {
-      return "Select a duration";
-    }
-  
-    // 1. Crear un objeto Date combinando selectedDay y selectedTime
-    const [year, month, day] = selectedDay.split('-'); // Dividimos la fecha "YYYY-MM-DD"
-    const [hours, minutes] = selectedTime.split(':'); // Dividimos la hora "HH:mm"
-    
-    const startTime = new Date(year, month - 1, day, hours, minutes); // Crear el objeto Date
-    const formattedDay = startTime.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }); // Ej: "Friday 25 Oct"
-    const formattedTime = startTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }); // Ej: "12:58"
-  
-    // 2. Calcular la hora de finalización añadiendo la duración
-    const endTime = new Date(startTime);
-    endTime.setMinutes(endTime.getMinutes() + duration); // Añadir la duración en minutos
-    const formattedEndTime = endTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }); // Ej: "14:28"
-  
-    // 3. Calcular el precio basado en el tipo de precio
-    let totalPrice = parseFloat(serviceData.price);
-    if (serviceData.price_type === 'hour') {
-      const hours = duration / 60; // Duración en horas
-      totalPrice = serviceData.price * hours;
-    }
-  
-    // 4. Construir el mensaje de reserva final
-    const priceLabel = `${totalPrice.toFixed(0)}€`; // Asegurarnos de que el precio tenga dos decimales si es necesario
-    return `Book for ${formattedDay} \n ${formattedTime} - ${formattedEndTime} for ${priceLabel}`;
-  };
-
   const getEndTime = () => {
-    const endTime = new Date(`1970-01-01T${bookingStartTime}:00`); 
+    const endTime = new Date(`1970-01-01T${startTime}:00`); 
 
-    endTime.setMinutes(endTime.getMinutes() + bookingDuration);
+    endTime.setMinutes(endTime.getMinutes() + duration);
 
     const formattedEndTime = endTime.toLocaleTimeString('en-GB', { 
         hour: '2-digit', 
@@ -236,20 +213,19 @@ export default function BookingScreen() {
     const searchedDirectionData = await getDataLocally('searchedDirection');
     if (searchedDirectionData) {
       searchedDirection = JSON.parse(searchedDirectionData);
-      setCountry(searchedDirection.country)
-      setState(searchedDirection.state)
-      setCity(searchedDirection.city)
-      setStreet(searchedDirection.street)
-      setPostalCode(searchedDirection.postalCode)
-      setStreetNumber(searchedDirection.streetNumber)
-      setAddress2(searchedDirection.address2)
+      setDirection(searchedDirection);
     }
   };
 
   useFocusEffect(
     useCallback(() => {
-        loadSearchedDirection();
-    }, [isFocused])
+      const loadDirections = async () => {
+        const directionList = await fetchDirections();
+        setDirections(directionList);
+      };
+      loadDirections();
+      loadSearchedDirection();
+    }, [])
   );
 
   const openSheetWithInput = (height) => {
@@ -260,6 +236,76 @@ export default function BookingScreen() {
       sheet.current.open();
     }, 0);
     
+  };
+
+  const fetchDirections = async () => {
+
+    const userData = await getDataLocally('user');
+    const user = JSON.parse(userData);
+    setUserId(user.id);
+
+    try {
+      const response = await api.get(`/api/directions/${user.id}`);
+      setDirections(response.data.directions)
+      return response.data.directions;
+    } catch (error) {
+      console.error('Error fetching directions:', error);
+    }
+  };
+
+  const handleConfirm = async () => {
+
+    try {
+      const response = await api.put(`/api/address/${selectedAddressId}`,{
+        address_type:address2 ? 'flat' : 'house', 
+        street_number:streetNumber, 
+        address_1:street, 
+        address_2:address2, 
+        postal_code:postalCode, 
+        city:city, 
+        state:state, 
+        country:country
+      });
+
+      setSheetOption('directions');
+      openSheetWithInput(350);
+
+      const directionList = await fetchDirections();
+      setDirections(directionList);
+
+
+    } catch (error) {
+      console.error('Error updating address:', error);
+    }
+    
+  };
+
+  const inputCountryChanged = (text) => {
+    setCountry(text);
+  };
+
+  const inputCityChanged = (text) => {
+    setCity(text);
+  };
+
+  const inputStateChanged = (text) => {
+    setState(text);
+  };
+
+  const inputStreetChanged = (text) => {
+    setStreet(text);
+  };
+
+  const inputPostalCodeChanged = (text) => {
+    setPostalCode(text);
+  };
+
+  const inputStreetNumberChanged = (text) => {
+    setStreetNumber(text);
+  };
+
+  const inputAddress2Changed = (text) => {
+    setAddress2(text);
   };
 
 
@@ -274,7 +320,7 @@ export default function BookingScreen() {
         height={sheetHeight}
         openDuration={300}
         closeDuration={300}
-        onClose={() => {setShowAddList(false); setIsAddingDate(false); setSelectedDay(); setSelectedTime(); setDuration(60); setSliderValue(12); setTimeUndefined(false); setSelectedDate() }}
+        onClose={() => {setStartDate(selectedDay); setDuration(selectedDuration); setStartTime(selectedTime); setTimeUndefined(selectedTimeUndefined);}}
         draggable={true}
         ref={sheet}
         customStyles={{
@@ -286,119 +332,315 @@ export default function BookingScreen() {
           draggableIcon: {backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'}
         }}>
 
-          <View className="flex-1 justify-start items-center">
 
+          {sheetOption==='date'? (
 
-            <View className="mt-4 mb-2 flex-row justify-center items-center">
-              <Text className="text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Select a date</Text>
-            </View>
+            <View className="flex-1 justify-start items-center">
 
-            <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-
-              <View className="w-full px-6">
-                <Calendar
-                  onDayPress={onDayPress}
-                  markedDates={selectedDate}
-                  firstDay={1}
-                  theme={{
-                    todayTextColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
-                    monthTextColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
-                    textMonthFontSize: 15,
-                    textMonthFontWeight: 'bold',
-                    dayTextColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
-                    textDayFontWeight: 'bold',
-                    textInactiveColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                    textSectionTitleColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                    textDisabledColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                    selectedDayBackgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3',
-                    selectedDayTextColor: '#ffffff', // Color del texto del día seleccionado
-                    arrowColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
-                    calendarBackground: 'transparent',
-                  }}
-                  style={{ backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', padding:20, borderRadius:20 }}
-                />
+              <View className="mt-4 mb-2 flex-row justify-center items-center">
+                <Text className="text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Select a date</Text>
               </View>
 
-              <View className="mt-2 w-full px-6 ">
+              <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
 
-                <Text className="ml-3 mb-2 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Start time</Text>
-                
-                <DateTimePicker
-                  value={tempDate}
-                  mode="time" // Cambia a modo hora
-                  display="spinner" // Puede ser 'default', 'spinner', 'clock', etc.
-                  onChange={handleHourSelected}
-                  style={{ width: 320, height: 150 }} // Puedes ajustar el estilo como prefieras
-                />
-              </View>
-              
-              <View className="mt-6 mb-10 w-full px-6 ">
-
-                <Text className="ml-3 mb-8 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Duration: {formatDuration(duration)}</Text>
-
-                <View className="flex-1 px-4 justify-center items-center">      
-                  <Slider
-                    style={{ width: '100%', height: 10 }} 
-                    minimumValue={1} // Ahora el valor mínimo del slider es 0
-                    maximumValue={34} // Máximo valor (ajustado para abarcar el rango completo)
-                    step={1} // Paso de 1 porque nosotros controlamos el salto
-                    thumbImage={thumbImage}
-                    minimumTrackTintColor="#b6b5b5"
-                    maximumTrackTintColor="#474646"
-                    value={sliderValue} // Convertimos los minutos reales al valor del slider
-                    onValueChange={handleSliderChange}
+                <View className="w-full px-6">
+                  <Calendar
+                    onDayPress={onDayPress}
+                    markedDates={selectedDate}
+                    firstDay={1}
+                    theme={{
+                      todayTextColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
+                      monthTextColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
+                      textMonthFontSize: 15,
+                      textMonthFontWeight: 'bold',
+                      dayTextColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                      textDayFontWeight: 'bold',
+                      textInactiveColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                      textSectionTitleColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                      textDisabledColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                      selectedDayBackgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3',
+                      selectedDayTextColor: '#ffffff', // Color del texto del día seleccionado
+                      arrowColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
+                      calendarBackground: 'transparent',
+                    }}
+                    style={{ backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', padding:20, borderRadius:20 }}
                   />
                 </View>
+
+                <View className="mt-2 w-full px-6 ">
+
+                  <Text className="ml-3 mb-2 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Start time</Text>
+                  
+                  <DateTimePicker
+                    value={tempDate}
+                    mode="time" // Cambia a modo hora
+                    display="spinner" // Puede ser 'default', 'spinner', 'clock', etc.
+                    onChange={handleHourSelected}
+                    style={{ width: 320, height: 150 }} // Puedes ajustar el estilo como prefieras
+                  />
+                </View>
+                
+                <View className="mt-6 mb-10 w-full px-6 ">
+
+                  <Text className="ml-3 mb-8 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Duration: {formatDuration(selectedDuration)}</Text>
+
+                  <View className="flex-1 px-4 justify-center items-center">      
+                    <Slider
+                      style={{ width: '100%', height: 10 }} 
+                      minimumValue={1} // Ahora el valor mínimo del slider es 0
+                      maximumValue={34} // Máximo valor (ajustado para abarcar el rango completo)
+                      step={1} // Paso de 1 porque nosotros controlamos el salto
+                      thumbImage={thumbImage}
+                      minimumTrackTintColor="#b6b5b5"
+                      maximumTrackTintColor="#474646"
+                      value={sliderValue} // Convertimos los minutos reales al valor del slider
+                      onValueChange={handleSliderChange}
+                    />
+                  </View>
+                </View>
+
+                <View className="pl-10 flex-row w-full justify-start  items-center ">
+                  
+                  <TouchableOpacity
+                    onPress={() => setSelectedTimeUndefined(!selectedTimeUndefined)} 
+                    style={[
+                      styles.checkbox, 
+                      { borderColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E' }, 
+                      selectedTimeUndefined && { 
+                        backgroundColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131', 
+                        borderWidth: 0 
+                      }
+                    ]}
+                  >
+                    {selectedTimeUndefined && (
+                      <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5} />
+                    )}
+                  </TouchableOpacity>
+
+                  <Text className="ml-3 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Undefined time</Text>
+
+                </View> 
+
+                <View className="mt-6 pb-3 px-6 flex-row justify-center items-center ">
+
+                  <TouchableOpacity
+                    disabled={!(selectedDay && selectedTime && selectedDuration) && !selectedTimeUndefined}
+                    onPress={() => {sheet.current.close()} }
+                    style={{ opacity: !(selectedDay && selectedTime && selectedDuration) && !selectedTimeUndefined? 0.5 : 1 }}
+                    className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17] rounded-full items-center justify-center"
+                  >
+                    <Text>
+                      <Text className="text-center font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
+                        Accept
+                      </Text>
+                    </Text>
+                  </TouchableOpacity>
+
+                </View>
+
+                <View className="h-[20]"/>
+
+              </ScrollView>
+              
+            </View>
+
+          ) : sheetOption==='directions'? (
+
+            <View className="flex-1 w-full justify-start items-center pt-5 pb-5 ">
+
+              <View className="px-7 flex-row w-full justify-between items-center ">
+                <Text className="text-center font-inter-semibold text-[20px] text-[#444343] dark:text-[#f2f2f2] ">Your directions</Text>
+                <TouchableOpacity onPress={() =>{ sheet.current.close(); navigation.navigate('SearchDirectionAlone')}} className=" justify-center items-end">
+                  <Plus height={23} width={23} strokeWidth={1.7} color={iconColor} className="" />
+                </TouchableOpacity>
               </View>
 
-              <View className="pl-10 flex-row w-full justify-start  items-center ">
-                
-                <TouchableOpacity
-                  onPress={() => setTimeUndefined(!timeUndefined)} 
-                  style={[
-                    styles.checkbox, 
-                    { borderColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E' }, 
-                    timeUndefined && { 
-                      backgroundColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131', 
-                      borderWidth: 0 
-                    }
-                  ]}
-                >
-                  {timeUndefined && (
-                    <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5} />
-                  )}
-                </TouchableOpacity>
+              {(!directions || directions.length<1)? (
 
-                <Text className="ml-3 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Undefined time</Text>
+                <View className="mt-[80] justify-center items-center">
+                  <MapPin height={30} width={30} strokeWidth={1.7} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+                  <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
+                    No directions found
+                  </Text>
+                </View>
+
+                ) : (
+
+                  <ScrollView showsVerticalScrollIndicator={false} className="w-full">
+
+                  <View className="flex-1 px-6 mt-10 ">
+                    {directions.map((direction) => (
+                      <TouchableOpacity onPress={() => {setDirection(direction); sheet.current.close()}} key={direction.direction_id} className="pb-5 mb-5 flex-row w-full justify-center items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+                        <View className="w-11 h-11 items-center justify-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                          <MapPin height={22} width={22} strokeWidth={1.6} color={iconColor} />
+                        </View>
+
+                        <View className="pl-4 pr-3 flex-1 justify-center items-start">
+                          <Text numberOfLines={1} className="mb-[6] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]">
+                            {[direction.address_1, direction.street_number].filter(Boolean).join(', ')}
+                          </Text>
+                          <Text numberOfLines={1} className="font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">
+                            {[direction.postal_code, direction.city, direction.state, direction.country].filter(Boolean).join(', ')}
+                          </Text>
+                        </View>
+
+                        <View className="h-full justify-start items-center">
+                          <TouchableOpacity onPress={() => { 
+
+                            setSheetOption('edit');
+                            setSelectedAddressId(direction.address_id); 
+                            setCountry(direction.country);
+                            setState(direction.state);
+                            setCity(direction.city);
+                            setStreet(direction.address_1);
+                            setStreetNumber(direction.street_number);
+                            setPostalCode(direction.postal_code);
+                            setAddress2(direction.address_2);
+                            openSheetWithInput(700);}}>
+
+                            <Edit2 height={18} width={18} strokeWidth={1.7} color={iconColor} />
+                          </TouchableOpacity>
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  </ScrollView>
+                )}
+
+            </View>
+
+          ) : (
+
+            <ScrollView>      
+              <View className="flex-1 w-full justify-start items-center pt-3 pb-5 px-5"> 
+
+              <View className="justify-between items-center mb-10">                  
+                  <Text className="text-center font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Confirm your direction</Text>
+              </View>
+                
+              <View className="w-full h-[55] mx-2 mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                {country && country.length>0? (
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Country/region</Text>
+                ) : null}              
+                <TextInput
+                  placeholder='Country/region...'
+                  selectionColor={cursorColorChange}
+                  placeholderTextColor={placeHolderTextColorChange}
+                  onChangeText={inputCountryChanged} 
+                  value={country || ''}
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+                />            
+              </View>
+
+              <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                {state && state.length>0? (
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">State</Text>
+                ) : null}              
+                <TextInput
+                  placeholder='State...'
+                  selectionColor={cursorColorChange}
+                  placeholderTextColor={placeHolderTextColorChange}
+                  onChangeText={inputStateChanged} 
+                  value={state || ''}
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+                />
+              </View>
+
+              <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                {city && city.length>0? (
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">City/town</Text>
+                ) : null}              
+                <TextInput
+                  placeholder='City/town...'
+                  selectionColor={cursorColorChange}
+                  placeholderTextColor={placeHolderTextColorChange}
+                  onChangeText={inputCityChanged} 
+                  value={city || ''}
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+                />
+              </View>
+
+              <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                {street && street.length>0? (
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Street</Text>
+                ) : null}              
+                <TextInput
+                  placeholder='Street...'
+                  selectionColor={cursorColorChange}
+                  placeholderTextColor={placeHolderTextColorChange}
+                  onChangeText={inputStreetChanged} 
+                  value={street || ''}
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+                />
+              </View>
+              <View className="flex-row w-full justify-between items-center">
+
+                <View className="flex-1 h-[55] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                  {postalCode && postalCode.length>0? (
+                    <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Postal code</Text>
+                  ) : null}              
+                  <TextInput
+                    placeholder='Postal code...'
+                    selectionColor={cursorColorChange}
+                    placeholderTextColor={placeHolderTextColorChange}
+                    onChangeText={inputPostalCodeChanged} 
+                    value={postalCode || ''}
+                    keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                    className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+                  />
+                </View>
+
+                <View className="flex-1 h-[55] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                  {streetNumber && String(streetNumber).length>0? (
+                    <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Street number</Text>
+                  ) : null}   
+                  <TextInput
+                    placeholder='Street number...'
+                    selectionColor={cursorColorChange}
+                    placeholderTextColor="#ff633e"
+                    onChangeText={inputStreetNumberChanged} 
+                    value={streetNumber ? String(streetNumber) : ''}
+                    keyboardType="number-pad"
+                    keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                    className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+                  />
+                </View>
+
+              </View>
+
+
+
+              <View className="w-full h-[55] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                { address2 && address2.length>0? (
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Floor, door, stair (optional)</Text>
+                ) : null}              
+                <TextInput
+                  placeholder='Floor, door, stair (optional)...'
+                  selectionColor={cursorColorChange}
+                  placeholderTextColor={placeHolderTextColorChange}
+                  onChangeText={inputAddress2Changed} 
+                  value={address2 || ''}
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+                />
+              </View>
+
+              <TouchableOpacity 
+                  disabled={streetNumber.length<1}
+                  onPress={() => handleConfirm()}
+                  style={{opacity: streetNumber.length<1? 0.5: 1}}
+                  className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
+                      <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Confirm</Text>
+              </TouchableOpacity>
 
               </View> 
-
-              <View className="mt-6 pb-3 px-6 flex-row justify-center items-center ">
-
-                <TouchableOpacity
-                  disabled={!(selectedDay && selectedTime && duration) && !timeUndefined}
-                  onPress={() => {sheet.current.close(); navigation.navigate('Booking', { serviceData,location, bookingStartDate:selectedDay, bookingStartTime:selectedTime, bookingDuration:duration, bookingDateUndefined:timeUndefined})} }
-                  style={{ opacity: !(selectedDay && selectedTime && duration) && !timeUndefined? 0.5 : 1 }}
-                  className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17] rounded-full items-center justify-center"
-                >
-                  <Text>
-                    <Text className="text-center font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
-                      {formatBookingMessage()}
-                    </Text>
-                  </Text>
-                </TouchableOpacity>
-
-              </View>
-
-              <View className="h-[20]"/>
-
-
-
             </ScrollView>
 
-
-
-          </View>
+          )}
 
           
 
@@ -460,11 +702,11 @@ export default function BookingScreen() {
 
         {/* Fecha */}
 
-        <View className="mt-8 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
+        <View className="mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
           
           <View className="w-full flex-row justify-between items-center ">
             <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Date and time</Text>
-            <TouchableOpacity onPress={() => openSheetWithInput(700)}>
+            <TouchableOpacity onPress={() => {openSheetWithInput(700); setSheetOption('date')}}>
               <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
             </TouchableOpacity>
           </View>
@@ -472,30 +714,70 @@ export default function BookingScreen() {
 
           <View className="mt-4 flex-1">
 
-            {!timeUndefined && (
+            {!selectedTimeUndefined?  (
               <View className="flex-1 justify-center items-center">
 
                 <View className="w-full flex-row justify-between items-center">
 
                   <View className="flex-row justify-start items-center">
                     <CalendarIcon height={15} width={15} color={colorScheme === 'dark' ? '#d4d4d3' : '#515150'} strokeWidth={2.2} />
-                    <Text className="ml-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]">{formatDate(selectedDate)}</Text>
+                    <Text className="ml-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]">{formatDate(startDate)}</Text>
                   </View>
 
                   <View className="justify-end items-center">
-                    <Text className="font-inter-semibold text-[14px] text-[#515150] dark:text-[#979797]">{formatDuration()}</Text>
+                    <Text className="font-inter-semibold text-[14px] text-[#515150] dark:text-[#979797]">{formatDuration(duration)}</Text>
                   </View>
 
                 </View>
 
                 <View className="mt-4 justify-end items-center">
-                  <Text className=" font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]">{selectedTime} - {getEndTime()}</Text>
+                  <Text className=" font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]">{startTime} - {getEndTime()}</Text>
                 </View>
 
               </View>
+            ) : (
+
+              <View className="mt-1 flex-1 justify-center items-center">
+                <Clock height={40} width={40} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+                <Text className="mt-4 font-inter-semibold text-[16px] text-[#979797]">
+                  Undefined time
+                </Text>
+              </View>
+              
             )}
 
           </View>
+
+        </View>
+
+        {/* Direccion */}
+
+        <View className="mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
+
+          <View className="w-full flex-row justify-between items-center ">
+            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Address</Text>
+            <TouchableOpacity onPress={() => {openSheetWithInput(350); fetchDirections; setSheetOption('directions')}}>
+              <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
+            </TouchableOpacity>
+          </View>
+
+          <View className="mt-4 flex-row justify-center items-center">
+
+            <View className="w-11 h-11 items-center justify-center">
+              <MapPin height={25} width={25} strokeWidth={1.6} color={iconColor} />
+            </View>
+
+            <View className="pl-3 pr-3 flex-1 justify-center items-start">
+              <Text numberOfLines={1} className="mb-[6] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]">
+                {[direction.address_1, direction.street_number].filter(Boolean).join(', ')}
+              </Text>
+              <Text numberOfLines={1} className="font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">
+                {[direction.postal_code, direction.city, direction.state, direction.country].filter(Boolean).join(', ')}
+              </Text>
+            </View>
+
+          </View>
+
 
         </View>
 

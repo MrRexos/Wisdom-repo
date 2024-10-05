@@ -233,7 +233,7 @@ export default function SearchDirectionScreen() {
           country:country
         });
 
-        const searchedDirection = {location, country, state, city, street, streetNumber, postalCode, address2}
+        const searchedDirection = {location, country, state, city, address_1: street, street_number :streetNumber, postal_code: postalCode, address_2: address2}
         await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
         navigation.goBack();
 
@@ -256,7 +256,7 @@ export default function SearchDirectionScreen() {
           country:country
         });
 
-        const searchedDirection = {location, country, state, city, street, streetNumber, postalCode, address2}
+        const searchedDirection = {location, country, state, city, address_1: street, street_number :streetNumber, postal_code: postalCode, address_2: address2}
         await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
         navigation.goBack();
 
