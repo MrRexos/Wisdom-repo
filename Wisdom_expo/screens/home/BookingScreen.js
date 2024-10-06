@@ -21,6 +21,7 @@ import Slider from '@react-native-community/slider';
 import SliderThumbDark from '../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../assets/SliderThumbLight.png';
 import { format } from 'date-fns';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -86,20 +87,31 @@ export default function BookingScreen() {
   };
 
   useEffect(() => {
+    const fetchData = async () => {
+        try {
+            setStartDate(bookingStartDate);
+            setDuration(bookingDuration);
+            setStartTime(bookingStartTime);
+            setTimeUndefined(bookingDateUndefined);
+            console.log(bookingStartDate);
 
-    setStartDate(bookingStartDate);
-    setDuration(bookingDuration);
-    setStartTime(bookingStartTime);
-    setTimeUndefined(bookingDateUndefined);
+            setSelectedDay(bookingStartDate);
+            setSelectedDate({ bookingStartDate });
+            setSelectedTime(bookingStartTime);
+            setSelectedTimeUndefined(bookingDateUndefined);
 
-    setSelectedDay(bookingStartDate);
-    setSelectedDate({bookingStartDate});
-    setSelectedTime(bookingStartTime);
-    setSelectedTimeUndefined(bookingDateUndefined);
+            const userData = await getDataLocally('user');
+            const user = JSON.parse(userData);
+            setUserId(user.id);
 
-    fetchDirections();
+            fetchDirections();
+        } catch (error) {
+            console.error('Error al cargar los datos:', error);
+        }
+    };
 
-  }, []);
+    fetchData();
+}, []);
 
 
   const getFormattedPrice = () => {
@@ -226,10 +238,19 @@ export default function BookingScreen() {
 
   const loadPaymentMethod = async () => {
     
-    const paymentMethodRaw = await getDataLocally('paymentMethod');
-    if (paymentMethodRaw) {
-      paymentMethodData = JSON.parse(paymentMethodRaw);
+    const PaymentMethodRaw = await getDataLocally('paymentMethod');
+    if (PaymentMethodRaw) {
+      paymentMethodData = JSON.parse(PaymentMethodRaw);
       setPaymentMethod(paymentMethodData);
+      
+    }
+  };
+
+  const removePaymentMethod = async () => {
+    try {
+      await AsyncStorage.removeItem('paymentMethod');
+    } catch (error) {
+      console.error('Error al eliminar paymentMethod:', error);
     }
   };
 
@@ -242,6 +263,8 @@ export default function BookingScreen() {
       loadDirections();
       loadSearchedDirection();
       loadPaymentMethod();
+      removePaymentMethod();
+      
     }, [])
   );
 
@@ -257,12 +280,8 @@ export default function BookingScreen() {
 
   const fetchDirections = async () => {
 
-    const userData = await getDataLocally('user');
-    const user = JSON.parse(userData);
-    setUserId(user.id);
-
     try {
-      const response = await api.get(`/api/directions/${user.id}`);
+      const response = await api.get(`/api/directions/${userId}`);
       setDirections(response.data.directions)
       return response.data.directions;
     } catch (error) {
@@ -332,6 +351,83 @@ export default function BookingScreen() {
   const handleClearText = () => {
     setDescription('');
   };
+
+  const combineDateTime = () => {
+
+    let startDateTime = `${startDate} ${startTime}:00`;
+
+    return startDateTime;
+  }
+
+  const calculateEndDateTime = () => {
+
+    let startDateTime = new Date(`${startDate}T${startTime}:00`); // Convertir a objeto Date
+
+    // Sumar la duración en minutos
+    startDateTime.setMinutes(startDateTime.getMinutes() + duration);
+
+    // Obtener el nuevo valor de fecha y hora final en el formato deseado
+    const endDate = startDateTime.toISOString().split('T')[0]; // YYYY-MM-DD
+    const endTime = startDateTime.toTimeString().split(' ')[0]; // HH:MM:SS
+
+    return `${endDate} ${endTime}`;
+  }
+
+  const calculateFinalPrice = () => {
+    let final_price = null; 
+
+    const durationInHours = duration / 60;
+
+    if (serviceData.price_type === 'hour') {
+        final_price = ((parseFloat(serviceData.price) * durationInHours) * 1.1).toFixed(2);
+    } else if (serviceData.price_type === 'fix') {
+        final_price = (parseFloat(serviceData.price) + (parseFloat(serviceData.price) * 0.1)).toFixed(2);
+    }
+
+    return final_price; 
+}
+
+  const createBooking = async () => {
+
+    try {
+      const response = await api.post('/api/bookings', {
+        user_id: userId,
+        address_type: direction? direction.address_2? 'house' : 'flat': null,
+        street_number: direction? direction.street_number : null,
+        address_1: direction? direction.address_1 : null,
+        address_2: direction? direction.address_2 : null,
+        postal_code: direction? direction.postal_code : null,
+        city: direction? direction.city : null,
+        state: direction? direction.state : null,
+        country: direction? direction.country : null,
+        service_id: serviceData.service_id,
+        booking_start_datetime: startDate && startTime? combineDateTime() : null,
+        booking_end_datetime: duration && startDate && startTime? calculateEndDateTime() : null,
+        recurrent_pattern_id:null,
+        promotion_id:null,
+        service_duration:duration? parseInt(duration) : null,
+        final_price: calculateFinalPrice(),
+        description: description? description:null
+      });
+
+      return response.data;
+  
+    } catch (error) {
+
+      console.error('Error message:', error.message);
+   
+    }
+  };
+
+  const handleBook = async () => {
+
+    await createBooking();
+    navigation.navigate('ConfirmPayment');
+
+  }
+
+
+  
 
 
   return (
@@ -863,6 +959,21 @@ export default function BookingScreen() {
                         {(((parseFloat(serviceData.price) * (duration / 60)) * 1.1)).toFixed(1)} €
                       </Text>
                     </View>
+
+                    <View className="mt-4 flex-row">
+                      <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+                        Deposit
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]"
+                      >
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+                        1 €
+                      </Text>
+                    </View>
                   </>
                 )}
 
@@ -912,6 +1023,21 @@ export default function BookingScreen() {
                       </Text>
                       <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
                         {(parseFloat(serviceData.price)+(parseFloat(serviceData.price) * 0.1)).toFixed(0)} €
+                      </Text>
+                    </View>
+
+                    <View className="mt-4 flex-row">
+                      <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+                        Deposit
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]"
+                      >
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+                        1 €
                       </Text>
                     </View>
                   </>
@@ -973,32 +1099,63 @@ export default function BookingScreen() {
 
         </View>
 
-        {/* Fecha */}
+        {/* Payment Method */}
 
         <View className="mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
           
           <View className="w-full flex-row justify-between items-center ">
             <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Payment method</Text>
+            {paymentMethod && (
+              <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod')}>
+                <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
+              </TouchableOpacity>
+            )}
           </View>
           
 
           <View className="mt-4 flex-1">
 
             {paymentMethod?  (
-              <View className="flex-1 justify-center items-center">
+              <View className="flex-1 my-3 justify-center items-center ">
+
+
+                <View className="px-7 pb-5 pt-[50] bg-[#EEEEEE] dark:bg-[#111111] rounded-xl">
+
+                  <Text>
+                    <Text className="font-inter-medium text-[16px] text-[#444343] dark:text-[#f2f2f2]">••••   ••••   ••••   </Text>
+                    <Text className="font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]">{paymentMethod.cardNumber.slice(-4)}</Text>
+                  </Text>
+
+                  <View className="mt-6 flex-row justify-between items-center">
+
+                    <View className="flex-row items-center">                  
+                      <View className="justify-center items-center">
+                      <Text className="font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]">{paymentMethod.expiration}</Text>
+                      </View>
+                      <View className="ml-3 justify-center items-center">
+                        <Text className=" font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]">{paymentMethod.cvv}</Text>
+                      </View>
+                    </View>
+
+                    <View className="h-5 w-8 bg-[#fcfcfc] dark:bg-[#323131] rounded-md"/>
+
+                  </View>
+                  
+                </View>
+
 
               </View>
             ) : (
 
               <View className="mt-1 flex-1 justify-center items-center">
-                <CreditCard height={50} width={50} strokeWidth={1.3} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+                <CreditCard height={55} width={55} strokeWidth={1.3} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
 
-                <View className="flex-row justify-center items-center pb-3 px-6">
+                <View className="flex-row justify-center items-center px-6">
 
                   <TouchableOpacity
                     onPress={() => navigation.navigate('PaymentMethod') }
                     style={{ opacity: 1 }}
-                    className="bg-[#706f6e] mt-3 dark:bg-[#b6b5b5] w-full h-[55] rounded-full items-center justify-center"
+                    className="bg-[#706f6e] my-2 mt-3 dark:bg-[#b6b5b5] w-full py-[14] rounded-full items-center justify-center"
                   >
                     <Text>
                       <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
@@ -1125,13 +1282,14 @@ export default function BookingScreen() {
       <View className="flex-row justify-center items-center pb-3 px-6">
 
         <TouchableOpacity
-          onPress={() => null }
+          onPress={() => {paymentMethod? handleBook() : navigation.navigate('PaymentMethod')} }
           style={{ opacity: 1 }}
           className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center"
         >
           <Text>
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
-              Continue to Payment
+              {paymentMethod? 'Continue to Payment' : 'Add Payment Method'}
+              
             </Text>
           </Text>
         </TouchableOpacity>

@@ -1228,17 +1228,9 @@ export default function ServiceProfileScreen() {
         >
           <Text>
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
-              {serviceData.price_type === 'hour' ? (
-                <>
-                  Book for <Text className="font-inter-semibold text-[15px] text-[#B6B5B5] dark:text-[#706f6e]">{parseFloat(serviceData.price).toFixed(0)} €/h</Text>
-                </>
-              ) : serviceData.price_type === 'fix' ? (
-                <>
-                  Book for <Text className="font-inter-semibold text-[15px] text-[#B6B5B5] dark:text-[#706f6e]">{parseFloat(serviceData.price).toFixed(0)} €</Text>
-                </>
-              ) : (
-                <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Book with deposit</Text>
-              )}
+              
+              Book for <Text className="font-inter-semibold text-[15px] text-[#B6B5B5] dark:text-[#706f6e]">1 €</Text>
+                
             </Text>
           </Text>
         </TouchableOpacity>

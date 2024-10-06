@@ -139,7 +139,7 @@ export default function Navigation() {
           <Stack.Screen name="CreateService12" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
           <Stack.Screen name="CreateService13" component={CreateService13Screen} options={{ animation: 'none', gestureEnabled: false }}/> 
           <Stack.Screen name="Booking" component={BookingScreen}/>
-          <Stack.Screen name="ConfirmPayment" component={ConfirmPaymentScreen}/>
+          <Stack.Screen name="ConfirmPayment" component={ConfirmPaymentScreen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen}/> 
           <Stack.Screen name="Results" component={ResultsScreen}/> 
           <Stack.Screen name="Search" component={SearchScreen} options={{ animation: 'none' }}/> 
@@ -357,7 +357,7 @@ function HomeStackNavigator() {
       <Stack.Navigator  screenOptions={{ headerShown: false }}>
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen name="Booking" component={BookingScreen}/>
-          <Stack.Screen name="ConfirmPayment" component={ConfirmPaymentScreen}/>
+          <Stack.Screen name="ConfirmPayment" component={ConfirmPaymentScreen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen}/> 
           <Stack.Screen name="Results" component={ResultsScreen}/> 
           <Stack.Screen name="Search" component={SearchScreen} options={{ animation: 'none' }}/> 
