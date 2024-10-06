@@ -1217,7 +1217,6 @@ export default function ServiceProfileScreen() {
         <View className="h-[50]"/>
       </ScrollView >
 
-
       {/* Button book */}
 
       <View className="flex-row justify-center items-center pb-3 px-6">
