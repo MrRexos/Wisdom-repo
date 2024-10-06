@@ -528,11 +528,7 @@ export default function ServiceProfileScreen() {
 
               <View className="h-[20]"/>
 
-
-
               </ScrollView>
-
-
 
             </View>
 

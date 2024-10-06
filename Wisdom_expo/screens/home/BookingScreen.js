@@ -111,7 +111,7 @@ export default function BookingScreen() {
     };
 
     fetchData();
-}, []);
+  }, []);
 
 
   const getFormattedPrice = () => {
@@ -568,7 +568,7 @@ export default function BookingScreen() {
 
               <View className="px-7 flex-row w-full justify-between items-center ">
                 <Text className="text-center font-inter-semibold text-[20px] text-[#444343] dark:text-[#f2f2f2] ">Your directions</Text>
-                <TouchableOpacity onPress={() =>{ sheet.current.close(); navigation.navigate('SearchDirectionAlone')}} className=" justify-center items-end">
+                <TouchableOpacity onPress={() =>{ sheet.current.close(); navigation.navigate('SearchDirectionAlone', {prevScreen:'Booking'})}} className=" justify-center items-end">
                   <Plus height={23} width={23} strokeWidth={1.7} color={iconColor} className="" />
                 </TouchableOpacity>
               </View>

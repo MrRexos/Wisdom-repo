@@ -352,7 +352,7 @@ export default function DirectionsScreen() {
             <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">Directions</Text>
           </View>
 
-          <TouchableOpacity onPress={() => navigation.navigate('AddDirection')} className="flex-1 justify-center items-end">
+          <TouchableOpacity onPress={() => navigation.navigate('AddDirection', {prevScreen:'Directions'})} className="flex-1 justify-center items-end">
             <Plus height={25} width={25} strokeWidth={1.7} color={iconColor} className="mr-3" />
           </TouchableOpacity>
         </View>

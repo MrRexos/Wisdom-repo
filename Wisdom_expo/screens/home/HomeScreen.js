@@ -1,14 +1,25 @@
 
-import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, ImageBackground} from 'react-native';
+import React, { useEffect, useState, useCallback, useRef, useMemo} from 'react'
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, ImageBackground, Button} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
-import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect, useIsFocused } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon} from 'react-native-heroicons/outline';
 import {Search} from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
+import BlurBackground from '../../components/blurBackground';
+import MapView, { Marker, Circle } from 'react-native-maps';
+import { Calendar } from 'react-native-calendars';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import Slider from '@react-native-community/slider';
+import SliderThumbDark from '../../assets/SliderThumbDark.png';
+import SliderThumbLight from '../../assets/SliderThumbLight.png';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { BlurView } from 'expo-blur';
+
+
 
 
 
@@ -21,6 +32,24 @@ export default function HomeScreen() {
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const [selectedCategoryID, setSelectedCategoryID] = useState(null);
   const [suggestedProfessionals, setSuggestedProfessionals] = useState(null);
+  const [isSearchOptionsVisible, setSearchOptionsVisible] = useState(false);
+  const [searchOption, setSearchOption] = useState('service');
+  const [searchDateOptionSelected, setSearchDateOptionSelected] = useState('frequency');
+  const route = useRoute();
+  const isFocused = useIsFocused();
+
+  const [selectedDate, setSelectedDate] = useState({});
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [tempDate, setTempDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState('');
+  const [duration, setDuration] = useState(60);
+  const [sliderValue, setSliderValue] = useState(12);
+  const sliderTimeoutId = useRef(null);
+
+  const [searchedDirection, setSearchedDirection] = useState();
+  const [searchedService, setSearchedService] = useState();
+
+  const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
 
   const fetchProfessionals = async () => {
     try {
@@ -30,6 +59,16 @@ export default function HomeScreen() {
       console.error('Error fetching lists:', error);
     } 
   };
+
+  useEffect(() => {
+
+    if (route.params && route.params.blurVisible !== undefined) {
+      setSearchOptionsVisible(route.params.blurVisible);
+      console.log(isSearchOptionsVisible)
+    } else {
+      setSearchOptionsVisible(false);
+    }
+  }, [route.params]);
 
   useEffect(() => {
     const loadProfessionals = async () => {
@@ -44,7 +83,6 @@ export default function HomeScreen() {
       prevProfessionals.filter(professional => professional.service_id !== id)
     );
   };
-
 
   suggestions  = [
     {
@@ -272,7 +310,6 @@ export default function HomeScreen() {
     </View>
   );
 
-  // Función para renderizar cada familia
   const renderFamily = ({ item, index }) => (
 
     <View>
@@ -311,15 +348,331 @@ export default function HomeScreen() {
 
   );
 
+  const onDayPress = (day) => {
+    setSelectedDate({
+      [day.dateString]: {
+        selected: true,
+        selectedColor: colorScheme === 'dark' ? '#979797' : '#979797', // Color del fondo del círculo
+        selectedTextColor: '#ffffff'
+      },
+    });
+    setSelectedDay(day.dateString);
+  };
+
+  const handleSliderChange = (value) => {
+    // Limpiamos cualquier timeout previo
+    if (sliderTimeoutId.current) {
+      clearTimeout(sliderTimeoutId.current);
+    }
+  
+    // Establecemos un nuevo timeout para aplicar el valor
+    sliderTimeoutId.current = setTimeout(() => {
+      const adjustedValue = sliderValueToMinutes(value); // Convertimos el valor del slider a minutos reales
+      setSliderValue(value);
+      setDuration(adjustedValue); // Actualizamos la duración basada en minutos reales
+    }, 100); // Esperamos 100ms antes de actualizar el estado
+  };
+
+  const sliderValueToMinutes = (value) => {
+    // Mapeamos el valor del slider a minutos según el segmento
+    if (value <= 12) {
+      return value * 5; // Primer tramo: 0-60 minutos (paso de 5 en 5)
+    } else if (value <= 18) {
+      return 60 + (value - 12) * 10; // Segundo tramo: 60-120 minutos (paso de 10 en 10)
+    } else if (value <= 26) {
+      return 120 + (value - 18) * 15; // Tercer tramo: 120-240 minutos (paso de 15 en 15)
+    } else {
+      return 240 + (value - 26) * 30; // Cuarto tramo: 240-480 minutos (paso de 30 en 30)
+    }
+  };
+
+  const formatDuration = () => {
+    const hours = Math.floor(duration / 60);
+    const minutes = duration % 60;
+  
+    if (hours > 0 && minutes > 0) {
+      return `${hours} h ${minutes} min`;
+    } else if (hours > 0) {
+      return `${hours} h`;
+    } else {
+      return `${minutes} min`;
+    }
+  };
+
+  const handleHourSelected = (event, selectedDate) => {
+    const currentDate = selectedDate || tempDate;
+    setTempDate(currentDate);
+    
+    // Formatear la hora seleccionada en formato HH:MM
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const formattedTime = `${hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
+    
+    setSelectedTime(formattedTime); // Guarda la hora seleccionada en el estado
+  };
+
+  const loadSearchedDirection = async () => {
+    
+    const searchedDirectionRaw = await getDataLocally('searchedDirection');
+    if (searchedDirectionRaw) {
+      searchedDirectionData = JSON.parse(searchedDirectionRaw);
+      setSearchedDirection([searchedDirectionData]) 
+    }
+  };
+
+  const loadSearchedService = async () => {
+    
+    const searchedServiceRaw = await getDataLocally('searchedService');
+    if (searchedServiceRaw) {
+      searchedServiceData = JSON.parse(searchedServiceRaw);
+      setSearchedService([searchedServiceData]) 
+    }
+  };
+
+  const removeSearchedDirection = async () => {
+    
+    try {
+      await AsyncStorage.removeItem('searchedDirection');
+    } catch (error) {
+      console.error('Error al eliminar searchedDirection:', error);
+    }
+  };
+
+  const removeSearchedService = async () => {
+    
+    try {
+      await AsyncStorage.removeItem('searchedService');
+    } catch (error) {
+      console.error('Error al eliminar searchedService:', error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+
+      loadSearchedDirection();
+      loadSearchedService();
+
+    }, [isFocused])
+  );
+
   
   
    
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
+
+
+
+      {isSearchOptionsVisible && (
+
+      <BlurBackground>
+
+        <View className="flex-1 w-full justify-between items-center ">
+          <View className="flex-1 w-full justify-start items-center ">
+
+            {/* Service */}
+
+            <View style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.2,
+              shadowRadius: 15,
+              elevation: 5,}} 
+              className="px-5 w-full justify-center items-center rounded-3xl bg-[#fcfcfc] dark:bg-[#323131]">
+      
+                <View className="mt-[70] flex-row justify-between items-center pb-4 ">
+                    <View className="flex-1 ">
+                        <TouchableOpacity onPress={() => {setSearchOptionsVisible(false); setSearchDateOptionSelected('frequency'); setSearchOption('service')}}>
+                            <ChevronLeftIcon size={24} strokeWidth={1.8} color={iconColor}/>  
+                        </TouchableOpacity>                             
+                    </View>
+                    <View className="flex-1 justify-center items-center ">
+                        <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">Search</Text>
+                    </View>
+                    
+                    <View className="flex-1"></View>
+                </View>
+
+                {searchOption==='service' ? (
+
+                  <TouchableOpacity onPress={() => {navigation.navigate('SearchService', {blurVisible:true, prevScreen:'HomeScreen'}); setSearchOptionsVisible(false);}} className="mt-8 mb-7 w-full justify-center items-center ">
+                    <View className="py-[20] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
+                      <Search height={19} color={iconColor} strokeWidth="2"/>
+                      <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">Search a service...</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                ) : (
+
+                  <TouchableOpacity onPress={() => setSearchOption('service')} className="mt-8 mb-7 w-full justify-center items-center">
+                    <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">Service</Text>
+                  </TouchableOpacity>
+
+                )}
+
+
+              
+
+            </View>      
+
+            {/* Direction */}
+
+            <View style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.2,
+              shadowRadius: 15,
+              elevation: 5,}} 
+              className="mt-2 px-5 w-full justify-center items-center rounded-3xl bg-[#fcfcfc] dark:bg-[#323131]">
+
+              {searchOption==='direction' ? (
+
+                <View className="w-full justify-start items-center">
+
+                  <TouchableOpacity onPress={() => {setSearchOptionsVisible(false); navigation.navigate('SearchDirection',{blurVisible:true, prevScreen:'HomeScreen'})}} className="mt-8 mb-6 w-full justify-center items-center ">
+                    <View className="py-[20] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
+                      <Search height={19} color={iconColor} strokeWidth="2"/>
+                      <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">Search a location...</Text>
+                    </View>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity className="mb-6 px-4 py-2 rounded-full bg-[#e0e0e0] dark:bg-[#3D3D3D]">
+                    <Text className=" font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">Unlocated</Text>
+                  </TouchableOpacity>
+
+                </View>
+
+              ) : (
+
+                <TouchableOpacity onPress={() => setSearchOption('direction')} className="mt-8 mb-7 w-full justify-center items-center">
+                  <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">Location {searchedDirection}</Text>
+                </TouchableOpacity>
+
+              )}
+
+            </View>
+
+            {/* Date */}
+
+            <View style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.2,
+              shadowRadius: 15,
+              elevation: 5,}} 
+              className="mt-2 px-[20] w-full justify-center items-center rounded-3xl bg-[#fcfcfc] dark:bg-[#323131]">
+
+              {searchOption==='date' ? (
+
+                <View className="mt-8 mb-7 w-full justify-start items-center">
+
+                  <View className="flex-row space-x-2">
+
+                    <TouchableOpacity onPress={() => setSearchDateOptionSelected('frequency')} className={`px-4 py-[11] rounded-full ${searchDateOptionSelected === 'frequency' ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#f2f2f2] dark:bg-[#3d3d3d]'}`}>
+                      <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'frequency' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>Frequency</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => setSearchDateOptionSelected('duration')} className={`px-4 py-[11] rounded-full ${searchDateOptionSelected === 'duration' ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#f2f2f2] dark:bg-[#3d3d3d]'}`}>
+                      <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'duration' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>Duration</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => setSearchDateOptionSelected('start')} className={`px-4 py-[11] rounded-full ${searchDateOptionSelected === 'start' ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#f2f2f2] dark:bg-[#3d3d3d]'}`}>
+                      <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'start' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>Start</Text>
+                    </TouchableOpacity>
+                  
+                  </View>      
+
+                  <View className="w-full">
+
+                    {searchDateOptionSelected==='frequency'? (
+
+                      <Calendar
+                        onDayPress={onDayPress}
+                        markedDates={selectedDate}
+                        firstDay={1}
+                        theme={{
+                          todayTextColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
+                          monthTextColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
+                          textMonthFontSize: 15,
+                          textMonthFontWeight: 'bold',
+                          dayTextColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                          textDayFontWeight: 'bold',
+                          textInactiveColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                          textSectionTitleColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                          textDisabledColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                          selectedDayBackgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3',
+                          selectedDayTextColor: '#ffffff', // Color del texto del día seleccionado
+                          arrowColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
+                          calendarBackground: 'transparent',
+                        }}
+                        style={{ backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', padding:20, borderRadius:20 }}
+                      />
+
+
+                    )  : searchDateOptionSelected==='duration'? (
+                      
+                      <View className=" w-full mt-8 px-4 justify-center items-center">  
+
+                        <Text className="mb-4 font-inter-bold text-[24px] text-[#444343] dark:text-[#f2f2f2]">{formatDuration()}</Text>
+
+                        <View className="w-full">
+                          <Slider
+                            style={{ width: '100%', height: 10 }} 
+                            minimumValue={1} 
+                            maximumValue={34} 
+                            step={1} 
+                            thumbImage={thumbImage}
+                            minimumTrackTintColor="#b6b5b5"
+                            maximumTrackTintColor="#474646"
+                            value={sliderValue} 
+                            onValueChange={handleSliderChange}
+                          />
+                        </View>
+
+                      </View>
+
+                    )  :  (
+
+                      <View className="mt-2 w-full px-6 ">
+                        <DateTimePicker
+                          value={tempDate}
+                          mode="time" // Cambia a modo hora
+                          display="spinner" // Puede ser 'default', 'spinner', 'clock', etc.
+                          onChange={handleHourSelected}
+                          style={{ width: 320, height: 150 }} // Puedes ajustar el estilo como prefieras
+                        />
+                      </View>
+
+                    )}
+    
+                  </View>
+
+                </View>
+
+              ) : (
+
+                <TouchableOpacity onPress={() => setSearchOption('date')} className="mt-8 mb-7 w-full justify-center items-center">
+                  <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">Date</Text>
+                </TouchableOpacity>
+
+              )}
+
+            </View>
+          
+          </View>
+
+          
+
+        </View>
+
+      </BlurBackground>
+
+      )}
       
 
-        <TouchableOpacity onPress={() => navigation.navigate('Results', {category:2})} className="justify-center items-center pt-8 px-10">
+        <TouchableOpacity onPress={() => {removeSearchedDirection(); removeSearchedService(); setSearchedDirection(); setSearchedService(); setSearchOptionsVisible(true)}} className="justify-center items-center pt-8 px-10">
           <View className="h-[55] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
             <Search height={19} color={iconColor} strokeWidth="2"/>
             <Text className="ml-2 font-inter-medium text-[14px] text-[#979797]">Search a service...</Text>

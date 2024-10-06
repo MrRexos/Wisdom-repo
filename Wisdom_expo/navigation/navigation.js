@@ -361,8 +361,8 @@ function HomeStackNavigator() {
           <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen}/> 
           <Stack.Screen name="Results" component={ResultsScreen}/> 
           <Stack.Screen name="Search" component={SearchScreen} options={{ animation: 'none' }}/> 
-          <Stack.Screen name="SearchService" component={SearchServiceScreen}/> 
-          <Stack.Screen name="SearchDirection" component={SearchDirectionScreen}/> 
+          <Stack.Screen name="SearchService" component={SearchServiceScreen} options={{ animation: 'none', gestureEnabled: false }}/> 
+          <Stack.Screen name="SearchDirection" component={SearchDirectionScreen} options={{ animation: 'none', gestureEnabled: false }}/> 
           <Stack.Screen name="DisplayImages" component={DisplayImagesScreen}/> 
           <Stack.Screen name="DisplayReviews" component={DisplayReviewsScreen}/>
           <Stack.Screen name="EnlargedImage" component={EnlargedImageScreen}/>

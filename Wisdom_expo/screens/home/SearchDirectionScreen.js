@@ -23,7 +23,10 @@ export default function SearchDirectionScreen() {
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
+
   const route = useRoute();
+  const {prevScreen} = route.params;
+
   const [searchText, setSearchText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [placeDetails, setPlaceDetails] = useState([]);
@@ -45,6 +48,13 @@ export default function SearchDirectionScreen() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [addressId, setAddressId] = useState();
+  const [blurVisible, setBlurVisible] = useState(false);
+
+  useEffect(() => {
+    if (route.params && route.params.blurVisible !== undefined) {
+      setBlurVisible(true);
+    }
+  }, [route.params]);
 
   const handleClearText = () => {
     setSearchText('');
@@ -102,7 +112,7 @@ export default function SearchDirectionScreen() {
       setSuggestions([locationSuggestion, ...response.data.predictions]);
     } catch (error) {
       console.error('Error fetching suggestions:', error);
-    }
+    } 
   };
 
   const fetchPlaceDetails = async (placeId) => {
@@ -219,8 +229,6 @@ export default function SearchDirectionScreen() {
 
     if (isEditing) {
 
-      console.log('editando')
-
       try {
         const response = await api.put(`/api/address/${addressId}`,{
           address_type:address2 ? 'flat' : 'house', 
@@ -235,7 +243,7 @@ export default function SearchDirectionScreen() {
 
         const searchedDirection = {location, country, state, city, address_1: street, street_number :streetNumber, postal_code: postalCode, address_2: address2}
         await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
-        navigation.goBack();
+        navigation.navigate(prevScreen, {blurVisible});
 
       } catch (error) {
         console.error('Error updating address:', error);
@@ -258,7 +266,8 @@ export default function SearchDirectionScreen() {
 
         const searchedDirection = {location, country, state, city, address_1: street, street_number :streetNumber, postal_code: postalCode, address_2: address2}
         await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
-        navigation.goBack();
+        console.log(blurVisible)
+        navigation.navigate(prevScreen, {blurVisible});
 
       } catch (error) {
         console.error('Error fetching directions:', error);
@@ -601,7 +610,7 @@ export default function SearchDirectionScreen() {
 
         <View className="flex-row justify-start items-center mb-5">
 
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => navigation.navigate(prevScreen, {blurVisible})}>
                 <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6"/>
             </TouchableOpacity>
 
