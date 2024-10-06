@@ -64,8 +64,6 @@ export default function ServiceProfileScreen() {
   const sliderTimeoutId = useRef(null);
   const [timeUndefined, setTimeUndefined] = useState(false); 
   
-
-
   const languagesMap = {
     es: 'Spanish',
     en: 'English',
@@ -1245,7 +1243,7 @@ export default function ServiceProfileScreen() {
             </Text>
           </Text>
         </TouchableOpacity>
-      </View>
+      </View> 
 
     </SafeAreaView>
   );

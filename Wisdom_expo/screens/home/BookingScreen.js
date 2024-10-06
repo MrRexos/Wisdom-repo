@@ -1,13 +1,13 @@
 
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView } from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect, useIsFocused } from '@react-navigation/native';
-import {XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon, GlobeAltIcon, GlobeEuropeAfricaIcon, XCircleIcon} from 'react-native-heroicons/outline';
+import {XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon, XCircleIcon} from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import {Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X, Check, Calendar as CalendarIcon, Edit3, Clock, MapPin, Edit2} from "react-native-feather";
+import {Plus, Info, Phone, FileText, Flag, X, Check, Calendar as CalendarIcon, Edit3, Clock, MapPin, Edit2, AlertCircle, AlertTriangle, CreditCard} from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
@@ -64,6 +64,13 @@ export default function BookingScreen() {
   const [streetNumber, setStreetNumber] = useState('');
   const [address2, setAddress2] = useState('');
   const [selectedAddressId, setSelectedAddressId] = useState(null);
+
+  const [description, setDescription] = useState('');
+  const maxLength = 1000;
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const inputRef = useRef(null);
+
+  const [paymentMethod, setPaymentMethod] = useState();
 
 
 
@@ -217,6 +224,15 @@ export default function BookingScreen() {
     }
   };
 
+  const loadPaymentMethod = async () => {
+    
+    const paymentMethodRaw = await getDataLocally('paymentMethod');
+    if (paymentMethodRaw) {
+      paymentMethodData = JSON.parse(paymentMethodRaw);
+      setPaymentMethod(paymentMethodData);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
       const loadDirections = async () => {
@@ -225,6 +241,7 @@ export default function BookingScreen() {
       };
       loadDirections();
       loadSearchedDirection();
+      loadPaymentMethod();
     }, [])
   );
 
@@ -308,8 +325,13 @@ export default function BookingScreen() {
     setAddress2(text);
   };
 
+  const inputDescriptionChanged = (text) => {
+    setDescription(text);
+  };
 
-
+  const handleClearText = () => {
+    setDescription('');
+  };
 
 
   return (
@@ -668,7 +690,7 @@ export default function BookingScreen() {
 
       <View className="h-[70] w-full justify-end"/>
 
-      <ScrollView  className="flex-1 px-3">
+      <ScrollView showsVerticalScrollIndicator={false}  className="flex-1 px-3">
 
 
         {/* Profile */}
@@ -781,8 +803,339 @@ export default function BookingScreen() {
 
         </View>
 
+        {/* Precio */}
+
+        <View className="mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
+          
+          <View className="w-full flex-row justify-between items-center ">
+            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Price details</Text>
+          </View>
+          
+
+          <View className="mt-5 px-3 flex-1">
+              <View className="flex-1 justify-center items-center">
+                {/* Verificación del tipo de precio */}
+                {serviceData.price_type === 'hour' && (
+                  <>
+                    <View className="flex-row">
+                      <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
+                        Service price x {(duration / 60).toFixed(0)}h
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]"
+                      >
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className="font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]">
+                        {(parseFloat(serviceData.price) * (duration / 60)).toFixed(0)} €
+                      </Text>
+                    </View>
+
+                    <View className="mt-3 flex-row">
+                      <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
+                        Quality commission
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]"
+                      >
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className="font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]">
+                        {(((parseFloat(serviceData.price) * (duration / 60)) * 1.1) - (parseFloat(serviceData.price) * (duration / 60))).toFixed(1)} €
+                      </Text>
+                    </View>
+
+                    <View className="w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]"></View>
+
+                    <View className="mt-4 flex-row">
+                      <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+                        Final price
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]"
+                      >
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+                        {(((parseFloat(serviceData.price) * (duration / 60)) * 1.1)).toFixed(1)} €
+                      </Text>
+                    </View>
+                  </>
+                )}
+
+                {serviceData.price_type === 'fix' && (
+                  <>
+                    <View className="flex-row">
+                      <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
+                        Fixed price
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]"
+                      >
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className="font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]">
+                        {parseFloat(serviceData.price).toFixed(0)} €
+                      </Text>
+                    </View>
+
+                    <View className="mt-3 flex-row">
+                      <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
+                        Quality commission
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]"
+                      >
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className="font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]">
+                        {(parseFloat(serviceData.price) * 0.1).toFixed(1)} €
+                      </Text>
+                    </View>
+
+                    <View className="w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]"></View>
+
+                    <View className="mt-4 flex-row">
+                      <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+                        Final price
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]"
+                      >
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+                        {(parseFloat(serviceData.price)+(parseFloat(serviceData.price) * 0.1)).toFixed(0)} €
+                      </Text>
+                    </View>
+                  </>
+                )}
+
+                {serviceData.price_type === 'budget' && (
+                  <>
+                    <View className="flex-row">
+                      <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
+                        Service price
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]"
+                      >
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className="font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]">
+                        budget
+                      </Text>
+                    </View>
+
+                    <View className="mt-3 flex-row">
+                      <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
+                        Deposit
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]"
+                      >
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className="font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]">
+                        1 €
+                      </Text>
+                    </View>
+
+                    <View className="w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]"></View>
+
+                    <View className="mt-4 flex-row">
+                      <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+                        Final price
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]"
+                      >
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+                        1 €
+                      </Text>
+                    </View>
+                  </>
+                )}
+              </View>
+          </View>
+
+
+        </View>
+
+        {/* Fecha */}
+
+        <View className="mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
+          
+          <View className="w-full flex-row justify-between items-center ">
+            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Payment method</Text>
+          </View>
+          
+
+          <View className="mt-4 flex-1">
+
+            {paymentMethod?  (
+              <View className="flex-1 justify-center items-center">
+
+              </View>
+            ) : (
+
+              <View className="mt-1 flex-1 justify-center items-center">
+                <CreditCard height={50} width={50} strokeWidth={1.3} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+
+                <View className="flex-row justify-center items-center pb-3 px-6">
+
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('PaymentMethod') }
+                    style={{ opacity: 1 }}
+                    className="bg-[#706f6e] mt-3 dark:bg-[#b6b5b5] w-full h-[55] rounded-full items-center justify-center"
+                  >
+                    <Text>
+                      <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
+                        Add a Credit Card
+                      </Text>
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                
+                
+
+              </View>
+              
+            )}
+
+          </View>
+
+        </View>
+
+        {/* Descripcion */}
+
+        <View className="mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
+          
+          <View className="w-full flex-row justify-between items-center ">
+            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Booking description</Text>
+          </View>
+          
+
+          <View className="flex-1 w-full mt-6">
+            <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
+            <View className="w-full min-h-[150] bg-[#f2f2f2] dark:bg-[#272626] rounded-2xl py-4 px-5 ">
+
+              {description.length > 0 ? (
+              <View className="flex-row justify-end">
+                <TouchableOpacity onPress={handleClearText} className="">
+                  <Text className="mb-1 font-inter-medium text-[13px] text-[#d4d4d3] dark:text-[#474646]">Clear</Text>
+                </TouchableOpacity>
+              </View>
+              ) : null }
+
+              <TextInput
+                placeholder='Description...'
+                selectionColor={cursorColorChange}
+                placeholderTextColor={placeHolderTextColorChange}
+                onChangeText={inputDescriptionChanged}
+                value={description}
+                ref={inputRef}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                className="w-full text-[15px] text-[#515150] dark:text-[#d4d4d3]"
+                multiline
+                maxLength={maxLength}
+                style={{ textAlignVertical: 'top' }}
+              />
+            </View>
+            </TouchableWithoutFeedback>
+            
+            {/* Contador de palabras */}
+            <View className="w-full flex-row justify-end">
+              <Text className="pt-2 pr-2 font-inter-medium text-[12px] text-[#979797] dark:text-[#979797]">{description.length}/{maxLength}</Text>
+            </View>
+            {isKeyboardVisible && (
+            <View className="h-[200]"></View>
+            )}
+
+          </View>
+
+        </View>
+
+        {/* Others */}
+
+        <View className="mt-8 px-2  justify-center items-start pb-7">
+
+          <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Others</Text>
+
+          <TouchableOpacity className="mb-3  flex-row w-full justify-between items-start">
+            <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+              <WisdomLogo  width={23} height={23} color={iconColor}/>
+            </View>
+            <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Operation of the reserves</Text>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
+            <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+              <XCircleIcon  width={24} height={24} color={iconColor} strokeWidth={1.4}/>
+            </View>
+            <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Cancellation Policy</Text>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+            </View>
+          </TouchableOpacity>
+          
+          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
+            <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+              <AlertTriangle  width={22} height={22} color={iconColor} strokeWidth={1.6}/>
+            </View>
+            <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Follow the rules</Text>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
+            <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+              <Phone  width={22} height={22} color={iconColor} strokeWidth={1.4} />
+            </View>
+            <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Contact Wisdom</Text>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+            </View>
+          </TouchableOpacity>
+
+
+        </View>
+
+        <View className="h-[70]"/>
+
       </ScrollView>
 
+      {/* Button book */}
+
+      <View className="flex-row justify-center items-center pb-3 px-6">
+
+        <TouchableOpacity
+          onPress={() => null }
+          style={{ opacity: 1 }}
+          className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center"
+        >
+          <Text>
+            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
+              Continue to Payment
+            </Text>
+          </Text>
+        </TouchableOpacity>
+      </View>
 
     </SafeAreaView>
   ); 
