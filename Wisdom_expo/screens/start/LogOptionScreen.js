@@ -72,7 +72,7 @@ export default function LogOptionScreen() {
     
     return (
         
-      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-neutral-700 justify-between'>
+      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 w-full bg-neutral-700 justify-between'>
         <Image source={require('../../assets/LoadChair.png')}  style={{ height: windowHeight, width: windowWidth, position: 'absolute' }}/>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
           <View>
@@ -85,14 +85,16 @@ export default function LogOptionScreen() {
                   <WisdomLogo width={70} height={40} className='fill-black'/>
               </View> 
           </View>
-          <View className="justify-center items-center space-y-2.5 pb-2">
-              <TouchableOpacity onPress={() => navigation.navigate('EnterEmail')} className="bg-[#f2f2f2] w-[320] h-[55] rounded-full items-center justify-center">
-                  <Text className="font-inter-semibold text-[15px]text-[#444343] ">
-                      Register
-                  </Text>
+          <View className="justify-center w-full items-center space-y-2.5 pb-2">
+              <TouchableOpacity onPress={() => navigation.navigate('EnterEmail')} className="w-full px-8">
+                  <View className="bg-[#f2f2f2] w-full h-[55] rounded-full items-center justify-center">
+                    <Text className="font-inter-semibold text-[15px]text-[#444343] ">
+                        Register
+                    </Text>
+                  </View> 
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate('LogIn')}>
-                  <View className="bg-[#f2f2f2]/10 w-[320] h-[55] rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
+              <TouchableOpacity onPress={() => navigation.navigate('LogIn')} className="w-full px-8">
+                  <View className="bg-[#f2f2f2]/10 w-full h-[55] rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
                     <Text className="font-inter-semibold text-[15px] text-[#f2f2f2]">
                         Log In
                     </Text>
