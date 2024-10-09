@@ -27,7 +27,7 @@ export default function HomeScreen() {
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const [selectedCategoryID, setSelectedCategoryID] = useState(null);
-  const [suggestedProfessionals, setSuggestedProfessionals] = useState(null);
+  const [suggestedProfessionals, setSuggestedProfessionals] = useState({});
 
   const [isSearchOptionsVisible, setSearchOptionsVisible] = useState(false);
 
@@ -71,15 +71,13 @@ export default function HomeScreen() {
     }, [route.params])
   );
 
-  useEffect(() => {
-    console.log('isSearchOptionsVisible:', isSearchOptionsVisible);
-  }, [isSearchOptionsVisible]);
-
 
   useEffect(() => {
     const loadProfessionals = async () => {
       const professionals = await fetchProfessionals();
-      setSuggestedProfessionals([{service_id:0}, ...professionals]);
+      if (Array.isArray(professionals)) {
+        setSuggestedProfessionals([{ service_id: 0 }, ...professionals]);
+      }
     };
     loadProfessionals();
   }, []);
@@ -323,7 +321,7 @@ export default function HomeScreen() {
     {index===1 ? (
 
     <View>
-      {suggestedProfessionals && (
+      {Array.isArray(suggestedProfessionals) && suggestedProfessionals.length > 0  && (
         <View className="mb-6">
           <Text className="mb-3 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{item.family}</Text>
           <FlatList
@@ -422,7 +420,7 @@ export default function HomeScreen() {
     const searchedDirectionRaw = await getDataLocally('searchedDirection');
     if (searchedDirectionRaw) {
       searchedDirectionData = JSON.parse(searchedDirectionRaw);
-      setSearchedDirection([searchedDirectionData]) 
+      setSearchedDirection(searchedDirectionData) 
     }
   };
 
@@ -466,9 +464,9 @@ export default function HomeScreen() {
 
           <View style={{ flex: 1,  backgroundColor: colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.1)' }}>
 
-          <TouchableWithoutFeedback onPress={() => setSearchOptionsVisible(false)}>
-            <BlurView style={styles.blur} blurType="light" blurAmount={10} intensity={70}  />
-          </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={() => setSearchOptionsVisible(false)}>
+              <BlurView style={styles.blur} blurType="light" blurAmount={10} intensity={70}  />
+            </TouchableWithoutFeedback>
             
             <View className="flex-1 w-full justify-between items-center ">
               <View className="flex-1 w-full justify-start items-center ">
@@ -501,14 +499,22 @@ export default function HomeScreen() {
                       <TouchableOpacity onPress={() => {navigation.navigate('SearchService', {blurVisible:true, prevScreen:'HomeScreen'}); setSearchOptionsVisible(false);}} className="mt-8 mb-7 w-full justify-center items-center ">
                         <View className="py-[20] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
                           <Search height={19} color={iconColor} strokeWidth="2"/>
-                          <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">Search a service...</Text>
+                          <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService? searchedService: 'Search a service...'}</Text>
                         </View>
                       </TouchableOpacity>
 
                     ) : (
 
                       <TouchableOpacity onPress={() => setSearchOption('service')} className="mt-8 mb-7 w-full justify-center items-center">
-                        <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">Service</Text>
+                        <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">
+                          Service
+                          {searchedService && (
+                            <>
+                              <Text className="font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">: </Text>
+                              <Text className="font-inter-bold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService}</Text>
+                            </>
+                          )}
+                        </Text>
                       </TouchableOpacity>
 
                     )}
@@ -535,7 +541,7 @@ export default function HomeScreen() {
                       <TouchableOpacity onPress={() => {setSearchOptionsVisible(false); navigation.navigate('SearchDirection',{blurVisible:true, prevScreen:'HomeScreen'})}} className="mt-8 mb-6 w-full justify-center items-center ">
                         <View className="py-[20] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
                           <Search height={19} color={iconColor} strokeWidth="2"/>
-                          <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">Search a location...</Text>
+                          <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedDirection? searchedDirection.address_1:'Search a location...'}</Text>
                         </View>
                       </TouchableOpacity>
 
@@ -548,7 +554,15 @@ export default function HomeScreen() {
                   ) : (
 
                     <TouchableOpacity onPress={() => setSearchOption('direction')} className="mt-8 mb-7 w-full justify-center items-center">
-                      <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">Location {searchedDirection}</Text>
+                      <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">
+                          Location
+                          {searchedDirection && (
+                            <>
+                              <Text className="font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">: </Text>
+                              <Text className="font-inter-bold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedDirection.address_1}</Text>
+                            </>
+                          )}
+                        </Text>
                     </TouchableOpacity>
 
                   )}

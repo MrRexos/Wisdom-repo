@@ -277,6 +277,13 @@ export default function SearchDirectionScreen() {
     
   };
 
+  const handleDirectionSelected = async (searchedDirection) => {
+  
+    await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
+  
+    navigation.navigate(prevScreen, { blurVisible });
+  };
+
   const clearHistory = async () => {
     await storeDataLocally('historySearchedDirections', JSON.stringify([]));
     getHistorySearchedDirections();
@@ -436,20 +443,41 @@ export default function SearchDirectionScreen() {
                   <View className="flex-1 px-6 mt-10 ">
                     {directions.map((direction) => (
                       <View key={direction.direction_id} className="pb-5 mb-5 flex-row w-full justify-center items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+                        
                         <View className="w-11 h-11 items-center justify-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                           <MapPin height={22} width={22} strokeWidth={1.6} color={iconColor} />
                         </View>
 
-                        <View className="pl-4 pr-3 flex-1 justify-center items-start">
+                        <TouchableOpacity
+                          onPress={async () => {
+                            const searchedDirection = {
+                              location: direction.location,
+                              country: direction.country,
+                              state: direction.state,
+                              city: direction.city,
+                              address_1: direction.address_1,
+                              street_number: direction.street_number,
+                              postal_code: direction.postal_code,
+                              address_2: direction.address_2,
+                            };
+                        
+                            // Cerrar el sheet
+                            sheet.current.close();
+                        
+                            // Pasar el objeto a handleDirectionSelected
+                            handleDirectionSelected(searchedDirection);
+                          }}
+                          className="pl-4 pr-3 flex-1 justify-center items-start">
+
                           <Text numberOfLines={1} className="mb-[6] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]">
                             {[direction.address_1, direction.street_number].filter(Boolean).join(', ')}
                           </Text>
                           <Text numberOfLines={1} className="font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">
                             {[direction.postal_code, direction.city, direction.state, direction.country].filter(Boolean).join(', ')}
                           </Text>
-                        </View>
+                        </TouchableOpacity>
 
-                        <View className="h-full justify-start items-center">
+                        <View className="h-full justify-start items-center ml-5">
                           <TouchableOpacity onPress={() => { 
                             setCountry(direction.country);
                             setState(direction.state);
