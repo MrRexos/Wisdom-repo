@@ -42,10 +42,19 @@ export default function SearchServiceScreen() {
 
   const fetchSuggestions = async (input) => {
     try {
-      setSuggestions([]); // Se limpia correctamente con un array vacío
+      // Asegúrate de que el input no esté vacío antes de hacer la solicitud
+      if (!input || input.trim() === '') {
+        console.error('Input is required for fetching suggestions.');
+        return;
+      }
+  
+      // Construir la URL con el parámetro de búsqueda
+      const response = await api.get(`/api/suggestions?query=${encodeURIComponent(input)}`);
+      
+      setSuggestions(response.data.suggestions);        
     } catch (error) {
       console.error('Error fetching suggestions:', error);
-    }
+    } 
   };
 
   const saveHistorySearchedService = async (newService) => {
@@ -106,7 +115,7 @@ export default function SearchServiceScreen() {
     if (searchText.length > 0) {
       const timer = setTimeout(() => {
         fetchSuggestions(searchText);
-      }, 300);
+      }, 500);
 
       return () => clearTimeout(timer);
     } else {

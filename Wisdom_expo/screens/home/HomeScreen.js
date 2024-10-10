@@ -17,6 +17,7 @@ import SliderThumbDark from '../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../assets/SliderThumbLight.png';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BlurView } from 'expo-blur';
+import { format } from 'date-fns';
 
 
 export default function HomeScreen() {
@@ -39,9 +40,9 @@ export default function HomeScreen() {
   const [selectedDate, setSelectedDate] = useState({});
   const [selectedDay, setSelectedDay] = useState(null);
   const [tempDate, setTempDate] = useState(new Date());
-  const [selectedTime, setSelectedTime] = useState('');
-  const [duration, setDuration] = useState(60);
-  const [sliderValue, setSliderValue] = useState(12);
+  const [selectedTime, setSelectedTime] = useState();
+  const [duration, setDuration] = useState();
+  const [sliderValue, setSliderValue] = useState();
   const sliderTimeoutId = useRef(null);
 
   const [searchedDirection, setSearchedDirection] = useState();
@@ -451,7 +452,42 @@ export default function HomeScreen() {
     }
   };
 
-  
+  const formatDate = () => {
+    let formattedDay = '';
+    let formattedTime = '';
+    let formattedDuration = '';
+
+    // 1. Formatear el día si `selectedDay` está presente
+    if (selectedDay) {
+        const [year, month, day] = selectedDay.split('-'); // Dividir la fecha "YYYY-MM-DD"
+        if (year && month && day) {
+            const tempDate = new Date(year, month - 1, day);
+            formattedDay = tempDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }); // Ej: "Friday 25 Oct"
+        }
+    }
+
+    // 2. Usar `selectedTime` directamente si está presente
+    if (selectedTime) {
+        formattedTime = selectedTime; // Ya está en formato "HH:MM"
+    }
+
+    // 3. Calcular la duración si `duration` está presente
+    if (duration) {
+        const hoursDuration = Math.floor(duration / 60);
+        const minutesDuration = duration % 60;
+        formattedDuration = `${hoursDuration > 0 ? `${hoursDuration}h` : ''} ${minutesDuration > 0 ? `${minutesDuration}min` : ''}`.trim();
+    }
+
+    // Usar un array para los valores disponibles y unir con comas
+    const parts = [];
+    if (formattedDay) parts.push(formattedDay);
+    if (formattedTime) parts.push(formattedTime);
+    if (formattedDuration) parts.push(formattedDuration);
+
+    // Unir las partes con comas y devolver el resultado
+    return parts.length > 0 ? parts.join(', ') : 'No hay información disponible';
+  };
+
 
    
   return (
@@ -555,14 +591,14 @@ export default function HomeScreen() {
 
                     <TouchableOpacity onPress={() => setSearchOption('direction')} className="mt-8 mb-7 w-full justify-center items-center">
                       <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">
-                          Location
-                          {searchedDirection && (
-                            <>
-                              <Text className="font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">: </Text>
-                              <Text className="font-inter-bold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedDirection.address_1}</Text>
-                            </>
-                          )}
-                        </Text>
+                        Location
+                        {searchedDirection && (
+                          <>
+                            <Text className="font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">: </Text>
+                            <Text className="font-inter-bold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedDirection.address_1}</Text>
+                          </>
+                        )}
+                      </Text>
                     </TouchableOpacity>
 
                   )}
@@ -589,11 +625,27 @@ export default function HomeScreen() {
                           <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'frequency' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>Frequency</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => setSearchDateOptionSelected('duration')} className={`px-4 py-[11] rounded-full ${searchDateOptionSelected === 'duration' ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#f2f2f2] dark:bg-[#3d3d3d]'}`}>
+                        <TouchableOpacity 
+                          onPress={() => {
+                            if (!duration && !sliderValue) { // Verifica que ambos sean null, undefined o falsos
+                              setDuration(60);
+                              setSliderValue(12);
+                            } 
+                            setSearchDateOptionSelected('duration');
+                          }}
+                          className={`px-4 py-[11] rounded-full ${searchDateOptionSelected === 'duration' ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#f2f2f2] dark:bg-[#3d3d3d]'}`}
+                        >
                           <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'duration' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>Duration</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => setSearchDateOptionSelected('start')} className={`px-4 py-[11] rounded-full ${searchDateOptionSelected === 'start' ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#f2f2f2] dark:bg-[#3d3d3d]'}`}>
+                        <TouchableOpacity onPress={() => {
+                            if (!selectedTime) { 
+                              const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                              setSelectedTime(currentTime);
+                            } 
+                            setSearchDateOptionSelected('start')}} 
+                          className={`px-4 py-[11] rounded-full ${searchDateOptionSelected === 'start' ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#f2f2f2] dark:bg-[#3d3d3d]'}`}
+                        >
                           <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'start' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>Start</Text>
                         </TouchableOpacity>
                       
@@ -669,7 +721,15 @@ export default function HomeScreen() {
                   ) : (
 
                     <TouchableOpacity onPress={() => setSearchOption('date')} className="mt-8 mb-7 w-full justify-center items-center">
-                      <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">Date</Text>
+                      <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">
+                        Date
+                        {(selectedDay || selectedTime || duration) && (
+                          <>
+                            <Text className="font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">: </Text>
+                            <Text className="font-inter-bold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{selectedDay || selectedTime || duration? formatDate():''}</Text>
+                          </>
+                        )}
+                      </Text>
                     </TouchableOpacity>
 
                   )}
@@ -686,8 +746,6 @@ export default function HomeScreen() {
 
         </View>
       )}
-
-      
 
         <TouchableOpacity onPress={() => {removeSearchedDirection(); removeSearchedService(); setSearchedDirection(); setSearchedService(); setSearchOptionsVisible(true)}} className="justify-center items-center pt-8 px-10">
           <View className="h-[55] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
