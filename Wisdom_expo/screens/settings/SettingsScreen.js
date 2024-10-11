@@ -203,10 +203,10 @@ export default function SettingsScreen() {
             ))}
           </View>
         ))}
-        <View className="justify-center items-center">
+        <View className="justify-center items-center w-full px-8">
           <TouchableOpacity 
                   onPress={logOut}
-                  className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-[320] h-[55] rounded-full items-center justify-center" >
+                  className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-full h-[55] rounded-full items-center justify-center" >
                       <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">Log out</Text>
           </TouchableOpacity>
           <Text className="pt-4 pb-[85] text-[#e0e0e0] dark:text-[#3d3d3d]">Version 1.0.0</Text>

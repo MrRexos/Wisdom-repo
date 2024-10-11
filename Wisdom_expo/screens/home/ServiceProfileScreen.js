@@ -63,6 +63,7 @@ export default function ServiceProfileScreen() {
   const [sliderValue, setSliderValue] = useState(12);
   const sliderTimeoutId = useRef(null);
   const [timeUndefined, setTimeUndefined] = useState(false); 
+  const [showPicker, setShowPicker] = useState(false);
   
   const languagesMap = {
     es: 'Spanish',
@@ -311,6 +312,9 @@ export default function ServiceProfileScreen() {
     const formattedTime = `${hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
     
     setSelectedTime(formattedTime); // Guarda la hora seleccionada en el estado
+    if (Platform.OS==='android'){
+      setShowPicker(false)
+    }
   };
 
   const handleSliderChange = (value) => {
@@ -457,8 +461,10 @@ export default function ServiceProfileScreen() {
 
                 <View className="mt-2 w-full px-6 ">
 
+                  <TouchableOpacity onPress={() => setShowPicker(true)}>
                   <Text className="ml-3 mb-2 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Start time</Text>
-                  
+                  </TouchableOpacity>
+                  {showPicker && (
                   <DateTimePicker
                     value={tempDate}
                     mode="time" // Cambia a modo hora
@@ -466,6 +472,7 @@ export default function ServiceProfileScreen() {
                     onChange={handleHourSelected}
                     style={{ width: 320, height: 150 }} // Puedes ajustar el estilo como prefieras
                   />
+                  )}
                 </View>
                 
                 <View className="mt-6 mb-10 w-full px-6 ">
@@ -517,7 +524,7 @@ export default function ServiceProfileScreen() {
                   style={{ opacity: !(selectedDay && selectedTime && duration) && !timeUndefined? 0.5 : 1 }}
                   className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17] rounded-full items-center justify-center"
                 >
-                  <Text>
+                  <Text className="text-center">
                     <Text className="text-center font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
                       {formatBookingMessage()}
                     </Text>

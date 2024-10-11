@@ -173,10 +173,10 @@ export default function NotificationAllowScreen() {
             <Text className="font-inter-semibold text-[30px] text-[#444343] dark:text-[#f2f2f2] text-center w-[250]">Stay informed</Text>
             <Text className="font-inter-medium text-[15px] text-[#706f6e] dark:text-[#b6b5b5] text-center w-[250] mt-4">Receive information and reminders of your services</Text>
           </View>
-          <View className="justify-center items-center pb-4">
+          <View className="justify-center items-center pb-4 w-full px-8">
                 <TouchableOpacity 
                 onPress={allowPressed}
-                className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center" >
+                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">Allow</Text>
                 </TouchableOpacity>
             </View>

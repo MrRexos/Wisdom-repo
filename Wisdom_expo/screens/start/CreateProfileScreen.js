@@ -186,13 +186,13 @@ export default function CreateProfileScreen() {
                     <Text className="text-[#ff633e] text-[13px] pt-3">{errorMessage}</Text>
                 ) : null}
             </View>
-                <KeyboardAvoidingView>
-                <View className="justify-center items-center pb-6 mt-4">
+                <KeyboardAvoidingView className="w-full">
+                <View className="justify-center items-center pb-6 mt-4 w-full px-8">
                     <TouchableOpacity
                         disabled={username.length < 1}
                         onPress={nextPressed}
                         style={{ opacity: username.length < 1 ? 0.5 : 1.0 }}
-                        className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center" >
+                        className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
                         <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">Create account</Text>
                     </TouchableOpacity>
                 </View>

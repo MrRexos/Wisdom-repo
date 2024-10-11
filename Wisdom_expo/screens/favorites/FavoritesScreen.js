@@ -69,7 +69,7 @@
     );
 
     if (loading) {
-      return <Text>Loading...</Text>;
+      return <View className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]"></View>;
     } // ESTILIZAR
 
     const renderItem = ({ item }) => (

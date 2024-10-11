@@ -172,12 +172,12 @@ export default function LogInScreen() {
             ):null
         }
       </View>
-        <View className="justify-center items-center pb-6 pt-7">
+        <View className="justify-center items-center pb-6 pt-7 w-full px-8">
           <TouchableOpacity 
           disabled={password.length < 1 || userEmail.length < 1}
           onPress={nextPressed}
           style={{opacity: password.length < 1 || userEmail.length < 1 ? 0.5 : 1.0}}
-          className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center">
+          className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center">
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Next</Text>
           </TouchableOpacity>
         </View>

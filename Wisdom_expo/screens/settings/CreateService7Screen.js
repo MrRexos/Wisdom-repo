@@ -26,6 +26,8 @@ export default function CreateService7Screen() {
   const [openStartDate, setOpenStartDate] = useState(false);
   const [openEndDate, setOpenEndDate] = useState(false);
   const [tempDate, setTempDate] = useState(new Date());
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
 
   const inputPositionChanged = (text) => {
     setPosition(text);
@@ -38,6 +40,12 @@ export default function CreateService7Screen() {
   const handleStartDateChange = (event, date) => {
     if (date !== undefined) {
       setTempDate(date); // Almacena la fecha seleccionada temporalmente
+    }
+    if (Platform.OS==='android'){
+      setShowStartPicker(false)
+      setStartDate(tempDate); 
+      setTempDate(new Date());
+      setOpenStartDate(false); 
     }
   };
 
@@ -56,6 +64,25 @@ export default function CreateService7Screen() {
   const handleEndDateChange = (event, date) => {
     if (date !== undefined) {
       setTempDate(date); 
+    }
+    if (Platform.OS==='android'){
+      setShowEndPicker(false)
+      const today = new Date();
+    
+    const isToday = (
+      tempDate.getDate() === today.getDate() &&
+      tempDate.getMonth() === today.getMonth() &&
+      tempDate.getFullYear() === today.getFullYear()
+    );
+
+    if (tempDate >= today || isToday) {
+      setEndDate(null);
+    } else {
+      setEndDate(tempDate); // Si es en el pasado, establecer la fecha seleccionada
+    }
+  
+    setTempDate(new Date()); // Restablecer la fecha temporal a la fecha actual
+    setOpenEndDate(false); // Cerrar el DateTimePicker
     }
   };
 
@@ -211,14 +238,15 @@ export default function CreateService7Screen() {
 
                   <View className="flex-row justify-center items-center">
 
-                    <TouchableOpacity onPress={() => setOpenStartDate(true)} className="flex-1 justify-center items-center">
+                    <TouchableOpacity onPress={() => {setOpenStartDate(true); setShowStartPicker(true)}} className="flex-1 justify-center items-center">
                       <Text className="font-inter-semibold text-[14px] text-center underline underline-offset-2 text-[#444343] dark:text-[#f2f2f2]">Started</Text>
                       <Text className="mt-3 font-inter-medium text-[14px] text-center  text-[#b6b5b5] dark:text-[#706f6e]">{startDate.toLocaleDateString()}</Text>
                     </TouchableOpacity>
 
                     {openStartDate && (
                       <View>
-                        <View className="w-[300] h-[110]">
+                        {showStartPicker && (
+                        <View className={Platform.OS === 'ios' ? 'w-[300px] h-[110px]' : 'w-[0px] h-[0px]'}>
                           <DateTimePicker
                             value={tempDate}
                             mode="date"
@@ -227,6 +255,7 @@ export default function CreateService7Screen() {
                             style={styles.picker}
                           />
                         </View>
+                        )}
                         {Platform.OS === 'ios' ? (
                           <View className="flex-row justify-between px-12">
                             <TouchableOpacity onPress={handleCancelStartDate}>
@@ -241,14 +270,15 @@ export default function CreateService7Screen() {
                       </View>
                     )}
 
-                    <TouchableOpacity onPress={() => setOpenEndDate(true)} className="flex-1 justify-center items-center">
+                    <TouchableOpacity onPress={() => {setOpenEndDate(true); setShowEndPicker(true)}} className="flex-1 justify-center items-center">
                       <Text className={`font-inter-semibold text-[14px] text-center underline underline-offset-2 ${endDate && endDate < startDate ? 'text-[#ff633e]' : 'text-[#444343] dark:text-[#f2f2f2]'}`}>End</Text>
                       <Text className="mt-3 font-inter-medium text-[14px] text-center  text-[#b6b5b5] dark:text-[#706f6e]">{endDate? endDate.toLocaleDateString(): 'Still here'}</Text>
                     </TouchableOpacity>
 
                     {openEndDate && (
                       <View>
-                        <View className="w-[300] h-[110]">
+                        {showEndPicker && (
+                        <View className={Platform.OS === 'ios' ? 'w-[300px] h-[110px]' : 'w-[0px] h-[0px]'}>
                           <DateTimePicker
                             value={tempDate}
                             mode="date"
@@ -257,6 +287,7 @@ export default function CreateService7Screen() {
                             style={styles.picker}
                           />
                         </View>
+                        )}
                         {Platform.OS === 'ios' ? (
                           <View className="flex-row justify-between px-12">
                             <TouchableOpacity onPress={handleCancelEndDate}>

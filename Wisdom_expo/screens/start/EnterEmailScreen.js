@@ -93,13 +93,13 @@ export default function EnterEmailScreen() {
             }
         </View>
         <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <View className="justify-center items-center pb-6">
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="w-full ">
+            <View className="justify-center items-center pb-6 w-full px-8 ">
                 <TouchableOpacity 
                 disabled={email.length < 1}
                 onPress={nextPressed}
                 style={{opacity: email.length < 1 ? 0.5 : 1.0}}
-                className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center" >
+                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">Next </Text>
                 </TouchableOpacity>
             </View>

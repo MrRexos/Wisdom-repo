@@ -49,6 +49,7 @@ export default function HomeScreen() {
 
   const [searchedDirection, setSearchedDirection] = useState();
   const [searchedService, setSearchedService] = useState();
+  const [showPicker, setShowPicker] = useState(false);
 
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
 
@@ -275,10 +276,10 @@ export default function HomeScreen() {
       <ImageBackground
         source={{ uri: item.url }}
         className="mr-2 w-[270] h-[145] p-4 flex-row justify-between items-end "
-        imageStyle={{ borderRadius: 12, opacity:0.6}}
+        imageStyle={{ borderRadius: 12, opacity: colorScheme==='dark'? 0.6 : 0.8}}
       >
-        <Text className="ml-2 font-inter-semibold text-[18px] text-[#e0e0e0]">{item.category}</Text>
-        <Text className="ml-2 font-inter-semibold text-[18px] text-[#e0e0e0]">→</Text>
+        <Text className="ml-2 font-inter-semibold text-[18px] text-[#323131] dark:text-[#e0e0e0]">{item.category}</Text>
+        <Text className="ml-2 font-inter-semibold text-[18px] text-[#323131] dark:text-[#e0e0e0]">→</Text>
       </ImageBackground>
       
     </TouchableOpacity>
@@ -426,11 +427,15 @@ export default function HomeScreen() {
     const formattedTime = `${hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
     
     setSelectedTime(formattedTime); // Guarda la hora seleccionada en el estado
+    if (Platform.OS==='android'){
+      setShowPicker(false)
+    }
   };
 
   const loadSearchedDirection = async () => {
     
     const searchedDirectionRaw = await getDataLocally('searchedDirection');
+    console.log(searchedDirectionRaw)
     if (searchedDirectionRaw) {
       searchedDirectionData = JSON.parse(searchedDirectionRaw);
       setSearchedDirection(searchedDirectionData) 
@@ -662,7 +667,8 @@ export default function HomeScreen() {
                               const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
                               setSelectedTime(currentTime);
                             } 
-                            setSearchDateOptionSelected('start')}} 
+                            setSearchDateOptionSelected('start');
+                            setShowPicker(true)}} 
                           className={`px-4 py-[11] rounded-full ${searchDateOptionSelected === 'start' ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#f2f2f2] dark:bg-[#3d3d3d]'}`}
                         >
                           <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'start' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>Start</Text>
@@ -722,6 +728,7 @@ export default function HomeScreen() {
                         )  :  (
 
                           <View className="mt-2 w-full px-6 ">
+                            {showPicker && (
                             <DateTimePicker
                               value={tempDate}
                               mode="time" // Cambia a modo hora
@@ -729,6 +736,7 @@ export default function HomeScreen() {
                               onChange={handleHourSelected}
                               style={{ width: 320, height: 150 }} // Puedes ajustar el estilo como prefieras
                             />
+                            )}
                           </View>
 
                         )}

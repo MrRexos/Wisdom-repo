@@ -72,6 +72,7 @@ export default function BookingScreen() {
   const inputRef = useRef(null);
 
   const [paymentMethod, setPaymentMethod] = useState();
+  const [showPicker, setShowPicker] = useState(false);
 
 
 
@@ -109,7 +110,7 @@ export default function BookingScreen() {
             console.error('Error al cargar los datos:', error);
         }
     };
-
+    loadSearchedDirection();
     fetchData();
   }, []);
 
@@ -171,6 +172,9 @@ export default function BookingScreen() {
     const formattedTime = `${hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
     
     setSelectedTime(formattedTime); // Guarda la hora seleccionada en el estado
+    if (Platform.OS==='android'){
+      setShowPicker(false)
+    }
   };
 
   const handleSliderChange = (value) => {
@@ -230,6 +234,7 @@ export default function BookingScreen() {
   const loadSearchedDirection = async () => {
     
     const searchedDirectionData = await getDataLocally('searchedDirection');
+    
     if (searchedDirectionData) {
       searchedDirection = JSON.parse(searchedDirectionData);
       setDirection(searchedDirection);
@@ -308,6 +313,8 @@ export default function BookingScreen() {
 
       const directionList = await fetchDirections();
       setDirections(directionList);
+
+      
 
 
     } catch (error) {
@@ -486,9 +493,11 @@ export default function BookingScreen() {
                 </View>
 
                 <View className="mt-2 w-full px-6 ">
-
+                  <TouchableOpacity onPress={()=> setShowPicker(true)}>
                   <Text className="ml-3 mb-2 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Start time</Text>
-                  
+                  </TouchableOpacity>
+
+                  {showPicker && (
                   <DateTimePicker
                     value={tempDate}
                     mode="time" // Cambia a modo hora
@@ -496,6 +505,7 @@ export default function BookingScreen() {
                     onChange={handleHourSelected}
                     style={{ width: 320, height: 150 }} // Puedes ajustar el estilo como prefieras
                   />
+                  )}
                 </View>
                 
                 <View className="mt-6 mb-10 w-full px-6 ">
@@ -588,7 +598,7 @@ export default function BookingScreen() {
 
                   <View className="flex-1 px-6 mt-10 ">
                     {directions.map((direction) => (
-                      <TouchableOpacity onPress={() => {setDirection(direction); sheet.current.close()}} key={direction.direction_id} className="pb-5 mb-5 flex-row w-full justify-center items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+                      <TouchableOpacity onPress={() => {setDirection(direction); sheet.current.close(); console.log(direction)}} key={direction.direction_id} className="pb-5 mb-5 flex-row w-full justify-center items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
                         <View className="w-11 h-11 items-center justify-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                           <MapPin height={22} width={22} strokeWidth={1.6} color={iconColor} />
                         </View>
@@ -824,7 +834,7 @@ export default function BookingScreen() {
           
           <View className="w-full flex-row justify-between items-center ">
             <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Date and time</Text>
-            <TouchableOpacity onPress={() => {openSheetWithInput(700); setSheetOption('date')}}>
+            <TouchableOpacity onPress={() => {openSheetWithInput(700); setSheetOption('date'); setShowPicker(true)}}>
               <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
             </TouchableOpacity>
           </View>
@@ -874,10 +884,12 @@ export default function BookingScreen() {
 
           <View className="w-full flex-row justify-between items-center ">
             <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Address</Text>
-            <TouchableOpacity onPress={() => {openSheetWithInput(350); fetchDirections; setSheetOption('directions')}}>
+            <TouchableOpacity onPress={() => {openSheetWithInput(350); fetchDirections(); setSheetOption('directions')}}>
               <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
             </TouchableOpacity>
           </View>
+
+          {direction && Object.keys(direction).length > 0?  (
 
           <View className="mt-4 flex-row justify-center items-center">
 
@@ -895,6 +907,17 @@ export default function BookingScreen() {
             </View>
 
           </View>
+
+          ) : (
+
+            <View className="mt-1 flex-1 justify-center items-center">
+              <MapPin height={40} width={40} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+              <Text className="mt-4 font-inter-semibold text-[16px] text-[#979797]">
+                Location not selected
+              </Text>
+            </View>
+            
+          )}
 
 
         </View>
