@@ -1,4 +1,4 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, Image } from 'react-native'
@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
 import { getDataLocally } from '../utils/asyncStorage';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 import { Search, Heart, MessageSquare, Calendar } from "react-native-feather";
 import {BookOpenIcon as OutlineBookOpenIcon} from 'react-native-heroicons/outline';
@@ -169,10 +169,11 @@ export default function Navigation() {
     );
 }   
 
-function TabNavigator() {
+function TabNavigator({ route }) {
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n} = useTranslation();
   const [profileImage, setProfileImage] = useState(null);
+  const [showTabs, setShowTabs] = useState(true);
 
   useEffect(() => {
     // Función para obtener la imagen de perfil guardada en AsyncStorage
@@ -190,7 +191,19 @@ function TabNavigator() {
 
     getProfileImage();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (route.params?.showTab !== undefined) {
+        console.log(route.params.showTab)
+        setShowTabs(route.params.showTab);
+      }
+    }, [route.params?.showTab])
+  );
+
   return (
+    <>
+    {showTabs ? (
       <Tab.Navigator initialRouteName="Home" screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
@@ -251,12 +264,18 @@ function TabNavigator() {
         },
       })}
       >
-        <Tab.Screen name="Home" component={HomeStackNavigator} />
+        <Tab.Screen 
+          name="Home" 
+          component={HomeStackNavigator}
+        />
         <Tab.Screen name="Favorites" component={FavoritesStackNavigator} />
         <Tab.Screen name="Services" component={ServicesStackNavigator} />
         <Tab.Screen name="Chat" component={ChatStackNavigator} />
         <Tab.Screen name="Settings" component={SettingsStackNavigator} />
       </Tab.Navigator>
+        ) : null}
+        </>
+        
   );
 }
 

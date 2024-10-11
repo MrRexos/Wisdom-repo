@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, Button, StyleSheet } from 'react-native';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -10,21 +10,20 @@ import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
 
 export default function SearchServiceScreen() {
+
   const { colorScheme } = useColorScheme();
-  const { t } = useTranslation(); // Eliminamos la redundancia de i18n
-  const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
-  const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
+  const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343'
+  const { t } = useTranslation();
+  const navigation = useNavigation();
   const route = useRoute();
-  const {prevScreen} = route.params;
+  const { prevScreen } = route.params;
   const [searchText, setSearchText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [historySearchedServices, setHistorySearchedServices] = useState([]);
   const [userId, setUserId] = useState();
-  const [isSearchOptionsVisible, setSearchOptionsVisible] = useState(true);
   const [blurVisible, setBlurVisible] = useState(false);
-
 
   useEffect(() => {
     if (route.params && route.params.blurVisible !== undefined) {
@@ -42,15 +41,12 @@ export default function SearchServiceScreen() {
 
   const fetchSuggestions = async (input) => {
     try {
-      // Asegúrate de que el input no esté vacío antes de hacer la solicitud
       if (!input || input.trim() === '') {
         console.error('Input is required for fetching suggestions.');
         return;
       }
   
-      // Construir la URL con el parámetro de búsqueda
       const response = await api.get(`/api/suggestions?query=${encodeURIComponent(input)}`);
-      
       setSuggestions(response.data.suggestions);        
     } catch (error) {
       console.error('Error fetching suggestions:', error);
@@ -62,7 +58,6 @@ export default function SearchServiceScreen() {
       let history = await getDataLocally('historySearchedServices');
       history = history ? JSON.parse(history) : [];
 
-      // Verificar si el servicio ya existe en el historial
       const exists = history.some(service => JSON.stringify(service) === JSON.stringify(newService));
 
       if (!exists) {
@@ -82,22 +77,43 @@ export default function SearchServiceScreen() {
       const history = await getDataLocally('historySearchedServices');
       const parsedHistory = history ? JSON.parse(history) : [];
       setHistorySearchedServices(parsedHistory);
+      console.log(parsedHistory)
     } catch (error) {
       console.error('Error retrieving service history:', error);
     }
   };
 
-  const handleSelected = async (serviceId) => {
-    saveHistorySearchedService(serviceId);
+  const saveSearchedService = async (newService) => {
+    try {
+      await storeDataLocally('searchedService', JSON.stringify(newService));
+    } catch (error) {
+      console.error('Error saving services :', error);
+    }
+  };
 
-    const searchedService = {};
-    await storeDataLocally('searchedService', JSON.stringify(searchedService));
-    navigation.navigate(prevScreen, {blurVisible});
+  const handleSelected = async (service) => {
+    saveHistorySearchedService(service);
+    saveSearchedService(service); 
+    navigation.navigate(prevScreen, { blurVisible });
+  };
+
+  const handleHistorySelected = async (service) => {
+    saveSearchedService(service); 
+    navigation.navigate(prevScreen, { blurVisible });
   };
 
   const clearHistory = async () => {
-    await storeDataLocally('historySearchedServices', JSON.stringify([])); // Corregido a 'historySearchedServices'
-    getHistorySearchedServices(); // Corregido a getHistorySearchedServices
+    await storeDataLocally('historySearchedServices', JSON.stringify([]));
+    getHistorySearchedServices();
+  };
+
+  const clearHistorySearchedServices = async () => {
+    try {
+      await storeDataLocally('historySearchedServices', JSON.stringify([])); // Sobrescribe con un array vacío
+      console.log('Historial de búsquedas eliminado con éxito');
+    } catch (error) {
+      console.error('Error al eliminar el historial de búsquedas:', error);
+    }
   };
 
   useEffect(() => {
@@ -105,7 +121,7 @@ export default function SearchServiceScreen() {
       const userData = await getDataLocally('user');
       if (userData) {
         const user = JSON.parse(userData);
-        setUserId(user?.id); // Verificación adicional para evitar errores
+        setUserId(user?.id);
       }
     };
     getUserId();
@@ -123,34 +139,38 @@ export default function SearchServiceScreen() {
     }
   }, [searchText]);
 
-  const renderSuggestions = ({ item }) => (
+  const renderSuggestions = ({ item }) => {
+    const suggestionText = item.service_title || item.service_category_name || item.service_family || item.tag;
+  
+    
+    return (
     <TouchableOpacity className="pb-7 flex-row justify-between items-center" onPress={() => {
       if (searchText.length > 0) {
-        handleSelected(item.service_id);
+        handleSelected(item);
+      } else {
+        handleHistorySelected(item)
       }
     }}>
       <View className="flex-row justify-start items-center">
         <View className="w-11 h-11 items-center justify-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
           {item.place_id === 'your_location' ?
             <MapPinIcon height={21} color={iconColor} strokeWidth="1.7" /> :
-            searchText.length > 0 ? <Search height={17} color={iconColor} strokeWidth="2" /> :
-              <Clock height={19} color={iconColor} strokeWidth="2" />}
+            <Search height={17} color={iconColor} strokeWidth="2" />}
         </View>
-        <Text className="ml-4 text-[15px] text-[#444343] dark:text-[#f2f2f2]">{item.description}</Text>
+        <Text className="ml-4 text-[15px] text-[#444343] dark:text-[#f2f2f2]">{suggestionText}</Text>
       </View>
       <ChevronRightIcon size={18} color={colorScheme === 'dark' ? '#706F6E' : '#b6b5b5'} strokeWidth="2.5" className="p-6" />
     </TouchableOpacity>
-  );
+  )};
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
       
-
       <View className="px-5 pt-4 flex-1">
 
         <View className="flex-row justify-start items-center mb-5">
-          <TouchableOpacity onPress={() => navigation.navigate(prevScreen, {blurVisible})}>
+          <TouchableOpacity onPress={() => navigation.navigate(prevScreen, { blurVisible })}>
             <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6" />
           </TouchableOpacity>
 
@@ -190,7 +210,7 @@ export default function SearchServiceScreen() {
 
         <FlatList
           data={searchText.length < 1 ? historySearchedServices : suggestions}
-          keyExtractor={(item) => item.service_id || item.place_id} // Asegúrate de que service_id o place_id existan
+          keyExtractor={(item) => Math.random().toString()} // Asegúrate de que service_id o place_id existan
           renderItem={renderSuggestions}
         />
 
@@ -219,3 +239,4 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject, // Ocupa todo el fondo
   },
 });
+

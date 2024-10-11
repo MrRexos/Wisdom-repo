@@ -35,7 +35,27 @@ export default function ResultsScreen() {
   const [sheetHeight, setSheetHeight] = useState(450);
   const [addedServices, setAddedServices] = useState([]);
   const route = useRoute();
-  const { category } = route.params;
+  const [category, setCategory] = useState();
+  const [searchedService, setSearchedService] = useState();
+  const [duration, setDuration] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [searchedDirection, setSearchedDirection] = useState(null);
+
+  useEffect(() => {
+    if (route.params && route.params.category !== undefined) {
+      setCategory(route.params.category);
+      fetchResultsByCategory(route.params.category);
+    } else if (route.params && route.params.searchedService !== undefined) {
+      const {duration, selectedTime, selectedDay, searchedDirection} = route.params;
+      setSearchedService(route.params.searchedService)
+      setDuration(duration);
+      setSelectedTime(selectedTime);
+      setSelectedDay(selectedDay);
+      setSearchedDirection(searchedDirection);
+      fetchResultsBySearch(route.params.searchedService)
+    }
+  }, [route.params]);
 
   const orderByOptions = [
     { label: 'Recommend', type: 'recommend' },
@@ -61,14 +81,29 @@ export default function ResultsScreen() {
     setListName('');
   };
 
-
-
-  const fetchResults = async () => {
+  const fetchResultsByCategory = async (categoryId) => {
     try {
-      const response = await api.get(`/api/category/${category}/services`); //CAMBIAR ESTO MAS ADELANTE
+      const response = await api.get(`/api/category/${categoryId}/services`); 
       setResults(response.data);
     } catch (error) {
       console.error('Error al obtener los items:', error);
+    }
+  };
+
+  const getValue = (arr) => {
+    const key = Object.keys(arr[0])[0];
+    return arr[0][key]
+  };
+
+  const fetchResultsBySearch = async (searchQuery) => {
+    try {
+      // Añadir el parámetro query a la URL
+      const response = await api.get(`/api/services`, {
+        params: { query: getValue(searchQuery) }, // Pasar el parámetro aquí
+      });
+      setResults(response.data);
+    } catch (error) {
+      console.error('Error al obtener los resultados:', error);
     }
   };
 
@@ -83,10 +118,6 @@ export default function ResultsScreen() {
       console.error('Error fetching lists:', error);
     } 
   };
-
-  useEffect(() => {
-    fetchResults();  
-  }, []);
 
   const heartClicked = async (serviceId) => {
     console.log(serviceId);
@@ -141,8 +172,6 @@ export default function ResultsScreen() {
     }, 0);
     
   };
-
-
 
   const renderItem = ({ item, index }) => {
     const isServiceAdded = addedServices.includes(item.service_id);
@@ -244,6 +273,46 @@ export default function ResultsScreen() {
         
       </TouchableOpacity>
     );
+  };
+
+  const buildDisplayText = () => {
+    const parts = [];
+  
+    // Función para formatear selectedDay
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const options = { month: 'long', day: 'numeric' }; // Formato: "July 12"
+      return date.toLocaleDateString('en-US', options);
+    };
+  
+    // Agregar searchedDirection si no es null
+    if (searchedDirection) {
+      parts.push(searchedDirection.address_1);
+    } 
+  
+    // Formatear selectedDay si no es null
+    if (selectedDay) {
+      const formattedDay = formatDate(selectedDay);
+      parts.push(formattedDay);
+    }
+  
+    // Agregar selectedTime si no es null
+    if (selectedTime) {
+      parts.push(selectedTime);
+    }
+  
+    // Unir las partes
+    let displayText = '';
+  
+    if (parts.length === 3) {
+      displayText = `${parts[0]} • ${parts[1]}, ${parts[2]}`; // Forma: "Place • July 12, 19:00"
+    } else if (parts.length === 2) {
+      displayText = `${parts[0]} • ${parts[1]}`; // Forma: "Place • July 12"
+    } else if (parts.length === 1) {
+      displayText = parts[0]; // Solo "Place"
+    }
+  
+    return displayText;
   };
 
 
@@ -394,8 +463,8 @@ export default function ResultsScreen() {
             <View className="h-[55] pl-5 pr-1 w-full flex-row justify-between items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               <Search height={19} color={iconColor} strokeWidth="2"/>
               <View className=" justify-center items-center ">
-                <Text className="mb-1 font-inter-semibold text-center text-[14px] text-[#444343] dark:text-[#f2f2f2]">Home cleaner</Text>
-                <Text className="font-inter-medium text-center text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">Place • July 01-09</Text>
+                <Text className="mb-1 font-inter-semibold text-center text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService? getValue(searchedService):''}</Text>
+                <Text className="font-inter-medium text-center text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">{buildDisplayText()}</Text>
               </View> 
               <TouchableOpacity className="rounded-full px-3 py-4 bg-[#fcfcfc] dark:bg-[#323131]">
                 <Sliders height={17} color={iconColor} strokeWidth="1.8"/>
