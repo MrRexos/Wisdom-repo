@@ -35,7 +35,8 @@ export default function ResultsScreen() {
   const [sheetHeight, setSheetHeight] = useState(450);
   const [addedServices, setAddedServices] = useState([]);
   const route = useRoute();
-  const [category, setCategory] = useState();
+  const [categoryId, setCategoryId] = useState();
+  const [categoryName, setCategoryName] = useState();
   const [searchedService, setSearchedService] = useState();
   const [duration, setDuration] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
@@ -44,7 +45,8 @@ export default function ResultsScreen() {
 
   useEffect(() => {
     if (route.params && route.params.category !== undefined) {
-      setCategory(route.params.category);
+      setCategoryId(route.params.category);
+      setCategoryName(route.params.category_name);
       fetchResultsByCategory(route.params.category);
     } else if (route.params && route.params.searchedService !== undefined) {
       const {duration, selectedTime, selectedDay, searchedDirection} = route.params;
@@ -462,9 +464,11 @@ export default function ResultsScreen() {
           <TouchableOpacity onPress={() => navigation.navigate('Results')} className="justify-center items-center">
             <View className="h-[55] pl-5 pr-1 w-full flex-row justify-between items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               <Search height={19} color={iconColor} strokeWidth="2"/>
-              <View className=" justify-center items-center ">
-                <Text className="mb-1 font-inter-semibold text-center text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService? getValue(searchedService):''}</Text>
-                <Text className="font-inter-medium text-center text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">{buildDisplayText()}</Text>
+              <View className="justify-center items-center px-2">
+                <Text className="mb-1 font-inter-semibold text-center text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService? getValue(searchedService):categoryName?categoryName:''}</Text>
+                {searchedService && (
+                  <Text className="font-inter-medium text-center text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">{buildDisplayText()}</Text>
+                )}
               </View> 
               <TouchableOpacity className="rounded-full px-3 py-4 bg-[#fcfcfc] dark:bg-[#323131]">
                 <Sliders height={17} color={iconColor} strokeWidth="1.8"/>

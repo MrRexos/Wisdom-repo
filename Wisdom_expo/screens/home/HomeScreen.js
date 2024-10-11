@@ -271,7 +271,7 @@ export default function HomeScreen() {
   ];
 
   const renderCategory = ({ item }) => (
-    <TouchableOpacity onPress={() => navigation.navigate('Results', {category:item.id})}>
+    <TouchableOpacity onPress={() => navigation.navigate('Results', {category:item.id, category_name:item.category})}>
       <ImageBackground
         source={{ uri: item.url }}
         className="mr-2 w-[270] h-[145] p-4 flex-row justify-between items-end "
