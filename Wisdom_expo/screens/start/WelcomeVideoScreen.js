@@ -1,12 +1,10 @@
-
 import { View, Text, TouchableOpacity, Platform, NativeModules, Animated, Image } from 'react-native';
 import { useColorScheme } from 'nativewind';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { getDataLocally } from '../../utils/asyncStorage';
-import * as Font from 'expo-font';
 
 const WelcomeVideoScreen = () => {
   const { colorScheme } = useColorScheme();
@@ -15,6 +13,7 @@ const WelcomeVideoScreen = () => {
   const [token, setToken] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { i18n } = useTranslation();
+  const [currentImages, setCurrentImages] = useState([]);
 
   const categoriesArray = [
     { id: 2, category: "Plumbing", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20174847.png" },
@@ -63,38 +62,53 @@ const WelcomeVideoScreen = () => {
     loadUserData();
   }, []);
 
-  const [animatedValues, setAnimatedValues] = useState([]);
+  const startAnimation = () => {
+    // Seleccionar una imagen aleatoria
+    const randomIndex = Math.floor(Math.random() * categoriesArray.length);
+    const randomImage = categoriesArray[randomIndex];
 
-  useEffect(() => {
-    
-    const animateImages = () => {
-      const newAnimatedValues = categoriesArray.map((category, index) => {
-        const animatedValue = new Animated.Value(0);
-        const randomDuration = 9000; // Duración aleatoria entre 0.1s y 2s
-        const randomHeight = Math.random() * 2000; // Altura aleatoria
-        const randomDelay = Math.random() * 4000; // Retardo aleatorio para la aparición
+    // Crear valores animados para la nueva imagen
+    const newTranslateX = new Animated.Value(500); // Inicializar fuera de la pantalla a la derecha
+    const newTranslateY = new Animated.Value(Math.floor(Math.random() * 801) - 800); // Valor entre -150 y 150
 
-        Animated.sequence([
-          Animated.delay(index * 2000), // Retraso basado en el índice para la secuencia
-          Animated.timing(animatedValue, {
-            toValue: 1,
-            duration: randomDuration,
-            useNativeDriver: false,
-          }),
-          Animated.timing(animatedValue, {
-            toValue: 0,
-            duration: randomDuration,
-            useNativeDriver: false,
-          }),
-        ]).start();
-
-        return { animatedValue, randomHeight };
-      });
-
-      setAnimatedValues(newAnimatedValues);
+    const newImage = {
+      id: Math.random().toString(),
+      image: randomImage,
+      translateX: newTranslateX,
+      translateY: newTranslateY,
     };
 
-    animateImages();
+    // Añadir la nueva imagen al estado
+    setCurrentImages((prevImages) => [...prevImages, newImage]);
+
+    // Animación de desplazamiento de derecha a izquierda
+    Animated.timing(newTranslateX, {
+      toValue: -500, // Mover a la izquierda fuera de la pantalla
+      duration: 8000, // Duración de la animación
+      useNativeDriver: true,
+    }).start(() => {
+      // Eliminar la imagen una vez que termina la animación
+      setCurrentImages((prevImages) => prevImages.filter((img) => img.id !== newImage.id));
+    });
+  };
+
+  useEffect(() => {
+    const startAnimationLoop = () => {
+
+      startAnimation();
+
+      // Generar un intervalo aleatorio entre 500ms y 2000ms
+      const randomInterval = Math.random() * (2000 - 1000) + 1000;
+
+      // Establecer el siguiente intervalo
+      const intervalId = setTimeout(startAnimationLoop, randomInterval);
+
+      return intervalId;
+    };
+
+    const intervalId = startAnimationLoop();
+
+    return () => clearTimeout(intervalId);
   }, []);
 
   if (isLoading) {
@@ -104,32 +118,29 @@ const WelcomeVideoScreen = () => {
   return (
     <View className='flex-1 justify-end items-center bg-[#272626]'>
       <StatusBar style={'light'} />
-      <TouchableOpacity onPress={() => navigation.navigate('Loading')}>
-        <Text className='text-[#f2f2f2] font-inter-semibold m-[75]'>{t('skip_intro')}</Text>
-      </TouchableOpacity>
 
-      {/* Nivel 1 - Imágenes Frontales */}
-      {animatedValues.map(({ animatedValue, randomHeight }, index) => (
+      {/* Renderizar todas las imágenes animadas */}
+      {currentImages.map((imgObj) => (
         <Animated.View
-          key={index}
+          key={imgObj.id}
           style={{
             position: 'absolute',
-            height: 150,
-            width: 270,
-            top: randomHeight,
-            left: animatedValue.interpolate({
-              inputRange: [0, 1],
-              outputRange: [600, -400], // Se mueve de derecha a izquierda
-            }),
-          }}>
+            transform: [
+              { translateX: imgObj.translateX }, // Movimiento horizontal
+              { translateY: imgObj.translateY }, // Movimiento vertical
+            ],
+          }}
+        >
           <Image
-            source={{ uri: categoriesArray[index % categoriesArray.length].url }}
-            style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
-            className="rounded-xl"
+            source={{ uri: imgObj.image.url }}
+            style={{ width: 270, height: 150 }}
           />
         </Animated.View>
       ))}
 
+      <TouchableOpacity onPress={() => navigation.navigate('Loading')}>
+        <Text className='text-[#f2f2f2] font-inter-semibold m-[75]'>{t('skip_intro')}</Text>
+      </TouchableOpacity>
     </View> 
   );
 };
