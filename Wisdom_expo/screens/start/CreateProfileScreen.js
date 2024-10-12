@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, Linking, TextInput, KeyboardAvoidingView, TouchableOpacity, Image, Platform, StatusBar, Keyboard, Alert, ActivityIndicator } from 'react-native';
+import { SafeAreaView, View, Text, Linking, TextInput, KeyboardAvoidingView, TouchableOpacity, Image, Platform, StatusBar,  Alert, ActivityIndicator, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
@@ -140,64 +140,66 @@ export default function CreateProfileScreen() {
     return (
         <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
             <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
-            <KeyboardAwareScrollView style={{ flex: 1, width: '100%' }} enableOnAndroid={true} scrollEnabled={keyboardOpen} >
-            <View className="w-full px-5 py-3">
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6" />
-                </TouchableOpacity>
-                <View>
-                    <View className="items-center pt-6">
-                        <TouchableOpacity onPress={handleImagePicker}>
-                            <Image source={image ? { uri: image.uri } : require('../../assets/defaultProfilePic.jpg')} className="w-[120] h-[120] rounded-full bg-slate-500" />
-                        </TouchableOpacity>
+            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
+            <View className="flex-1 w-full justify-between items-center ">
+                <View className="w-full px-5 py-3 ">
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6" />
+                    </TouchableOpacity>
+                    <View>
+                        <View className="items-center pt-6">
+                            <TouchableOpacity onPress={handleImagePicker}>
+                                <Image source={image ? { uri: image.uri } : require('../../assets/defaultProfilePic.jpg')} className="w-[120] h-[120] rounded-full bg-slate-500" />
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-                <View className="justify-center items-center px-7">
-                    <Text className="font-inter-bold text-center text-xl pt-7 text-[#444343] dark:text-[#f2f2f2]">
-                        Add your profile picture and your username
-                    </Text>
-                </View>
-                <View className="mt-8 mb-1 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
-                    <Text className="pl-4 pr-2 text-[15px] text-[#444343] dark:text-[#f2f2f2]">
-                        @
-                    </Text>
-                    <TextInput
-                        placeholder='username'
-                        autoFocus={true}
-                        selectionColor={cursorColorChange}
-                        placeholderTextColor={placheHolderTextColorChange}
-                        onChange={inputChanged}
-                        value={username}
-                        onSubmitEditing={nextPressed}
-                        keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                        className="pr-4 h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]" />
+                    <View className="justify-center items-center px-7">
+                        <Text className="font-inter-bold text-center text-xl pt-7 text-[#444343] dark:text-[#f2f2f2]">
+                            Add your profile picture and your username
+                        </Text>
+                    </View>
+                    <View className="mt-8 mb-1 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+                        <Text className="pl-4 pr-2 text-[15px] text-[#444343] dark:text-[#f2f2f2]">
+                            @
+                        </Text>
+                        <TextInput
+                            placeholder='username'
+                            autoFocus={true}
+                            selectionColor={cursorColorChange}
+                            placeholderTextColor={placheHolderTextColorChange}
+                            onChange={inputChanged}
+                            value={username}
+                            onSubmitEditing={nextPressed}
+                            keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                            className="pr-4 h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]" />
 
-                    {isLoading ? (
-                        <ActivityIndicator size="15" color={iconColor} height={30} width={30} style={{ marginRight: 25, transform: [{ scale: 1 }] }} />
-                    ) : usernameExists !== null ? (
-                        usernameExists ? (
-                            <XCircleIcon size={20} color="#ff633e" height={30} width={30} style={{ marginRight: 10 }} />
-                        ) : (
-                            <CheckCircleIcon size={20} color="#74a450" height={30} width={30} style={{ marginRight: 10 }} />
-                        )
+                        {isLoading ? (
+                            <ActivityIndicator size="15" color={iconColor} height={30} width={30} style={{ marginRight: 25, transform: [{ scale: 1 }] }} />
+                        ) : usernameExists !== null ? (
+                            usernameExists ? (
+                                <XCircleIcon size={20} color="#ff633e" height={30} width={30} style={{ marginRight: 10 }} />
+                            ) : (
+                                <CheckCircleIcon size={20} color="#74a450" height={30} width={30} style={{ marginRight: 10 }} />
+                            )
+                        ) : null}
+                    </View>
+                    {showError ? (
+                        <Text className="text-[#ff633e] text-[13px] pt-3">{errorMessage}</Text>
                     ) : null}
                 </View>
-                {showError ? (
-                    <Text className="text-[#ff633e] text-[13px] pt-3">{errorMessage}</Text>
-                ) : null}
-            </View>
-                <KeyboardAvoidingView className="w-full">
-                <View className="justify-center items-center pb-6 mt-4 w-full px-8">
-                    <TouchableOpacity
-                        disabled={username.length < 1}
-                        onPress={nextPressed}
-                        style={{ opacity: username.length < 1 ? 0.5 : 1.0 }}
-                        className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
-                        <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">Create account</Text>
-                    </TouchableOpacity>
-                </View>
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="w-full">
+                    <View className="justify-center items-center pb-6 mt-4 w-full px-8">
+                        <TouchableOpacity
+                            disabled={username.length < 1}
+                            onPress={nextPressed}
+                            style={{ opacity: username.length < 1 ? 0.5 : 1.0 }}
+                            className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
+                            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">Create account</Text>
+                        </TouchableOpacity>
+                    </View>
                 </KeyboardAvoidingView>
-            </KeyboardAwareScrollView>
+            </View>
+            </TouchableWithoutFeedback>
         </SafeAreaView>
     );
 }

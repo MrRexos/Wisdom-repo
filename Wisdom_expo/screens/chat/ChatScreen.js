@@ -36,7 +36,7 @@ export default function ChatScreen() {
           <Text className="mb-2 font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
             Chat
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Calendar')} className="p-[12] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+          <TouchableOpacity onPress={null} className="p-[12] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
             <Search height={18} width={18} color={iconColor} strokeWidth={2.1}/>
           </TouchableOpacity>
         </View>

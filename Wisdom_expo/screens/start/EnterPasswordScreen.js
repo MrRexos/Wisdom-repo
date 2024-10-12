@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
+import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, TextInput, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -39,7 +39,10 @@ export default function EnterPasswordScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1  bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
+      
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
+        <View className="flex-1 w-full justify-between items-center">
       <View className="px-5 py-3 w-full">
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6" />
@@ -85,6 +88,9 @@ export default function EnterPasswordScreen() {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+      </View>
+
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }

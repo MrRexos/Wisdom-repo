@@ -266,7 +266,6 @@ export default function SearchDirectionScreen() {
 
         const searchedDirection = {location, country, state, city, address_1: street, street_number :streetNumber, postal_code: postalCode, address_2: address2}
         await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
-        console.log(blurVisible)
         navigation.navigate(prevScreen, {blurVisible});
 
       } catch (error) {
@@ -299,7 +298,7 @@ export default function SearchDirectionScreen() {
       }
   
       // Obtener la ubicación
-      let location = await Location.getCurrentPositionAsync({});
+      let location = await Location.getLastKnownPositionAsync({});
       const { latitude, longitude } = location.coords;
   
       // Usar la latitud y longitud para buscar lugares cercanos
@@ -313,6 +312,7 @@ export default function SearchDirectionScreen() {
           },
         }
       );
+
   
       fetchPlaceDetails(response.data.results[0].place_id);  // El primer lugar cercano
       

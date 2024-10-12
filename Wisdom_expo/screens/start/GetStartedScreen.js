@@ -35,11 +35,11 @@ export default function GetStartedScreen() {
                   <Text className="font-inter-semibold text-[15px] text-[#444343] ">{t('get_started')}</Text>
               </TouchableOpacity>
               <View className="w-[250]">
-                  <Text className="pt-3 pb-5">
+                  <Text className="pt-3 pb-5 text-center">
                       <Text className="text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center">By tapping on "Get Started", you agree to our </Text>
                       <Text onPress={() => navigation.navigate('Terms')} className="text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center underline">Terms</Text>
                       <Text className="text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center"> and </Text>
-                      <Text onPress={() => navigation.navigate('PrivacyPolicy')} className="text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center underline">Privacy Policy.</Text>
+                      <Text onPress={() => navigation.navigate('PrivacyPolicy')} className=" text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center underline">Privacy Policy.</Text>
                   </Text>
               </View>
           </View>

@@ -167,17 +167,18 @@ export default function SettingsScreen() {
           <View key={sectionIndex} style={{borderRadius: 12, overflow: 'hidden'}}>
             {items.map(({label, id, type, link, icon: Icon}, index) => (
               <View key={id} className="pl-5  bg-[#fcfcfc]  dark:bg-[#323131]" >
-                <TouchableOpacity 
+                <TouchableOpacity
+                  disabled={type === 'toggle'} 
                   onPress={() => {
-                    if (type === 'link') {
+                    if (type === 'link' && link) {
                       Linking.openURL(link); // Reemplaza 'yourpage' por tu página de Instagram
-                    } else if (type === 'select') {
+                    } else if (type === 'select' && link) {
                       navigation.navigate(link);
                     }
                   }}
                 >
                   <View className=" flex-row items-center justify-start ">
-                    <Icon  color={iconColor} strokeWidth={1.5} className="mr-4" style={{ transform: [{ scale: 1 }]}} ></Icon>
+                    <Icon  color={iconColor} strokeWidth={1.4} className="mr-4" style={{ transform: [{ scale: 1 }]}} ></Icon>
                     <View className="py-[10] flex-1 flex-row items-center justify-start pr-[14] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{borderTopWidth: 1}, index===0 && {borderTopWidth: 0 }]}>                   
                       <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{label}</Text>
                       <View className="flex-1"/>

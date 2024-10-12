@@ -85,7 +85,7 @@ export default function ServicesScreen() {
   };
 
   // Filtrar las reservas por estado seleccionado
-  const filteredBookings = bookings ? bookings.filter((booking) => booking.booking_status === selectedStatus) : null;
+  const filteredBookings = bookings && bookings.length>0 ? bookings.filter((booking) => booking.booking_status === selectedStatus) : null;
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>

@@ -809,7 +809,7 @@ export default function HomeScreen() {
               <View key={index} className="pl-2">
                 <TouchableOpacity
                   className={`px-4 py-3 rounded-full ${selectedCategoryID === item.categoryID ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#e0e0e0] dark:bg-[#3d3d3d]'}`}
-                  onPress={() => setSelectedCategoryID(item.categoryID)}
+                  onPress={() => {setSelectedCategoryID(item.categoryID); navigation.navigate('Results', {category:item.categoryID, category_name:item.label})}}
                 >
                   <Text className={`font-inter-medium text-[14px] ${selectedCategoryID === item.categoryID ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>
                     {item.label}
