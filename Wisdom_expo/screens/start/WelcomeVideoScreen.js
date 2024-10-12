@@ -162,7 +162,7 @@ const WelcomeVideoScreen = () => {
         </Animated.View>
       ))}
 
-    </View>
+    </View> 
   );
 };
 
