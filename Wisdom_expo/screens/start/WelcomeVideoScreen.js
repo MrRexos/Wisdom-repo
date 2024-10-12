@@ -14,6 +14,7 @@ const WelcomeVideoScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { i18n } = useTranslation();
   const [currentImages, setCurrentImages] = useState([]);
+  const [currentImagesDown, setCurrentImagesDown] = useState([]);
 
   const categoriesArray = [
     { id: 2, category: "Plumbing", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20174847.png" },
@@ -61,7 +62,6 @@ const WelcomeVideoScreen = () => {
     { id: 228, category: "Business analysis", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190143.png" }, 
   ];
   
-
   useEffect(() => {
     const changeDefaultLanguage = () => {
       const deviceLanguage =
@@ -142,6 +142,55 @@ const WelcomeVideoScreen = () => {
     return () => clearTimeout(intervalId);
   }, []);
 
+  const startAnimationDown = () => {
+    // Seleccionar una imagen aleatoria
+    const randomIndex = Math.floor(Math.random() * categoriesArray.length);
+    const randomImage = categoriesArray[randomIndex];
+
+    // Crear valores animados para la nueva imagen
+    const newTranslateX = new Animated.Value(400); // Inicializar fuera de la pantalla a la derecha
+    const newTranslateY = new Animated.Value(Math.floor(Math.random() * 801) - 800); // Valor entre -150 y 150
+
+    const newImage = {
+      id: Math.random().toString(),
+      image: randomImage,
+      translateX: newTranslateX,
+      translateY: newTranslateY,
+    };
+
+    // Añadir la nueva imagen al estado
+    setCurrentImagesDown((prevImages) => [...prevImages, newImage]);
+
+    // Animación de desplazamiento de derecha a izquierda
+    Animated.timing(newTranslateX, {
+      toValue: -500, // Mover a la izquierda fuera de la pantalla
+      duration: 40000, // Duración de la animación
+      useNativeDriver: true,
+    }).start(() => {
+      // Eliminar la imagen una vez que termina la animación
+      setCurrentImagesDown((prevImages) => prevImages.filter((img) => img.id !== newImage.id));
+    });
+  };
+
+  useEffect(() => {
+    const startAnimationLoop = () => {
+
+      startAnimationDown();
+
+      // Generar un intervalo aleatorio entre 500ms y 2000ms
+      const randomInterval = Math.random() * (10000 - 5000) + 5000;
+
+      // Establecer el siguiente intervalo
+      const intervalId = setTimeout(startAnimationLoop, randomInterval);
+
+      return intervalId;
+    };
+
+    const intervalId = startAnimationLoop();
+
+    return () => clearTimeout(intervalId);
+  }, []);
+
   if (isLoading) {
     return null;
   }
@@ -149,6 +198,27 @@ const WelcomeVideoScreen = () => {
   return (
     <View className='flex-1 justify-end items-center bg-[#272626]'>
       <StatusBar style={'light'} />
+
+      {/* Renderizar todas las imágenes borrosas */}
+      {currentImagesDown.map((imgObj) => (
+        <Animated.View
+          key={imgObj.id}
+          style={{
+            position: 'absolute',
+            transform: [
+              { translateX: imgObj.translateX }, // Movimiento horizontal
+              { translateY: imgObj.translateY }, // Movimiento vertical
+            ],
+          }}
+        >
+          <Image
+            source={{ uri: imgObj.image.url }}
+            style={{ width: 180, height: 100, opacity:0.4 }}
+            blurRadius={5} 
+            className="rounded-xl z-0"
+          />
+        </Animated.View>
+      ))}
 
       {/* Renderizar todas las imágenes animadas */}
       {currentImages.map((imgObj) => (

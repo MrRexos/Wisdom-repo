@@ -373,7 +373,7 @@ function ProTabNavigator() {
 
 function HomeStackNavigator() {
   return (
-      <Stack.Navigator  screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName="HomeScreen"  screenOptions={{ headerShown: false }}>
           <Stack.Screen name="HomeScreen" component={HomeScreen} />
           <Stack.Screen name="Booking" component={BookingScreen}/>
           <Stack.Screen name="ConfirmPayment" component={ConfirmPaymentScreen} options={{ animation: 'none', gestureEnabled: false }}/>

@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../../languages/i18n';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
+
 import {XMarkIcon} from 'react-native-heroicons/outline';
 
 
@@ -13,6 +15,25 @@ export default function CreateService1Screen() {
   const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const navigation = useNavigation();
+
+  useFocusEffect(
+    useCallback(() => {
+      const checkUserData = async () => {
+        const userData = await getDataLocally('user');
+        console.log(userData);
+
+        // Comprobar si userData indica que no hay usuario
+        if (userData === '{"userToken":false}') {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'GetStarted' }], 
+          });
+        }
+      };
+
+      checkUserData();
+    }, [navigation])
+  );
 
 
   return (

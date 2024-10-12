@@ -65,6 +65,25 @@ export default function SettingsScreen() {
     notifications: false,
   });
 
+  useFocusEffect(
+    useCallback(() => {
+      const checkUserData = async () => {
+        const userData = await getDataLocally('user');
+        console.log(userData);
+
+        // Comprobar si userData indica que no hay usuario
+        if (userData === '{"userToken":false}') {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'GetStarted' }], 
+          });
+        }
+      };
+
+      checkUserData();
+    }, [navigation])
+  );
+
   const logOut = async () => {
     let emptyUser = { userToken: false}
     await storeDataLocally('user', JSON.stringify(emptyUser));

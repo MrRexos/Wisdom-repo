@@ -19,6 +19,25 @@
     const [userId, setUserId] = useState();
     const [editing, setEditing] = useState(false);  // Nuevo estado para controlar el modo de edición
 
+    useFocusEffect(
+      useCallback(() => {
+        const checkUserData = async () => {
+          const userData = await getDataLocally('user');
+          console.log(userData);
+  
+          // Comprobar si userData indica que no hay usuario
+          if (userData === '{"userToken":false}') {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'GetStarted' }], 
+            });
+          }
+        };
+  
+        checkUserData();
+      }, [navigation])
+    );
+
     const deleteList = async (listId) => {
       Alert.alert(
         'Are you sure you want to delete this list?',

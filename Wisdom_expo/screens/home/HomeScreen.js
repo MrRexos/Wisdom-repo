@@ -66,7 +66,6 @@ export default function HomeScreen() {
     setShowTab(false); // Solo cambia el estado local
   };
   
-  // useEffect para actualizar el parámetro showTab después de cambiar el estado
   useEffect(() => {
     navigation.setParams({ showTab });
   }, [showTab]);

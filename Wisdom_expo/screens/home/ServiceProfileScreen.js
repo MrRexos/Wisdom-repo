@@ -86,6 +86,24 @@ export default function ServiceProfileScreen() {
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
 
 
+  const verifyRegistered  = async () => {
+
+    const userData = await getDataLocally('user');
+    console.log(userData);
+
+    // Comprobar si userData indica que no hay usuario
+    if (userData === '{"userToken":false}') {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'GetStarted' }], 
+      });
+    } else {
+      openSheetWithInput(700); setIsAddingDate(true)
+    }
+  
+  }
+
+
   const getServiceInfo = async () => {
     try {
       const response = await api.get(`/api/service/${serviceId}`, {});
@@ -1225,7 +1243,7 @@ export default function ServiceProfileScreen() {
       <View className="flex-row justify-center items-center pb-3 px-6">
 
         <TouchableOpacity
-          onPress={() => {openSheetWithInput(700); setIsAddingDate(true)}  }
+          onPress={() => {verifyRegistered(); }  }
           style={{ opacity: 1 }}
           className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center"
         >

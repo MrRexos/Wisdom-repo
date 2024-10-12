@@ -27,9 +27,31 @@ export default function ServicesScreen() {
     { label: 'In progress', value:'progress', id:5 },
   ];
 
+  useFocusEffect(
+    useCallback(() => {
+      const checkUserData = async () => {
+        const userData = await getDataLocally('user');
+        console.log(userData);
+
+        // Comprobar si userData indica que no hay usuario
+        if (userData === '{"userToken":false}') {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'GetStarted' }], 
+          });
+        }
+      };
+
+      checkUserData();
+    }, [navigation])
+  );
+
   const fetchBookings = async () => {
     const userData = await getDataLocally('user');
+    console.log(userData)
+
     const user = JSON.parse(userData);
+    
     setUserId(user.id);
     try {
       const response = await api.get(`/api/user/${user.id}/bookings`);
