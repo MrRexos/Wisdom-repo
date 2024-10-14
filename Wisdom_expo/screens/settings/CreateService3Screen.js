@@ -169,7 +169,7 @@ export default function CreateService3Screen() {
 
               <TouchableOpacity 
               disabled={!family && !category}
-              onPress={() => navigation.navigate('CreateService4', {title, family, category})}
+              onPress={() => {navigation.navigate('CreateService4', {title, family, category}); console.log(category.service_category_id)}}
               style={{opacity: family && category? 1.0: 0.5}}
               className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
                   <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>

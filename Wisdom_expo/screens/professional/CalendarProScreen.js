@@ -137,10 +137,10 @@ export default function CalendarProScreen() {
     setMarkedDates(newMarkedDates); // Actualiza las fechas marcadas
 
     // Filtra los bookings que coincidan con la fecha seleccionada
-    const filteredBookings = bookings.filter((booking) => {
+    const filteredBookings = bookings && bookings.length>0? bookings.filter((booking) => {
       const bookingDate = new Date(booking.booking_start_datetime).toISOString().split('T')[0];
       return bookingDate === day.dateString;
-    });
+    }) : [];
 
     setBookingsEvents(filteredBookings); // Actualiza los bookings filtrados
   };

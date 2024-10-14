@@ -94,7 +94,7 @@ export default function TodayProScreen() {
     );
   };
 
-  const filteredBookings = bookings? bookings.filter((booking) => booking.booking_status === selectedStatus) : null;
+  const filteredBookings = bookings && bookings.length>0? bookings.filter((booking) => booking.booking_status === selectedStatus) : null;
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
@@ -150,7 +150,7 @@ export default function TodayProScreen() {
           <View className="px-8 h-[260] w-full justify-center items-center">
             <View className="p-2 flex-1 w-full rounded-2xl bg-[#fcfcfc] dark:bg-[#323131]">
               
-            {filteredBookings.length === 0 ? (
+            {( !filteredBookings || filteredBookings.length === 0 ) ? (
               <View className="flex-1 justify-center items-center">
                 <Clipboard height={40} width={40} fill={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
                 <Text className="mt-7 font-inter-semibold text-[16px] text-[#706F6E] dark:text-[#B6B5B5]">

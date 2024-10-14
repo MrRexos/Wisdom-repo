@@ -25,6 +25,8 @@ export default function CreateService13Screen() {
   const [userId, setUserId] = useState();
 
   const getUserId = async () => {
+    console.log(title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate,
+      experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk)
     const userData = await getDataLocally('user');
     const user = JSON.parse(userData);
     setUserId(user.id);
@@ -37,7 +39,7 @@ export default function CreateService13Screen() {
     experience_end_date: exp.endDate? new Date(exp.endDate).toISOString(): null  // Convertir `undefined` a `null`
   }));
 
-  console.log(transformedExperiences)
+  
 
   useEffect( () => {
     getUserId();

@@ -94,9 +94,9 @@ export default function CreateService9_0Screen() {
               </TouchableOpacity>
 
               <TouchableOpacity 
-              disabled={!family && !category}
+              disabled={false}
               onPress={() => {priceType==='budget'? navigation.navigate('CreateService10', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType}) : navigation.navigate('CreateService9', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType})}}
-              style={{opacity: family && category? 1.0: 0.5}}
+              style={{opacity: 1}}
               className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
                   <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
               </TouchableOpacity>

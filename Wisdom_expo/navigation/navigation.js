@@ -194,6 +194,25 @@ function TabNavigator({ route }) {
 
   useFocusEffect(
     useCallback(() => {
+      const getProfileImage = async () => {
+        try {
+          const userData = await getDataLocally('user');
+          const user = JSON.parse(userData);
+          if (user.profile_picture) {
+            setProfileImage(user.profile_picture);
+          }
+        } catch (error) {
+          console.log('Error al cargar la imagen de perfil:', error);
+        }
+      };
+  
+      getProfileImage();
+    }, [route])
+  );
+
+
+  useFocusEffect(
+    useCallback(() => {
       if (route.params?.showTab !== undefined) {
         console.log(route.params.showTab)
         setShowTabs(route.params.showTab);

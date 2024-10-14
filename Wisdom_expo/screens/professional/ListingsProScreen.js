@@ -165,7 +165,7 @@ export default function ListingsProScreen() {
 
         ) : (
 
-          <View style={{zIndex:1}}>
+          <View style={{zIndex:1}} className="flex-1 w-full">
             <FlatList
               data={listings}
               keyExtractor={(item, index) => index.toString()}
