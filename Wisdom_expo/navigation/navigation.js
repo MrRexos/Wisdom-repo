@@ -298,7 +298,8 @@ function TabNavigator({ route }) {
   );
 }
 
-function ProTabNavigator() {
+function ProTabNavigator({ route }) {
+  
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n} = useTranslation();
   const [profileImage, setProfileImage] = useState(null);
@@ -319,6 +320,26 @@ function ProTabNavigator() {
 
     getProfileImage();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      const getProfileImage = async () => {
+        try {
+          const userData = await getDataLocally('user');
+          const user = JSON.parse(userData);
+          if (user.profile_picture) {
+            setProfileImage(user.profile_picture);
+          }
+        } catch (error) {
+          console.log('Error al cargar la imagen de perfil:', error);
+        }
+      };
+  
+      getProfileImage();
+    }, [route])
+  );
+
+
   return (
       <Tab.Navigator initialRouteName="Today" screenOptions={({ route }) => ({
         headerShown: false,
