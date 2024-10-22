@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "Wisdom",
-    "slug": "Wisdom",
-    "scheme": "Wisdom",
+    "slug": "Wisdom_expo",
+    "scheme": "Wisdom_expo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/WisdomIcon.png",
@@ -28,7 +28,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.rexos.Wisdom",
+      "package": "com.rexos.Wisdom_expo",
       "versionCode": 1
     },
     "web": {
