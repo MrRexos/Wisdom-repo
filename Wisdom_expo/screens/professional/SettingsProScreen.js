@@ -34,17 +34,17 @@ const Sections = [
       {id: 'becomeExpert', icon: ExpertIcon, label:'Become an expert', type: 'select', link: 'TurnExpert'},
     ]
   },
-  {
-    items: [
-      {id: 'giftCard', icon: GiftCardIcon, label:'Gift card', type: 'select'},
-      {id: 'inviteProfessionals', icon: UserPlus, label:'Invite professionals', type: 'select'},
-    ]
-  },
+  // {
+  //   items: [
+  //     {id: 'giftCard', icon: GiftCardIcon, label:'Gift card', type: 'select'},
+  //     {id: 'inviteProfessionals', icon: UserPlus, label:'Invite professionals', type: 'select'},
+  //   ]
+  // },
   {
     items: [
       {id: 'help', icon: Info, label:'Help', type: 'select', link: 'Help'},
-      {id: 'rateUs', icon: Star, label:'Rate us', type: 'select'},
-      {id: 'shareApp', icon: Share, label:'Share app', type: 'select'},
+      // {id: 'rateUs', icon: Star, label:'Rate us', type: 'select'},
+      // {id: 'shareApp', icon: Share, label:'Share app', type: 'select'},
       {id: 'followInsta', icon: Instagram, label:'Follow us in Instagram', type: 'link', link: 'https://www.instagram.com/wisdom__app/'},
     ]
   },

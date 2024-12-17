@@ -470,11 +470,12 @@ export default function ResultsScreen() {
                   <Text className="font-inter-medium text-center text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">{buildDisplayText()}</Text>
                 )}
               </View> 
-              <TouchableOpacity className="rounded-full px-3 py-4 bg-[#fcfcfc] dark:bg-[#323131]">
-                <Sliders height={17} color={iconColor} strokeWidth="1.8"/>
+              {/* DE MOMENTO ESTA BORRADO FILTERS BUTON */}
+              <TouchableOpacity className="rounded-full px-3 py-4 bg- [#fcfcfc] dark:bg- [#323131]"> 
+                {/*<Sliders height={17} color={iconColor} strokeWidth="1.8"/>*/}
               </TouchableOpacity>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> 
         </View>
 
         <View className="w-10"/>
@@ -483,7 +484,7 @@ export default function ResultsScreen() {
 
       {/* Contenedor del botón "Order by" */}
       
-      <View className="flex-row p-5 justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+      <View style={{ zIndex: 10 }} className="flex-row p-5 justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
         <Text className="mb-1 font-inter-bold text-center text-[18px] text-[#444343] dark:text-[#f2f2f2]">Order by</Text>
 
         {/* Botón desplegable */}
@@ -507,12 +508,18 @@ export default function ResultsScreen() {
             <View 
               style={{ 
                 position: 'absolute', 
-                top: 50, // Ajusta según el espacio que necesites
+                top: 50, // Ajusta la posición verticalmente
                 left: 0, 
                 right: 0,
-                zIndex: 1000, // Asegura que esté encima de otros elementos
+                zIndex: 9999, // Asegura que esté por encima de otros elementos
+                elevation: 5, // Para dispositivos Android
                 backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#e0e0e0',
                 borderRadius: 15,
+                shadowColor: "#000", // Sombras para iOS
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 1,
+                shadowRadius: 3.84,
+                overflow: 'hidden',
               }}
             >
               <ScrollView className="max-h-[200] rounded-2xl pb-1">
@@ -557,6 +564,7 @@ export default function ResultsScreen() {
             contentContainerStyle={{
               justifyContent: 'space-between',
               paddingBottom:200,
+              zIndex:"1",
             }}
           />
         </View>

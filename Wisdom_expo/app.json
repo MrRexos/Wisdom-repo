@@ -21,7 +21,8 @@
           "CFBundleURLSchemes": ["com.googleusercontent.apps.232292898356-o6jj43dnn8uqg139udlvtptcaj8551rp"]
         }
       ]
-    }
+      },
+      "newArchEnabled": true
     },
     "android": {
       "adaptiveIcon": {
@@ -29,7 +30,8 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.rexos.Wisdom_expo",
-      "versionCode": 1
+      "versionCode": 1,
+      "newArchEnabled": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
