@@ -35,12 +35,28 @@ export default function GetStartedScreen() {
                   <Text className="font-inter-semibold text-[15px] text-[#444343] ">{t('get_started')}</Text>
               </TouchableOpacity>
               <View className="w-[250]">
-                  <Text className="pt-3 pb-5 text-center">
-                      <Text className="text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center">By tapping on "Get Started", you agree to our </Text>
-                      <Text onPress={() => navigation.navigate('Terms')} className="text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center underline">Terms</Text>
-                      <Text className="text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center"> and </Text>
-                      <Text onPress={() => navigation.navigate('PrivacyPolicy')} className=" text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center underline">Privacy Policy.</Text>
-                  </Text>
+
+                      <Text className="pt-3 text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center">By tapping on "Get Started", you agree to our </Text>
+                      <View className="pb-5 flex-row justify-center items-center">
+                        <TouchableOpacity 
+                            hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+                            onPress={() => navigation.navigate('Terms')}
+                        >
+                            <Text className="text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center underline">
+                                Terms
+                            </Text>
+                        </TouchableOpacity>
+                        <Text className="text-[11px] mx-1 font-inter-medium text-[#f2f2f2] opacity-60 text-center">and</Text>
+                        <TouchableOpacity 
+                            onPress={() => navigation.navigate('PrivacyPolicy')} 
+                            hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+                        >
+                            <Text className="text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center underline">
+                                Privacy Policy.
+                            </Text>
+                        </TouchableOpacity>
+                      </View>
+
               </View>
           </View>
       </SafeAreaView>

@@ -277,8 +277,8 @@ export default function HomeScreen() {
         className="mr-2 w-[270] h-[145] p-4 flex-row justify-between items-end "
         imageStyle={{ borderRadius: 12, opacity: colorScheme==='dark'? 0.6 : 0.8}}
       >
-        <Text className="ml-2 font-inter-semibold text-[18px] text-[#323131] dark:text-[#e0e0e0]">{item.category}</Text>
-        <Text className="ml-2 font-inter-semibold text-[18px] text-[#323131] dark:text-[#e0e0e0]">→</Text>
+        <Text className="ml-2 font-inter-semibold text-[18px] text-[#ffffff] dark:text-[#e0e0e0]" style={{textShadowColor: 'rgba(0, 0, 0, 0.4)', textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 4, }}>{item.category}</Text>
+        <Text className="ml-2 font-inter-semibold text-[18px] text-[#ffffff] dark:text-[#e0e0e0]">→</Text>
       </ImageBackground>
       
     </TouchableOpacity>
@@ -819,7 +819,7 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
 
-        <View className="flex-1 mt-3">
+        <View className="flex-1">
 
           <FlatList
             data={serviceFamilies}

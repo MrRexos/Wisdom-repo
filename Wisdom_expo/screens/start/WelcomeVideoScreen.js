@@ -76,9 +76,10 @@ const WelcomeVideoScreen = () => {
 
     const loadUserData = async () => {
       const userData = await getDataLocally('user');
+      console.log(userData)
       if (userData) {
         const user = JSON.parse(userData);
-        setToken(user.userToken);
+        setToken(user.userToken);    
         if (user.userToken) {
           navigation.navigate('Loading');
         } else {
@@ -91,6 +92,7 @@ const WelcomeVideoScreen = () => {
     };
 
     loadUserData();
+    console.log("laod")
   }, []);
 
   const startAnimation = () => {
@@ -124,6 +126,7 @@ const WelcomeVideoScreen = () => {
   };
 
   useEffect(() => {
+    
     const startAnimationLoop = () => {
 
       startAnimation();
@@ -191,9 +194,7 @@ const WelcomeVideoScreen = () => {
     return () => clearTimeout(intervalId);
   }, []);
 
-  if (isLoading) {
-    return null;
-  }
+
 
   return (
     <View className='flex-1 justify-end items-center bg-[#272626]'>
