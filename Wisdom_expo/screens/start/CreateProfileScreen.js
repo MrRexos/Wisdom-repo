@@ -35,8 +35,8 @@ export default function CreateProfileScreen() {
 
         if (status !== 'granted') {
             Alert.alert(
-                "Permission Denied",
-                "You need to allow access to your gallery to select a profile picture. ",
+                'Allow "Wisdom" to Access to Your Gallery',
+                "We need access to your photo library so you can choose and set a profile picture.",
                 [
                     { text: "Cancel", style: "cancel" },
                     { text: "Settings", onPress: () => Linking.openSettings() }

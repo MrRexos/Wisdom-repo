@@ -99,8 +99,8 @@ export default function CreateService8Screen() {
 
     if (status !== 'granted') {
         Alert.alert(
-            "Permission Denied",
-            "You need to allow access to your gallery to select a profile picture. ",
+            'Allow "Wisdom" to Access to Your Gallery',
+            "We need access to your photo library so you can upload images to showcase your services.",
             [
                 { text: "Cancel", style: "cancel" },
                 { text: "Settings", onPress: () => Linking.openSettings() }
