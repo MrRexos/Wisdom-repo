@@ -3,7 +3,7 @@
     "name": "Wisdom",
     "slug": "Wisdom_expo",
     "scheme": "Wisdom_expo",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/WisdomIcon.png",
     "userInterfaceStyle": "light",
@@ -15,6 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.rexos.Wisdom_expo",
+      "buildNumber": "2",
       "infoPlist": {
       "CFBundleURLTypes": [
         {
