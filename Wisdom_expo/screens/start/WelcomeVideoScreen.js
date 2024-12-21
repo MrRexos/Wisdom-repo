@@ -12,6 +12,7 @@ const WelcomeVideoScreen = () => {
   const { t } = useTranslation();
   const [token, setToken] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSkip, setShowSkip] = useState(false);
   const { i18n } = useTranslation();
   const [currentImages, setCurrentImages] = useState([]);
   const [currentImagesDown, setCurrentImagesDown] = useState([]);
@@ -83,6 +84,7 @@ const WelcomeVideoScreen = () => {
         if (user.userToken) {
           navigation.navigate('Loading');
         } else {
+          setShowSkip(true);
           changeDefaultLanguage();
           setIsLoading(false);
         }
@@ -197,7 +199,7 @@ const WelcomeVideoScreen = () => {
 
 
   return (
-    <View className='flex-1 justify-end items-center bg-[#272626]'>
+    <View className='flex-1 justify-end items-center bg-[#111111]'>
       <StatusBar style={'light'} />
 
       {/* Renderizar todas las imágenes borrosas */}
@@ -240,10 +242,12 @@ const WelcomeVideoScreen = () => {
           />
         </Animated.View>
       ))}
-
+      {showSkip? 
       <TouchableOpacity onPress={() => navigation.navigate('Loading')}>
         <Text className='text-[#f2f2f2] font-inter-semibold m-[75]'>{t('skip_intro')}</Text>
       </TouchableOpacity>
+      : null}
+      
     </View> 
   );
 };

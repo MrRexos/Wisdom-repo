@@ -336,9 +336,10 @@ export default function HomeScreen() {
     <View>
       {Array.isArray(suggestedProfessionals) && suggestedProfessionals.length > 0  && (
         <View className="mb-6">
-          <Text className="mb-3 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{item.family}</Text>
+          <Text className="ml-5 mb-3 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{item.family}</Text>
           <FlatList
             data={suggestedProfessionals}
+            className="px-5"
             horizontal
             renderItem={renderProfile}
             keyExtractor={(category) => category.service_id.toString()}
@@ -351,8 +352,9 @@ export default function HomeScreen() {
     ) : (
 
     <View className="mb-10">
-      <Text className="mb-3 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{item.family}</Text>
+      <Text className="ml-5 mb-3 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{item.family}</Text>
       <FlatList
+        className="px-5"
         data={item.categories}
         horizontal
         renderItem={renderCategory}
@@ -826,7 +828,7 @@ export default function HomeScreen() {
             renderItem={renderFamily}
             keyExtractor={(family) => family.family}
             showsVerticalScrollIndicator={false}
-            className="p-5 pr-0"
+            className="py-5"
           />
 
         </View>
