@@ -89,12 +89,13 @@ const WelcomeVideoScreen = () => {
           setIsLoading(false);
         }
       } else {
+        setShowSkip(true);
         setIsLoading(false);
       }
     };
 
     loadUserData();
-    console.log("laod")
+    
   }, []);
 
   const startAnimation = () => {

@@ -99,8 +99,8 @@ export default function CreateService8Screen() {
 
     if (status !== 'granted') {
         Alert.alert(
-            'We need access to your photo library to let you upload images that showcase your services',
-            "These photos will be displayed on your service profile to help customers understand what you offer and will not be used for any other purpose.",
+            'Allow "Wisdom" to Access to Your Gallery',
+            "We need access to your photo library so you can upload images to showcase your services.",
             [
                 { text: "Cancel", style: "cancel" },
                 { text: "Settings", onPress: () => Linking.openSettings() }

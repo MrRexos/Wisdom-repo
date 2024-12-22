@@ -106,7 +106,7 @@ export default function ServicesScreen() {
     );
   };
 
-  // Filtrar las reservas por estado seleccionado
+  // Filtrar las reservas por estado seleccionado 
   const filteredBookings = bookings && bookings.length>0 ? bookings.filter((booking) => booking.booking_status === selectedStatus) : null;
 
   return (

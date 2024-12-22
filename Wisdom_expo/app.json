@@ -17,6 +17,10 @@
       "bundleIdentifier": "com.rexos.Wisdom",
       "buildNumber": "3",
       "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "We need access to your photo library so you can set a profile picture or display them in your services.",
+        "NSCameraUsageDescription": "We need access to your camera so you can set a profile picture or display them in your services.",
+        "NSPhotoLibraryAddUsageDescription": "We need permission to save images from your profile to your gallery.",
+        "NSLocationWhenInUseUsageDescription": "We need access to your current location in order to show you services near you.",
         "CFBundleURLTypes": [
           {
             "CFBundleURLSchemes": [

@@ -156,8 +156,8 @@ export default function EditProfileScreen() {
 
     if (status !== 'granted') {
         Alert.alert(
-            'We need access to your photo library to let you select a profile picture',
-            "This image will only be used to personalize your account and let people see your appearance.",
+            'Allow "Wisdom" to Access to Your Gallery',
+            "We need access to your photo library so you can choose and set a profile picture.",
             [
                 { text: "Cancel", style: "cancel" },
                 { text: "Settings", onPress: () => Linking.openSettings() }

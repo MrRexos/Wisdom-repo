@@ -1247,7 +1247,7 @@ export default function BookingScreen() {
 
         </View>
 
-        {/* Others */}
+        {/* Others */} 
 
         <View className="mt-8 px-2  justify-center items-start pb-7">
 
