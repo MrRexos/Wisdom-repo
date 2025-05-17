@@ -3,19 +3,19 @@
     "name": "Wisdom",
     "slug": "Wisdom_expo",
     "scheme": "Wisdom_expo",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/WisdomIcon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/wisdomLogo.tsx",
+      "image": "",
       "resizeMode": "contain",
       "backgroundColor": "#111111"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.rexos.Wisdom",
-      "buildNumber": "3",
+      "buildNumber": "4",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "We need access to your photo library so you can set a profile picture or display them in your services.",
         "NSCameraUsageDescription": "We need access to your camera so you can set a profile picture or display them in your services.",
