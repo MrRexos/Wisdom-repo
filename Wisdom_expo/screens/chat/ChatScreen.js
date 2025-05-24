@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image} from 'react-native';
+import React, { useEffect, useState, useCallback, useRef } from 'react'
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import i18n from '../../languages/i18n';
@@ -21,9 +21,9 @@ export default function ChatScreen() {
   const [userId, setUserId] = useState();
 
   const suggestions = [
-    { label: 'All', value:'all', id:1 },
-    { label: 'Professionals', value:'professionals', id:2 },
-    { label: 'Help', value:'help', id:3 },
+    { label: 'All', value: 'all', id: 1 },
+    { label: 'Professionals', value: 'professionals', id: 2 },
+    { label: 'Help', value: 'help', id: 3 },
   ];
 
   useFocusEffect(
@@ -36,7 +36,7 @@ export default function ChatScreen() {
         if (userData === '{"userToken":false}') {
           navigation.reset({
             index: 0,
-            routes: [{ name: 'GetStarted' }], 
+            routes: [{ name: 'GetStarted' }],
           });
         }
       };
@@ -47,16 +47,16 @@ export default function ChatScreen() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
-      <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
+    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+      <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
       <View className="flex-1 pt-[55] pb-3">
 
         <View className="mb-4 px-6 w-full flex-row justify-between items-center">
           <Text className="mb-2 font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
             Chat
           </Text>
-          <TouchableOpacity onPress={null} className="p-[12] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
-            <Search height={18} width={18} color={iconColor} strokeWidth={2.1}/>
+          <TouchableOpacity onPress={() => navigation.navigate('Conversation')} className="p-[12] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+            <Search height={18} width={18} color={iconColor} strokeWidth={2.1} />
           </TouchableOpacity>
         </View>
 
@@ -77,7 +77,7 @@ export default function ChatScreen() {
           </ScrollView>
         </View>
 
-        { true ? (
+        {true ? (
           <View className="flex-1 justify-center items-center">
             <ChatBubbleLeftRightIcon height={65} width={70} fill={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
             <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">

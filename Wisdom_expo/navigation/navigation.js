@@ -118,7 +118,7 @@ export default function Navigation() {
           <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="ServicesScreen" component={ServicesScreen} options={{ animation: 'none', gestureEnabled: false }}/>
           <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ animation: 'none', gestureEnabled: false }}/>
-          <Stack.Screen name="Conversation" component={ConversationScreen} options={{ animation: 'none' }}/>
+          <Stack.Screen name="Conversation" component={ConversationScreen} />
           <Stack.Screen name="Preferences" component={PreferencesScreen}/>
           <Stack.Screen name="Language" component={LanguageScreen}/>
           <Stack.Screen name="List" component={ListScreen}/>
@@ -451,7 +451,7 @@ function ChatStackNavigator() {
   return (
       <Stack.Navigator initialRouteName="ChatScreen" screenOptions={{ headerShown: false }}>
           <Stack.Screen name="ChatScreen" component={ChatScreen} />
-          <Stack.Screen name="Conversation" component={ConversationScreen} />
+
 
       </Stack.Navigator>
   );
