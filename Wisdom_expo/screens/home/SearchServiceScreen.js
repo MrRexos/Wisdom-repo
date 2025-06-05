@@ -177,7 +177,7 @@ export default function SearchServiceScreen() {
           <View className="h-[55] ml-4 pl-3 pr-1 flex-1 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
             <Search height={20} color={iconColor} strokeWidth="2" />
             <TextInput
-              placeholder='Search a service...'
+              placeholder={t('search_a_service')}
               autoFocus={true}
               selectionColor={cursorColorChange}
               placeholderTextColor={placeHolderTextColorChange}
@@ -199,10 +199,10 @@ export default function SearchServiceScreen() {
 
         {searchText.length < 1 ? (
           <View className="mb-6 flex-row justify-between items-center">
-            <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Recent searches</Text>
+            <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('recent_searches')}</Text>
             {historySearchedServices.length > 1 ? (
               <TouchableOpacity onPress={() => clearHistory()} className="px-3 py-2 rounded-full justify-center items-center bg-[#E0E0E0] dark:bg-[#3D3D3D]">
-                <Text className="font-inter-semibold text-[10px] text-[#706f6e] dark:text-[#b6b5b5]">CLEAR</Text>
+                <Text className="font-inter-semibold text-[10px] text-[#706f6e] dark:text-[#b6b5b5]">{t('clear_caps')}</Text>
               </TouchableOpacity>
             ) : null}
           </View>

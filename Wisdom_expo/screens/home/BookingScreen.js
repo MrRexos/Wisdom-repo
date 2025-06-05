@@ -122,18 +122,18 @@ export default function BookingScreen() {
       return (
         <>
           <Text className="font-inter-bold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols[serviceData.currency]}</Text>
-          <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5]">/hour</Text>
+          <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5]">{t('per_hour')}</Text>
         </>
       );
     } else if (serviceData.price_type === 'fix') {
       return (
         <>
-          <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5]">Fixed Price: </Text>
+          <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5]">{t('fixed_price_prefix')}</Text>
           <Text className="font-inter-bold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols[serviceData.currency]}</Text>
         </>
       );
     } else {
-      return <Text className="font-inter-bold text-[12px] text-[#706F6E] dark:text-[#B6B5B5]">Price on budget</Text>;
+      return <Text className="font-inter-bold text-[12px] text-[#706F6E] dark:text-[#B6B5B5]">{t('price_on_budget')}</Text>;
     }
   };
 
@@ -463,7 +463,7 @@ export default function BookingScreen() {
             <View className="flex-1 justify-start items-center">
 
               <View className="mt-4 mb-2 flex-row justify-center items-center">
-                <Text className="text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Select a date</Text>
+                <Text className="text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('select_a_date')}</Text>
               </View>
 
               <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
@@ -494,7 +494,7 @@ export default function BookingScreen() {
 
                 <View className="mt-2 w-full px-6 ">
                   <TouchableOpacity onPress={()=> setShowPicker(true)}>
-                  <Text className="ml-3 mb-2 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Start time</Text>
+                  <Text className="ml-3 mb-2 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('start_time')}</Text>
                   </TouchableOpacity>
 
                   {showPicker && (
@@ -510,7 +510,7 @@ export default function BookingScreen() {
                 
                 <View className="mt-6 mb-10 w-full px-6 ">
 
-                  <Text className="ml-3 mb-8 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Duration: {formatDuration(selectedDuration)}</Text>
+                  <Text className="ml-3 mb-8 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('duration')}: {formatDuration(selectedDuration)}</Text>
 
                   <View className="flex-1 px-4 justify-center items-center">      
                     <Slider
@@ -545,7 +545,7 @@ export default function BookingScreen() {
                     )}
                   </TouchableOpacity>
 
-                  <Text className="ml-3 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Undefined time</Text>
+                  <Text className="ml-3 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">{t('undefined_time')}</Text>
 
                 </View> 
 
@@ -559,7 +559,7 @@ export default function BookingScreen() {
                   >
                     <Text>
                       <Text className="text-center font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
-                        Accept
+                        {t('accept')}
                       </Text>
                     </Text>
                   </TouchableOpacity>
@@ -577,7 +577,7 @@ export default function BookingScreen() {
             <View className="flex-1 w-full justify-start items-center pt-5 pb-5 ">
 
               <View className="px-7 flex-row w-full justify-between items-center ">
-                <Text className="text-center font-inter-semibold text-[20px] text-[#444343] dark:text-[#f2f2f2] ">Your directions</Text>
+                <Text className="text-center font-inter-semibold text-[20px] text-[#444343] dark:text-[#f2f2f2] ">{t('your_directions')}</Text>
                 <TouchableOpacity onPress={() =>{ sheet.current.close(); navigation.navigate('SearchDirectionAlone', {prevScreen:'Booking'})}} className=" justify-center items-end">
                   <Plus height={23} width={23} strokeWidth={1.7} color={iconColor} className="" />
                 </TouchableOpacity>
@@ -588,7 +588,7 @@ export default function BookingScreen() {
                 <View className="mt-[80] justify-center items-center">
                   <MapPin height={30} width={30} strokeWidth={1.7} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
                   <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
-                    No directions found
+                    {t('no_directions_found')}
                   </Text>
                 </View>
 
@@ -868,7 +868,7 @@ export default function BookingScreen() {
               <View className="mt-1 flex-1 justify-center items-center">
                 <Clock height={40} width={40} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
                 <Text className="mt-4 font-inter-semibold text-[16px] text-[#979797]">
-                  Undefined time
+                  {t('undefined_time')}
                 </Text>
               </View>
               
@@ -1182,7 +1182,7 @@ export default function BookingScreen() {
                   >
                     <Text>
                       <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
-                        Add a Credit Card
+                        {t('add_credit_card')}
                       </Text>
                     </Text>
                   </TouchableOpacity>
@@ -1203,7 +1203,7 @@ export default function BookingScreen() {
         <View className="mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
           
           <View className="w-full flex-row justify-between items-center ">
-            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Booking description</Text>
+            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('booking_description')}</Text>
           </View>
           
 
@@ -1214,13 +1214,13 @@ export default function BookingScreen() {
               {description.length > 0 ? (
               <View className="flex-row justify-end">
                 <TouchableOpacity onPress={handleClearText} className="">
-                  <Text className="mb-1 font-inter-medium text-[13px] text-[#d4d4d3] dark:text-[#474646]">Clear</Text>
+                  <Text className="mb-1 font-inter-medium text-[13px] text-[#d4d4d3] dark:text-[#474646]">{t('clear')}</Text>
                 </TouchableOpacity>
               </View>
               ) : null }
 
               <TextInput
-                placeholder='Description...'
+                placeholder={t('description_placeholder')}
                 selectionColor={cursorColorChange}
                 placeholderTextColor={placeHolderTextColorChange}
                 onChangeText={inputDescriptionChanged}
@@ -1251,14 +1251,14 @@ export default function BookingScreen() {
 
         <View className="mt-8 px-2  justify-center items-start pb-7">
 
-          <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Others</Text>
+          <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('others')}</Text>
 
           <TouchableOpacity className="mb-3  flex-row w-full justify-between items-start">
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
               <WisdomLogo  width={23} height={23} color={iconColor}/>
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Operation of the reserves</Text>
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('operation_of_the_reserves')}</Text>
               <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
             </View>
           </TouchableOpacity>
@@ -1268,7 +1268,7 @@ export default function BookingScreen() {
               <XCircleIcon  width={24} height={24} color={iconColor} strokeWidth={1.4}/>
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Cancellation Policy</Text>
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('cancellation_policy')}</Text>
               <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
             </View>
           </TouchableOpacity>
@@ -1278,7 +1278,7 @@ export default function BookingScreen() {
               <AlertTriangle  width={22} height={22} color={iconColor} strokeWidth={1.6}/>
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Follow the rules</Text>
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('follow_the_rules')}</Text>
               <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
             </View>
           </TouchableOpacity>
@@ -1288,7 +1288,7 @@ export default function BookingScreen() {
               <Phone  width={22} height={22} color={iconColor} strokeWidth={1.4} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Contact Wisdom</Text>
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('contact_wisdom')}</Text>
               <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
             </View>
           </TouchableOpacity>
@@ -1311,7 +1311,7 @@ export default function BookingScreen() {
         >
           <Text>
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
-              {paymentMethod? 'Continue to Payment' : 'Add Payment Method'}
+              {paymentMethod? t('continue_to_payment') : t('add_payment_method')}
               
             </Text>
           </Text>
