@@ -51,18 +51,18 @@ export default function ListingsProScreen() {
         return (
           <>
             <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols[item.currency]} €</Text>
-            <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">/hour</Text>
+            <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">{t('per_hour')}</Text>
           </>
         );
       } else if (item.price_type === 'fix') {
         return (
           <>
-            <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">Fixed Price: </Text>
+            <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">{t('fixed_price_prefix')}</Text>
             <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols[item.currency]} €</Text>
           </>
         );
       } else {
-        return <Text className="font-inter-bold text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">Price on budget</Text>;
+        return <Text className="font-inter-bold text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">{t('price_on_budget')}</Text>;
       }
     };
 
@@ -99,7 +99,7 @@ export default function ListingsProScreen() {
               <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[45] w-[45] bg-[#706B5B] rounded-lg" />
               <View className="ml-3 justify-center items-start">
                 <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{item.first_name} {item.surname}</Text>
-                <Text className="font-inter-semibold text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">Place</Text>
+                <Text className="font-inter-semibold text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">{t('place')}</Text>
               </View>
             </View>
 
@@ -144,7 +144,7 @@ export default function ListingsProScreen() {
         
         <View className="px-6 w-full flex-row justify-between items-center">
           <Text className=" mb-2 font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2]">
-              Your listings
+              {t('your_listings')}
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate('CreateService1')} className="p-[8] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
             <Plus height={23} width={23} color={iconColor} strokeWidth={1.7}/>
@@ -156,10 +156,10 @@ export default function ListingsProScreen() {
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <SuitcaseFill height={60} width={60} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
             <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
-              Listings not found
+              {t('listings_not_found')}
             </Text>
             <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-4 w-[250]">
-              Publish a service to see them 
+              {t('publish_service_to_see_them')}
             </Text>
           </View>
 

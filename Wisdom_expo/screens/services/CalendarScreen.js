@@ -166,7 +166,7 @@ export default function CalendarScreen() {
               <ChevronLeftIcon size={24} strokeWidth={2} color={colorScheme === 'dark' ? '#979797' : '#979797'} />
             </TouchableOpacity>
             <Text className="ml-2 font-inter-bold text-[24px] text-[#444343] dark:text-[#f2f2f2]">
-              Calendar
+              {t('calendar')}
             </Text>
           </View>
           {/* <TouchableOpacity onPress={() => navigation.navigate('CreateService1')} className="p-[8] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
@@ -200,7 +200,7 @@ export default function CalendarScreen() {
           <View className="mt-4 mb-5 px-4 pt-6 flex-1 w-full rounded-2xl bg-[#fcfcfc] dark:bg-[#323131]">
             <View className="mb-5 flex-row justify-between items-center">
                 <Text className=" font-inter-bold text-[20px] text-[#000000] dark:text-[#ffffff]">
-                  Events 
+                  {t('events')}
                 </Text>
                 <Text className=" font-inter-semibold text-[12px] text-[#b6b5b5] dark:text-[#706F6E]">
                   {selectedDate ? formatDate(selectedDate) : null}
@@ -211,7 +211,7 @@ export default function CalendarScreen() {
               <View className="mt-1 flex-1 justify-center items-center">
                 <CalendarDaysIcon height={40} width={40} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
                 <Text className="mt-4 mb-5 font-inter-semibold text-[16px] text-[#979797]">
-                  No events this day
+                  {t('no_events_this_day')}
                 </Text>
               </View>
             ) : (

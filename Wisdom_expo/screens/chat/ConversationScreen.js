@@ -228,7 +228,7 @@ export default function ConversationScreen() {
             <View className="flex-1 justify-center">
             <TextInput
               className="my-2 mr-2 font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]"
-              placeholder={t('Your message')}
+              placeholder={t('your_message')}
               placeholderTextColor="#979797"
               multiline={true}
               value={text}

@@ -40,16 +40,16 @@
 
     const deleteList = async (listId) => {
       Alert.alert(
-        'Are you sure you want to delete this list?',
-        'This list will not be recoverable and will disappear for everyone.',
+        t('are_you_sure_you_want_to_delete_this_list'),
+        t('list_will_disappear_for_everyone'),
         [
           {
-            text: 'Cancel',
+            text: t('cancel'),
             onPress: null,
             style: 'cancel',
           },
           {
-            text: 'Delete',
+            text: t('delete'),
             onPress: async () => {
               try {
                 const response = await api.delete(`/api/lists/${listId}`);
@@ -107,7 +107,7 @@
           </View>
           <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2] ml-2 mt-2">{item.title}</Text>
           <View className="flex-row mt-2">
-            <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5] ml-2 ">{item.item_count === 0 ? 'empty' : item.item_count === 1 ? `${item.item_count} service` : `${item.item_count} services`}</Text>
+            <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5] ml-2 ">{item.item_count === 0 ? t('empty') : item.item_count === 1 ? `${item.item_count} ${t('service')}` : `${item.item_count} ${t('services')}`}</Text>
             <Text className="font-inter-medium text-[12px] text-[#B6B5B5] dark:text-[#706F6E] ml-3">{item.last_item_date? formatDistanceToNowStrict(new Date(item.last_item_date), { addSuffix: false}): null}</Text>
           </View>
         </TouchableOpacity>
@@ -127,7 +127,7 @@
         <View className="px-6 pt-[55] pb-3">
           <View className="flex-row justify-between mb-12">
             <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
-              Favorites
+              {t('favorites')}
             </Text>
             <TouchableOpacity
               className="h-[43] w-[43] items-center justify-center"

@@ -21,9 +21,9 @@ export default function ChatScreen() {
   const [userId, setUserId] = useState();
 
   const suggestions = [
-    { label: 'All', value: 'all', id: 1 },
-    { label: 'Professionals', value: 'professionals', id: 2 },
-    { label: 'Help', value: 'help', id: 3 },
+    { label: t('all'), value: 'all', id: 1 },
+    { label: t('professionals'), value: 'professionals', id: 2 },
+    { label: t('help'), value: 'help', id: 3 },
   ];
 
   useFocusEffect(
@@ -53,7 +53,7 @@ export default function ChatScreen() {
 
         <View className="mb-4 px-6 w-full flex-row justify-between items-center">
           <Text className="mb-2 font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
-            Chat
+            {t('chat')}
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Conversation')} className="p-[12] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
             <Search height={18} width={18} color={iconColor} strokeWidth={2.1} />
@@ -81,10 +81,10 @@ export default function ChatScreen() {
           <View className="flex-1 justify-center items-center">
             <ChatBubbleLeftRightIcon height={65} width={70} fill={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
             <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
-              No chats found
+              {t('no_chats_found')}
             </Text>
             <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[260]">
-              Write to professionals and talk about your bookings.
+              {t('write_to_professionals_and_talk_about_your_bookings')}
             </Text>
           </View>
 
