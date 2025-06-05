@@ -34,12 +34,12 @@ export default function EnterNameScreen() {
       const nameSplited = name.trim().split(" ");
 
       if (nameSplited.length === 1){
-        setErrorMessage('Must enter your surname');
+        setErrorMessage(t('must_enter_surname'));
         setShowError(true);
         
       }
       else if (nameSplited.length > 2) {
-        setErrorMessage('Must enter only your name and surname');
+        setErrorMessage(t('must_enter_only_name_and_surname'));
         setShowError(true);
       }
       else {
@@ -61,11 +61,11 @@ export default function EnterNameScreen() {
                 <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6"/>
             </TouchableOpacity>
             <Text className="font-inter-bold text-xl pt-11 text-[#444343] dark:text-[#f2f2f2]">
-                Enter your complete name
+                {t('enter_complete_name')}
             </Text>
             <View className="mt-7 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
-                <TextInput 
-                placeholder='Name and Surname' 
+                <TextInput
+                placeholder={t('name_and_surname')}
                 autoFocus={true} 
                 selectionColor={cursorColorChange} 
                 placeholderTextColor={placheHolderTextColorChange} 
@@ -89,7 +89,7 @@ export default function EnterNameScreen() {
                 onPress={nextPressed}
                 style={{opacity: name.length < 1 ? 0.5 : 1.0}}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
-                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">Next </Text>
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">{t('next')} </Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>

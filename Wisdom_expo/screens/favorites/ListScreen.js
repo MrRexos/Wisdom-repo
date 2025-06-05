@@ -133,11 +133,11 @@ export default function ListScreen() {
       });
       if (response.data.notFound) {
         Alert.alert(
-          'User not found',
-          'Username or email are incorrect.',
+          t('user_not_found'),
+          t('username_or_email_incorrect'),
           [
             {
-              text: 'Ok',
+              text: t('ok'),
               onPress: null,
               style: 'cancel',
             },
@@ -174,18 +174,18 @@ export default function ListScreen() {
         return (
           <>
             <Text className="font-inter-bold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols[item.currency]}</Text>
-            <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5]">/hour</Text>
+            <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5]">{t('per_hour')}</Text>
           </>
         );
       } else if (item.price_type === 'fix') {
         return (
           <>
-            <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5]">Fixed Price: </Text>
+            <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5]">{t('fixed_price_prefix')}</Text>
             <Text className="font-inter-bold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols[item.currency]}</Text>
           </>
         );
       } else {
-        return <Text className="font-inter-bold text-[12px] text-[#706F6E] dark:text-[#B6B5B5]">Price on budget</Text>;
+        return <Text className="font-inter-bold text-[12px] text-[#706F6E] dark:text-[#B6B5B5]">{t('price_on_budget')}</Text>;
       }
     };
 
@@ -210,7 +210,7 @@ export default function ListScreen() {
                     <Text className="ml-[3]">
                       <Text className="font-inter-bold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(item.average_rating).toFixed(1)}</Text>
                       <Text> </Text>
-                      <Text className="font-inter-medium text-[10px] text-[#706F6E] dark:text-[#B6B5B5]">({item.review_count === 1 ? `${item.review_count} review` : `${item.review_count} reviews`})</Text>
+                      <Text className="font-inter-medium text-[10px] text-[#706F6E] dark:text-[#B6B5B5]">({item.review_count === 1 ? `${item.review_count} ${t('review')}` : `${item.review_count} ${t('reviews')}`})</Text>
                     </Text>
                   </View>
                 )}
@@ -223,7 +223,7 @@ export default function ListScreen() {
           <View className="px-[14] py-4 border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{ borderBottomWidth: 1 }, index === items.length - 1 && { borderBottomWidth: 0 }]}>
             <View className="h-9 bg-[#D4D4D3] dark:bg-[#474646] rounded-md justify-center items-start">
             <TextInput
-              placeholder='Add a note...'
+              placeholder={t('add_a_note')}
               selectionColor={cursorColorChange}
               placeholderTextColor={placeholderTextColorChange}
               onChangeText={(text) => handleNoteChange(item.item_id, text)}
@@ -270,13 +270,13 @@ export default function ListScreen() {
                     </TouchableOpacity>
                   </View>
                   <View className="flex-1 justify-center items-center">
-                    <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">Change name</Text>
+                    <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('change_name')}</Text>
                   </View>
                   <View className="flex-1">
                     {
                       showDone? (
                         <TouchableOpacity onPress={submitOptions} className=" flex-1 justify-center items-end px-2">
-                          <Text className="font-inter-semibold text-[#f2f2f2] dark:text-[#706f6e] text-[13px]">Done</Text>
+                          <Text className="font-inter-semibold text-[#f2f2f2] dark:text-[#706f6e] text-[13px]">{t('done')}</Text>
                         </TouchableOpacity>
                       ):null
                     }
@@ -284,7 +284,7 @@ export default function ListScreen() {
                 </View>
                 <View className="w-full mx-2 py-2 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                   <TextInput
-                    placeholder={editing === 'share' ? 'Username or email...' : editing === 'shareRead' ? 'Username or email...' : 'Change name...'}
+                    placeholder={editing === 'share' ? t('username_or_email_placeholder') : editing === 'shareRead' ? t('username_or_email_placeholder') : t('change_name_placeholder')}
                     selectionColor={cursorColorChange}
                     placeholderTextColor={placeholderTextColorChange}
                     autoFocus={true}
@@ -301,25 +301,25 @@ export default function ListScreen() {
             ) : (
               <View className="flex-1 w-full justify-center items-center pt-3 pb-14 px-5">
                 <TouchableOpacity onPress={() => openSheetWithInput('share')} className="w-full pl-5 py-[2] bg-[#f2f2f2] dark:bg-[#3d3d3d] flex-1 rounded-t-xl justify-center items-start border-[#e0e0e0] dark:border-[#474646] border-b-[1px]">
-                    <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">Share this list</Text>
+                    <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('share_this_list')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => openSheetWithInput('shareRead')} className="w-full mb-2 pl-5 py-[2] bg-[#f2f2f2] dark:bg-[#3d3d3d] flex-1 rounded-b-xl justify-center items-start">           
-                    <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">Share in read-only</Text>            
+                    <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('share_in_read_only')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => openSheetWithInput('changeName')} className="w-full my-2 pl-5 py-[2] bg-[#f2f2f2] dark:bg-[#3d3d3d] flex-1 rounded-xl justify-center items-start">
-                    <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">Change the name</Text>
+                    <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('change_the_name')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={ () => Alert.alert(
-                  'Are you sure you want to delete this list?',
-                  'This list will not be recoverable and will disappear for everyone.',
+                  t('are_you_sure_you_want_to_delete_this_list'),
+                  t('list_will_disappear_for_everyone'),
                   [
                     {
-                      text: 'Cancel',
+                      text: t('cancel'),
                       onPress: null,
                       style: 'cancel',
                     },
                     {
-                      text: 'Delete',
+                      text: t('delete'),
                       onPress: () => deleteList(listId),                      
                       style: 'destructive', 
                     },
@@ -327,7 +327,7 @@ export default function ListScreen() {
                   { cancelable: false }
                 )} 
                 className="w-full my-2 pl-5 py-[2] bg-[#f2f2f2] dark:bg-[#3d3d3d] flex-1 rounded-xl justify-center items-start">
-                    <Text className="font-inter-medium text-[14px] text-[#ff633e]">Delete</Text>
+                    <Text className="font-inter-medium text-[14px] text-[#ff633e]">{t('delete')}</Text>
                 </TouchableOpacity>  
               </View>
             )}          
@@ -348,7 +348,7 @@ export default function ListScreen() {
           </TouchableOpacity>
         </View>
         {!items.empty ? (
-        <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5] pt-3">{itemCount === 0 ? 'empty' : itemCount === 1 ? `${itemCount} service` : `${itemCount} services`}</Text>
+        <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5] pt-3">{itemCount === 0 ? t('empty') : itemCount === 1 ? `${itemCount} ${t('service')}` : `${itemCount} ${t('services')}`}</Text>
         ):null}
         <View className="pb-7"></View>
         <View className="absolute bottom-0 left-0 w-[700] h-1 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]"/>
@@ -358,10 +358,10 @@ export default function ListScreen() {
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <BookMarksFillIcon height={60} width={60} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
         <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
-          Empty list
+          {t('empty_list')}
         </Text>
         <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[250]">
-          Save services to this list to easily access them.
+          {t('save_services_to_this_list')}
         </Text>
       </View>
       ) : (
