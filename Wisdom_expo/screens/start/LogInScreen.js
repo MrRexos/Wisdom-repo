@@ -49,10 +49,10 @@ export default function LogInScreen() {
   const nextPressed = async () => {
     if (userEmail.length < 1) {
       setShowError(true);
-      setErrorMessage("Email or username is missing");
+      setErrorMessage(t('email_missing'));
     } else if (password.length < 8) {
       setShowError(true);
-      setErrorMessage("Password must be at least 8 characters long");
+      setErrorMessage(t('password_length_error'));
     } else {
       try {
         const response = await api.post('/api/login', {
@@ -71,10 +71,10 @@ export default function LogInScreen() {
           navigation.navigate('HomeScreen');
         } else if (response.data.success===false) {
           setShowError(true);
-          setErrorMessage('Password incorrect.');
+          setErrorMessage(t('password_incorrect'));
         } else {
           setShowError(true);
-          setErrorMessage('Wrong user or password.');
+          setErrorMessage(t('wrong_user_or_password'));
         };
       } catch (error) {
         console.error('Login error:', error);
@@ -119,15 +119,15 @@ export default function LogInScreen() {
         </View>
 
         <Text className="font-inter-bold text-xl pt-4 text-center text-[#444343] dark:text-[#f2f2f2]">
-            Welcome back
+            {t('welcome_back')}
         </Text>
         <Text className="font-inter-semibold text-[15px] pt-10 text-[#444343] dark:text-[#f2f2f2]">
-          Email or username
+          {t('email_or_username')}
         </Text>
         
         <View className="mt-3 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
-            <TextInput 
-            placeholder='Email or username' 
+            <TextInput
+            placeholder={t('email_or_username')}
             autoFocus={true} 
             selectionColor={cursorColorChange} 
             placeholderTextColor={placeHolderTextColorChange} 
@@ -139,11 +139,11 @@ export default function LogInScreen() {
             className="px-4 h-11 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
         </View>
         <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">
-          Password
+          {t('password')}
         </Text>
         <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
           <TextInput
-            placeholder='password'
+            placeholder={t('password')}
             autoFocus={false}
             selectionColor={cursorColorChange}
             placeholderTextColor={placeHolderTextColorChange}
@@ -164,7 +164,7 @@ export default function LogInScreen() {
           
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-          <Text style={{color:placeHolderTextColorChange}} className="text-right text-[13px] mt-2">Forgot Password?</Text>
+          <Text style={{color:placeHolderTextColorChange}} className="text-right text-[13px] mt-2">{t('forgot_password_question')}</Text>
         </TouchableOpacity>
         {
             showError? (
@@ -178,7 +178,7 @@ export default function LogInScreen() {
           onPress={nextPressed}
           style={{opacity: password.length < 1 || userEmail.length < 1 ? 0.5 : 1.0}}
           className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center">
-            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Next</Text>
+            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('next')}</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAwareScrollView>
