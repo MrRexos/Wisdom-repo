@@ -22,11 +22,11 @@ export default function TodayProScreen() {
   const [userId, setUserId] = useState();
 
   const suggestions = [
-    { label: 'Upcoming', value:'accepted', id:1 },
-    { label: 'Requested', value:'requested', id:2 },
-    { label: 'Completed', value:'completed', id:3 },
-    { label: 'Canceled', value:'canceled', id:4 },
-    { label: 'In progress', value:'progress', id:5 },
+    { label: t('upcoming'), value:'accepted', id:1 },
+    { label: t('requested'), value:'requested', id:2 },
+    { label: t('completed'), value:'completed', id:3 },
+    { label: t('canceled'), value:'canceled', id:4 },
+    { label: t('in_progress'), value:'progress', id:5 },
   ];
 
   const fetchBookings = async () => {
@@ -103,7 +103,7 @@ export default function TodayProScreen() {
         
         <View className="px-6 w-full flex-row justify-between items-center">
           <Text className="font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2]">
-              Welcome, {user? user.first_name : null}
+              {t('welcome_comma')} {user? user.first_name : null}
           </Text>
           <TouchableOpacity>
             <Bell color={iconColor} strokeWidth={1.7} />
@@ -118,7 +118,7 @@ export default function TodayProScreen() {
             className="bg-[#323131] mx-2 dark:bg-[#fcfcfc] w-full h-[50] rounded-full items-center justify-center"
           >
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
-              Publish a service
+              {t('publish_a_service')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -127,7 +127,7 @@ export default function TodayProScreen() {
 
 
           <View className="pl-6 mb-5 w-full justify-center items-start">
-            <Text className="font-inter-semibold text-[20px] text-[#444343] dark:text-[#f2f2f2]">Your bookings</Text>
+            <Text className="font-inter-semibold text-[20px] text-[#444343] dark:text-[#f2f2f2]">{t('your_bookings')}</Text>
           </View>
  
           <View className="mb-5">
@@ -154,7 +154,7 @@ export default function TodayProScreen() {
               <View className="flex-1 justify-center items-center">
                 <Clipboard height={40} width={40} fill={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
                 <Text className="mt-7 font-inter-semibold text-[16px] text-[#706F6E] dark:text-[#B6B5B5]">
-                  No services found
+                  {t('no_services_found')}
                 </Text>
               </View>
             ) : (
