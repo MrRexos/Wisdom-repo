@@ -15,6 +15,7 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 export default function DirectionsScreen() {
 
   const { colorScheme } = useColorScheme();
+  const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';

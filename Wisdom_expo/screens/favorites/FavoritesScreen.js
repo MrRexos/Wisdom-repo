@@ -11,7 +11,7 @@
 
   export default function FavoritesScreen() {
     const {colorScheme} = useColorScheme();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const navigation = useNavigation();
     const iconColor = colorScheme === 'dark' ? '#f2f2f2': '#444343';
     const [lists, setLists] = useState([]);

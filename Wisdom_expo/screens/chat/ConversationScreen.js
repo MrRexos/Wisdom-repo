@@ -21,13 +21,14 @@ import {
 } from 'react-native-heroicons/outline';
 import { CheckIcon } from 'react-native-heroicons/solid';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../languages/i18n.js';
 
 
 export default function ConversationScreen() {
   // ---------------------------------------------------------------------------
   // • HOOKS & HELPERS
   // ---------------------------------------------------------------------------
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colorScheme } = useColorScheme();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const navigation = useNavigation();

@@ -1,6 +1,7 @@
 import React, { useState, useEffect  } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, ScrollView, Keyboard, StyleSheet} from 'react-native';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../languages/i18n.js';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { XMarkIcon } from 'react-native-heroicons/outline';
@@ -9,7 +10,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function CreateService7Screen() {
   const { colorScheme } = useColorScheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const navigation = useNavigation();
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';

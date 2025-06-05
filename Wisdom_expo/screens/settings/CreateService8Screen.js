@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, ScrollView, Image, StyleSheet, Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../languages/i18n.js';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { XMarkIcon} from 'react-native-heroicons/outline'; // Asegúrate de importar PlusIcon o el ícono que prefieras
@@ -86,7 +87,7 @@ const patternImages = (images, colorScheme, onRemoveImage) => {
 
 export default function CreateService8Screen() {
   const { colorScheme } = useColorScheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const navigation = useNavigation();
   const route = useRoute();

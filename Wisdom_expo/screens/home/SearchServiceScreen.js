@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
+import i18n from '../../languages/i18n.js';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, MapPinIcon, ChevronRightIcon } from 'react-native-heroicons/outline';
 import { Search, Clock, MapPin } from "react-native-feather";
@@ -15,7 +16,7 @@ export default function SearchServiceScreen() {
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343'
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
   const { prevScreen } = route.params;

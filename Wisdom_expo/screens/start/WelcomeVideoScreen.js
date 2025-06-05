@@ -9,11 +9,10 @@ import { getDataLocally } from '../../utils/asyncStorage';
 const WelcomeVideoScreen = () => {
   const { colorScheme } = useColorScheme();
   const navigation = useNavigation();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [token, setToken] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showSkip, setShowSkip] = useState(false);
-  const { i18n } = useTranslation();
   const [currentImages, setCurrentImages] = useState([]);
   const [currentImagesDown, setCurrentImagesDown] = useState([]);
 

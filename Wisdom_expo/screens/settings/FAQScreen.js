@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import i18n from '../../languages/i18n.js';
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon } from 'react-native-heroicons/outline';
@@ -18,7 +19,7 @@ If you accept it, at the end of the service you will have to pay the full price 
 
 export default function FAQScreen() {
   const { colorScheme } = useColorScheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
 
