@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, Image} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import i18n from '../../languages/i18n';
+import '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect, useIsFocused } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/outline';
 import { Search, Check } from "react-native-feather";

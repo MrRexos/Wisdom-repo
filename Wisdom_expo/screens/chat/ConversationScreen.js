@@ -21,7 +21,7 @@ import {
 } from 'react-native-heroicons/outline';
 import { CheckIcon } from 'react-native-heroicons/solid';
 import { useTranslation } from 'react-i18next';
-import i18n from '../../languages/i18n';
+import '../../languages/i18n';
 
 
 export default function ConversationScreen() {

@@ -2,7 +2,7 @@
   import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, ScrollView, FlatList, Alert, Image } from 'react-native';
   import { useTranslation } from 'react-i18next';
   import { useColorScheme } from 'nativewind'
-  import i18n from '../../languages/i18n';
+  import '../../languages/i18n';
   import { useNavigation, useFocusEffect } from '@react-navigation/native';
   import { Edit2, X, Check } from "react-native-feather"; 
   import { getDataLocally } from '../../utils/asyncStorage';

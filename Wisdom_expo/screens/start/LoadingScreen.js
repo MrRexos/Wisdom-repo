@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import {View, StatusBar} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import i18n from '../../languages/i18n';
+import '../../languages/i18n';
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import { useNavigation } from '@react-navigation/native';
 import { getDataLocally } from '../../utils/asyncStorage';
