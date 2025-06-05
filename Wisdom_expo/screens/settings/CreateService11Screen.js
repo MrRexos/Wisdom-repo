@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import i18n from '../../languages/i18n';
+import '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/outline';
 import { Edit3 } from 'react-native-feather';

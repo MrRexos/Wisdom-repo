@@ -4,7 +4,7 @@ import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollVi
 import { useTranslation } from 'react-i18next';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import { useColorScheme } from 'nativewind'
-import i18n from '../../languages/i18n';
+import '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import api from '../../utils/api.js';
 

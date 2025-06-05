@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, Dimensions, Image} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import i18n from '../../languages/i18n';
+import '../../languages/i18n';
 import { useNavigation } from '@react-navigation/native';
 import {XMarkIcon} from 'react-native-heroicons/outline';
 import WisdomLogo from '../../assets/wisdomLogo.tsx'

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import i18n from '../../languages/i18n';
+import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon } from 'react-native-heroicons/outline';
