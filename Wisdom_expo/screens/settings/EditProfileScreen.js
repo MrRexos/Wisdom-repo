@@ -110,13 +110,13 @@ export default function EditProfileScreen() {
     const nameSplited = name.trim().split(" ");
 
     if (name.length === 0) {
-        setErrorMessage('Must enter your name and surname');
+        setErrorMessage(t('must_enter_name_and_surname'));
         setShowError(true);
     } else if (nameSplited.length === 1) {
-        setErrorMessage('Must enter your surname');
+        setErrorMessage(t('must_enter_your_surname'));
         setShowError(true);
     } else if (nameSplited.length > 2) {
-        setErrorMessage('Must enter only your name and surname');
+        setErrorMessage(t('must_enter_only_name_and_surname'));
         setShowError(true);
     } else {
         const firstName = nameSplited[0].charAt(0).toUpperCase() + nameSplited[0].slice(1).toLowerCase();
@@ -144,7 +144,7 @@ export default function EditProfileScreen() {
             navigation.goBack();
         } catch (error) {
             console.error('Error updating user:', error);
-            setErrorMessage('Error updating user. Please try again.'); // Mostrar mensaje de error
+            setErrorMessage(t('error_updating_user_please_try_again')); // Mostrar mensaje de error
             setShowError(true);
         }
     }
@@ -253,7 +253,7 @@ export default function EditProfileScreen() {
                 </TouchableOpacity>                             
             </View>
             <View className="flex-1 justify-center items-center ">
-                <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">Edit Profile</Text>
+                <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('edit_profile')}</Text>
             </View>
             
             <View className="flex-1 justify-center items-end">
@@ -263,7 +263,7 @@ export default function EditProfileScreen() {
                     onPress={DonePressed} 
                     className="mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]"
                     style={{ opacity: usernameExists ? 0.5 : 1.0 }}>
-                    <Text className="font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]">Done</Text>
+                    <Text className="font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('done')}</Text>
                 </TouchableOpacity>
                 )}
             </View>
@@ -278,12 +278,12 @@ export default function EditProfileScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity onPress={handleImagePicker}>
-                <Text className="mt-3 mb-10 font-inter-medium text-[15px] text-[#b6b5b5] dark:text-[#706f6e]">Update profile photo</Text>
+                <Text className="mt-3 mb-10 font-inter-medium text-[15px] text-[#b6b5b5] dark:text-[#706f6e]">{t('update_profile_photo')}</Text>
             </TouchableOpacity>
         </View>
 
         <View className="mb-7">   
-            <Text className="mb-2 font-inter-medium text-[15px] text-[#b6b5b5] dark:text-[#706f6e]">Username</Text>
+            <Text className="mb-2 font-inter-medium text-[15px] text-[#b6b5b5] dark:text-[#706f6e]">{t('username')}</Text>
             <View className="w-full h-[55] py-2 pl-6 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 <Text className="font-inter-medium mr-[2] text-[15px] text-[#444343] dark:text-[#f2f2f2]">@</Text>
                 
@@ -311,7 +311,7 @@ export default function EditProfileScreen() {
         </View>
 
         <View>   
-            <Text className="mb-2 font-inter-medium text-[15px] text-[#b6b5b5] dark:text-[#706f6e]">Full name</Text>
+            <Text className="mb-2 font-inter-medium text-[15px] text-[#b6b5b5] dark:text-[#706f6e]">{t('full_name')}</Text>
             <View className="w-full h-[55] py-2 px-6 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">                
                 <TextInput
                     placeholder=''

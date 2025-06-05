@@ -12,8 +12,8 @@ import {ChevronRightIcon, ChevronLeftIcon} from 'react-native-heroicons/outline'
 const Sections = [
   {
     items: [
-      {id: 'darkMode', label:'Dark Mode', type: 'toggle'},
-      {id: 'language', label:'Language', type: 'select', link: 'Language'},
+      {id: 'darkMode', label: t('dark_mode'), type: 'toggle'},
+      {id: 'language', label: t('language'), type: 'select', link: 'Language'},
     ]
   },
 ];
@@ -66,7 +66,7 @@ export default function PreferencesScreen() {
                 </TouchableOpacity>                             
             </View>
             <View className="flex-1 justify-center items-center ">
-                <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Preferences</Text>
+                <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('preferences')}</Text>
             </View>
             
             <View className="flex-1"></View>

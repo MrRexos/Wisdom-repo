@@ -177,15 +177,15 @@ export default function DirectionsScreen() {
             <View className="flex-1 w-full justify-start items-center pt-3 pb-5 px-5"> 
 
             <View className="justify-between items-center mb-10">                  
-                <Text className="text-center font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Confirm your direction</Text>
+                <Text className="text-center font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('confirm_your_direction')}</Text>
             </View>
               
             <View className="w-full h-[55] mx-2 mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               {country && country.length>0? (
-                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Country/region</Text>
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('country_region')}</Text>
               ) : null}              
               <TextInput
-                placeholder='Country/region...'
+                placeholder={t('country_region') + '...'}
                 selectionColor={cursorColorChange}
                 placeholderTextColor={placeHolderTextColorChange}
                 onChangeText={inputCountryChanged} 
@@ -197,10 +197,10 @@ export default function DirectionsScreen() {
 
             <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               {state && state.length>0? (
-                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">State</Text>
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('state')}</Text>
               ) : null}              
               <TextInput
-                placeholder='State...'
+                placeholder={t('state') + '...'}
                 selectionColor={cursorColorChange}
                 placeholderTextColor={placeHolderTextColorChange}
                 onChangeText={inputStateChanged} 
@@ -212,10 +212,10 @@ export default function DirectionsScreen() {
 
             <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               {city && city.length>0? (
-                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">City/town</Text>
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('city_town')}</Text>
               ) : null}              
               <TextInput
-                placeholder='City/town...'
+                placeholder={t('city_town') + '...'}
                 selectionColor={cursorColorChange}
                 placeholderTextColor={placeHolderTextColorChange}
                 onChangeText={inputCityChanged} 
@@ -227,10 +227,10 @@ export default function DirectionsScreen() {
 
             <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               {street && street.length>0? (
-                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Street</Text>
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('street')}</Text>
               ) : null}              
               <TextInput
-                placeholder='Street...'
+                placeholder={t('street') + '...'}
                 selectionColor={cursorColorChange}
                 placeholderTextColor={placeHolderTextColorChange}
                 onChangeText={inputStreetChanged} 
@@ -243,10 +243,10 @@ export default function DirectionsScreen() {
 
               <View className="flex-1 h-[55] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {postalCode && postalCode.length>0? (
-                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Postal code</Text>
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('postal_code')}</Text>
                 ) : null}              
                 <TextInput
-                  placeholder='Postal code...'
+                  placeholder={t('postal_code') + '...'}
                   selectionColor={cursorColorChange}
                   placeholderTextColor={placeHolderTextColorChange}
                   onChangeText={inputPostalCodeChanged} 
@@ -258,10 +258,10 @@ export default function DirectionsScreen() {
 
               <View className="flex-1 h-[55] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {streetNumber && String(streetNumber).length>0? (
-                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Street number</Text>
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('street_number')}</Text>
                 ) : null}   
                 <TextInput
-                  placeholder='Street number...'
+                  placeholder={t('street_number') + '...'}
                   selectionColor={cursorColorChange}
                   placeholderTextColor="#ff633e"
                   onChangeText={inputStreetNumberChanged} 
@@ -278,10 +278,10 @@ export default function DirectionsScreen() {
 
             <View className="w-full h-[55] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               { address2 && address2.length>0? (
-                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Floor, door, stair (optional)</Text>
+                <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('floor_door_stair_optional')}</Text>
               ) : null}              
               <TextInput
-                placeholder='Floor, door, stair (optional)...'
+                placeholder={t('floor_door_stair_optional') + '...'}
                 selectionColor={cursorColorChange}
                 placeholderTextColor={placeHolderTextColorChange}
                 onChangeText={inputAddress2Changed} 
@@ -296,7 +296,7 @@ export default function DirectionsScreen() {
                 onPress={() => handleConfirm()}
                 style={{opacity: streetNumber.length<1? 0.5: 1}}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
-                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Confirm</Text>
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('confirm')}</Text>
             </TouchableOpacity>
 
             </View> 
@@ -349,7 +349,7 @@ export default function DirectionsScreen() {
           </View>
 
           <View className="flex-1 justify-center items-center ">
-            <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">Directions</Text>
+            <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('directions')}</Text>
           </View>
 
           <TouchableOpacity onPress={() => navigation.navigate('AddDirection', {prevScreen:'Directions'})} className="flex-1 justify-center items-end">

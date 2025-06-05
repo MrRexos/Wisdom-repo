@@ -89,10 +89,10 @@ export default function TurnExpertScreen() {
                 shadowRadius: 10,
                 elevation: 10,
               }} >
-              <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Explore Plans</Text>
+              <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('explore_plans')}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-             <Text className="mt-4 text-[13px] font-inter-semibold text-[#979797] text-center">Cancel</Text>    
+             <Text className="mt-4 text-[13px] font-inter-semibold text-[#979797] text-center">{t('cancel')}</Text>
             </TouchableOpacity>    
         </View>
         

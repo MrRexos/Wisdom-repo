@@ -20,18 +20,18 @@ import SuticasePlusIcon from '../../assets/SuitcasePlus';
 const Sections = [
   {
     items: [
-      {id: 'account', icon: KeyIcon, label:'Account', type: 'select', link: 'EditAccount'},
-      {id: 'preferences', icon: Settings, label:'Preferences', type: 'select', link: 'Preferences'},
-      {id: 'notifications', icon: Bell, label:'Notifications', type: 'toggle'},
-      {id: 'directions', icon: MapPin, label:'Directions', type: 'select', link: 'Directions'},
-      {id: 'payments', icon: CashStackIcon, label:'Payments and refunds', type: 'select', link: 'Wallet'},
+      {id: 'account', icon: KeyIcon, label: t('account'), type: 'select', link: 'EditAccount'},
+      {id: 'preferences', icon: Settings, label: t('preferences'), type: 'select', link: 'Preferences'},
+      {id: 'notifications', icon: Bell, label: t('notifications'), type: 'toggle'},
+      {id: 'directions', icon: MapPin, label: t('directions'), type: 'select', link: 'Directions'},
+      {id: 'payments', icon: CashStackIcon, label: t('payments_and_refunds'), type: 'select', link: 'Wallet'},
     ]
   },
   {
     items: [
-      {id: 'provideService', icon: SuticasePlusIcon, label:'Provide service', type: 'select', link: 'CreateService1'},
-      {id: 'switchProfessionalVersion', icon: ArrowsRightLeftIcon, label:'Switch to professional version', type: 'select', link: 'Professional'},
-      {id: 'becomeExpert', icon: ExpertIcon, label:'Become an expert', type: 'select', link: 'TurnExpert'},
+      {id: 'provideService', icon: SuticasePlusIcon, label: t('provide_service'), type: 'select', link: 'CreateService1'},
+      {id: 'switchProfessionalVersion', icon: ArrowsRightLeftIcon, label: t('switch_to_professional_version'), type: 'select', link: 'Professional'},
+      {id: 'becomeExpert', icon: ExpertIcon, label: t('become_an_expert'), type: 'select', link: 'TurnExpert'},
     ]
   },
   // {
@@ -155,7 +155,7 @@ export default function SettingsScreen() {
       <ScrollView className="flex-1 px-6 pt-[55] gap-y-9">
         <View className="flex-row justify-between">
           <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
-              Profile
+              {t('profile')}
           </Text>
           <TouchableOpacity className="h-[43] w-[43] rounded-full items-center justify-center bg-[#fcfcfc] dark:bg-[#323131]">
             <Share height={22} strokeWidth={1.7} color={iconColor}/>
@@ -227,9 +227,9 @@ export default function SettingsScreen() {
           <TouchableOpacity 
                   onPress={logOut}
                   className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-full h-[55] rounded-full items-center justify-center" >
-                      <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">Log out</Text>
+                      <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('log_out')}</Text>
           </TouchableOpacity>
-          <Text className="pt-4 pb-[85] text-[#e0e0e0] dark:text-[#3d3d3d]">Version 1.0.3</Text>
+          <Text className="pt-4 pb-[85] text-[#e0e0e0] dark:text-[#3d3d3d]">{t('version_1_0_3')}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

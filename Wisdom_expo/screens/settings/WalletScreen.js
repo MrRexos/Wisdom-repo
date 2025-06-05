@@ -16,8 +16,8 @@ import api from '../../utils/api.js';
 const Sections = [
   {
     items: [
-      {id: 'bookings', label:'Bookings', type: 'select', link: 'Services'},
-      {id: 'paymentMethod', label:'Payment methods', type: 'select', link: ''},
+      {id: 'bookings', label: t('bookings'), type: 'select', link: 'Services'},
+      {id: 'paymentMethod', label: t('payment_methods'), type: 'select', link: ''},
     ]
   },
 ];
@@ -68,7 +68,7 @@ export default function WalletScreen() {
                 </TouchableOpacity>                             
             </View>
             <View className="flex-2/4 justify-center items-center ">
-                <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">Payments and refunds</Text>
+                <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('payments_and_refunds')}</Text>
             </View>
             
             <View className="flex-1/4"></View>
@@ -78,7 +78,7 @@ export default function WalletScreen() {
       <ScrollView className="flex-1 px-6 pt-[75] gap-y-9">
 
         <View className="p-7 justify-center items-center rounded-3xl bg-[#fcfcfc]  dark:bg-[#323131]">
-          <Text className="mb-4 font-inter-semibold text-[16px] text-[#B6B5B5] dark:text-[#706f6e]">Money in wallet:</Text>
+          <Text className="mb-4 font-inter-semibold text-[16px] text-[#B6B5B5] dark:text-[#706f6e]">{t('money_in_wallet')}</Text>
           <Text className="font-inter-bold text-[40px] text-[#444343] dark:text-[#f2f2f2]">{moneyWallet? moneyWallet : '0.00'} €</Text>
         </View>
         
