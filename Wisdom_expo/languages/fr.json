@@ -20,6 +20,13 @@
         "enter_complete_name": "Entrez votre nom complet",
         "name_and_surname": "Nom et Prénom",
         "must_enter_surname": "Vous devez entrer votre prénom",
-        "must_enter_only_name_and_surname": "Entrez seulement nom et prénom"
+        "must_enter_only_name_and_surname": "Entrez seulement nom et prénom",
+        "chat": "Chat",
+        "all": "Tous",
+        "professionals": "Professionnels",
+        "help": "Aide",
+        "no_chats_found": "Aucun chat trouvé",
+        "write_to_professionals_and_talk_about_your_bookings": "Écrivez aux professionnels et discutez de vos réservations.",
+        "your_message": "Votre message"
     }
 }

@@ -20,6 +20,13 @@
         "enter_complete_name": "Introdueix el teu nom complet",
         "name_and_surname": "Nom i Cognom",
         "must_enter_surname": "Has d'introduir el cognom",
-        "must_enter_only_name_and_surname": "Introdueix només nom i cognom"
+        "must_enter_only_name_and_surname": "Introdueix només nom i cognom",
+        "chat": "Xat",
+        "all": "Tots",
+        "professionals": "Professionals",
+        "help": "Ajuda",
+        "no_chats_found": "No hi ha xats",
+        "write_to_professionals_and_talk_about_your_bookings": "Escriu als professionals i parla de les teves reserves.",
+        "your_message": "El teu missatge"
     }
 }

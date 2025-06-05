@@ -20,6 +20,13 @@
         "enter_complete_name": "أدخل اسمك الكامل",
         "name_and_surname": "الاسم واللقب",
         "must_enter_surname": "يجب إدخال اللقب",
-        "must_enter_only_name_and_surname": "أدخل الاسم واللقب فقط"
+        "must_enter_only_name_and_surname": "أدخل الاسم واللقب فقط",
+        "chat": "دردشة",
+        "all": "الكل",
+        "professionals": "المحترفون",
+        "help": "مساعدة",
+        "no_chats_found": "لا توجد محادثات",
+        "write_to_professionals_and_talk_about_your_bookings": "اكتب إلى المحترفين وتحدث عن حجوزاتك.",
+        "your_message": "رسالتك"
     }
 }

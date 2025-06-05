@@ -20,6 +20,13 @@
         "enter_complete_name": "输入你的全名",
         "name_and_surname": "名字和姓氏",
         "must_enter_surname": "必须输入姓氏",
-        "must_enter_only_name_and_surname": "只输入名字和姓氏"
+        "must_enter_only_name_and_surname": "只输入名字和姓氏",
+        "chat": "聊天",
+        "all": "全部",
+        "professionals": "专业人员",
+        "help": "帮助",
+        "no_chats_found": "暂无聊天",
+        "write_to_professionals_and_talk_about_your_bookings": "给专业人员写信并讨论你的预订。",
+        "your_message": "你的消息"
     }
 }
