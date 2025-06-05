@@ -48,7 +48,7 @@ export default function NotificationAllowScreen() {
 
     const uploadImage = async () => {
       if (!image) {
-        Alert.alert('Por favor selecciona una imagen primero');
+        Alert.alert(t('please_select_image_first'));
         return;
       }
   
@@ -170,14 +170,14 @@ export default function NotificationAllowScreen() {
               )}
               <Text className="pt-[60] absolute font-inter-bold text-[17px] text-[#444343] dark:text-[#f2f2f2] text-cente">Saturday, April 21</Text>
             </View>
-            <Text className="font-inter-semibold text-[30px] text-[#444343] dark:text-[#f2f2f2] text-center w-[250]">Stay informed</Text>
-            <Text className="font-inter-medium text-[15px] text-[#706f6e] dark:text-[#b6b5b5] text-center w-[250] mt-4">Receive information and reminders of your services</Text>
+            <Text className="font-inter-semibold text-[30px] text-[#444343] dark:text-[#f2f2f2] text-center w-[250]">{t('stay_informed')}</Text>
+            <Text className="font-inter-medium text-[15px] text-[#706f6e] dark:text-[#b6b5b5] text-center w-[250] mt-4">{t('notifications_subtitle')}</Text>
           </View>
           <View className="justify-center items-center pb-4 w-full px-3 ">
                 <TouchableOpacity 
                 onPress={allowPressed}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
-                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">Allow</Text>
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">{t('allow')}</Text>
                 </TouchableOpacity>
             </View>
           

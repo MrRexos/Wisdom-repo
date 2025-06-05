@@ -39,7 +39,7 @@ export default function EnterEmailScreen() {
           });
       
           if (response.data.exists) {
-            setErrorMessage('Email already in use');
+            setErrorMessage(t('email_already_in_use'));
             setShowError(true);
           } else {
             navigation.navigate('EnterPassword', {email});
@@ -56,7 +56,7 @@ export default function EnterEmailScreen() {
             checkEmailExists(email);
         }
         else{
-            setErrorMessage('Email not valid');
+            setErrorMessage(t('email_not_valid'));
             setShowError(true);
         }
     }
@@ -72,11 +72,11 @@ export default function EnterEmailScreen() {
                 <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6"/>
             </TouchableOpacity>
             <Text className="font-inter-bold text-xl pt-11 text-[#444343] dark:text-[#f2f2f2]">
-                Enter your email
+                {t('enter_your_email')}
             </Text>
             <View className="mt-7 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
                 <TextInput 
-                placeholder='Email' 
+                placeholder={t('email')}
                 autoFocus={true} 
                 selectionColor={cursorColorChange} 
                 placeholderTextColor={placheHolderTextColorChange} 
@@ -102,7 +102,7 @@ export default function EnterEmailScreen() {
                 onPress={nextPressed}
                 style={{opacity: email.length < 1 ? 0.5 : 1.0}}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
-                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">Next </Text>
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">{t('next')} </Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>

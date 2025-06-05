@@ -48,11 +48,11 @@ export default function EnterPasswordScreen() {
           <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6" />
         </TouchableOpacity>
         <Text className="font-inter-bold text-xl pt-11 text-[#444343] dark:text-[#f2f2f2]">
-          Set a password
+          {t('set_a_password')}
         </Text>
         <View className="mt-7 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
           <TextInput
-            placeholder='8 characters or more'
+            placeholder={t('eight_characters_or_more')}
             autoFocus={true}
             selectionColor={cursorColorChange}
             placeholderTextColor={placeholderTextColorChange}
@@ -73,7 +73,7 @@ export default function EnterPasswordScreen() {
         </View>
         {
             showError? (
-                <Text className="text-[#ff633e] text-[13px] pt-3">Password must be at least 8 characters</Text>
+                <Text className="text-[#ff633e] text-[13px] pt-3">{t('password_at_least_eight')}</Text>
             ):null
         }
       </View>
@@ -84,7 +84,7 @@ export default function EnterPasswordScreen() {
           onPress={nextPressed}
           style={{opacity: password.length < 1 ? 0.5 : 1.0}}
           className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center">
-            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Next</Text>
+            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('next')}</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

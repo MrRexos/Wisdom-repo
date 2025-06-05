@@ -30,7 +30,7 @@ export default function TermsScreen() {
       
       <ScrollView className="p-4">
         <Text style={{ color: titleColor }} className="text-2xl font-inter-bold mb-10">
-        Terms and Conditions
+        {t('terms_and_conditions')}
         </Text>
 
         <Text style={{ color: textColor }} className={textStyle}>
