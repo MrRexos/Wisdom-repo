@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
 import Navigation from './navigation/navigation';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import './languages/i18n';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 

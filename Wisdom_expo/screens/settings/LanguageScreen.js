@@ -23,7 +23,7 @@ const Sections = [
 
 export default function LanguageScreen() {
   const { colorScheme } = useColorScheme();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
