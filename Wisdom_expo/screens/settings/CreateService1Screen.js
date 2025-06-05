@@ -46,8 +46,8 @@ export default function CreateService1Screen() {
                 </View> 
             </TouchableOpacity>
             <View className="flex-1 justify-center items-start  ">
-              <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">Create your service,</Text>
-              <Text className="font-inter-bold text-[30px] text-[#b6b5b5] dark:text-[#706f6e]">tell the world what you do</Text>
+              <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">{t('create_your_service')}</Text>
+              <Text className="font-inter-bold text-[30px] text-[#b6b5b5] dark:text-[#706f6e]">{t('tell_the_world_what_you_do')}</Text>
             </View>
             <View className="justify-center items-center">
                 <TouchableOpacity 
@@ -55,7 +55,7 @@ export default function CreateService1Screen() {
                 onPress={() => navigation.navigate('CreateService2')}
                 style={{opacity: 1}}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
-                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Start</Text>
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('start')}</Text>
                 </TouchableOpacity>
             </View>
         </View>

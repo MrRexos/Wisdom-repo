@@ -29,21 +29,21 @@ export default function CreateService12Screen() {
                 </View> 
             </TouchableOpacity>
             <View className="flex-1 justify-center items-start  ">
-              <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">Remember</Text>
-              <Text className="font-inter-bold text-[24px] text-[#b6b5b5] dark:text-[#706f6e]">all communications and payments must be made through the application, otherwise, you will get strikes that can lead to account suspension and legal violations.</Text>
+              <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">{t('remember')}</Text>
+              <Text className="font-inter-bold text-[24px] text-[#b6b5b5] dark:text-[#706f6e]">{t('communications_warning')}</Text>
             </View>
             <View className="justify-center items-center">
                 <Text className="pb-5">
-                      <Text onPress={() => navigation.navigate('Terms')} className="text-[11px] font-inter-medium text-[#b6b5b5] dark:text-[#706f6e] text-center underline">Terms</Text>
+                      <Text onPress={() => navigation.navigate('Terms')} className="text-[11px] font-inter-medium text-[#b6b5b5] dark:text-[#706f6e] text-center underline">{t('terms')}</Text>
                       <Text className="text-[11px] font-inter-medium text-[#b6b5b5] dark:text-[#706f6e] text-center"> and </Text>
-                      <Text onPress={() => navigation.navigate('PrivacyPolicy')} className="text-[11px] font-inter-medium text-[#b6b5b5] dark:text-[#706f6e] text-center underline">Policies</Text>
+                      <Text onPress={() => navigation.navigate('PrivacyPolicy')} className="text-[11px] font-inter-medium text-[#b6b5b5] dark:text-[#706f6e] text-center underline">{t('policies')}</Text>
                 </Text>
                 <TouchableOpacity 
                 disabled={false}
                 onPress={() => navigation.navigate('CreateService13', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk})}
                 style={{opacity: 1}}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
-                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Accept Wisdom terms</Text>
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('accept_wisdom_terms')}</Text>
                 </TouchableOpacity>
             </View>
         </View>

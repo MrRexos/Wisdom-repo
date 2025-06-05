@@ -25,11 +25,11 @@ export default function CreateService10Screen() {
 
   const options  = [
     {
-        label: 'Don’t add discounts',
+        label: t('dont_add_discounts'),
         value: false,
     },
     {
-        label: 'Add discounts for recurrent bookings',
+        label: t('add_discounts_for_recurrent_bookings'),
         value: true,
     },
   ]
@@ -54,7 +54,7 @@ export default function CreateService10Screen() {
             </TouchableOpacity>
 
             <View className=" justify-center items-center ">
-              <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">Allow discounts</Text>
+              <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('allow_discounts')}</Text>
             </View>
 
             <View className="flex-1 px-5 pt-[80] justify-start items-start">
@@ -107,7 +107,7 @@ export default function CreateService10Screen() {
               onPress={() => navigation.goBack()}
               style={{opacity: 1}}
               className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
-                  <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
+                  <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 
@@ -115,7 +115,7 @@ export default function CreateService10Screen() {
               onPress={() => {navigation.navigate('CreateService11_0', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate})}}
               style={{opacity: 1}}
               className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
-                  <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
               </TouchableOpacity>
 
             </View>
