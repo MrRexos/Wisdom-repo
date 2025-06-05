@@ -16,10 +16,10 @@ import api from '../../utils/api.js';
 const Sections = [
   {
     items: [
-      {id: 'bookings', label:'FAQ', type: 'select', link: 'FAQ'},
-      {id: 'terms', label:'Terms', type: 'select', link: 'Terms'},
-      {id: 'privacyPolicy', label:'Privacy Policy', type: 'select', link: 'PrivacyPolicy'},
-      {id: 'writeUs', label:'Write us', type: 'link', link: 'mailto:wisdom.helpcontact@gmail.com'},
+      {id: 'bookings', label: t('faq'), type: 'select', link: 'FAQ'},
+      {id: 'terms', label: t('terms'), type: 'select', link: 'Terms'},
+      {id: 'privacyPolicy', label: t('privacy_policy_title'), type: 'select', link: 'PrivacyPolicy'},
+      {id: 'writeUs', label: t('write_us'), type: 'link', link: 'mailto:wisdom.helpcontact@gmail.com'},
     ]
   },
 ];
@@ -49,7 +49,7 @@ export default function HelpScreen() {
                 </TouchableOpacity>                             
             </View>
             <View className="flex-1 justify-center items-center ">
-                <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">Help</Text>
+                <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('help')}</Text>
             </View>
             
             <View className="flex-1"></View>

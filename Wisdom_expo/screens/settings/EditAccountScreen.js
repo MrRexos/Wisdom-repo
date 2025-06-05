@@ -60,7 +60,7 @@ export default function EditAccountScreen() {
       });
   
       if (response.data.exists) {
-        setErrorMessage('Email already in use');
+        setErrorMessage(t('email_already_in_use'));
         setShowError(true);
       } else {
 
@@ -108,7 +108,7 @@ export default function EditAccountScreen() {
       } 
     }
     else{
-        setErrorMessage('Email not valid');
+        setErrorMessage(t('email_not_valid'));
         setShowError(true);
     }    
     
@@ -116,16 +116,16 @@ export default function EditAccountScreen() {
 
   const deleteAccount = async () => {
     Alert.alert(
-      'Are you sure you want to delete this account?',
-      'Doing this will permanetly delete all your data',
+      t('are_you_sure_you_want_to_delete_this_account'),
+      t('doing_this_will_delete_all_your_data'),
       [
         {
-          text: 'Cancel',
+          text: t('cancel'),
           onPress: null,
           style: 'cancel',
         },
         {
-          text: 'Delete',
+          text: t('delete'),
           onPress: async () => {
             try {
               const response = await api.put(`/api/user/${user.id}`, {
@@ -168,7 +168,7 @@ export default function EditAccountScreen() {
                 </TouchableOpacity>                             
             </View>
             <View className="flex-1 justify-center items-center ">
-                <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">Account</Text>
+                <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('account')}</Text>
             </View>
             
             <View className="flex-1 justify-center items-end">
@@ -189,7 +189,7 @@ export default function EditAccountScreen() {
       <ScrollView className="flex-1 px-6 pt-[75]">
 
         <View>   
-            <Text className="mt-6 mb-2 font-inter-medium text-[15px] text-[#b6b5b5] dark:text-[#706f6e]">Email</Text>
+            <Text className="mt-6 mb-2 font-inter-medium text-[15px] text-[#b6b5b5] dark:text-[#706f6e]">{t('email')}</Text>
             <View className="w-full h-[55] py-2 px-6 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">                
                 <TextInput
                     placeholder=''
@@ -213,7 +213,7 @@ export default function EditAccountScreen() {
       </ScrollView>
 
       <TouchableOpacity onPress={deleteAccount} className="justify-center items-center w-full mb-10">
-          <Text className="font-inter-semibold text-[15px] text-[#ff633e]/50 ">Delete account</Text>
+          <Text className="font-inter-semibold text-[15px] text-[#ff633e]/50 ">{t('delete_account')}</Text>
       </TouchableOpacity>
 
     </SafeAreaView>

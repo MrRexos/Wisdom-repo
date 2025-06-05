@@ -22,19 +22,19 @@ export default function CreateService9_0Screen() {
 
   const options  = [
     {
-        label: 'Price per hour',
+        label: t('price_per_hour'),
         type: 'hour',
-        description: 'The service is charged on an hourly basis',
+        description: t('service_charged_hourly'),
     },
     {
-        label: 'Price according to budget',
+        label: t('price_according_to_budget'),
         type: 'budget',
-        description: "The price will be determined according to the professional's budget",
+        description: t('price_by_professional_budget'),
     },
     {
-        label: 'Fixed price',
+        label: t('fixed_price'),
         type: 'fix',
-        description: 'A single, non-negotiable price for the entire service',
+        description: t('non_negotiable_price'),
     },
   ]
   
@@ -57,7 +57,7 @@ export default function CreateService9_0Screen() {
             </TouchableOpacity>
 
             <View className=" justify-center items-center ">
-              <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">Price type</Text>
+              <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('price_type')}</Text>
             </View>
 
             <View className="flex-1 px-5 pt-[80] justify-start items-start">
@@ -90,7 +90,7 @@ export default function CreateService9_0Screen() {
               onPress={() => navigation.goBack()}
               style={{opacity: 1}}
               className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
-                  <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
+                    <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 
@@ -98,7 +98,7 @@ export default function CreateService9_0Screen() {
               onPress={() => {priceType==='budget'? navigation.navigate('CreateService10', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType}) : navigation.navigate('CreateService9', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType})}}
               style={{opacity: 1}}
               className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
-                  <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
               </TouchableOpacity>
 
             </View>

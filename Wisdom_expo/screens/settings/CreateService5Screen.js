@@ -135,7 +135,7 @@ export default function CreateService5Screen() {
             </TouchableOpacity>
 
             <View className=" justify-center items-start ">
-              <Text className="pl-2 mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">Give some information</Text>
+              <Text className="pl-2 mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('give_some_information')}</Text>
             </View>
 
             {/* Languages */}
@@ -143,7 +143,7 @@ export default function CreateService5Screen() {
             <View className="mt-[60] flex-1 pl-[30] pr-5 justify-start items-start">
               
               <TouchableOpacity onPress={() => handleLanguagesPress()} className="flex-row w-full justify-between items-center">
-                <Text className="font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">Languages</Text>                
+                <Text className="font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">{t('languages')}</Text>
                 {showLanguages? (                  
                   <ChevronUpIcon size={20} color={colorScheme=='dark'? '#b6b5b5': '#706f6e'} strokeWidth="2" />
                 ): null }
@@ -194,7 +194,7 @@ export default function CreateService5Screen() {
                   <View className="w-full justify-center items-center">   
 
                     <TouchableOpacity onPress={() => setIsIndividual(!isIndividual)} className="flex-row w-full justify-between mt-5 pl-6">
-                      <Text className="font-inter-medium text-[15px] text-[#706f6e] dark:text-[#b6b5b5]">Are you an individual?</Text>
+                        <Text className="font-inter-medium text-[15px] text-[#706f6e] dark:text-[#b6b5b5]">{t('are_you_an_individual')}</Text>
                       <View 
                         style={[
                           styles.checkbox, 
@@ -216,13 +216,13 @@ export default function CreateService5Screen() {
                       {hobbies.length > 0 ? (
                       <View className="flex-row justify-end">
                         <TouchableOpacity onPress={handleClearText} className="">
-                          <Text className="mb-1 font-inter-medium text-[13px] text-[#d4d4d3] dark:text-[#474646]">Clear</Text>
+                          <Text className="mb-1 font-inter-medium text-[13px] text-[#d4d4d3] dark:text-[#474646]">{t('clear')}</Text>
                         </TouchableOpacity>
                       </View>
                       ) : null }
 
                       <TextInput
-                        placeholder='Hobbies (optional)...'
+                          placeholder={t('hobbies_optional_placeholder')}
                         selectionColor={cursorColorChange}
                         placeholderTextColor={placeholderTextColorChange}
                         onChangeText={inputHobbiesChanged}
@@ -247,7 +247,7 @@ export default function CreateService5Screen() {
               <View className="mt-8 justify-start items-start w-full">
 
                 <TouchableOpacity onPress={() => handleTagsPress()} className="flex-row w-full justify-between items-center">
-                  <Text className="font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">Tags</Text>    
+                  <Text className="font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">{t('tags')}</Text>
                   {showTags? (
                     <ChevronUpIcon size={20} color={colorScheme=='dark'? '#b6b5b5': '#706f6e'} strokeWidth="2" />
                   ): null }
@@ -271,7 +271,7 @@ export default function CreateService5Screen() {
                         ))}
 
                         <TextInput
-                          placeholder= {tags.length > 14? 'Maximum 15 tags': 'Add a tag... ' }
+                            placeholder={tags.length > 14 ? t('maximum_15_tags') : t('add_a_tag_placeholder')}
                           selectionColor={cursorColorChange}
                           placeholderTextColor={placeholderTextColorChange}
                           onChangeText={inputTagsChanged}
@@ -309,7 +309,7 @@ export default function CreateService5Screen() {
           onPress={() => navigation.goBack()}
           style={{opacity: 1}}
           className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
-              <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
+                <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
@@ -317,7 +317,7 @@ export default function CreateService5Screen() {
           onPress={() => navigation.navigate('CreateService6', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags})}
           style={{opacity: (selectedLanguages.length>0 && tags.length>0)? 1 : 0.5}}
           className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
-              <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
+                <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
           </TouchableOpacity>
 
         </View>

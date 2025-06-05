@@ -64,7 +64,7 @@ export default function CreateService4Screen() {
             </TouchableOpacity>
 
             <View className="justify-center items-center">
-              <Text className="mt-[55] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">Add a description</Text>
+              <Text className="mt-[55] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('add_a_description')}</Text>
             </View>
 
             <View className="flex-1 w-full mt-[50]">
@@ -74,13 +74,13 @@ export default function CreateService4Screen() {
                 {description.length > 0 ? (
                 <View className="flex-row justify-end">
                   <TouchableOpacity onPress={handleClearText} className="">
-                    <Text className="mb-1 font-inter-medium text-[13px] text-[#d4d4d3] dark:text-[#474646]">Clear</Text>
+                    <Text className="mb-1 font-inter-medium text-[13px] text-[#d4d4d3] dark:text-[#474646]">{t('clear')}</Text>
                   </TouchableOpacity>
                 </View>
                 ) : null }
 
                 <TextInput
-                  placeholder='Description...'
+                  placeholder={t('description_placeholder')}
                   selectionColor={cursorColorChange}
                   placeholderTextColor={placeholderTextColorChange}
                   onChangeText={inputChanged}
@@ -110,7 +110,7 @@ export default function CreateService4Screen() {
         {/* Botones fijos abajo */}
         <View className="flex-row justify-center items-center pt-4 pb-6 px-6">
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center">
-            <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
+            <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -119,7 +119,7 @@ export default function CreateService4Screen() {
             style={{ opacity: description ? 1.0 : 0.5 }}
             className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center"
           >
-            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
+            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
           </TouchableOpacity>
         </View>
       

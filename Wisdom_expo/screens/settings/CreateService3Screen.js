@@ -86,14 +86,14 @@ export default function CreateService3Screen() {
                 </View> 
             </TouchableOpacity>
             <View className=" justify-center items-center ">
-              <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">What family and category does it belong to?</Text>
+              <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('what_family_and_category_does_it_belong_to')}</Text>
             </View>
 
             <View className="flex-1 px-9 pb-[80] justify-center items-center">
 
               <TouchableOpacity onPress={() => {setShowFamilyDropdown(!showFamilyDropdown); setShowCategoryDropdown(false);}} className="w-full px-6 py-4 bg-[#fcfcfc] dark:bg-[#323131] rounded-xl flex-row justify-between items-center">
                 <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">
-                  {family ? family.service_family : "Choose family"}
+                  {family ? family.service_family : t('choose_family')}
                 </Text>
                 {showFamilyDropdown? (
                   <ChevronUpIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2" />
@@ -125,7 +125,7 @@ export default function CreateService3Screen() {
 
               <TouchableOpacity onPress={() => {setShowCategoryDropdown(!showCategoryDropdown); setShowFamilyDropdown(false);}} disabled={!family} style={{opacity: family ? 1.0 : 0.4}} className="mt-8 w-full px-6 py-4 bg-[#fcfcfc] dark:bg-[#323131] rounded-xl flex-row justify-between items-center">
                 <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">                  
-                  {category ? category.service_category_name : "Choose category"}
+                  {category ? category.service_category_name : t('choose_category')}
                 </Text>
                 {showCategoryDropdown? (
                   <ChevronUpIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2" />
@@ -164,7 +164,7 @@ export default function CreateService3Screen() {
               onPress={() => navigation.goBack()}
               style={{opacity: 1}}
               className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
-                  <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
+                  <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 
@@ -172,7 +172,7 @@ export default function CreateService3Screen() {
               onPress={() => {navigation.navigate('CreateService4', {title, family, category}); console.log(category.service_category_id)}}
               style={{opacity: family && category? 1.0: 0.5}}
               className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
-                  <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
+                  <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
               </TouchableOpacity>
 
             </View>

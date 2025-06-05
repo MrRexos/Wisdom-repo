@@ -113,8 +113,8 @@ export default function CreateService6Screen() {
             </TouchableOpacity>
 
             <View className=" justify-center items-center ">
-              <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">Locate your service</Text>
-              <Text className="mt-5 font-inter-bold text-[14px] text-center text-[#b6b5b5] dark:text-[#706f6e]">The exact location will never be made public</Text>
+                <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('locate_your_service')}</Text>
+                <Text className="mt-5 font-inter-bold text-[14px] text-center text-[#b6b5b5] dark:text-[#706f6e]">{t('exact_location_never_public')}</Text>
             </View>
 
             <View className="flex-1 pb-[80] justify-start items-center ">
@@ -128,7 +128,7 @@ export default function CreateService6Screen() {
                       numberOfLines={1}
                       ellipsizeMode="tail"
                     >
-                      {direction || 'Search a direction...'}
+                      {direction || t('search_a_direction')}
                     </Text>
                 </View>
               </TouchableOpacity>
@@ -170,9 +170,9 @@ export default function CreateService6Screen() {
                 <View className="w-full px-4 flex-row justify-start items-center">
                   <View className="flex-1 justify-center items-start">
                   <Text className="mr-2">
-                    <Text className="font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Action rate - </Text>
+                    <Text className="font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">{t('action_rate_dash')} </Text>
                     <Text className="font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">
-                      {actionRate === 100 ? 'full' : `${actionRate} km`}
+                        {actionRate === 100 ? t('full') : `${actionRate} km`}
                     </Text>
                   </Text>
 
@@ -195,7 +195,7 @@ export default function CreateService6Screen() {
               ) : null}
 
               <TouchableOpacity onPress={() => setIsUnlocated(!isUnlocated)} className="flex-row w-full justify-start pl-4 items-center mt-1">
-                <Text className="mr-6 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Unlocated service</Text>
+                <Text className="mr-6 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">{t('unlocated_service')}</Text>
                 <View 
                   style={[
                     styles.checkbox, 
@@ -223,7 +223,7 @@ export default function CreateService6Screen() {
               onPress={() => navigation.goBack()}
               style={{opacity: 1}}
               className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
-                  <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
+                  <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 
@@ -231,7 +231,7 @@ export default function CreateService6Screen() {
               onPress={() => navigation.navigate('CreateService7', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate})}
               style={{opacity: isUnlocated || direction? 1.0: 0.5}}
               className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
-                  <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
+                  <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
               </TouchableOpacity>
 
             </View>

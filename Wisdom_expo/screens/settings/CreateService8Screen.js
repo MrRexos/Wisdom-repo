@@ -99,11 +99,11 @@ export default function CreateService8Screen() {
 
     if (status !== 'granted') {
         Alert.alert(
-            'Allow "Wisdom" to Access to Your Gallery',
-            "We need access to your photo library so you can upload images to showcase your services.",
+            t('allow_wisdom_to_access_gallery'),
+            t('need_gallery_access_service'),
             [
-                { text: "Cancel", style: "cancel" },
-                { text: "Settings", onPress: () => Linking.openSettings() }
+                { text: t('cancel'), style: 'cancel' },
+                { text: t('settings'), onPress: () => Linking.openSettings() }
             ],
             { cancelable: true }
         );
@@ -127,11 +127,11 @@ export default function CreateService8Screen() {
 
     if (status !== 'granted') {
         Alert.alert(
-            "Permission Denied",
-            "You need to allow access to your gallery to select a profile picture. ",
+            t('permission_denied'),
+            t('need_gallery_access_service'),
             [
-                { text: "Cancel", style: "cancel" },
-                { text: "Settings", onPress: () => Linking.openSettings() }
+                { text: t('cancel'), style: 'cancel' },
+                { text: t('settings'), onPress: () => Linking.openSettings() }
             ],
             { cancelable: true }
         );
@@ -169,13 +169,13 @@ export default function CreateService8Screen() {
           </TouchableOpacity>
 
           <View className="justify-center items-center">
-            <Text className="mt-[55] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">Upload some photos</Text>
-            <Text className="mt-5 font-inter-bold text-[14px] text-center text-[#b6b5b5] dark:text-[#706f6e]">We recommend you to upload at least 5 images</Text>
+            <Text className="mt-[55] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('upload_some_photos')}</Text>
+            <Text className="mt-5 font-inter-bold text-[14px] text-center text-[#b6b5b5] dark:text-[#706f6e]">{t('we_recommend_you_upload_at_least_five_images')}</Text>
           </View>
 
           {serviceImages.length < 2 ? null : (
             <TouchableOpacity onPress={handlePickImages}>
-              <Text className="mt-10 font-inter-medium text-[16px] text-center text-[#444343] dark:text-[#f2f2f2]">+ Add More</Text>
+              <Text className="mt-10 font-inter-medium text-[16px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('add_more')}</Text>
             </TouchableOpacity>
           )}
 
@@ -187,7 +187,7 @@ export default function CreateService8Screen() {
 
               <TouchableOpacity onPress={handlePickMainImage} className="justify-center items-center relative ">
                 <AddMainImage fill={iconColor} width={257} height={118} />
-                <Text className="absolute bottom-4 left-1/2 inset-x-0 font-inter-semibold text-[14px] text-center text-[#e0e0e0] dark:text-[#3d3d3d]">Main photo</Text>
+                <Text className="absolute bottom-4 left-1/2 inset-x-0 font-inter-semibold text-[14px] text-center text-[#e0e0e0] dark:text-[#3d3d3d]">{t('main_photo')}</Text>
               </TouchableOpacity>
 
             ) : (
@@ -230,7 +230,7 @@ export default function CreateService8Screen() {
       <View className="flex-row justify-center items-center pt-4 pb-6 px-6">
 
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center">
-          <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
+          <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -239,7 +239,7 @@ export default function CreateService8Screen() {
           style={{ opacity: 1 }}
           className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center"
         >
-          <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
+          <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
         </TouchableOpacity>
 
       </View>

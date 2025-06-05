@@ -23,11 +23,11 @@ export default function CreateService11_0Screen() {
   
   const options  = [
     {
-        label: "Don't allow to ask",
+        label: t('dont_allow_to_ask'),
         value: false,
     },
     {
-        label: 'Allow to ask',
+        label: t('allow_to_ask'),
         value: true,
     },
   ]
@@ -47,8 +47,8 @@ export default function CreateService11_0Screen() {
               </TouchableOpacity>
 
               <View className=" justify-center items-center ">
-                <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">Allow clients to ask</Text>
-                <Text className="mt-5 font-inter-bold text-[14px] text-center text-[#b6b5b5] dark:text-[#706f6e]">Allows your clients to writte you 3 messages without booking</Text>
+                  <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('allow_clients_to_ask')}</Text>
+                  <Text className="mt-5 font-inter-bold text-[14px] text-center text-[#b6b5b5] dark:text-[#706f6e]">{t('allows_clients_to_write_you_3_messages_without_booking')}</Text>
               </View>
 
               <View className="flex-1 px-5 pt-[80] justify-start items-start">
@@ -81,7 +81,7 @@ export default function CreateService11_0Screen() {
                 onPress={() => navigation.goBack()}
                 style={{opacity: 1}}
                 className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
-                    <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
+                    <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity 
@@ -89,7 +89,7 @@ export default function CreateService11_0Screen() {
                 onPress={() => {navigation.navigate('CreateService11', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowAsk})}}
                 style={{opacity: 1}}
                 className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
-                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
                 </TouchableOpacity>
 
               </View>

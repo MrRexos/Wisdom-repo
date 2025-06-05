@@ -29,11 +29,11 @@ export default function CreateService11Screen() {
 
   const options  = [
     {
-        label: "Don't allow consults",
+        label: t('dont_allow_consults'),
         value: false,
     },
     {
-        label: 'Allow consults',
+        label: t('allow_consults'),
         value: true,
     },
   ]
@@ -63,8 +63,8 @@ export default function CreateService11Screen() {
               </TouchableOpacity>
 
               <View className=" justify-center items-center ">
-                <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">Allow consults</Text>
-                <Text className="mt-5 font-inter-bold text-[14px] text-center text-[#b6b5b5] dark:text-[#706f6e]">Allows clients to book personalized consultations</Text>
+                <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('allow_consults')}</Text>
+                <Text className="mt-5 font-inter-bold text-[14px] text-center text-[#b6b5b5] dark:text-[#706f6e]">{t('allows_clients_to_book_personalized_consultations')}</Text>
               </View>
 
               <View className="flex-1 px-5 pt-[80] justify-start items-start">
@@ -117,11 +117,11 @@ export default function CreateService11Screen() {
                                   {typeSelected===1 && (
                                     <View className="justify-center items-start w-full mt-2">
                                       
-                                      <Text className={isActive? `font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]`: `font-inter-semibold text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>Via</Text>
+                                      <Text className={isActive? `font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]`: `font-inter-semibold text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>{t('via')}</Text>
                                       
                                       <View className="rounded-full w-full mt-3  px-4 bg-[#fcfcfc] dark:bg-[#323131]">
                                         <TextInput
-                                          placeholder="Ex. Zoom, Meet, In person..."
+                                          placeholder={t('example_zoom_meet_in_person')}
                                           selectionColor={cursorColorChange}
                                           placeholderTextColor={placeholderTextColorChange}
                                           onChangeText={inputViaChanged}
@@ -149,7 +149,7 @@ export default function CreateService11Screen() {
                 onPress={() => navigation.goBack()}
                 style={{opacity: 1}}
                 className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
-                    <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
+                    <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity 
@@ -157,7 +157,7 @@ export default function CreateService11Screen() {
                 onPress={() => {navigation.navigate('CreateService12', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk})}}
                 style={{opacity: allowConsults? consultVia.length<1 || !consultPrice? 0.5 : 1: 1}}
                 className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
-                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
                 </TouchableOpacity>
 
               </View>

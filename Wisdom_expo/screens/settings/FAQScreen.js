@@ -45,7 +45,7 @@ export default function FAQScreen() {
             </TouchableOpacity>
           </View>
           <View className="flex-1 justify-center items-center">
-            <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">FAQ</Text>
+            <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('faq')}</Text>
           </View>
           <View className="flex-1"></View>
         </View>

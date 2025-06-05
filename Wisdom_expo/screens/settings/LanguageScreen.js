@@ -55,7 +55,7 @@ export default function LanguageScreen() {
             </TouchableOpacity>
           </View>
           <View className="flex-1 justify-center items-center ">
-            <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Language</Text>
+            <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('language')}</Text>
           </View>
           <View className="flex-1"></View>
         </View>

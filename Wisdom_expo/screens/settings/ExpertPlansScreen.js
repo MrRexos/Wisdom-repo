@@ -52,13 +52,13 @@ export default function ExpertPlansScreen() {
                 </TouchableOpacity>                             
             </View>
             <View className="flex-1 justify-center items-center ">
-                <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Overview</Text>
+                <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('overview')}</Text>
             </View>
             <View className="flex-1"></View>
         </View>
 
         <View className="mt-1 w-full justify-center items-center ">
-            <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">Confirm you expert plan</Text>
+            <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">{t('confirm_your_expert_plan')}</Text>
         </View>
 
         <View className="flex-1 px-10 pt-[80] justify-start items-start">
@@ -143,10 +143,10 @@ export default function ExpertPlansScreen() {
 
         <View className="mb-3 justify-center items-center">
             <TouchableOpacity onPress={() => navigation.pop(2)} className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center" >
-              <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue to Payment</Text>
+              <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue_to_payment')}</Text>
             </TouchableOpacity>
             <View >
-             <Text className="mt-4 text-[12px] font-inter-medium text-[#979797]/50 text-center">Your next bill will be on {getNextBillingDate()}</Text>    
+             <Text className="mt-4 text-[12px] font-inter-medium text-[#979797]/50 text-center">{t('your_next_bill_will_be_on')} {getNextBillingDate()}</Text>
             </View>    
         </View>
 

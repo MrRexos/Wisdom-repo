@@ -29,7 +29,7 @@ export default function PrivacyPolicy() {
       
       <ScrollView className="p-4">
         <Text style={{ color: titleColor }} className="text-2xl font-inter-semibold mb-4">
-            Privacy Policy 
+            {t('privacy_policy_title')}
         </Text>
 
         <Text style={{ color: textColor }} className={textStyle}>

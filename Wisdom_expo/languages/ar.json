@@ -1,58 +1,262 @@
 {
-    "translation": {
-        "skip_intro": "تخطي المقدمة",
-        "hello": "مرحباً",
-        "profile": "الملف الشخصي",
-        "get_started": "ابدأ",
-        "by_tapping_get_started": "بالنقر على \"ابدأ\" أنت توافق على",
-        "terms": "الشروط",
-        "and": "و",
-        "privacy_policy": "سياسة الخصوصية.",
-        "email_missing": "البريد الإلكتروني أو اسم المستخدم مفقود",
-        "password_length_error": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
-        "password_incorrect": "كلمة المرور غير صحيحة.",
-        "wrong_user_or_password": "اسم المستخدم أو كلمة المرور غير صحيحة.",
-        "welcome_back": "مرحباً بعودتك",
-        "email_or_username": "البريد الإلكتروني أو اسم المستخدم",
-        "password": "كلمة المرور",
-        "forgot_password_question": "هل نسيت كلمة المرور؟",
-        "next": "التالي",
-        "enter_complete_name": "أدخل اسمك الكامل",
-        "name_and_surname": "الاسم واللقب",
-        "must_enter_surname": "يجب إدخال اللقب",
-        "must_enter_only_name_and_surname": "أدخل الاسم واللقب فقط",
-        "chat": "دردشة",
-        "all": "الكل",
-        "professionals": "المحترفون",
-        "help": "مساعدة",
-        "no_chats_found": "لا توجد محادثات",
-        "write_to_professionals_and_talk_about_your_bookings": "اكتب إلى المحترفين وتحدث عن حجوزاتك.",
-        "your_message": "رسالتك",
-        "favorites": "المفضلة",
-        "are_you_sure_you_want_to_delete_this_list": "هل أنت متأكد أنك تريد حذف هذه القائمة؟",
-        "list_will_disappear_for_everyone": "لن يمكن استرجاع هذه القائمة وستختفي للجميع.",
-        "cancel": "إلغاء",
-        "delete": "حذف",
-        "empty": "فارغة",
-        "service": "خدمة",
-        "services": "خدمات",
-        "user_not_found": "المستخدم غير موجود",
-        "username_or_email_incorrect": "اسم المستخدم أو البريد الإلكتروني غير صحيح.",
-        "ok": "حسناً",
-        "change_name": "تغيير الاسم",
-        "done": "تم",
-        "username_or_email_placeholder": "اسم المستخدم أو البريد...",
-        "change_name_placeholder": "تغيير الاسم...",
-        "share_this_list": "مشاركة هذه القائمة",
-        "share_in_read_only": "مشاركة للقراءة فقط",
-        "change_the_name": "تغيير الاسم",
-        "empty_list": "قائمة فارغة",
-        "save_services_to_this_list": "احفظ الخدمات في هذه القائمة للوصول إليها بسهولة.",
-        "add_a_note": "أضف ملاحظة...",
-        "fixed_price_prefix": "سعر ثابت: ",
-        "price_on_budget": "السعر عند الطلب",
-        "per_hour": "/ساعة",
-        "review": "مراجعة",
-        "reviews": "مراجعات"
-    }
+  "translation": {
+    "skip_intro": "تخطي المقدمة",
+    "hello": "مرحباً",
+    "profile": "الملف الشخصي",
+    "get_started": "ابدأ",
+    "by_tapping_get_started": "بالنقر على \"ابدأ\" أنت توافق على",
+    "terms": "الشروط",
+    "and": "و",
+    "privacy_policy": "سياسة الخصوصية.",
+    "email_missing": "البريد الإلكتروني أو اسم المستخدم مفقود",
+    "password_length_error": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+    "password_incorrect": "كلمة المرور غير صحيحة.",
+    "wrong_user_or_password": "اسم المستخدم أو كلمة المرور غير صحيحة.",
+    "welcome_back": "مرحباً بعودتك",
+    "email_or_username": "البريد الإلكتروني أو اسم المستخدم",
+    "password": "كلمة المرور",
+    "forgot_password_question": "هل نسيت كلمة المرور؟",
+    "next": "التالي",
+    "enter_complete_name": "أدخل اسمك الكامل",
+    "name_and_surname": "الاسم واللقب",
+    "must_enter_surname": "يجب إدخال اللقب",
+    "must_enter_only_name_and_surname": "أدخل الاسم واللقب فقط",
+    "chat": "دردشة",
+    "all": "الكل",
+    "professionals": "المحترفون",
+    "help": "مساعدة",
+    "no_chats_found": "لا توجد محادثات",
+    "write_to_professionals_and_talk_about_your_bookings": "اكتب إلى المحترفين وتحدث عن حجوزاتك.",
+    "your_message": "رسالتك",
+    "favorites": "المفضلة",
+    "are_you_sure_you_want_to_delete_this_list": "هل أنت متأكد أنك تريد حذف هذه القائمة؟",
+    "list_will_disappear_for_everyone": "لن يمكن استرجاع هذه القائمة وستختفي للجميع.",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "empty": "فارغة",
+    "service": "خدمة",
+    "services": "خدمات",
+    "user_not_found": "المستخدم غير موجود",
+    "username_or_email_incorrect": "اسم المستخدم أو البريد الإلكتروني غير صحيح.",
+    "ok": "حسناً",
+    "change_name": "تغيير الاسم",
+    "done": "تم",
+    "username_or_email_placeholder": "اسم المستخدم أو البريد...",
+    "change_name_placeholder": "تغيير الاسم...",
+    "share_this_list": "مشاركة هذه القائمة",
+    "share_in_read_only": "مشاركة للقراءة فقط",
+    "change_the_name": "تغيير الاسم",
+    "empty_list": "قائمة فارغة",
+    "save_services_to_this_list": "احفظ الخدمات في هذه القائمة للوصول إليها بسهولة.",
+    "add_a_note": "أضف ملاحظة...",
+    "fixed_price_prefix": "سعر ثابت: ",
+    "price_on_budget": "السعر عند الطلب",
+    "per_hour": "/ساعة",
+    "review": "مراجعة",
+    "reviews": "المراجعات",
+    "calendar": "التقويم",
+    "events": "الأحداث",
+    "no_events_this_day": "لا توجد أحداث في هذا اليوم",
+    "your_listings": "قوائمك",
+    "listings_not_found": "لم يتم العثور على قوائم",
+    "publish_service_to_see_them": "قم بنشر خدمة لتراها",
+    "place": "المكان",
+    "welcome_comma": "مرحباً،",
+    "publish_a_service": "انشر خدمة",
+    "your_bookings": "حجوزاتك",
+    "no_services_found": "لم يتم العثور على خدمات",
+    "upcoming": "قادم",
+    "requested": "مطلوب",
+    "completed": "مكتمل",
+    "canceled": "ملغى",
+    "in_progress": "قيد التنفيذ",
+    "account": "الحساب",
+    "preferences": "التفضيلات",
+    "notifications": "الإشعارات",
+    "directions": "الاتجاهات",
+    "payments_and_refunds": "المدفوعات والمبالغ المستردة",
+    "provide_service": "تقديم خدمة",
+    "switch_to_client_version": "التبديل إلى نسخة العميل",
+    "become_an_expert": "كن خبيراً",
+    "follow_us_in_instagram": "تابعنا على إنستجرام",
+    "log_out": "تسجيل الخروج",
+    "version_1_0_3": "الإصدار 1.0.3",
+    "upcoming_services": "الخدمات القادمة",
+    "no_upcoming_reservations_yet": "يبدو أنك لم تقم بأي حجوزات قادمة بعد.",
+    "no_requested_services_at_the_moment": "لا توجد خدمات مطلوبة حالياً.",
+    "no_completed_services_yet": "لم تكمل أي خدمات بعد.",
+    "no_services_have_been_canceled": "لم يتم إلغاء أي خدمات.",
+    "no_services_are_currently_in_progress": "لا توجد خدمات قيد التنفيذ حالياً.",
+    "no_reservations_yet": "يبدو أنك لم تقم بأي حجوزات بعد.",
+    "email": "البريد الإلكتروني",
+    "check_your_inbox": "تحقق من صندوق الوارد",
+    "email_sent_reset": "لقد أرسلنا لك بريداً إلكترونياً لتتمكن من تعيين كلمة مرور جديدة.",
+    "open_mail": "افتح البريد",
+    "need_help": "تحتاج مساعدة؟",
+    "contact_support": "اتصل بالدعم",
+    "enter_your_email": "أدخل بريدك الإلكتروني",
+    "email_already_in_use": "البريد مستخدم بالفعل",
+    "email_not_valid": "البريد غير صالح",
+    "set_a_password": "قم بتعيين كلمة مرور",
+    "eight_characters_or_more": "8 أحرف أو أكثر",
+    "password_at_least_eight": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
+    "restart_password": "إعادة تعيين كلمة المرور",
+    "reset_link_instruction": "أدخل بريدك الإلكتروني أو اسم المستخدم وسنرسل لك رابطاً لإعادة تعيين كلمة المرور.",
+    "send_link": "إرسال الرابط",
+    "add_profile_picture_and_username": "أضف صورة ملفك الشخصي واسم المستخدم",
+    "username_placeholder": "اسم المستخدم",
+    "username_taken": "اسم المستخدم مستخدم.",
+    "username_already_taken": "اسم المستخدم مستخدم بالفعل.",
+    "no_capital_letters": "لا يمكن استخدام أحرف كبيرة.",
+    "spaces_not_allowed_use_underscore": "لا يمكن أن يحتوي اسم المستخدم على مسافات، استخدم _",
+    "upload_profile_picture": "يجب تحميل صورة الملف الشخصي.",
+    "please_select_image_first": "الرجاء تحديد صورة أولاً",
+    "create_account": "إنشاء حساب",
+    "register": "تسجيل",
+    "log_in": "تسجيل الدخول",
+    "set_a_new_password": "تعيين كلمة مرور جديدة",
+    "new_password": "كلمة المرور الجديدة",
+    "confirm_new_password": "تأكيد كلمة المرور الجديدة",
+    "type_it_again": "اكتبها مرة أخرى",
+    "safe_and_login": "احفظ وسجّل الدخول",
+    "stay_informed": "ابق على اطلاع",
+    "notifications_subtitle": "تلقي المعلومات والتذكيرات حول خدماتك",
+    "allow": "السماح",
+    "allow_wisdom_to_access_gallery": "السماح لـ\"Wisdom\" بالوصول إلى معرضك",
+    "need_gallery_access": "نحتاج إلى الوصول إلى معرض الصور الخاص بك حتى تتمكن من اختيار صورة ملف شخصي.",
+    "terms_and_conditions": "الشروط والأحكام",
+    "settings": "الإعدادات",
+    "privacy_policy_title": "سياسة الخصوصية",
+    "payment_method": "طريقة الدفع",
+    "card_number": "رقم البطاقة",
+    "expiration_date": "تاريخ الانتهاء",
+    "cvv": "CVV",
+    "save": "حفظ",
+    "add_credit_card": "إضافة بطاقة ائتمان",
+    "select_a_date": "اختر تاريخاً",
+    "start_time": "وقت البدء",
+    "duration": "المدة",
+    "undefined_time": "وقت غير محدد",
+    "accept": "قبول",
+    "your_directions": "عناوينك",
+    "no_directions_found": "لا توجد عناوين",
+    "booking_description": "وصف الحجز",
+    "clear": "مسح",
+    "description_placeholder": "وصف...",
+    "others": "أخرى",
+    "operation_of_the_reserves": "كيفية عمل الحجوزات",
+    "cancellation_policy": "سياسة الإلغاء",
+    "follow_the_rules": "اتبع القواعد",
+    "contact_wisdom": "اتصل بـ Wisdom",
+    "continue_to_payment": "المتابعة إلى الدفع",
+    "add_payment_method": "إضافة طريقة دفع",
+    "booking_successfully_completed": "تم الحجز بنجاح",
+    "gallery": "معرض",
+    "recent_searches": "عمليات البحث الأخيرة",
+    "search_a_service": "ابحث عن خدمة...",
+    "clear_caps": "مسح",
+    "confirm": "تأكيد",
+    "confirm_your_direction": "تأكيد العنوان",
+    "search_a_direction": "ابحث عن عنوان...",
+    "country_region": "البلد/المنطقة",
+    "state": "الولاية",
+    "city_town": "المدينة",
+    "street": "الشارع",
+    "postal_code": "الرمز البريدي",
+    "street_number": "رقم الشارع",
+    "floor_door_stair_optional": "طابق، باب، سُلَّم (اختياري)"
+    ,"switch_to_professional_version": "التبديل إلى النسخة الاحترافية"
+    ,"dark_mode": "الوضع الداكن"
+    ,"language": "اللغة"
+    ,"back": "رجوع"
+    ,"start": "ابدأ"
+    ,"continue": "متابعة"
+    ,"create_your_service": "أنشئ خدمتك،"
+    ,"tell_the_world_what_you_do": "أخبر العالم بما تقوم به"
+    ,"what_is_the_title_of_your_service": "ما عنوان خدمتك؟"
+    ,"this_will_be_the_public_title": "سيكون هذا العنوان عامًا"
+    ,"service_title_placeholder": "عنوان الخدمة..."
+    ,"choose_family": "اختر العائلة"
+    ,"choose_category": "اختر الفئة"
+    ,"what_family_and_category_does_it_belong_to": "إلى أي عائلة وفئة تنتمي؟"
+    ,"add_a_description": "أضف وصفًا"
+    ,"description_placeholder": "وصف..."
+    ,"faq": "الأسئلة الشائعة"
+    ,"write_us": "اكتب لنا"
+    ,"edit_direction": "تعديل العنوان"
+    ,"delete_account": "حذف الحساب"
+    ,"are_you_sure_you_want_to_delete_this_account": "هل أنت متأكد من حذف هذا الحساب؟"
+    ,"doing_this_will_delete_all_your_data": "سيؤدي هذا إلى حذف جميع بياناتك نهائيًا"
+    ,"bookings": "الحجوزات"
+    ,"payment_methods": "طرق الدفع"
+    ,"money_in_wallet": "المال في المحفظة:"
+    ,"edit_profile": "تعديل الملف الشخصي"
+    ,"must_enter_name_and_surname": "يجب إدخال الاسم واللقب"
+    ,"must_enter_your_surname": "يجب إدخال لقبك"
+    ,"must_enter_only_name_and_surname": "يجب إدخال الاسم واللقب فقط"
+    ,"update_profile_photo": "تحديث صورة الملف الشخصي"
+    ,"username": "اسم المستخدم"
+    ,"full_name": "الاسم الكامل"
+    ,"error_updating_user_please_try_again": "حدث خطأ أثناء التحديث. حاول مرة أخرى."
+    ,"explore_plans": "استعرض الخطط"
+    ,"overview": "نظرة عامة"
+    ,"confirm_your_expert_plan": "أكد خطة الخبراء الخاصة بك"
+    ,"your_next_bill_will_be_on": "الفاتورة القادمة ستكون في"
+    ,"give_some_information": "قدم بعض المعلومات"
+    ,"languages": "اللغات"
+    ,"about_you": "حولك"
+    ,"are_you_an_individual": "هل أنت فرد؟"
+    ,"hobbies_optional_placeholder": "الهوايات (اختياري)..."
+    ,"tags": "الوسوم"
+    ,"add_a_tag_placeholder": "أضف وسمًا..."
+    ,"maximum_15_tags": "حد أقصى 15 وسمًا"
+    ,"locate_your_service": "حدد موقع خدمتك"
+    ,"exact_location_never_public": "لن يتم نشر الموقع الدقيق أبدًا"
+    ,"action_rate_dash": "نطاق العمل -"
+    ,"full": "كامل"
+    ,"unlocated_service": "خدمة بدون موقع"
+    ,"your_experience": "خبرتك"
+    ,"show_your_entire_career_with_this_service": "أظهر كامل مسيرتك مع هذه الخدمة"
+    ,"add_an_experience": "+ أضف خبرة"
+    ,"position_or_study_placeholder": "المنصب أو الدراسة..."
+    ,"place_or_company_placeholder": "المكان أو الشركة..."
+    ,"started": "البداية"
+    ,"end": "النهاية"
+    ,"still_here": "ما زلت هنا"
+    ,"upload_some_photos": "حمّل بعض الصور"
+    ,"we_recommend_you_upload_at_least_five_images": "ننصحك بتحميل ما لا يقل عن 5 صور"
+    ,"add_more": "+ أضف المزيد"
+    ,"main_photo": "الصورة الرئيسية"
+    ,"permission_denied": "تم رفض الإذن"
+    ,"need_gallery_access_service": "نحتاج إلى الوصول إلى معرض الصور لديك حتى تتمكن من تحميل صور لعرض خدماتك."
+    ,"price": "السعر"
+    ,"the_client_pays": "يدفع العميل"
+    ,"you_recibes": "تستلم"
+    ,"quality_commission": "عمولة الجودة"
+    ,"client_final_price": "السعر النهائي للعميل"
+    ,"price_per_hour": "السعر لكل ساعة"
+    ,"service_charged_hourly": "يتم احتساب الخدمة على أساس الساعة"
+    ,"price_according_to_budget": "السعر حسب الميزانية"
+    ,"price_by_professional_budget": "سيتم تحديد السعر حسب ميزانية المحترف"
+    ,"fixed_price": "سعر ثابت"
+    ,"non_negotiable_price": "سعر واحد غير قابل للتفاوض لكل الخدمة"
+    ,"price_type": "نوع السعر"
+    ,"allow_discounts": "السماح بالخصومات"
+    ,"dont_add_discounts": "عدم إضافة خصومات"
+    ,"add_discounts_for_recurrent_bookings": "إضافة خصومات للحجوزات المتكررة"
+    ,"allow_consults": "السماح بالاستشارات"
+    ,"dont_allow_consults": "عدم السماح بالاستشارات"
+    ,"allows_clients_to_book_personalized_consultations": "يسمح للعملاء بحجز استشارات مخصصة"
+    ,"via": "عبر"
+    ,"example_zoom_meet_in_person": "مثال: Zoom، Meet، حضور شخصي..."
+    ,"allow_clients_to_ask": "السماح للعملاء بالسؤال"
+    ,"allows_clients_to_write_you_3_messages_without_booking": "يسمح لعملائك بكتابة 3 رسائل بدون حجز"
+    ,"dont_allow_to_ask": "عدم السماح بالسؤال"
+    ,"allow_to_ask": "السماح بالسؤال"
+    ,"remember": "تذكر"
+    ,"communications_warning": "يجب أن تتم جميع الاتصالات والمدفوعات عبر التطبيق، وإلا ستحصل على مخالفات قد تؤدي إلى تعليق الحساب ومخالفات قانونية."
+    ,"accept_wisdom_terms": "قبول شروط Wisdom"
+    ,"check_your_service": "راجع خدمتك"
+    ,"publish_service": "انشر الخدمة"
+  }
 }

@@ -96,7 +96,7 @@ export default function PaymentMethodScreen() {
             </View>
 
             <View className="flex-3 justify-center items-center ">
-                <Text className="font-inter-bold text-center text-[18px] text-[#444343] dark:text-[#f2f2f2]">Payment Method</Text>
+                <Text className="font-inter-bold text-center text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('payment_method')}</Text>
             </View> 
 
             <View className="flex-1 h-2 "></View>
@@ -111,7 +111,7 @@ export default function PaymentMethodScreen() {
 
           <View className="flex-1 w-full px-4 justify-start items-start ">
 
-            <Text className="pb-2 font-inter-semibold text-[15px] text-[#515150] dark:text-[#d4d4d3]">Card Number</Text>
+            <Text className="pb-2 font-inter-semibold text-[15px] text-[#515150] dark:text-[#d4d4d3]">{t('card_number')}</Text>
             <View className="mb-7 py-2 px-6 w-full h-[55]  justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">      
               <TextInput
                 placeholder='0000 0000 0000 0000'
@@ -129,7 +129,7 @@ export default function PaymentMethodScreen() {
             <View className="flex-row justify-between space-x-2 ">
 
               <View className="flex-1">
-                <Text className="pb-2 font-inter-semibold text-[15px] text-[#515150] dark:text-[#d4d4d3]">Expiration date</Text>
+                <Text className="pb-2 font-inter-semibold text-[15px] text-[#515150] dark:text-[#d4d4d3]">{t('expiration_date')}</Text>
                 <View className="w-full h-[55]  mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">      
                   <TextInput
                     placeholder='MM/YY'
@@ -146,7 +146,7 @@ export default function PaymentMethodScreen() {
               </View>
 
               <View className="flex-1">
-                <Text className="pb-2 font-inter-semibold text-[15px] text-[#515150] dark:text-[#d4d4d3]">CVV</Text>
+                <Text className="pb-2 font-inter-semibold text-[15px] text-[#515150] dark:text-[#d4d4d3]">{t('cvv')}</Text>
                 <View className="w-full h-[55] mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">      
                   <TextInput
                     placeholder='123'
@@ -175,7 +175,7 @@ export default function PaymentMethodScreen() {
             >
               <Text>
                 <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
-                  Save
+                  {t('save')}
                 </Text>
               </Text>
             </TouchableOpacity>

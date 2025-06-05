@@ -41,11 +41,11 @@ export default function EmailSendedScreen() {
             </View>
 
             <Text className="font-inter-bold text-xl pt-4 text-center text-[#444343] dark:text-[#f2f2f2]">
-                Check your Inbox
+                {t('check_your_inbox')}
             </Text>
             <View className="justify-center items-center px-8">
               <Text className="font-inter-medium text-[13px] text-center pt-3 text-[#B6B5B5] dark:text-[#706F6E]">
-                We sent an email to xxx so you can pick a new password.
+                {t('email_sent_reset')}
               </Text>
             </View>
             
@@ -55,12 +55,12 @@ export default function EmailSendedScreen() {
                 <TouchableOpacity 
                 onPress={() => navigation.navigate('NewPassword')}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center" >
-                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">Open Mail</Text>
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">{t('open_mail')}</Text>
                 </TouchableOpacity>
             </View>     
             <Text className="font-inter-medium text-center text-[12px] pt-4 pb-6 text-[#444343] dark:text-[#f2f2f2]">
-              <Text>Need help? </Text>
-              <Text onPress={openMailApp} className="text-[#444343] dark:text-[#f2f2f2] opacity-60 text-center underline">Contact support</Text>
+              <Text>{t('need_help')} </Text>
+              <Text onPress={openMailApp} className="text-[#444343] dark:text-[#f2f2f2] opacity-60 text-center underline">{t('contact_support')}</Text>
             </Text>
           </View>
       </SafeAreaView>

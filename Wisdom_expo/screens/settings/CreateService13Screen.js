@@ -131,7 +131,7 @@ export default function CreateService13Screen() {
             </TouchableOpacity>
 
             <View className=" justify-center items-start ml-2 ">
-                <Text className="mt-[55] font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2] ">Check your service</Text>
+                <Text className="mt-[55] font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2] ">{t('check_your_service')}</Text>
             </View>
 
             <View className="flex-1">
@@ -151,7 +151,7 @@ export default function CreateService13Screen() {
                   elevation: 10,
                 }}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
-                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Publish service</Text>
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('publish_service')}</Text>
                 </TouchableOpacity>
             </View>
 

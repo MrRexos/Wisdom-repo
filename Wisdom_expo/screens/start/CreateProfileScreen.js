@@ -35,11 +35,11 @@ export default function CreateProfileScreen() {
 
         if (status !== 'granted') {
             Alert.alert(
-                'Allow "Wisdom" to Access to Your Gallery',
-                "We need access to your photo library so you can choose and set a profile picture.",
+                t('allow_wisdom_to_access_gallery'),
+                t('need_gallery_access'),
                 [
-                    { text: "Cancel", style: "cancel" },
-                    { text: "Settings", onPress: () => Linking.openSettings() }
+                    { text: t('cancel'), style: "cancel" },
+                    { text: t('settings'), onPress: () => Linking.openSettings() }
                 ],
                 { cancelable: true }
             );
@@ -76,7 +76,7 @@ export default function CreateProfileScreen() {
 
             if (response.data.exists) {
                 setUsernameExists(true);
-                setErrorMessage('Username taken.');
+                setErrorMessage(t('username_taken'));
                 setShowError(true);
                 
             } else {
@@ -119,19 +119,19 @@ export default function CreateProfileScreen() {
 
     const nextPressed = async () => {
         if (username.split(" ").length > 1) {
-            setErrorMessage("Username can't have spaces, use _");
+            setErrorMessage(t('spaces_not_allowed_use_underscore'));
             setShowError(true);
         } else if (username != username.toLowerCase()) {
-            setErrorMessage("There can be no capital letters.");
+            setErrorMessage(t('no_capital_letters'));
             setShowError(true);
         } else if (image === null) {
-            setErrorMessage("You must upload a profile picture.");
+            setErrorMessage(t('upload_profile_picture'));
             setShowError(true);
         } else {
             if (!usernameExists) {
                 navigation.navigate('NotificationAllow', { email, password, firstName, surname, username, image });
             } else {
-                setErrorMessage("Username is already taken.");
+                setErrorMessage(t('username_already_taken'));
                 setShowError(true);
             }
         }
@@ -155,7 +155,7 @@ export default function CreateProfileScreen() {
                     </View>
                     <View className="justify-center items-center px-7">
                         <Text className="font-inter-bold text-center text-xl pt-7 text-[#444343] dark:text-[#f2f2f2]">
-                            Add your profile picture and your username
+                            {t('add_profile_picture_and_username')}
                         </Text>
                     </View>
                     <View className="mt-8 mb-1 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
@@ -163,7 +163,7 @@ export default function CreateProfileScreen() {
                             @
                         </Text>
                         <TextInput
-                            placeholder='username'
+                            placeholder={t('username_placeholder')}
                             autoFocus={true}
                             selectionColor={cursorColorChange}
                             placeholderTextColor={placheHolderTextColorChange}
@@ -194,7 +194,7 @@ export default function CreateProfileScreen() {
                             onPress={nextPressed}
                             style={{ opacity: username.length < 1 ? 0.5 : 1.0 }}
                             className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
-                            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">Create account</Text>
+                            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">{t('create_account')}</Text>
                         </TouchableOpacity>
                     </View>
                 </KeyboardAvoidingView>

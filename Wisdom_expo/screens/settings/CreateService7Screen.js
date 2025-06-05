@@ -148,8 +148,8 @@ export default function CreateService7Screen() {
             </TouchableOpacity>
 
             <View className="justify-center items-center">
-              <Text className="mt-[55] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">Your experience</Text>
-              <Text className="mt-5 font-inter-bold text-[15px] text-center text-[#b6b5b5] dark:text-[#706f6e]">Show your entire career with this service</Text>
+                <Text className="mt-[55] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('your_experience')}</Text>
+                <Text className="mt-5 font-inter-bold text-[15px] text-center text-[#b6b5b5] dark:text-[#706f6e]">{t('show_your_entire_career_with_this_service')}</Text>
             </View>
 
             {experiences.length>0? (
@@ -194,7 +194,7 @@ export default function CreateService7Screen() {
 
               <View className="flex-1 justify-center items-center">
                 <TouchableOpacity onPress={() => setShowAddExperience(true)}>
-                  <Text className="mt-5 font-inter-bold text-[15px] text-center text-[#706F6E] dark:text-[#b6b5b5]">+ Add an experience</Text>
+                  <Text className="mt-5 font-inter-bold text-[15px] text-center text-[#706F6E] dark:text-[#b6b5b5]">{t('add_an_experience')}</Text>
                 </TouchableOpacity>
               </View>
 
@@ -207,10 +207,10 @@ export default function CreateService7Screen() {
                   </TouchableOpacity>
 
                   <View className="mb-5 w-full justify-center items-start">
-                    <Text className="mb-2 font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Position or study...</Text>
+                    <Text className="mb-2 font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('position_or_study_placeholder')}</Text>
                     <View className="w-full  px-5 justify-center items-start rounded-full bg-[#f2f2f2] dark:bg-[#272626]">           
                       <TextInput
-                        placeholder='Position or study...'
+                        placeholder={t('position_or_study_placeholder')}
                         selectionColor={cursorColorChange}
                         placeholderTextColor={placeHolderTextColorChange}
                         onChangeText={inputPositionChanged} 
@@ -222,10 +222,10 @@ export default function CreateService7Screen() {
                   </View>
 
                   <View className="mb-7 w-full justify-center items-start">
-                    <Text className="mb-2 font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Place or company...</Text>
+                    <Text className="mb-2 font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('place_or_company_placeholder')}</Text>
                     <View className="w-full px-5 justify-center items-start rounded-full bg-[#f2f2f2] dark:bg-[#272626]">           
                       <TextInput
-                        placeholder='Place or company...'
+                        placeholder={t('place_or_company_placeholder')}
                         selectionColor={cursorColorChange}
                         placeholderTextColor={placeHolderTextColorChange}
                         onChangeText={inputPlaceChanged} 
@@ -239,7 +239,7 @@ export default function CreateService7Screen() {
                   <View className="flex-row justify-center items-center">
 
                     <TouchableOpacity onPress={() => {setOpenStartDate(true); setShowStartPicker(true)}} className="flex-1 justify-center items-center">
-                      <Text className="font-inter-semibold text-[14px] text-center underline underline-offset-2 text-[#444343] dark:text-[#f2f2f2]">Started</Text>
+                      <Text className="font-inter-semibold text-[14px] text-center underline underline-offset-2 text-[#444343] dark:text-[#f2f2f2]">{t('started')}</Text>
                       <Text className="mt-3 font-inter-medium text-[14px] text-center  text-[#b6b5b5] dark:text-[#706f6e]">{startDate.toLocaleDateString()}</Text>
                     </TouchableOpacity>
 
@@ -259,10 +259,10 @@ export default function CreateService7Screen() {
                         {Platform.OS === 'ios' ? (
                           <View className="flex-row justify-between px-12">
                             <TouchableOpacity onPress={handleCancelStartDate}>
-                              <Text className="mt-3 font-inter-medium text-[15px] text-center text-[#b6b5b5] dark:text-[#706f6e]">Cancel</Text>
+                                <Text className="mt-3 font-inter-medium text-[15px] text-center text-[#b6b5b5] dark:text-[#706f6e]">{t('cancel')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={handleAcceptStartDate}>
-                              <Text className="mt-3 font-inter-semibold text-[15px] text-center text-[#706F6E] dark:text-[#b6b5b5]">Accept</Text>
+                                <Text className="mt-3 font-inter-semibold text-[15px] text-center text-[#706F6E] dark:text-[#b6b5b5]">{t('accept')}</Text>
                             </TouchableOpacity>
                           </View>
                         ) : null}
@@ -271,8 +271,8 @@ export default function CreateService7Screen() {
                     )}
 
                     <TouchableOpacity onPress={() => {setOpenEndDate(true); setShowEndPicker(true)}} className="flex-1 justify-center items-center">
-                      <Text className={`font-inter-semibold text-[14px] text-center underline underline-offset-2 ${endDate && endDate < startDate ? 'text-[#ff633e]' : 'text-[#444343] dark:text-[#f2f2f2]'}`}>End</Text>
-                      <Text className="mt-3 font-inter-medium text-[14px] text-center  text-[#b6b5b5] dark:text-[#706f6e]">{endDate? endDate.toLocaleDateString(): 'Still here'}</Text>
+                      <Text className={`font-inter-semibold text-[14px] text-center underline underline-offset-2 ${endDate && endDate < startDate ? 'text-[#ff633e]' : 'text-[#444343] dark:text-[#f2f2f2]'}`}>{t('end')}</Text>
+                      <Text className="mt-3 font-inter-medium text-[14px] text-center  text-[#b6b5b5] dark:text-[#706f6e]">{endDate? endDate.toLocaleDateString(): t('still_here')}</Text>
                     </TouchableOpacity>
 
                     {openEndDate && (
@@ -291,10 +291,10 @@ export default function CreateService7Screen() {
                         {Platform.OS === 'ios' ? (
                           <View className="flex-row justify-between px-12">
                             <TouchableOpacity onPress={handleCancelEndDate}>
-                              <Text className="mt-3 font-inter-medium text-[15px] text-center text-[#b6b5b5] dark:text-[#706f6e]">Cancel</Text>
+                              <Text className="mt-3 font-inter-medium text-[15px] text-center text-[#b6b5b5] dark:text-[#706f6e]">{t('cancel')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={handleAcceptEndDate}>
-                              <Text className="mt-3 font-inter-semibold text-[15px] text-center text-[#706F6E] dark:text-[#b6b5b5]">Accept</Text>
+                              <Text className="mt-3 font-inter-semibold text-[15px] text-center text-[#706F6E] dark:text-[#b6b5b5]">{t('accept')}</Text>
                             </TouchableOpacity>
                           </View>
                         ) : null}
@@ -312,7 +312,7 @@ export default function CreateService7Screen() {
                     onPress={() => handleSave()}
                   >
                     <Text className="mt-5 font-inter-bold text-[15px] text-center text-[#706F6E] dark:text-[#b6b5b5]">
-                      Save
+                      {t('save')}
                     </Text>
                   </TouchableOpacity>
 
@@ -327,7 +327,7 @@ export default function CreateService7Screen() {
         {/* Botones fijos abajo */}
         <View className="flex-row justify-center items-center pt-4 pb-6 px-6">
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center">
-            <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
+            <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -336,7 +336,7 @@ export default function CreateService7Screen() {
             style={{ opacity: 1 }}
             className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center"
           >
-            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
+              <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
           </TouchableOpacity>
         </View>
       

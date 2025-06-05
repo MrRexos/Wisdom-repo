@@ -80,15 +80,15 @@ export default function LogInScreen() {
         </View>
 
         <Text className="font-inter-bold text-xl pt-4 text-center text-[#444343] dark:text-[#f2f2f2]">
-            Set a new Password
+            {t('set_a_new_password')}
         </Text>
         <Text className="font-inter-semibold text-[15px] pt-10 text-[#444343] dark:text-[#f2f2f2]">
-          New Password
+          {t('new_password')}
         </Text>
         
         <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
             <TextInput 
-            placeholder='New password' 
+            placeholder={t('new_password')}
             autoFocus={true} 
             secureTextEntry={isSecurePassword}
             selectionColor={cursorColorChange} 
@@ -108,11 +108,11 @@ export default function LogInScreen() {
             </TouchableOpacity>
         </View>
         <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">
-          Confirm new password
+          {t('confirm_new_password')}
         </Text>
         <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
           <TextInput
-            placeholder='Type it again'
+            placeholder={t('type_it_again')}
             autoFocus={true}
             selectionColor={cursorColorChange}
             placeholderTextColor={placeHolderTextColorChange}
@@ -140,7 +140,7 @@ export default function LogInScreen() {
           onPress={nextPressed}
           style={{opacity: confirmPassword.length < 1 || password.length < 1 ? 0.5 : 1.0}}
           className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center">
-            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Safe and Login</Text>
+            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('safe_and_login')}</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAwareScrollView>

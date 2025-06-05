@@ -40,7 +40,7 @@ export default function CreateService9Screen() {
           </TouchableOpacity>
 
           <View className=" justify-center items-center ">
-            <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">Price</Text>
+              <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('price')}</Text>
           </View>
 
           <View className="flex-1 px-9 justify-center items-center">
@@ -66,7 +66,7 @@ export default function CreateService9Screen() {
           {priceValue && (
             <View className="pb-7 px-8 justify-center items-center">
               <TouchableOpacity onPress={() => setShowDetails(!showDetails)} className="flex-row justify-center items-center">
-                <Text className="mr-3 font-inter-semibold text-center text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">The client pays {finalPrice} €</Text>
+                  <Text className="mr-3 font-inter-semibold text-center text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{t('the_client_pays')} {finalPrice} €</Text>
                 {showDetails? (
                   <ChevronUpIcon size={15} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} strokeWidth="2.5" />
                 ) : (
@@ -77,20 +77,20 @@ export default function CreateService9Screen() {
                 <View className="justify-center items-start w-full">
 
                   <View className="mt-8 flex-row">
-                    <Text className="font-inter-medium  text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">You recibes</Text>
+                      <Text className="font-inter-medium  text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{t('you_recibes')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
                     <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">{priceValue} €</Text>
                   </View>
 
                   <View className="mt-6 flex-row">
-                    <Text className="font-inter-medium  text-[14px]text-[#b6b5b5] dark:text-[#706f6e]">Quality commission</Text>
+                      <Text className="font-inter-medium  text-[14px]text-[#b6b5b5] dark:text-[#706f6e]">{t('quality_commission')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
                     <Text className="text-[14px] font-inter-semibold text-[#74a450]">+{finalPrice-priceValue} €</Text>
                   </View>
                   
                   
                   <View className="mt-6 mb-6 flex-row">
-                    <Text className="font-inter-medium  text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">Client final price</Text>
+                      <Text className="font-inter-medium  text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{t('client_final_price')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
                     <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">{finalPrice} €</Text>
                   </View>
@@ -107,7 +107,7 @@ export default function CreateService9Screen() {
               style={{ opacity: 1 }}
               className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center"
             >
-              <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">Back</Text>
+                <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -116,7 +116,7 @@ export default function CreateService9Screen() {
               style={{ opacity: priceValue ? 1.0 : 0.5 }}
               className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center"
             >
-              <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Continue</Text>
+                <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
             </TouchableOpacity>
           </View>
         </View>

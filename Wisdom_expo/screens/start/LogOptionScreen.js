@@ -89,14 +89,14 @@ export default function LogOptionScreen() {
               <TouchableOpacity onPress={() => navigation.navigate('EnterEmail')} className="w-full px-8">
                   <View className="bg-[#f2f2f2] w-full h-[55] rounded-full items-center justify-center">
                     <Text className="font-inter-semibold text-[15px]text-[#444343] ">
-                        Register
+                        {t('register')}
                     </Text>
                   </View> 
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate('LogIn')} className="w-full px-8">
                   <View className="bg-[#f2f2f2]/10 w-full h-[55] rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
                     <Text className="font-inter-semibold text-[15px] text-[#f2f2f2]">
-                        Log In
+                        {t('log_in')}
                     </Text>
                   </View>
                   

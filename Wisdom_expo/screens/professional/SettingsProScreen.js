@@ -17,38 +17,6 @@ import CashStackIcon from '../../assets/CashStack';
 import SuticasePlusIcon from '../../assets/SuitcasePlus';
 
 
-const Sections = [
-  {
-    items: [
-      {id: 'account', icon: KeyIcon, label:'Account', type: 'select', link: 'EditAccount'},
-      {id: 'preferences', icon: Settings, label:'Preferences', type: 'select', link: 'Preferences'},
-      {id: 'notifications', icon: Bell, label:'Notifications', type: 'toggle'},
-      {id: 'directions', icon: MapPin, label:'Directions', type: 'select', link: 'Directions'},
-      {id: 'payments', icon: CashStackIcon, label:'Payments and refunds', type: 'select', link: 'Wallet'},
-    ]
-  },
-  {
-    items: [
-      {id: 'provideService', icon: SuticasePlusIcon, label:'Provide service', type: 'select', link: 'CreateService1'},
-      {id: 'switchClientVersion', icon: ArrowsRightLeftIcon, label:'Switch to client version', type: 'select', link: 'Home'},
-      {id: 'becomeExpert', icon: ExpertIcon, label:'Become an expert', type: 'select', link: 'TurnExpert'},
-    ]
-  },
-  // {
-  //   items: [
-  //     {id: 'giftCard', icon: GiftCardIcon, label:'Gift card', type: 'select'},
-  //     {id: 'inviteProfessionals', icon: UserPlus, label:'Invite professionals', type: 'select'},
-  //   ]
-  // },
-  {
-    items: [
-      {id: 'help', icon: Info, label:'Help', type: 'select', link: 'Help'},
-      // {id: 'rateUs', icon: Star, label:'Rate us', type: 'select'},
-      // {id: 'shareApp', icon: Share, label:'Share app', type: 'select'},
-      {id: 'followInsta', icon: Instagram, label:'Follow us in Instagram', type: 'link', link: 'https://www.instagram.com/wisdom__app/'},
-    ]
-  },
-];
 
 export default function SettingsScreen() {
   
@@ -64,6 +32,31 @@ export default function SettingsScreen() {
   const [form, setForm] = useState({
     notifications: false,
   });
+
+  const Sections = [
+    {
+      items: [
+        {id: 'account', icon: KeyIcon, label: t('account'), type: 'select', link: 'EditAccount'},
+        {id: 'preferences', icon: Settings, label: t('preferences'), type: 'select', link: 'Preferences'},
+        {id: 'notifications', icon: Bell, label: t('notifications'), type: 'toggle'},
+        {id: 'directions', icon: MapPin, label: t('directions'), type: 'select', link: 'Directions'},
+        {id: 'payments', icon: CashStackIcon, label: t('payments_and_refunds'), type: 'select', link: 'Wallet'},
+      ]
+    },
+    {
+      items: [
+        {id: 'provideService', icon: SuticasePlusIcon, label: t('provide_service'), type: 'select', link: 'CreateService1'},
+        {id: 'switchClientVersion', icon: ArrowsRightLeftIcon, label: t('switch_to_client_version'), type: 'select', link: 'Home'},
+        {id: 'becomeExpert', icon: ExpertIcon, label: t('become_an_expert'), type: 'select', link: 'TurnExpert'},
+      ]
+    },
+    {
+      items: [
+        {id: 'help', icon: Info, label: t('help'), type: 'select', link: 'Help'},
+        {id: 'followInsta', icon: Instagram, label: t('follow_us_in_instagram'), type: 'link', link: 'https://www.instagram.com/wisdom__app/'},
+      ]
+    },
+  ];
 
   useFocusEffect(
     useCallback(() => {
@@ -155,7 +148,7 @@ export default function SettingsScreen() {
       <ScrollView className="flex-1 px-6 pt-[55] gap-y-9">
         <View className="flex-row justify-between">
           <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
-              Profile
+              {t('profile')}
           </Text>
           <TouchableOpacity className="h-[43] w-[43] rounded-full items-center justify-center bg-[#fcfcfc] dark:bg-[#323131]">
             <Share height={22} strokeWidth={1.7} color={iconColor}/>
@@ -224,12 +217,12 @@ export default function SettingsScreen() {
           </View>
         ))}
         <View className="justify-center items-center w-full px-8">
-          <TouchableOpacity 
+          <TouchableOpacity
                   onPress={logOut}
                   className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-full h-[55] rounded-full items-center justify-center" >
-                      <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">Log out</Text>
+                      <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('log_out')}</Text>
           </TouchableOpacity>
-          <Text className="pt-4 pb-[85] text-[#e0e0e0] dark:text-[#3d3d3d]">Version 1.0.3</Text>
+          <Text className="pt-4 pb-[85] text-[#e0e0e0] dark:text-[#3d3d3d]">{t('version_1_0_3')}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

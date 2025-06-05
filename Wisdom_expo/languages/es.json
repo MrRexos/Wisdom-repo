@@ -1,58 +1,262 @@
 {
-    "translation": {
-        "skip_intro": "Saltar intro",
-        "hello": "hola",
-        "profile": "Perfil",
-        "get_started": "Empezar",
-        "by_tapping_get_started": "Al pulsar en \"Empezar\" aceptas nuestras",
-        "terms": "Condiciones",
-        "and": "y",
-        "privacy_policy": "Política de privacidad.",
-        "email_missing": "Falta el email o usuario",
-        "password_length_error": "La contraseña debe tener al menos 8 caracteres",
-        "password_incorrect": "Contraseña incorrecta.",
-        "wrong_user_or_password": "Usuario o contraseña incorrectos.",
-        "welcome_back": "Bienvenido de nuevo",
-        "email_or_username": "Email o usuario",
-        "password": "Contraseña",
-        "forgot_password_question": "¿Olvidaste la contraseña?",
-        "next": "Siguiente",
-        "enter_complete_name": "Introduce tu nombre completo",
-        "name_and_surname": "Nombre y Apellido",
-        "must_enter_surname": "Debes introducir tu apellido",
-        "must_enter_only_name_and_surname": "Debes introducir solo nombre y apellido",
-        "chat": "Chat",
-        "all": "Todos",
-        "professionals": "Profesionales",
-        "help": "Ayuda",
-        "no_chats_found": "No hay chats",
-        "write_to_professionals_and_talk_about_your_bookings": "Escribe a profesionales y habla sobre tus reservas.",
-        "your_message": "Tu mensaje",
-        "favorites": "Favoritos",
-        "are_you_sure_you_want_to_delete_this_list": "¿Estás seguro de que deseas eliminar esta lista?",
-        "list_will_disappear_for_everyone": "Esta lista no se podrá recuperar y desaparecerá para todos.",
-        "cancel": "Cancelar",
-        "delete": "Eliminar",
-        "empty": "vacía",
-        "service": "servicio",
-        "services": "servicios",
-        "user_not_found": "Usuario no encontrado",
-        "username_or_email_incorrect": "Nombre de usuario o email incorrectos.",
-        "ok": "Ok",
-        "change_name": "Cambiar nombre",
-        "done": "Hecho",
-        "username_or_email_placeholder": "Usuario o email...",
-        "change_name_placeholder": "Cambiar nombre...",
-        "share_this_list": "Compartir esta lista",
-        "share_in_read_only": "Compartir en solo lectura",
-        "change_the_name": "Cambiar el nombre",
-        "empty_list": "Lista vacía",
-        "save_services_to_this_list": "Guarda servicios en esta lista para acceder fácilmente a ellos.",
-        "add_a_note": "Añadir una nota...",
-        "fixed_price_prefix": "Precio fijo: ",
-        "price_on_budget": "Precio a convenir",
-        "per_hour": "/hora",
-        "review": "reseña",
-        "reviews": "reseñas"
-    }
+  "translation": {
+    "skip_intro": "Saltar intro",
+    "hello": "hola",
+    "profile": "Perfil",
+    "get_started": "Empezar",
+    "by_tapping_get_started": "Al pulsar en \"Empezar\" aceptas nuestras",
+    "terms": "Condiciones",
+    "and": "y",
+    "privacy_policy": "Política de privacidad.",
+    "email_missing": "Falta el email o usuario",
+    "password_length_error": "La contraseña debe tener al menos 8 caracteres",
+    "password_incorrect": "Contraseña incorrecta.",
+    "wrong_user_or_password": "Usuario o contraseña incorrectos.",
+    "welcome_back": "Bienvenido de nuevo",
+    "email_or_username": "Email o usuario",
+    "password": "Contraseña",
+    "forgot_password_question": "¿Olvidaste la contraseña?",
+    "next": "Siguiente",
+    "enter_complete_name": "Introduce tu nombre completo",
+    "name_and_surname": "Nombre y Apellido",
+    "must_enter_surname": "Debes introducir tu apellido",
+    "must_enter_only_name_and_surname": "Debes introducir solo nombre y apellido",
+    "chat": "Chat",
+    "all": "Todos",
+    "professionals": "Profesionales",
+    "help": "Ayuda",
+    "no_chats_found": "No hay chats",
+    "write_to_professionals_and_talk_about_your_bookings": "Escribe a profesionales y habla sobre tus reservas.",
+    "your_message": "Tu mensaje",
+    "favorites": "Favoritos",
+    "are_you_sure_you_want_to_delete_this_list": "¿Estás seguro de que deseas eliminar esta lista?",
+    "list_will_disappear_for_everyone": "Esta lista no se podrá recuperar y desaparecerá para todos.",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "empty": "vacía",
+    "service": "servicio",
+    "services": "servicios",
+    "user_not_found": "Usuario no encontrado",
+    "username_or_email_incorrect": "Nombre de usuario o email incorrectos.",
+    "ok": "Ok",
+    "change_name": "Cambiar nombre",
+    "done": "Hecho",
+    "username_or_email_placeholder": "Usuario o email...",
+    "change_name_placeholder": "Cambiar nombre...",
+    "share_this_list": "Compartir esta lista",
+    "share_in_read_only": "Compartir en solo lectura",
+    "change_the_name": "Cambiar el nombre",
+    "empty_list": "Lista vacía",
+    "save_services_to_this_list": "Guarda servicios en esta lista para acceder fácilmente a ellos.",
+    "add_a_note": "Añadir una nota...",
+    "fixed_price_prefix": "Precio fijo: ",
+    "price_on_budget": "Precio a convenir",
+    "per_hour": "/hora",
+    "review": "reseña",
+    "reviews": "Reseñas",
+    "calendar": "Calendario",
+    "events": "Eventos",
+    "no_events_this_day": "No hay eventos este día",
+    "your_listings": "Tus servicios",
+    "listings_not_found": "Servicios no encontrados",
+    "publish_service_to_see_them": "Publica un servicio para verlos",
+    "place": "Lugar",
+    "welcome_comma": "Bienvenido,",
+    "publish_a_service": "Publicar un servicio",
+    "your_bookings": "Tus reservas",
+    "no_services_found": "No se encontraron servicios",
+    "upcoming": "Próximos",
+    "requested": "Solicitados",
+    "completed": "Completados",
+    "canceled": "Cancelados",
+    "in_progress": "En progreso",
+    "account": "Cuenta",
+    "preferences": "Preferencias",
+    "notifications": "Notificaciones",
+    "directions": "Direcciones",
+    "payments_and_refunds": "Pagos y reembolsos",
+    "provide_service": "Ofrecer servicio",
+    "switch_to_client_version": "Cambiar a versión cliente",
+    "become_an_expert": "Hazte experto",
+    "follow_us_in_instagram": "Síguenos en Instagram",
+    "log_out": "Cerrar sesión",
+    "version_1_0_3": "Versión 1.0.3",
+    "upcoming_services": "Próximos servicios",
+    "no_upcoming_reservations_yet": "Parece que aún no has hecho ninguna reserva próxima.",
+    "no_requested_services_at_the_moment": "No hay servicios solicitados por el momento.",
+    "no_completed_services_yet": "Aún no has completado ningún servicio.",
+    "no_services_have_been_canceled": "No se han cancelado servicios.",
+    "no_services_are_currently_in_progress": "No hay servicios en curso actualmente.",
+    "no_reservations_yet": "Parece que aún no has hecho ninguna reserva.",
+    "email": "Correo",
+    "check_your_inbox": "Revisa tu buzón",
+    "email_sent_reset": "Te enviamos un correo para que puedas crear una nueva contraseña.",
+    "open_mail": "Abrir correo",
+    "need_help": "¿Necesitas ayuda?",
+    "contact_support": "Contactar soporte",
+    "enter_your_email": "Introduce tu correo",
+    "email_already_in_use": "Correo ya en uso",
+    "email_not_valid": "Correo no válido",
+    "set_a_password": "Elige una contraseña",
+    "eight_characters_or_more": "8 caracteres o más",
+    "password_at_least_eight": "La contraseña debe tener al menos 8 caracteres",
+    "restart_password": "Restablecer contraseña",
+    "reset_link_instruction": "Introduce tu correo o usuario y te enviaremos un enlace para restablecer tu contraseña.",
+    "send_link": "Enviar enlace",
+    "add_profile_picture_and_username": "Añade tu foto de perfil y tu nombre de usuario",
+    "username_placeholder": "usuario",
+    "username_taken": "Nombre de usuario en uso.",
+    "username_already_taken": "El nombre de usuario ya está en uso.",
+    "no_capital_letters": "No puede haber mayúsculas.",
+    "spaces_not_allowed_use_underscore": "El nombre de usuario no puede tener espacios, usa _",
+    "upload_profile_picture": "Debes subir una foto de perfil.",
+    "please_select_image_first": "Selecciona una imagen primero",
+    "create_account": "Crear cuenta",
+    "register": "Registrarse",
+    "log_in": "Iniciar sesión",
+    "set_a_new_password": "Elige una nueva contraseña",
+    "new_password": "Nueva contraseña",
+    "confirm_new_password": "Confirmar nueva contraseña",
+    "type_it_again": "Vuelve a escribirla",
+    "safe_and_login": "Guardar e iniciar sesión",
+    "stay_informed": "Mantente informado",
+    "notifications_subtitle": "Recibe información y recordatorios de tus servicios",
+    "allow": "Permitir",
+    "allow_wisdom_to_access_gallery": "Permitir que \"Wisdom\" acceda a tu galería",
+    "need_gallery_access": "Necesitamos acceso a tu galería para que puedas elegir una foto de perfil.",
+    "terms_and_conditions": "Términos y condiciones",
+    "settings": "Ajustes",
+    "privacy_policy_title": "Política de privacidad",
+    "payment_method": "Método de pago",
+    "card_number": "Número de tarjeta",
+    "expiration_date": "Fecha de expiración",
+    "cvv": "CVV",
+    "save": "Guardar",
+    "add_credit_card": "Añadir tarjeta de crédito",
+    "select_a_date": "Selecciona una fecha",
+    "start_time": "Hora de inicio",
+    "duration": "Duración",
+    "undefined_time": "Hora sin definir",
+    "accept": "Aceptar",
+    "your_directions": "Tus direcciones",
+    "no_directions_found": "No se encontraron direcciones",
+    "booking_description": "Descripción de la reserva",
+    "clear": "Borrar",
+    "description_placeholder": "Descripción...",
+    "others": "Otros",
+    "operation_of_the_reserves": "Funcionamiento de las reservas",
+    "cancellation_policy": "Política de cancelación",
+    "follow_the_rules": "Sigue las normas",
+    "contact_wisdom": "Contactar con Wisdom",
+    "continue_to_payment": "Continuar al pago",
+    "add_payment_method": "Añadir método de pago",
+    "booking_successfully_completed": "Reserva completada con éxito",
+    "gallery": "Galería",
+    "recent_searches": "Búsquedas recientes",
+    "search_a_service": "Buscar un servicio...",
+    "clear_caps": "BORRAR",
+    "confirm": "Confirmar",
+    "confirm_your_direction": "Confirma tu dirección",
+    "search_a_direction": "Buscar una dirección...",
+    "country_region": "País/región",
+    "state": "Provincia",
+    "city_town": "Ciudad/pueblo",
+    "street": "Calle",
+    "postal_code": "Código postal",
+    "street_number": "Número",
+    "floor_door_stair_optional": "Piso, puerta, escalera (opcional)"
+    ,"switch_to_professional_version": "Cambiar a versión profesional"
+    ,"dark_mode": "Modo oscuro"
+    ,"language": "Idioma"
+    ,"back": "Atrás"
+    ,"start": "Empezar"
+    ,"continue": "Continuar"
+    ,"create_your_service": "Crea tu servicio,"
+    ,"tell_the_world_what_you_do": "cuenta al mundo a qué te dedicas"
+    ,"what_is_the_title_of_your_service": "¿Cuál es el título de tu servicio?"
+    ,"this_will_be_the_public_title": "Este será el título público"
+    ,"service_title_placeholder": "Título del servicio..."
+    ,"choose_family": "Elige familia"
+    ,"choose_category": "Elige categoría"
+    ,"what_family_and_category_does_it_belong_to": "¿A qué familia y categoría pertenece?"
+    ,"add_a_description": "Añade una descripción"
+    ,"description_placeholder": "Descripción..."
+    ,"faq": "FAQ"
+    ,"write_us": "Escríbenos"
+    ,"edit_direction": "Editar dirección"
+    ,"delete_account": "Eliminar cuenta"
+    ,"are_you_sure_you_want_to_delete_this_account": "¿Seguro que quieres eliminar esta cuenta?"
+    ,"doing_this_will_delete_all_your_data": "Hacer esto eliminará permanentemente todos tus datos"
+    ,"bookings": "Reservas"
+    ,"payment_methods": "Métodos de pago"
+    ,"money_in_wallet": "Dinero en la cartera:"
+    ,"edit_profile": "Editar perfil"
+    ,"must_enter_name_and_surname": "Debes introducir tu nombre y apellido"
+    ,"must_enter_your_surname": "Debes introducir tu apellido"
+    ,"must_enter_only_name_and_surname": "Debes introducir solo tu nombre y apellido"
+    ,"update_profile_photo": "Actualizar foto de perfil"
+    ,"username": "Nombre de usuario"
+    ,"full_name": "Nombre completo"
+    ,"error_updating_user_please_try_again": "Error al actualizar el usuario. Por favor, inténtalo de nuevo."
+    ,"explore_plans": "Explorar planes"
+    ,"overview": "Resumen"
+    ,"confirm_your_expert_plan": "Confirma tu plan experto"
+    ,"your_next_bill_will_be_on": "Tu próxima factura será el"
+    ,"give_some_information": "Da alguna información"
+    ,"languages": "Idiomas"
+    ,"about_you": "Sobre ti"
+    ,"are_you_an_individual": "¿Eres un particular?"
+    ,"hobbies_optional_placeholder": "Aficiones (opcional)..."
+    ,"tags": "Etiquetas"
+    ,"add_a_tag_placeholder": "Añade una etiqueta..."
+    ,"maximum_15_tags": "Máximo 15 etiquetas"
+    ,"locate_your_service": "Ubica tu servicio"
+    ,"exact_location_never_public": "La ubicación exacta nunca se hará pública"
+    ,"action_rate_dash": "Radio de acción -"
+    ,"full": "completo"
+    ,"unlocated_service": "Servicio sin ubicación"
+    ,"your_experience": "Tu experiencia"
+    ,"show_your_entire_career_with_this_service": "Muestra toda tu carrera con este servicio"
+    ,"add_an_experience": "+ Añadir una experiencia"
+    ,"position_or_study_placeholder": "Posición o estudio..."
+    ,"place_or_company_placeholder": "Lugar o empresa..."
+    ,"started": "Empezó"
+    ,"end": "Fin"
+    ,"still_here": "Actualmente"
+    ,"upload_some_photos": "Sube algunas fotos"
+    ,"we_recommend_you_upload_at_least_five_images": "Te recomendamos subir al menos 5 imágenes"
+    ,"add_more": "+ Añadir más"
+    ,"main_photo": "Foto principal"
+    ,"permission_denied": "Permiso denegado"
+    ,"need_gallery_access_service": "Necesitamos acceso a tu galería para que puedas subir imágenes y mostrar tus servicios."
+    ,"price": "Precio"
+    ,"the_client_pays": "El cliente paga"
+    ,"you_recibes": "Tú recibes"
+    ,"quality_commission": "Comisión de calidad"
+    ,"client_final_price": "Precio final del cliente"
+    ,"price_per_hour": "Precio por hora"
+    ,"service_charged_hourly": "El servicio se cobra por hora"
+    ,"price_according_to_budget": "Precio según presupuesto"
+    ,"price_by_professional_budget": "El precio se determinará según el presupuesto del profesional"
+    ,"fixed_price": "Precio fijo"
+    ,"non_negotiable_price": "Un único precio no negociable por todo el servicio"
+    ,"price_type": "Tipo de precio"
+    ,"allow_discounts": "Permitir descuentos"
+    ,"dont_add_discounts": "No añadir descuentos"
+    ,"add_discounts_for_recurrent_bookings": "Añadir descuentos para reservas recurrentes"
+    ,"allow_consults": "Permitir consultas"
+    ,"dont_allow_consults": "No permitir consultas"
+    ,"allows_clients_to_book_personalized_consultations": "Permite a los clientes reservar consultas personalizadas"
+    ,"via": "Vía"
+    ,"example_zoom_meet_in_person": "Ej. Zoom, Meet, En persona..."
+    ,"allow_clients_to_ask": "Permitir preguntas"
+    ,"allows_clients_to_write_you_3_messages_without_booking": "Permite a tus clientes enviarte 3 mensajes sin reservar"
+    ,"dont_allow_to_ask": "No permitir preguntas"
+    ,"allow_to_ask": "Permitir preguntas"
+    ,"remember": "Recuerda"
+    ,"communications_warning": "todas las comunicaciones y pagos deben hacerse a través de la aplicación, de lo contrario recibirás strikes que pueden llevar a la suspensión de la cuenta y violaciones legales."
+    ,"accept_wisdom_terms": "Aceptar términos de Wisdom"
+    ,"check_your_service": "Revisa tu servicio"
+    ,"publish_service": "Publicar servicio"
+  }
 }

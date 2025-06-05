@@ -20,11 +20,11 @@ export default function ServicesScreen() {
   const [userId, setUserId] = useState();
 
   const suggestions = [
-    { label: 'Upcoming', value:'accepted', id:1 },
-    { label: 'Requested', value:'requested', id:2 },
-    { label: 'Completed', value:'completed', id:3 },
-    { label: 'Canceled', value:'canceled', id:4 },
-    { label: 'In progress', value:'progress', id:5 },
+    { label: t('upcoming'), value:'accepted', id:1 },
+    { label: t('requested'), value:'requested', id:2 },
+    { label: t('completed'), value:'completed', id:3 },
+    { label: t('canceled'), value:'canceled', id:4 },
+    { label: t('in_progress'), value:'progress', id:5 },
   ];
 
   useFocusEffect(
@@ -116,7 +116,7 @@ export default function ServicesScreen() {
 
         <View className="mb-4 px-6 w-full flex-row justify-between items-center">
           <Text className="mb-2 font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
-            Services
+            {t('services')}
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Calendar')} className="p-[10] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
             <CalendarDaysIcon height={21} width={21} color={iconColor} strokeWidth={1.7}/>
@@ -144,20 +144,20 @@ export default function ServicesScreen() {
           <View className="flex-1 justify-center items-center">
             <Clipboard height={55} width={60} fill={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
             <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
-              {selectedStatus === 'accepted' ? 'Upcoming services' : 'No services found'}
+              {selectedStatus === 'accepted' ? t('upcoming_services') : t('no_services_found')}
             </Text>
             <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[260]">
               {selectedStatus === 'accepted'
-                ? "It looks like you haven't made any upcoming reservations yet."
+                ? t('no_upcoming_reservations_yet')
                 : selectedStatus === 'requested'
-                ? "No requested services at the moment."
+                ? t('no_requested_services_at_the_moment')
                 : selectedStatus === 'completed'
-                ? "You haven't completed any services yet."
+                ? t('no_completed_services_yet')
                 : selectedStatus === 'canceled'
-                ? "No services have been canceled."
+                ? t('no_services_have_been_canceled')
                 : selectedStatus === 'progress'
-                ? "No services are currently in progress."
-                : "It looks like you haven't made any reservations yet."}
+                ? t('no_services_are_currently_in_progress')
+                : t('no_reservations_yet')}
             </Text>
           </View>
         ) : (

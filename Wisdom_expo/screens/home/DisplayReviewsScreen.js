@@ -53,7 +53,7 @@ export default function DisplayReviewsScreen() {
             </TouchableOpacity>
           </View>
           <View className="flex-1 justify-center items-center">
-            <Text className="font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2]">Reviews</Text>
+            <Text className="font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2]">{t('reviews')}</Text>
           </View>
           <View className="flex-1 justify-center items-start"></View>
         </View>
