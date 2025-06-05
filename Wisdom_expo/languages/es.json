@@ -20,6 +20,13 @@
         "enter_complete_name": "Introduce tu nombre completo",
         "name_and_surname": "Nombre y Apellido",
         "must_enter_surname": "Debes introducir tu apellido",
-        "must_enter_only_name_and_surname": "Debes introducir solo nombre y apellido"
+        "must_enter_only_name_and_surname": "Debes introducir solo nombre y apellido",
+        "chat": "Chat",
+        "all": "Todos",
+        "professionals": "Profesionales",
+        "help": "Ayuda",
+        "no_chats_found": "No hay chats",
+        "write_to_professionals_and_talk_about_your_bookings": "Escribe a profesionales y habla sobre tus reservas.",
+        "your_message": "Tu mensaje"
     }
 }

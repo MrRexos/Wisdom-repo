@@ -20,6 +20,13 @@
         "enter_complete_name": "Enter your complete name",
         "name_and_surname": "Name and Surname",
         "must_enter_surname": "Must enter your surname",
-        "must_enter_only_name_and_surname": "Must enter only your name and surname"
+        "must_enter_only_name_and_surname": "Must enter only your name and surname",
+        "chat": "Chat",
+        "all": "All",
+        "professionals": "Professionals",
+        "help": "Help",
+        "no_chats_found": "No chats found",
+        "write_to_professionals_and_talk_about_your_bookings": "Write to professionals and talk about your bookings.",
+        "your_message": "Your message"
     }
 }
