@@ -3,7 +3,7 @@ import { SafeAreaView, View, Text, Linking, TextInput, KeyboardAvoidingView, Tou
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
-import i18n from '../../languages/i18n.js';
+import i18n from '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
