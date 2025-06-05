@@ -2,6 +2,24 @@
     "translation": {
         "skip_intro": "Saltar intro",
         "hello": "hola",
-        "profile": "Perfil"
+        "profile": "Perfil",
+        "get_started": "Empezar",
+        "by_tapping_get_started": "Al pulsar en \"Empezar\" aceptas nuestras",
+        "terms": "Condiciones",
+        "and": "y",
+        "privacy_policy": "Política de privacidad.",
+        "email_missing": "Falta el email o usuario",
+        "password_length_error": "La contraseña debe tener al menos 8 caracteres",
+        "password_incorrect": "Contraseña incorrecta.",
+        "wrong_user_or_password": "Usuario o contraseña incorrectos.",
+        "welcome_back": "Bienvenido de nuevo",
+        "email_or_username": "Email o usuario",
+        "password": "Contraseña",
+        "forgot_password_question": "¿Olvidaste la contraseña?",
+        "next": "Siguiente",
+        "enter_complete_name": "Introduce tu nombre completo",
+        "name_and_surname": "Nombre y Apellido",
+        "must_enter_surname": "Debes introducir tu apellido",
+        "must_enter_only_name_and_surname": "Debes introducir solo nombre y apellido"
     }
 }

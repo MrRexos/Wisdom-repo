@@ -36,23 +36,23 @@ export default function GetStartedScreen() {
               </TouchableOpacity>
               <View className="w-[250]">
 
-                      <Text className="pt-3 text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center">By tapping on "Get Started", you agree to our </Text>
+                      <Text className="pt-3 text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center">{t('by_tapping_get_started')} </Text>
                       <View className="pb-5 flex-row justify-center items-center">
                         <TouchableOpacity 
                             hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
                             onPress={() => navigation.navigate('Terms')}
                         >
                             <Text className="text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center underline">
-                                Terms
+                                {t('terms')}
                             </Text>
                         </TouchableOpacity>
-                        <Text className="text-[11px] mx-1 font-inter-medium text-[#f2f2f2] opacity-60 text-center">and</Text>
+                        <Text className="text-[11px] mx-1 font-inter-medium text-[#f2f2f2] opacity-60 text-center">{t('and')}</Text>
                         <TouchableOpacity 
                             onPress={() => navigation.navigate('PrivacyPolicy')} 
                             hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
                         >
                             <Text className="text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center underline">
-                                Privacy Policy.
+                                {t('privacy_policy')}
                             </Text>
                         </TouchableOpacity>
                       </View>

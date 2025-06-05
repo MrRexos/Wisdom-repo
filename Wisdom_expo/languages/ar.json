@@ -2,6 +2,24 @@
     "translation": {
         "skip_intro": "تخطي المقدمة",
         "hello": "مرحباً",
-        "profile": "الملف الشخصي"
+        "profile": "الملف الشخصي",
+        "get_started": "ابدأ",
+        "by_tapping_get_started": "بالنقر على \"ابدأ\" أنت توافق على",
+        "terms": "الشروط",
+        "and": "و",
+        "privacy_policy": "سياسة الخصوصية.",
+        "email_missing": "البريد الإلكتروني أو اسم المستخدم مفقود",
+        "password_length_error": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+        "password_incorrect": "كلمة المرور غير صحيحة.",
+        "wrong_user_or_password": "اسم المستخدم أو كلمة المرور غير صحيحة.",
+        "welcome_back": "مرحباً بعودتك",
+        "email_or_username": "البريد الإلكتروني أو اسم المستخدم",
+        "password": "كلمة المرور",
+        "forgot_password_question": "هل نسيت كلمة المرور؟",
+        "next": "التالي",
+        "enter_complete_name": "أدخل اسمك الكامل",
+        "name_and_surname": "الاسم واللقب",
+        "must_enter_surname": "يجب إدخال اللقب",
+        "must_enter_only_name_and_surname": "أدخل الاسم واللقب فقط"
     }
 }

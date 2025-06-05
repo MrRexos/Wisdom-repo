@@ -2,6 +2,24 @@
     "translation": {
         "skip_intro": "跳过介绍",
         "hello": "你好",
-        "profile": "概况"
+        "profile": "概况",
+        "get_started": "开始",
+        "by_tapping_get_started": "点击\"开始\"即表示同意我们的",
+        "terms": "条款",
+        "and": "和",
+        "privacy_policy": "隐私政策。",
+        "email_missing": "缺少邮箱或用户名",
+        "password_length_error": "密码至少需要8个字符",
+        "password_incorrect": "密码不正确。",
+        "wrong_user_or_password": "用户名或密码不正确。",
+        "welcome_back": "欢迎回来",
+        "email_or_username": "邮箱或用户名",
+        "password": "密码",
+        "forgot_password_question": "忘记密码？",
+        "next": "下一步",
+        "enter_complete_name": "输入你的全名",
+        "name_and_surname": "名字和姓氏",
+        "must_enter_surname": "必须输入姓氏",
+        "must_enter_only_name_and_surname": "只输入名字和姓氏"
     }
 }

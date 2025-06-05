@@ -3,6 +3,23 @@
         "skip_intro": "Skip intro",
         "hello": "hello",
         "profile": "Profile",
-        "get_started": "Get Started"
+        "get_started": "Get Started",
+        "by_tapping_get_started": "By tapping on \"Get Started\", you agree to our",
+        "terms": "Terms",
+        "and": "and",
+        "privacy_policy": "Privacy Policy.",
+        "email_missing": "Email or username is missing",
+        "password_length_error": "Password must be at least 8 characters long",
+        "password_incorrect": "Password incorrect.",
+        "wrong_user_or_password": "Wrong user or password.",
+        "welcome_back": "Welcome back",
+        "email_or_username": "Email or username",
+        "password": "Password",
+        "forgot_password_question": "Forgot Password?",
+        "next": "Next",
+        "enter_complete_name": "Enter your complete name",
+        "name_and_surname": "Name and Surname",
+        "must_enter_surname": "Must enter your surname",
+        "must_enter_only_name_and_surname": "Must enter only your name and surname"
     }
 }

@@ -2,6 +2,24 @@
     "translation": {
         "skip_intro": "Sauter l'intro",
         "hello": "bonjour",
-        "profile": "Profil"
+        "profile": "Profil",
+        "get_started": "Commencer",
+        "by_tapping_get_started": "En appuyant sur \"Commencer\", vous acceptez nos",
+        "terms": "Conditions",
+        "and": "et",
+        "privacy_policy": "Politique de confidentialité.",
+        "email_missing": "Email ou utilisateur manquant",
+        "password_length_error": "Le mot de passe doit comporter au moins 8 caractères",
+        "password_incorrect": "Mot de passe incorrect.",
+        "wrong_user_or_password": "Utilisateur ou mot de passe incorrect.",
+        "welcome_back": "Bon retour",
+        "email_or_username": "Email ou utilisateur",
+        "password": "Mot de passe",
+        "forgot_password_question": "Mot de passe oublié ?",
+        "next": "Suivant",
+        "enter_complete_name": "Entrez votre nom complet",
+        "name_and_surname": "Nom et Prénom",
+        "must_enter_surname": "Vous devez entrer votre prénom",
+        "must_enter_only_name_and_surname": "Entrez seulement nom et prénom"
     }
 }
