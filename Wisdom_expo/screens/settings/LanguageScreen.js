@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Text, View, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import '../../languages/i18n';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';

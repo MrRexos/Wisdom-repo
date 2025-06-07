@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
+import '../../languages/i18n';
 import { getDataLocally } from '../../utils/asyncStorage';
 
 const WelcomeVideoScreen = () => {

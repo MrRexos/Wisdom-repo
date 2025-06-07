@@ -39,9 +39,9 @@ export default function App() {
   if (!fontsLoaded) {
     return null; // Puedes mostrar un componente de carga aquí si lo deseas
   }
-  
+
   return (
-    <Navigation/>
+    <Navigation />
   );
 }
 
