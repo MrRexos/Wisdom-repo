@@ -6,22 +6,23 @@ import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon } from 'react-native-heroicons/outline';
 
-const Sections = [
-  {
-    items: [
-      { id: 'question1', label: 'Can I book services without being a professional?', answer: 'Of course, both professionals and clients can book all the services they are interested in.' },
-      { id: 'question2', label: 'How does a booking work?', answer: `Once you have booked the service, the professional will have 48 hours to confirm the request. If he/she refuses or does not reply, the deposit will be refunded in full.
-
-If you accept it, at the end of the service you will have to pay the full price of the service.`},
-    ],
-  },
-];
 
 export default function FAQScreen() {
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
+
+  const Sections = [
+    {
+      items: [
+        { id: 'question1', label: 'Can I book services without being a professional?', answer: 'Of course, both professionals and clients can book all the services they are interested in.' },
+        { id: 'question2', label: 'How does a booking work?', answer: `Once you have booked the service, the professional will have 48 hours to confirm the request. If he/she refuses or does not reply, the deposit will be refunded in full.
+  
+  If you accept it, at the end of the service you will have to pay the full price of the service.`},
+      ],
+    },
+  ];
 
   // Estado para almacenar qué preguntas están abiertas
   const [expandedQuestions, setExpandedQuestions] = useState({});

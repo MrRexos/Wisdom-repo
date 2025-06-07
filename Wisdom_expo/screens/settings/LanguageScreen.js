@@ -9,18 +9,7 @@ import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Check } from "react-native-feather";
 
-const Sections = [
-  {
-    items: [
-      { id: 'en', label: 'English' },
-      { id: 'es', label: 'Español' },
-      { id: 'ca', label: 'Català' },
-      { id: 'fr', label: 'Français' },
-      { id: 'zh', label: '中文' },
-      { id: 'ar', label: 'العربية' },
-    ],
-  },
-];
+
 
 export default function LanguageScreen() {
   const { colorScheme } = useColorScheme();
@@ -28,6 +17,19 @@ export default function LanguageScreen() {
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
+
+  const Sections = [
+    {
+      items: [
+        { id: 'en', label: 'English' },
+        { id: 'es', label: 'Español' },
+        { id: 'ca', label: 'Català' },
+        { id: 'fr', label: 'Français' },
+        { id: 'zh', label: '中文' },
+        { id: 'ar', label: 'العربية' },
+      ],
+    },
+  ];
 
   const changeLanguage = async (language) => {
     setSelectedLanguage(language);  // Cambiar el estado localmente

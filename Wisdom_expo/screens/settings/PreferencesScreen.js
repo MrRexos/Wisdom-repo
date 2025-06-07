@@ -9,15 +9,6 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import {ChevronRightIcon, ChevronLeftIcon} from 'react-native-heroicons/outline';
 
 
-const Sections = [
-  {
-    items: [
-      {id: 'darkMode', label: t('dark_mode'), type: 'toggle'},
-      {id: 'language', label: t('language'), type: 'select', link: 'Language'},
-    ]
-  },
-];
-
 
 export default function PreferencesScreen() {
 
@@ -34,6 +25,15 @@ export default function PreferencesScreen() {
     zh: '中文',
     ar: 'العربية',
   };
+
+  const Sections = [
+    {
+      items: [
+        {id: 'darkMode', label: t('dark_mode'), type: 'toggle'},
+        {id: 'language', label: t('language'), type: 'select', link: 'Language'},
+      ]
+    },
+  ];
   
   const [form, setForm] = useState({
     darkMode: colorScheme === 'dark',
