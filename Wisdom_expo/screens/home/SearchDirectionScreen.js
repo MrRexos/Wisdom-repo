@@ -105,7 +105,7 @@ export default function SearchDirectionScreen() {
         }
       );
       const locationSuggestion = {
-        description: 'Your location',
+        description: t('your_location'),
         place_id: 'your_location',
       };
 
@@ -211,7 +211,7 @@ export default function SearchDirectionScreen() {
     try {
       const history = await getDataLocally('historySearchedDirections');  
       const locationSuggestion = {
-        description: 'Your location',
+        description: t('your_location'),
         place_id: 'your_location',
       };
       const parsedHistory = history ? JSON.parse(history) : [];

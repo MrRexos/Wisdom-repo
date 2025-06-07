@@ -379,19 +379,19 @@ export default function ServiceProfileScreen() {
     // Validaciones para mostrar mensajes cuando no hay valores seleccionados
 
     if (timeUndefined===true) {
-      return "Book without date";
-    } 
+      return t('book_without_date');
+    }
     if (!selectedDay && !selectedTime && !duration) {
-      return "Select a date, time, and duration";
-    } 
+      return t('select_date_time_and_duration');
+    }
     if (!selectedDay) {
-      return "Select a date";
+      return t('select_a_date');
     }
     if (!selectedTime) {
-      return "Select a time";
+      return t('select_a_time');
     }
     if (!duration) {
-      return "Select a duration";
+      return t('select_a_duration');
     }
   
     // 1. Crear un objeto Date combinando selectedDay y selectedTime
@@ -955,7 +955,7 @@ export default function ServiceProfileScreen() {
 
             <View className="justify-center items-center w-full">
               <GlobeAltIcon height={80} width={80} strokeWidth={1.2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
-              <Text className="mt-3 font-inter-semibold text-[18px] text-[#706F6E] dark:text-[#b6b5b5]">Unlocated or online service</Text>  
+              <Text className="mt-3 font-inter-semibold text-[18px] text-[#706F6E] dark:text-[#b6b5b5]">{t('unlocated_or_online_service')}</Text>
             </View>
 
           ) : (
@@ -1145,7 +1145,7 @@ export default function ServiceProfileScreen() {
                   style={{ opacity: 1 }}
                   className={`mr-2 bg-[#E0E0E0] dark:bg-[#3d3d3d] ${serviceData.user_can_consult === 0 ? 'w-full' : 'w-1/3'} h-[40] rounded-full items-center justify-center`}
                   >
-                    <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Write</Text>
+                    <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('write')}</Text>
                   </TouchableOpacity>
 
                 )}
@@ -1157,7 +1157,7 @@ export default function ServiceProfileScreen() {
                   style={{ opacity: 1 }}
                   className={`bg-[#444343] dark:bg-[#f2f2f2] ${serviceData.user_can_ask === 0 ? 'w-full' : 'w-2/3'} h-[40] rounded-full items-center justify-center`}
                   >
-                    <Text className="font-inter-semibold text-[13px] text-[#f2f2f2] dark:text-[#272626]">Book a consult</Text>
+                    <Text className="font-inter-semibold text-[13px] text-[#f2f2f2] dark:text-[#272626]">{t('book_a_consult')}</Text>
                   </TouchableOpacity>
                 )}  
 

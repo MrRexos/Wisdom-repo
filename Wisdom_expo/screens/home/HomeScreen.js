@@ -295,11 +295,11 @@ export default function HomeScreen() {
             <View className="h-[19]" />
           </View>
           <Image source={require('../../assets/defaultProfilePic.jpg')} className="mb-4 w-[90] h-[90] rounded-full bg-slate-500" />
-          <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Become a professional</Text>
-          <Text className="mb-3 font-inter-medium text-[10px] text-[#706F6E] dark:text-[#b6b5b5]">And make money serving</Text>
+          <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('become_a_professional')}</Text>
+          <Text className="mb-3 font-inter-medium text-[10px] text-[#706F6E] dark:text-[#b6b5b5]">{t('make_money_serving')}</Text>
           <View className="justify-center items-center">
             <TouchableOpacity onPress={() => navigation.navigate('CreateService1')} className="py-2 px-5 justify-center items-center bg-[#444343] dark:bg-[#f2f2f2] rounded-lg" >
-              <Text className="font-inter-semibold text-[13px] text-[#f2f2f2] dark:text-[#272626]">Create</Text>
+              <Text className="font-inter-semibold text-[13px] text-[#f2f2f2] dark:text-[#272626]">{t('create')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -317,7 +317,7 @@ export default function HomeScreen() {
           </TouchableOpacity>
           <View className="justify-center items-center">
             <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.service_id })} className="py-2 px-5 justify-center items-center bg-[#444343] dark:bg-[#f2f2f2] rounded-lg" >
-              <Text className="font-inter-semibold text-[13px] text-[#f2f2f2] dark:text-[#272626]">Visit</Text>
+              <Text className="font-inter-semibold text-[13px] text-[#f2f2f2] dark:text-[#272626]">{t('visit')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -550,7 +550,7 @@ export default function HomeScreen() {
                       </TouchableOpacity>
                     </View>
                     <View className="flex-1 justify-center items-center ">
-                      <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">Search</Text>
+                      <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('search')}</Text>
                     </View>
 
                     <View className="flex-1"></View>
@@ -561,7 +561,7 @@ export default function HomeScreen() {
                     <TouchableOpacity onPress={() => { navigation.navigate('SearchService', { blurVisible: true, prevScreen: 'HomeScreen' }); setSearchOptionsVisible(false); }} className="mt-8 mb-7 w-full justify-center items-center ">
                       <View className="py-[20] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
                         <Search height={19} color={iconColor} strokeWidth="2" />
-                        <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService ? getValue(searchedService) : 'Search a service...'}</Text>
+                        <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService ? getValue(searchedService) : t('search_a_service')}</Text>
                       </View>
                     </TouchableOpacity>
 
@@ -604,12 +604,12 @@ export default function HomeScreen() {
                       <TouchableOpacity onPress={() => { setSearchOptionsVisible(false); navigation.navigate('SearchDirection', { blurVisible: true, prevScreen: 'HomeScreen' }) }} className="mt-8 mb-6 w-full justify-center items-center ">
                         <View className="py-[20] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
                           <Search height={19} color={iconColor} strokeWidth="2" />
-                          <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedDirection ? searchedDirection.address_1 : 'Search a location...'}</Text>
+                          <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedDirection ? searchedDirection.address_1 : t('search_a_location')}</Text>
                         </View>
                       </TouchableOpacity>
 
                       <TouchableOpacity className="mb-6 px-4 py-2 rounded-full bg-[#e0e0e0] dark:bg-[#3D3D3D]">
-                        <Text className=" font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">Unlocated</Text>
+                        <Text className=" font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{t('unlocated')}</Text>
                       </TouchableOpacity>
 
                     </View>
@@ -618,7 +618,7 @@ export default function HomeScreen() {
 
                     <TouchableOpacity onPress={() => setSearchOption('direction')} className="mt-7 mb-7 w-full justify-center items-center">
                       <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">
-                        Location
+                        {t('location')}
                         {searchedDirection && (
                           <>
                             <Text className="font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">: </Text>
@@ -804,7 +804,7 @@ export default function HomeScreen() {
       <TouchableOpacity onPress={() => { removeSearchedDirection(); removeSearchedService(); setSearchedDirection(); setSearchedService(); setSearchOptionsVisible(true); toggleTabs(); setDuration(); setSelectedDay(), setSelectedTime() }} className="justify-center items-center pt-8 px-10">
         <View className="h-[55] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
           <Search height={19} color={iconColor} strokeWidth="2" />
-          <Text className="ml-2 font-inter-medium text-[14px] text-[#979797]">Search a service...</Text>
+          <Text className="ml-2 font-inter-medium text-[14px] text-[#979797]">{t('search_a_service')}</Text>
         </View>
       </TouchableOpacity>
 
