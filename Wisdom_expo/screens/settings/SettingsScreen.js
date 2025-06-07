@@ -17,38 +17,7 @@ import CashStackIcon from '../../assets/CashStack';
 import SuticasePlusIcon from '../../assets/SuitcasePlus';
 
 
-const Sections = [
-  {
-    items: [
-      {id: 'account', icon: KeyIcon, label: t('account'), type: 'select', link: 'EditAccount'},
-      {id: 'preferences', icon: Settings, label: t('preferences'), type: 'select', link: 'Preferences'},
-      {id: 'notifications', icon: Bell, label: t('notifications'), type: 'toggle'},
-      {id: 'directions', icon: MapPin, label: t('directions'), type: 'select', link: 'Directions'},
-      {id: 'payments', icon: CashStackIcon, label: t('payments_and_refunds'), type: 'select', link: 'Wallet'},
-    ]
-  },
-  {
-    items: [
-      {id: 'provideService', icon: SuticasePlusIcon, label: t('provide_service'), type: 'select', link: 'CreateService1'},
-      {id: 'switchProfessionalVersion', icon: ArrowsRightLeftIcon, label: t('switch_to_professional_version'), type: 'select', link: 'Professional'},
-      {id: 'becomeExpert', icon: ExpertIcon, label: t('become_an_expert'), type: 'select', link: 'TurnExpert'},
-    ]
-  },
-  // {
-  //   items: [
-  //     {id: 'giftCard', icon: GiftCardIcon, label:'Gift card', type: 'select'},
-  //     {id: 'inviteProfessionals', icon: UserPlus, label:'Invite professionals', type: 'select'},
-  //   ]
-  // },
-  {
-    items: [
-      {id: 'help', icon: Info, label:'Help', type: 'select', link: 'Help'},
-      // {id: 'rateUs', icon: Star, label:'Rate us', type: 'select'},
-      // {id: 'shareApp', icon: Share, label:'Share app', type: 'select'},
-      {id: 'followInsta', icon: Instagram, label:'Follow us in Instagram', type: 'link', link: 'https://www.instagram.com/wisdom__app/'},
-    ]
-  },
-];
+
 
 export default function SettingsScreen() {
   
@@ -64,6 +33,39 @@ export default function SettingsScreen() {
   const [form, setForm] = useState({
     notifications: false,
   });
+
+  const Sections = [
+    {
+      items: [
+        {id: 'account', icon: KeyIcon, label: t('account'), type: 'select', link: 'EditAccount'},
+        {id: 'preferences', icon: Settings, label: t('preferences'), type: 'select', link: 'Preferences'},
+        {id: 'notifications', icon: Bell, label: t('notifications'), type: 'toggle'},
+        {id: 'directions', icon: MapPin, label: t('directions'), type: 'select', link: 'Directions'},
+        {id: 'payments', icon: CashStackIcon, label: t('payments_and_refunds'), type: 'select', link: 'Wallet'},
+      ]
+    },
+    {
+      items: [
+        {id: 'provideService', icon: SuticasePlusIcon, label: t('provide_service'), type: 'select', link: 'CreateService1'},
+        {id: 'switchProfessionalVersion', icon: ArrowsRightLeftIcon, label: t('switch_to_professional_version'), type: 'select', link: 'Professional'},
+        {id: 'becomeExpert', icon: ExpertIcon, label: t('become_an_expert'), type: 'select', link: 'TurnExpert'},
+      ]
+    },
+    // {
+    //   items: [
+    //     {id: 'giftCard', icon: GiftCardIcon, label:'Gift card', type: 'select'},
+    //     {id: 'inviteProfessionals', icon: UserPlus, label:'Invite professionals', type: 'select'},
+    //   ]
+    // },
+    {
+      items: [
+        {id: 'help', icon: Info, label:'Help', type: 'select', link: 'Help'},
+        // {id: 'rateUs', icon: Star, label:'Rate us', type: 'select'},
+        // {id: 'shareApp', icon: Share, label:'Share app', type: 'select'},
+        {id: 'followInsta', icon: Instagram, label:'Follow us in Instagram', type: 'link', link: 'https://www.instagram.com/wisdom__app/'},
+      ]
+    },
+  ];
 
   useFocusEffect(
     useCallback(() => {

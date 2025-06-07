@@ -14,7 +14,6 @@ import { Calendar } from 'react-native-calendars';
 
 
 export default function CalendarScreen() {
-
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();

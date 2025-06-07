@@ -13,16 +13,6 @@ import api from '../../utils/api.js';
 
 
 
-const Sections = [
-  {
-    items: [
-      {id: 'bookings', label: t('bookings'), type: 'select', link: 'Services'},
-      {id: 'paymentMethod', label: t('payment_methods'), type: 'select', link: ''},
-    ]
-  },
-];
-
-
 export default function WalletScreen() {
 
   const {colorScheme, toggleColorScheme} = useColorScheme();
@@ -32,6 +22,15 @@ export default function WalletScreen() {
   const currentLanguage = i18n.language;
   const [userId, setUserId] = useState();
   const [moneyWallet, setMoneyWallet] = useState([]);
+
+  const Sections = [
+    {
+      items: [
+        {id: 'bookings', label: t('bookings'), type: 'select', link: 'Services'},
+        {id: 'paymentMethod', label: t('payment_methods'), type: 'select', link: ''},
+      ]
+    },
+  ];
 
   const fetchMoneyWallet = async () => {
     const userData = await getDataLocally('user');
