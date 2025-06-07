@@ -59,10 +59,10 @@ export default function SettingsScreen() {
     // },
     {
       items: [
-        {id: 'help', icon: Info, label:'Help', type: 'select', link: 'Help'},
+        {id: 'help', icon: Info, label: t('help'), type: 'select', link: 'Help'},
         // {id: 'rateUs', icon: Star, label:'Rate us', type: 'select'},
         // {id: 'shareApp', icon: Share, label:'Share app', type: 'select'},
-        {id: 'followInsta', icon: Instagram, label:'Follow us in Instagram', type: 'link', link: 'https://www.instagram.com/wisdom__app/'},
+        {id: 'followInsta', icon: Instagram, label: t('follow_us_in_instagram'), type: 'link', link: 'https://www.instagram.com/wisdom__app/'},
       ]
     },
   ];
