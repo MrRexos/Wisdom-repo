@@ -7,7 +7,6 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import {XMarkIcon, ChevronLeftIcon} from 'react-native-heroicons/outline';
 import api from '../../utils/api.js';
 import { getDataLocally } from '../../utils/asyncStorage';
-import axios from 'axios';
 
 
 
@@ -60,7 +59,7 @@ export default function CreateService13Screen() {
     console.log(formData)
   
     try {
-      const res = await axios.post('https://wisdom-app-34b3fb420f18.herokuapp.com/api/upload-images', formData, {
+      const res = await api.post('/api/upload-images', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
