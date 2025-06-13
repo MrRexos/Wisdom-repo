@@ -4,7 +4,7 @@ import { getStorage } from 'firebase/storage';
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBrhX_vfrA7nldoytx6HyYxD6sfwrdaHAQ",
+    apiKey: ".",
     authDomain: "wisdom-63348.firebaseapp.com",
     projectId: "wisdom-63348",
     storageBucket: "wisdom-63348.firebasestorage.app",
