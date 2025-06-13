@@ -25,7 +25,7 @@ export default function NotificationAllowScreen() {
     const [apiError, setApiError] = useState('');
 
     let user = {
-        userToken:true,
+        token: null,
         id: "", //FALTAAAA
         email: "",
         username: "",
@@ -43,9 +43,12 @@ export default function NotificationAllowScreen() {
         strikes_num: false,
         hobbies: null
     };
-
+  
     const {email, password, firstName, surname, username, image} = route.params;
 
+    console.log(email, password, firstName, surname, username, image);
+   
+    
     const uploadImage = async () => {
       if (!image) {
         Alert.alert(t('please_select_image_first'));
@@ -85,7 +88,7 @@ export default function NotificationAllowScreen() {
           profile_picture: imageURL
         });
         console.log('User created:', response.data);
-        return response.data.userId;
+        return { id: response.data.userId, token: response.data.token };
         
 
       } catch (error) {
@@ -105,10 +108,11 @@ export default function NotificationAllowScreen() {
 
     const notAllowPressed = async () =>{    
         const imageURL = await uploadImage();
-        const userId = await createUser(false, imageURL);
+        const result = await createUser(false, imageURL);
 
-        console.log(userId)
-        user.id = userId;
+        console.log(result)
+        user.id = result.id;
+        user.token = result.token;
         user.email = email;
         user.first_name = firstName;
         user.surname = surname;
@@ -125,9 +129,10 @@ export default function NotificationAllowScreen() {
 
     const allowPressed = async () =>{
         const imageURL = await uploadImage();
-        const userId = await createUser(true, imageURL);
-        console.log(userId)
-        user.id = userId;
+        const result = await createUser(true, imageURL);
+        console.log(result)
+        user.id = result.id;
+        user.token = result.token;
         user.email = email;
         user.first_name = firstName;
         user.surname = surname;

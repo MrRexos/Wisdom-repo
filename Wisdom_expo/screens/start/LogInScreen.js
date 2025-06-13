@@ -63,7 +63,7 @@ export default function LogInScreen() {
   
         if (response.data.success) {
           let user = response.data.user;
-          user.userToken = true;
+          user.token = response.data.token;
           
           // Almacena la información del usuario en AsyncStorage
           await storeDataLocally('user', JSON.stringify(user));
