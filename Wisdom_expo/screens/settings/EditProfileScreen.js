@@ -11,7 +11,6 @@ import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
 import { CheckCircleIcon, XCircleIcon } from 'react-native-heroicons/solid';
 import * as ImagePicker from 'expo-image-picker';
-import axios from 'axios';
 
 
 
@@ -71,7 +70,7 @@ export default function EditProfileScreen() {
     });
 
     try {
-      const res = await axios.post('https://wisdom-app-34b3fb420f18.herokuapp.com/api/upload-image', formData, {
+      const res = await api.post('/api/upload-image', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

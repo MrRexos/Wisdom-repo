@@ -11,7 +11,6 @@ import {XMarkIcon} from 'react-native-heroicons/outline';
 import NotificationAskWhite from '../../assets/NotificationAskWhite.svg';
 import NotificationAskDark from '../../assets/NotificationAskDark.svg';
 import api from '../../utils/api.js';
-import axios from 'axios';
 
 
 
@@ -52,40 +51,40 @@ export default function NotificationAllowScreen() {
     const uploadImage = async () => {
       if (!image) {
         Alert.alert(t('please_select_image_first'));
-        return;
+        return null;
       }
-  
+
       const formData = new FormData();
       formData.append('file', {
         uri: image.uri,
         type: image.type,
         name: image.fileName,
       });
-  
+
       try {
-        const res = await axios.post('https://wisdom-app-34b3fb420f18.herokuapp.com/api/upload-image', formData, {
+        const res = await api.post('/api/upload-image', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
-        return res.data.url
+        return res.data.url;
       } catch (error) {
         console.error(error);
       }
+      return null;
     };
 
-    const createUser = async (allowNotis, imageURL) => {
-      console.log(imageURL);
+    const createUser = async (allowNotis) => {
       try {
         const response = await api.post('/api/signup', {
           email: email,
           username: username,
           password: password,
           first_name: firstName,
-          surname: surname, 
+          surname: surname,
           language: i18n.language,
           allow_notis: allowNotis,
-          profile_picture: imageURL
+          profile_picture: null
         });
         console.log('User created:', response.data);
         return { id: response.data.userId, token: response.data.token };
@@ -104,13 +103,25 @@ export default function NotificationAllowScreen() {
       }
     };
 
+    const updateUserProfile = async (imageURL) => {
+      try {
+        await api.put(`/api/user/${user.id}/profile`, {
+          username: username,
+          first_name: firstName,
+          surname: surname,
+          profile_picture: imageURL,
+        });
+      } catch (error) {
+        console.error('Error updating user profile:', error);
+      }
+    };
+
     
 
-    const notAllowPressed = async () =>{    
-        const imageURL = await uploadImage();
-        const result = await createUser(false, imageURL);
+    const notAllowPressed = async () =>{
+        const result = await createUser(false);
+        if (!result) return;
 
-        console.log(result)
         user.id = result.id;
         user.token = result.token;
         user.email = email;
@@ -119,18 +130,26 @@ export default function NotificationAllowScreen() {
         user.username = username;
         user.language =  i18n.language;
         user.joined_datetime = new Date().toISOString();
-        user.allow_notis = false; 
-        user.profile_picture = imageURL;
-        
+        user.allow_notis = false;
+        user.profile_picture = null;
+
         await storeDataLocally('user', JSON.stringify(user));
+
+        const imageURL = await uploadImage();
+        if (imageURL) {
+            await updateUserProfile(imageURL);
+            user.profile_picture = imageURL;
+            await storeDataLocally('user', JSON.stringify(user));
+        }
+
         navigation.navigate('HomeScreen');
-      
+
     }
 
     const allowPressed = async () =>{
-        const imageURL = await uploadImage();
-        const result = await createUser(true, imageURL);
-        console.log(result)
+        const result = await createUser(true);
+        if (!result) return;
+
         user.id = result.id;
         user.token = result.token;
         user.email = email;
@@ -139,12 +158,20 @@ export default function NotificationAllowScreen() {
         user.username = username;
         user.language =  i18n.language;
         user.joined_datetime = new Date().toISOString();
-        user.allow_notis = true; 
-        user.profile_picture = imageURL;
+        user.allow_notis = true;
+        user.profile_picture = null;
 
         await storeDataLocally('user', JSON.stringify(user));
+
+        const imageURL = await uploadImage();
+        if (imageURL) {
+            await updateUserProfile(imageURL);
+            user.profile_picture = imageURL;
+            await storeDataLocally('user', JSON.stringify(user));
+        }
+
         navigation.navigate('HomeScreen');
-      
+
     }
   
     return (
