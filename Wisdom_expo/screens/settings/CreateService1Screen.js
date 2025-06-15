@@ -23,10 +23,10 @@ export default function CreateService1Screen() {
         console.log(userData);
 
         // Comprobar si userData indica que no hay usuario
-        if (userData === '{"userToken":false}') {
+        if (userData === '{"token":false}') {
           navigation.reset({
             index: 0,
-            routes: [{ name: 'GetStarted' }], 
+            routes: [{ name: 'GetStarted' }],
           });
         }
       };
