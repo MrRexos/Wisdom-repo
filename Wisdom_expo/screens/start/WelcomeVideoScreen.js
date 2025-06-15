@@ -80,8 +80,8 @@ const WelcomeVideoScreen = () => {
       console.log(userData)
       if (userData) {
         const user = JSON.parse(userData);
-        setToken(user.userToken);    
-        if (user.userToken) {
+        setToken(user.token);
+        if (user.token) {
           navigation.navigate('Loading');
         } else {
           setShowSkip(true);

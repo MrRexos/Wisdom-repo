@@ -29,13 +29,13 @@ export default function SettingsScreen() {
       
       if (userData) {
         const user = JSON.parse(userData);
-        setToken(user.userToken);
+        setToken(user.token);
         let language = user.selectedLanguage;
         if (language) {
           i18n.changeLanguage(language);
         };
         setTimeout(() => {
-          if (user.userToken) {
+          if (user.token) {
             navigation.navigate('HomeScreen');
           } else {
             navigation.navigate('GetStarted');
