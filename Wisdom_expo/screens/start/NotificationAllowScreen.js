@@ -69,7 +69,7 @@ export default function NotificationAllowScreen() {
         });
         return res.data.url;
       } catch (error) {
-        console.error(error);
+        console.error(error.response.data);
       }
       return null;
     };

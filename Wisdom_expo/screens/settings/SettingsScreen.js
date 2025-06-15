@@ -34,6 +34,8 @@ export default function SettingsScreen() {
     notifications: false,
   });
 
+  
+
   const Sections = [
     {
       items: [

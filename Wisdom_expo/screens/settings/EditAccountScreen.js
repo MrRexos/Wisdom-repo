@@ -128,11 +128,13 @@ export default function EditAccountScreen() {
           text: t('delete'),
           onPress: async () => {
             try {
-              const response = await api.put(`/api/user/${user.id}`, {
+              const response = await api.delete(`/api/user/${user.id}`, {
                 email: email,
               });
-        
+              
+              navigation.navigate('GetStarted');
               return response.data;
+              
               
             } catch (error) {
                 if (error.response) {
