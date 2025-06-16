@@ -7,7 +7,8 @@ import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
-import WisdomLogo from '../../assets/wisdomLogo.tsx'
+import WisdomLogo from '../../assets/wisdomLogo.tsx';
+import api from '../../utils/api';
 
 
 export default function ForgotPasswordScreen() {
@@ -25,13 +26,19 @@ export default function ForgotPasswordScreen() {
         setEmail (newEmail);
         setShowError(false);
       }
-    const nextPressed = () =>{
-    if (email.includes('@')){
-        navigation.navigate('EmailSended');
-    }
-    else{
+      
+    const nextPressed = async () => {
+      if (email.length < 1) {
         setShowError(true);
-    }
+        return;
+      }
+      try {
+        await api.post('/api/forgot-password', { emailOrUsername: email });
+        navigation.navigate('EmailSended');
+      } catch (error) {
+        console.error('Forgot password error:', error);
+        setShowError(true);
+      }
     }
 
     return (

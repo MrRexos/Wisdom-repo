@@ -24,13 +24,16 @@
         "CFBundleURLTypes": [
           {
             "CFBundleURLSchemes": [
-              "com.googleusercontent.apps.232292898356-o6jj43dnn8uqg139udlvtptcaj8551rp"
+              "com.googleusercontent.apps.232292898356-o6jj43dnn8uqg139udlvtptcaj8551rp",
+              "Wisdom_expo",
+              "wisdomexpo"
             ]
           }
         ]
       },
       "newArchEnabled": true
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -38,11 +41,23 @@
       },
       "package": "com.rexos.Wisdom_expo",
       "versionCode": 1,
-      "newArchEnabled": true
+      "newArchEnabled": true,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "category": ["BROWSABLE", "DEFAULT"],
+          "data": [
+            { "scheme": "Wisdom_expo" }, 
+            { "scheme": "wisdomexpo" }  
+          ]
+        }
+      ]
     },
+
     "web": {
       "favicon": "./assets/favicon.png"
     },
+
     "extra": {
       "eas": {
         "projectId": "d34848bf-7bb0-442f-a1d7-5ddf9b8e7392"

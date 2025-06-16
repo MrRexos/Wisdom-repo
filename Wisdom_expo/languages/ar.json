@@ -119,6 +119,8 @@
     "confirm_new_password": "تأكيد كلمة المرور الجديدة",
     "type_it_again": "اكتبها مرة أخرى",
     "safe_and_login": "احفظ وسجّل الدخول",
+    "passwords_do_not_match": "كلمات المرور غير متطابقة.",
+    "reset_token_error": "حدثت مشكلة أثناء إعادة تعيين كلمة المرور.",
     "stay_informed": "ابق على اطلاع",
     "notifications_subtitle": "تلقي المعلومات والتذكيرات حول خدماتك",
     "allow": "السماح",

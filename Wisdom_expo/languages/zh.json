@@ -119,6 +119,8 @@
     "confirm_new_password": "确认新密码",
     "type_it_again": "再输入一次",
     "safe_and_login": "保存并登录",
+    "passwords_do_not_match": "两次密码不一致。",
+    "reset_token_error": "重置密码时出现问题。",
     "stay_informed": "保持知情",
     "notifications_subtitle": "接收有关您服务的信息和提醒",
     "allow": "允许",

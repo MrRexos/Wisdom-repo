@@ -1,4 +1,5 @@
 import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
+import * as Linking from 'expo-linking';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text, Image } from 'react-native'
@@ -93,10 +94,19 @@ import EditProfileScreen from '../screens/settings/EditProfileScreen';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+const linking = {
+  prefixes: [Linking.createURL('/'), 'Wisdom_expo://'],
+  config: {
+    screens: {
+      NewPassword: 'reset-password'
+    }
+  }
+};
+
 
 export default function Navigation() {
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="WelcomeVideo" component={WelcomeVideoScreen} options={{ gestureEnabled: false }} />
         <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'none', gestureEnabled: false }} />

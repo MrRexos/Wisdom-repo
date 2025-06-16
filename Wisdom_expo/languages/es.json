@@ -119,6 +119,8 @@
     "confirm_new_password": "Confirmar nueva contraseña",
     "type_it_again": "Vuelve a escribirla",
     "safe_and_login": "Guardar e iniciar sesión",
+    "passwords_do_not_match": "Las contraseñas no coinciden.",
+    "reset_token_error": "Hubo un problema al restablecer tu contraseña.",
     "stay_informed": "Mantente informado",
     "notifications_subtitle": "Recibe información y recordatorios de tus servicios",
     "allow": "Permitir",
