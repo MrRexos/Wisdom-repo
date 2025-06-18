@@ -75,7 +75,7 @@ export default function NewPasswordScreen({ route }) {
       const response = await api.post('/api/reset-password', { emailOrUsername, code, newPassword: password });
       if (response.data && response.data.token) {
         let user = response.data.user;
-        user.userToken = true;
+        user.token = response.data.token;
         await storeDataLocally('user', JSON.stringify(user));
         navigation.navigate('HomeScreen');
       }
