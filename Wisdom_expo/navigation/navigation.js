@@ -82,6 +82,7 @@ import TodayProScreen from '../screens/professional/TodayProScreen';
 import CalendarScreen from '../screens/services/CalendarScreen';
 import DirectionsScreen from '../screens/settings/DirectionsScreen';
 import EditAccountScreen from '../screens/settings/EditAccountScreen';
+import ChangePasswordScreen from '../screens/settings/ChangePasswordScreen';
 import HelpScreen from '../screens/settings/HelpScreen';
 import TurnExpertScreen from '../screens/settings/TurnExpertScreen';
 import WalletScreen from '../screens/settings/WalletScreen';
@@ -177,6 +178,7 @@ export default function Navigation() {
         <Stack.Screen name="Calendar" component={CalendarScreen} />
         <Stack.Screen name="Directions" component={DirectionsScreen} />
         <Stack.Screen name="EditAccount" component={EditAccountScreen} />
+        <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
         <Stack.Screen name="Help" component={HelpScreen} />
         <Stack.Screen name="TurnExpert" component={TurnExpertScreen} />
         <Stack.Screen name="Wallet" component={WalletScreen} />
@@ -481,6 +483,7 @@ function SettingsStackNavigator() {
       <Stack.Screen name="Preferences" component={PreferencesScreen} />
       <Stack.Screen name="Language" component={LanguageScreen} />
       <Stack.Screen name="EditAccount" component={EditAccountScreen} />
+      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
       <Stack.Screen name="Help" component={HelpScreen} />
       <Stack.Screen name="Wallet" component={WalletScreen} />
       <Stack.Screen name="FAQ" component={FAQScreen} />

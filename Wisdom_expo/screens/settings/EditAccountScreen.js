@@ -207,6 +207,10 @@ export default function EditAccountScreen() {
                 <Text className="text-[#ff633e] text-[13px] pt-3">{errorMessage}</Text>
             ) : null}
         </View>
+        <TouchableOpacity onPress={() => navigation.navigate('ChangePassword')}>
+            <Text className="font-inter-medium text-[15px] pt-5 text-[#444343] dark:text-[#f2f2f2]">{t('change_password_arrow')}</Text>
+        </TouchableOpacity>
+
           
         
         
