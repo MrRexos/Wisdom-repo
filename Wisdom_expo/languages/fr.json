@@ -121,6 +121,8 @@
     "safe_and_login": "Enregistrer et se connecter",
     "passwords_do_not_match": "Les mots de passe ne correspondent pas.",
     "reset_token_error": "Un problème est survenu lors de la réinitialisation du mot de passe.",
+    "code": "Code",
+    "change_password_arrow": "Changer le mot de passe ->",
     "stay_informed": "Restez informé",
     "notifications_subtitle": "Recevez des informations et des rappels sur vos services",
     "allow": "Autoriser",

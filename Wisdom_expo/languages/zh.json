@@ -121,6 +121,8 @@
     "safe_and_login": "保存并登录",
     "passwords_do_not_match": "两次密码不一致。",
     "reset_token_error": "重置密码时出现问题。",
+    "code": "验证码",
+    "change_password_arrow": "更改密码 ->",
     "stay_informed": "保持知情",
     "notifications_subtitle": "接收有关您服务的信息和提醒",
     "allow": "允许",

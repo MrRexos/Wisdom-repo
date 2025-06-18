@@ -121,6 +121,8 @@
     "safe_and_login": "احفظ وسجّل الدخول",
     "passwords_do_not_match": "كلمات المرور غير متطابقة.",
     "reset_token_error": "حدثت مشكلة أثناء إعادة تعيين كلمة المرور.",
+    "code": "رمز",
+    "change_password_arrow": "تغيير كلمة المرور ->",
     "stay_informed": "ابق على اطلاع",
     "notifications_subtitle": "تلقي المعلومات والتذكيرات حول خدماتك",
     "allow": "السماح",

@@ -19,7 +19,8 @@ export default function NewPasswordScreen({ route }) {
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
-  const token = route?.params?.token;
+  const emailOrUsername = route?.params?.emailOrUsername;
+  const [code, setCode] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [password, setPassword] = useState('');
   const [isSecurePassword, setIsSecurePassword] = useState(true);
@@ -34,6 +35,10 @@ export default function NewPasswordScreen({ route }) {
 
 
   
+  const inputCodeChanged = (event) => {
+    setCode(event.nativeEvent.text);
+    setShowError(false);
+  };
 
   const inputConfirmPasswordChanged = (event) => {
     const newConfirmPassword = event.nativeEvent.text;
@@ -48,14 +53,26 @@ export default function NewPasswordScreen({ route }) {
   }
 
   const nextPressed = async () => {
-    if (!token || password !== confirmPassword || password.length < 1) {
+    if (!emailOrUsername || !code) {
+      setShowError(true);
+      setErrorMessage(t('passwords_do_not_match'));
+      return;
+    }
+
+    if (password.length < 8) {
+      setShowError(true);
+      setErrorMessage(t('password_at_least_eight'));
+      return;
+    }
+
+    if (password !== confirmPassword) {
       setShowError(true);
       setErrorMessage(t('passwords_do_not_match'));
       return;
     }
 
     try {
-      const response = await api.post('/api/reset-password', { token, newPassword: password });
+      const response = await api.post('/api/reset-password', { emailOrUsername, code, newPassword: password });
       if (response.data && response.data.token) {
         let user = response.data.user;
         user.userToken = true;
@@ -107,13 +124,29 @@ export default function NewPasswordScreen({ route }) {
             {t('set_a_new_password')}
         </Text>
         <Text className="font-inter-semibold text-[15px] pt-10 text-[#444343] dark:text-[#f2f2f2]">
+          {t('code')}
+        </Text>
+
+        <View className="mt-3 px-5 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+            <TextInput
+            placeholder={t('code')}
+            autoFocus={true}
+            selectionColor={cursorColorChange}
+            placeholderTextColor={placeHolderTextColorChange}
+            onChange={inputCodeChanged}
+            value={code}
+            keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+            className=" h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
+        </View>
+
+        <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">
           {t('new_password')}
         </Text>
         
         <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
             <TextInput 
             placeholder={t('new_password')}
-            autoFocus={true} 
+            autoFocus={false} 
             secureTextEntry={isSecurePassword}
             selectionColor={cursorColorChange} 
             placeholderTextColor={placeHolderTextColorChange} 
@@ -137,7 +170,7 @@ export default function NewPasswordScreen({ route }) {
         <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
           <TextInput
             placeholder={t('type_it_again')}
-            autoFocus={true}
+            autoFocus={false}
             selectionColor={cursorColorChange}
             placeholderTextColor={placeHolderTextColorChange}
             secureTextEntry={isSecureConfirmation} // Controla la visibilidad del texto

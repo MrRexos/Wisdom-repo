@@ -34,7 +34,7 @@ export default function ForgotPasswordScreen() {
       }
       try {
         await api.post('/api/forgot-password', { emailOrUsername: email });
-        navigation.navigate('EmailSended');
+        navigation.navigate('EmailSended', { emailOrUsername: email });
       } catch (error) {
         console.error('Forgot password error:', error);
         setShowError(true);

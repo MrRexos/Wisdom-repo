@@ -121,6 +121,8 @@
     "safe_and_login": "Safe and Login",
     "passwords_do_not_match": "Passwords do not match.",
     "reset_token_error": "There was a problem resetting your password.",
+    "code": "Code",
+    "change_password_arrow": "Change password ->",
     "stay_informed": "Stay informed",
     "notifications_subtitle": "Receive information and reminders of your services",
     "allow": "Allow",

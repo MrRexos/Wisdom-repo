@@ -63,7 +63,8 @@
     "react-native-screens": "~4.10.0",
     "react-native-svg": "15.11.2",
     "react-native-svg-transformer": "^1.5.0",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "expo-linking": "~7.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

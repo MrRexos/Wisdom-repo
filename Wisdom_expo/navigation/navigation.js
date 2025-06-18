@@ -95,18 +95,27 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const linking = {
-  prefixes: [Linking.createURL('/'), 'Wisdom_expo://'],
+  prefixes: [
+    Linking.createURL('/'),
+    'Wisdom_expo://',
+    'https://wisdom-app-34b3fb420f18.herokuapp.com'
+  ],
   config: {
     screens: {
-      NewPassword: 'reset-password'
-    }
-  }
+      NewPassword: {
+        path: 'reset-password/:token?',
+        parse: {
+          token: (token) => token,
+        },
+      },
+    },
+  },
 };
 
 
 export default function Navigation() {
   return (
-    <NavigationContainer linking={linking}>
+    <NavigationContainer  linking={linking}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="WelcomeVideo" component={WelcomeVideoScreen} options={{ gestureEnabled: false }} />
         <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'none', gestureEnabled: false }} />
