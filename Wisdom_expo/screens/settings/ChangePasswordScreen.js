@@ -27,6 +27,7 @@ export default function ChangePasswordScreen() {
 
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
 
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
@@ -53,6 +54,24 @@ export default function ChangePasswordScreen() {
     };
   }, []);
 
+  const validatePasswords = () => {
+    if ((newPassword && newPassword.length < 8) || (confirmPassword && confirmPassword.length < 8)) {
+      setPasswordMismatch(false);
+      setErrorMessage(t('password_at_least_eight'));
+      setShowError(true);
+      return;
+    }
+
+    if (newPassword && confirmPassword && newPassword !== confirmPassword) {
+      setPasswordMismatch(true);
+      setErrorMessage(t('passwords_do_not_match'));
+      setShowError(true);
+    } else {
+      setPasswordMismatch(false);
+      setShowError(false);
+    }
+  };
+
   const formValid = currentPassword.length > 0 && newPassword.length >= 8 && newPassword === confirmPassword;
 
   const handleChangePassword = async () => {
@@ -62,6 +81,7 @@ export default function ChangePasswordScreen() {
         currentPassword: currentPassword,
         newPassword: newPassword,
       });
+      Alert.alert(t('password_updated'));
       navigation.goBack();
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
@@ -78,27 +98,35 @@ export default function ChangePasswordScreen() {
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[95] w-full z-10 justify-end">
         <View className="flex-row justify-between items-center pb-4 px-2">
-          <View className="flex-1">
+          <View className="flex-[1] ">
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <ChevronLeftIcon size={24} strokeWidth={1.7} color={iconColor} />
             </TouchableOpacity>
           </View>
-          <View className="flex-1 justify-center items-center">
+          <View className="flex-[2] justify-center items-center  ">
             <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('change_password')}</Text>
           </View>
-          <View className="flex-1 justify-center items-end">
-            {formValid && (
-              <TouchableOpacity onPress={handleChangePassword} className="mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]">
-                <Text className="font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('done')}</Text>
-              </TouchableOpacity>
-            )}
+          <View className="flex-[1] justify-center items-end ">
+          <TouchableOpacity
+            disabled={!formValid}
+            onPress={handleChangePassword}
+            className={`
+              mr-2 rounded-full px-3 py-2
+              bg-[#E0E0E0] dark:bg-[#3D3D3D]
+              ${formValid ? '' : 'opacity-0'}
+            `}
+          >
+            <Text className="font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+              {t('done')}
+            </Text>
+          </TouchableOpacity>
           </View>
         </View>
       </View>
       <KeyboardAwareScrollView style={{ flex: 1, width: '100%' }} enableOnAndroid={true} scrollEnabled={keyboardOpen}>
         <View className="px-5 pt-[75] w-full">
           <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">{t('current_password')}</Text>
-          <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+          <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#706F6E]/20">
             <TextInput
               placeholder={t('current_password')}
               secureTextEntry={isSecureCurrent}
@@ -124,7 +152,8 @@ export default function ChangePasswordScreen() {
               secureTextEntry={isSecurePassword}
               selectionColor={cursorColorChange}
               placeholderTextColor={placeHolderTextColorChange}
-              onChangeText={(text) => { setNewPassword(text); setShowError(false); }}
+              onChangeText={(text) => { setNewPassword(text); setShowError(false); setPasswordMismatch(false); }}
+              onEndEditing={validatePasswords}
               value={newPassword}
               keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
               className="text-[15px] h-[55] flex-1 text-[#444343] dark:text-[#f2f2f2]"
@@ -144,7 +173,8 @@ export default function ChangePasswordScreen() {
               secureTextEntry={isSecureConfirm}
               selectionColor={cursorColorChange}
               placeholderTextColor={placeHolderTextColorChange}
-              onChangeText={(text) => { setConfirmPassword(text); setShowError(false); }}
+              onChangeText={(text) => { setConfirmPassword(text); setShowError(false); setPasswordMismatch(false); }}
+              onEndEditing={validatePasswords}
               value={confirmPassword}
               keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
               className="h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"
@@ -157,7 +187,7 @@ export default function ChangePasswordScreen() {
               )}
             </TouchableOpacity>
           </View>
-          {showError ? (
+          {(showError || passwordMismatch) ? (
             <Text className="text-[#ff633e] text-[13px] pt-3">{errorMessage}</Text>
           ) : null}
         </View>
