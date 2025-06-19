@@ -29,15 +29,15 @@ export default function TodayProScreen() {
     { label: t('in_progress'), value:'progress', id:5 },
   ];
 
-  const fetchBookings = async () => {
+  const fetchBookings = async (statusParam) => {
     const userData = await getDataLocally('user');
     const user = JSON.parse(userData);
     setUserId(user.id);
     try {
-      const response = await api.get(`/api/service-user/${user.id}/bookings`);
+      const response = await api.get(`/api/service-user/${user.id}/bookings`, { params: { status: statusParam } });
       return response.data;
     } catch (error) {
-      console.error('Error fetching lists:', error);
+      console.error('Error fetching bookings:', error);
     }
   };
 
@@ -52,12 +52,12 @@ export default function TodayProScreen() {
 
   useEffect(() => {
     const loadBookings = async () => {
-      const bookings = await fetchBookings();
-      setBookings(bookings);
+      const bookingsData = await fetchBookings(selectedStatus);
+      setBookings(bookingsData);
     };
     loadBookings();
     loadUserData();
-  }, []);
+  }, [selectedStatus]);
 
   const formatDate = (dateString) => {
     // Convertir la cadena a un objeto Date
@@ -94,7 +94,8 @@ export default function TodayProScreen() {
     );
   };
 
-  const filteredBookings = bookings && bookings.length>0? bookings.filter((booking) => booking.booking_status === selectedStatus) : null;
+  // Las reservas ya vienen filtradas desde la API
+  const filteredBookings = bookings;
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>

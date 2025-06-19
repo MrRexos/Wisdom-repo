@@ -46,28 +46,25 @@ export default function ServicesScreen() {
     }, [navigation])
   );
 
-  const fetchBookings = async () => {
+  const fetchBookings = async (statusParam) => {
     const userData = await getDataLocally('user');
-    console.log(userData)
-
     const user = JSON.parse(userData);
-    
     setUserId(user.id);
     try {
-      const response = await api.get(`/api/user/${user.id}/bookings`);
+      const response = await api.get(`/api/user/${user.id}/bookings`, { params: { status: statusParam } });
       return response.data;
     } catch (error) {
-      console.error('Error fetching lists:', error);
+      console.error('Error fetching bookings:', error);
     }
   };
 
   useEffect(() => {
     const loadBookings = async () => {
-      const bookings = await fetchBookings();
-      setBookings(bookings);
+      const bookingsData = await fetchBookings(selectedStatus);
+      setBookings(bookingsData);
     };
     loadBookings();
-  }, []);
+  }, [selectedStatus]);
 
   const formatDate = (dateString) => {
     // Convertir la cadena a un objeto Date
@@ -106,8 +103,9 @@ export default function ServicesScreen() {
     );
   };
 
-  // Filtrar las reservas por estado seleccionado 
-  const filteredBookings = bookings && bookings.length>0 ? bookings.filter((booking) => booking.booking_status === selectedStatus) : null;
+  // Las reservas ya vienen filtradas desde la API por estado
+  const filteredBookings = bookings;
+
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>

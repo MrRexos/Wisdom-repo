@@ -450,7 +450,10 @@ function ProTabNavigator({ route }) {
             const now = Date.now();
             if (lastTapRef.current && now - lastTapRef.current < 300) {
               e.preventDefault();
-              navigation.navigate('HomeScreen');
+              navigation.navigate('HomeScreen', {
+                screen: 'Home',
+                params: { screen: 'HomeScreen' },
+              });
             }
             lastTapRef.current = now;
           },
