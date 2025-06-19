@@ -277,6 +277,12 @@
     ,"book_a_consult": "Book a consult"
     ,"book_without_date": "Book without date"
     ,"select_date_time_and_duration": "Select a date, time, and duration"
+    ,"booking_details": "Detalles de la reserva"
+    ,"save_changes": "Guardar cambios"
+    ,"cancel_booking": "Cancelar reserva"
+    ,"confirm_cancel_booking": "¿Seguro que deseas cancelar esta reserva?"
+    ,"reject": "Rechazar"
+    ,"edit": "Editar"
     ,"select_a_time": "Select a time"
     ,"select_a_duration": "Select a duration"
   }

@@ -75,7 +75,7 @@ export default function TodayProScreen() {
 
   const renderBooking = ({ item }) => {
     return (
-      <View className="w-full mb-4 pb-4 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+      <TouchableOpacity onPress={() => navigation.navigate('BookingDetails', { bookingId: item.booking_id, role: 'pro' })} className="w-full mb-4 pb-4 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
         <View className="flex-row justify-center items-center">
           <View className="ml-3 justify-center items-start">
             <Text className="mb-1 font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{item.booking_user_first_name} {item.booking_user_surname}</Text>
@@ -90,7 +90,7 @@ export default function TodayProScreen() {
         </View>
         <ChevronRightIcon size={17} color={colorScheme === 'dark' ? '#796f6e': '#b6b5b5'} strokeWidth={2.2}/>
 
-      </View>
+      </TouchableOpacity>
     );
   };
 

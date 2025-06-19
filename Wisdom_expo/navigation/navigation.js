@@ -73,6 +73,7 @@ import ServiceProfileScreen from '../screens/home/ServiceProfileScreen';
 import DisplayImagesScreen from '../screens/home/DisplayImagesScreen';
 import DisplayReviewsScreen from '../screens/home/DisplayReviewsScreen';
 import EnlargedImageScreen from '../screens/home/EnlargedImageScreen';
+import BookingDetailsScreen from '../screens/booking/BookingDetailsScreen';
 
 import CalendarProScreen from '../screens/professional/CalendarProScreen';
 import ListingsProScreen from '../screens/professional/ListingsProScreen';
@@ -170,6 +171,7 @@ export default function Navigation() {
         <Stack.Screen name="DisplayImages" component={DisplayImagesScreen} />
         <Stack.Screen name="DisplayReviews" component={DisplayReviewsScreen} />
         <Stack.Screen name="EnlargedImage" component={EnlargedImageScreen} />
+        <Stack.Screen name="BookingDetails" component={BookingDetailsScreen} />
         <Stack.Screen name="CalendarPro" component={CalendarProScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="ListingsPro" component={ListingsProScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="SettingsPro" component={SettingsProScreen} options={{ animation: 'none', gestureEnabled: false }} />

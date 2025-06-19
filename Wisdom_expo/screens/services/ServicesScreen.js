@@ -82,7 +82,7 @@ export default function ServicesScreen() {
 
   const renderBooking = ({ item }) => {
     return (
-      <View className="w-full mb-4 pb-4 flex-row justify-between items-end border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+      <TouchableOpacity onPress={() => navigation.navigate('BookingDetails', { bookingId: item.booking_id, role: 'client' })} className="w-full mb-4 pb-4 flex-row justify-between items-end border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
         <View className="flex-row justify-center items-center">
           <Image source={{ uri: item.profile_picture }} className="w-[80] h-[80] bg-[#706B5B] rounded-xl" />
           <View className="ml-4 justify-center items-start">
@@ -99,7 +99,7 @@ export default function ServicesScreen() {
         {item.final_price && (
           <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(item.final_price).toFixed(0)} €</Text>
         )}
-      </View>
+      </TouchableOpacity>
     );
   };
 
