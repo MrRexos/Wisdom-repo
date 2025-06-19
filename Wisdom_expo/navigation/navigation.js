@@ -1,4 +1,4 @@
-import { NavigationContainer, useFocusEffect } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect, useNavigation } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
 import { getDataLocally } from '../utils/asyncStorage';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
 import { Search, Heart, MessageSquare, Calendar } from "react-native-feather";
 import { BookOpenIcon as OutlineBookOpenIcon } from 'react-native-heroicons/outline';
@@ -195,6 +195,8 @@ function TabNavigator({ route }) {
   const { t, i18n } = useTranslation();
   const [profileImage, setProfileImage] = useState(null);
   const [showTabs, setShowTabs] = useState(true);
+  const navigation = useNavigation();
+  const lastTapRef = useRef(null);
 
   useEffect(() => {
     // Función para obtener la imagen de perfil guardada en AsyncStorage
@@ -310,7 +312,20 @@ function TabNavigator({ route }) {
           <Tab.Screen name="Favorites" component={FavoritesStackNavigator} />
           <Tab.Screen name="Services" component={ServicesStackNavigator} />
           <Tab.Screen name="Chat" component={ChatStackNavigator} />
-          <Tab.Screen name="Settings" component={SettingsStackNavigator} />
+          <Tab.Screen
+            name="Settings"
+            component={SettingsStackNavigator}
+            listeners={{
+              tabPress: (e) => {
+                const now = Date.now();
+                if (lastTapRef.current && now - lastTapRef.current < 300) {
+                  e.preventDefault();
+                  navigation.navigate('Professional');
+                }
+                lastTapRef.current = now;
+              },
+            }}
+          />
         </Tab.Navigator>
       ) : null}
     </>
@@ -323,6 +338,8 @@ function ProTabNavigator({ route }) {
   const { colorScheme, toggleColorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const [profileImage, setProfileImage] = useState(null);
+  const navigation = useNavigation();
+  const lastTapRef = useRef(null);
 
   useEffect(() => {
     // Función para obtener la imagen de perfil guardada en AsyncStorage
@@ -424,7 +441,21 @@ function ProTabNavigator({ route }) {
       <Tab.Screen name="Calendar" component={CalendarProScreen} options={{ animation: 'none', gestureEnabled: false }} />
       <Tab.Screen name="Listings" component={ListingsProScreen} options={{ animation: 'none', gestureEnabled: false }} />
       <Tab.Screen name="Chat" component={ChatStackNavigator} options={{ animation: 'none', gestureEnabled: false }} />
-      <Tab.Screen name="Settings" component={SettingsProScreen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsProScreen}
+        options={{ animation: 'none', gestureEnabled: false }}
+        listeners={{
+          tabPress: (e) => {
+            const now = Date.now();
+            if (lastTapRef.current && now - lastTapRef.current < 300) {
+              e.preventDefault();
+              navigation.navigate('HomeScreen');
+            }
+            lastTapRef.current = now;
+          },
+        }}
+      />
 
     </Tab.Navigator>
   );
