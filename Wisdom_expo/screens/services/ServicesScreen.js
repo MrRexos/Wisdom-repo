@@ -24,7 +24,7 @@ export default function ServicesScreen() {
     { label: t('requested'), value:'requested', id:2 },
     { label: t('completed'), value:'completed', id:3 },
     { label: t('canceled'), value:'canceled', id:4 },
-    { label: t('in_progress'), value:'progress', id:5 },
+    { label: t('in_progress'), value: 'in_progress', id: 5 },
   ];
 
   useFocusEffect(
@@ -103,8 +103,15 @@ export default function ServicesScreen() {
     );
   };
 
-  // Las reservas ya vienen filtradas desde la API por estado
-  const filteredBookings = bookings;
+  // Si la API no filtra correctamente, filtramos localmente por estado
+  const filteredBookings = Array.isArray(bookings)
+    ? bookings.filter(
+        (booking) =>
+          booking.status === selectedStatus ||
+          booking.booking_status === selectedStatus
+      )
+    : [];
+  
 
 
   return (

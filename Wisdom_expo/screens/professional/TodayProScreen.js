@@ -94,8 +94,14 @@ export default function TodayProScreen() {
     );
   };
 
-  // Las reservas ya vienen filtradas desde la API
-  const filteredBookings = bookings;
+  // Si la API no filtra correctamente, filtramos localmente por estado
+  const filteredBookings = Array.isArray(bookings)
+    ? bookings.filter(
+        (booking) =>
+          booking.status === selectedStatus ||
+          booking.booking_status === selectedStatus
+      )
+    : [];
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
