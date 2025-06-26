@@ -15,6 +15,8 @@ import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import MapView, { Marker, Circle } from 'react-native-maps';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../../utils/firebase';
 import axios from 'axios'; 
 import { Calendar } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -419,6 +421,32 @@ export default function ServiceProfileScreen() {
     return `Book for ${formattedDay} \n ${formattedTime} - ${formattedEndTime} for ${priceLabel}`;
   };
   
+  const startChat = async () => {
+    try {
+      const userData = await getDataLocally('user');
+      if (!userData) return;
+      const me = JSON.parse(userData);
+      const participants = [me.id, serviceData.user_id];
+      const conversationId = [...participants].sort().join('_');
+      await setDoc(
+        doc(db, 'conversations', conversationId),
+        {
+          participants,
+          name: `${serviceData.first_name} ${serviceData.surname}`,
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+      navigation.navigate('Conversation', {
+        conversationId,
+        participants,
+        name: `${serviceData.first_name} ${serviceData.surname}`,
+      });
+    } catch (err) {
+      console.error('startChat error:', err);
+    }
+  };
+  
 
 
   return (
@@ -636,7 +664,7 @@ export default function ServiceProfileScreen() {
 
                 <ScrollView className="flex-1 w-full px-7">
                   {lists.map((list, index) => (
-                    <View key={index} className="justify-center items-center" >
+                    <View key={list.id ? list.id : index} className="justify-center items-center" >
 
                       <TouchableOpacity onPress={() => addItemList(list.id)} className="mb-4 flex-row justify-between items-center w-full">
 
@@ -790,8 +818,11 @@ export default function ServiceProfileScreen() {
 
             {serviceData.images.slice(0, 10).map((image, index) => (
 
-              <TouchableOpacity onPress={() => navigation.navigate('EnlargedImage', {images:serviceData.images, index:index})}>
-                <Image key={index} source={{uri: image.image_url}} className="mr-3 h-[110] w-[100] bg-[#d4d4d3] dark:bg-[#474646] rounded-2xl"/>
+              <TouchableOpacity
+              key={image.id ? image.id : index}
+              onPress={() => navigation.navigate('EnlargedImage', {images:serviceData.images, index:index})}
+              >
+                <Image source={{uri: image.image_url}} className="mr-3 h-[110] w-[100] bg-[#d4d4d3] dark:bg-[#474646] rounded-2xl"/>
               </TouchableOpacity>
 
             ))}
@@ -1141,7 +1172,7 @@ export default function ServiceProfileScreen() {
                 {serviceData.user_can_ask === 1 && (
 
                   <TouchableOpacity
-                  onPress={() => null }
+                  onPress={startChat}
                   style={{ opacity: 1 }}
                   className={`mr-2 bg-[#E0E0E0] dark:bg-[#3d3d3d] ${serviceData.user_can_consult === 0 ? 'w-full' : 'w-1/3'} h-[40] rounded-full items-center justify-center`}
                   >

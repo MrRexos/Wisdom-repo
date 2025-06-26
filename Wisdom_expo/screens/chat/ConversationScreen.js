@@ -186,7 +186,7 @@ export default function ConversationScreen() {
   // ---------------------------------------------------------------------------
   // • RENDER HELPERS
   // ---------------------------------------------------------------------------
-  const renderMessage = ({ item, index }) => {           // ← añade index
+  const renderMessage = ({ item, index }) => {           
     if (item.type === 'label') {
       return (
         <View className="self-start bg-[#D4D4D3] dark:bg-[#3d3d3d] rounded-full px-3 py-2 my-1">
@@ -201,11 +201,11 @@ export default function ConversationScreen() {
     const lastOfStreak = isLastOfStreak(messages, index);
 
     const bubbleBase =
-      'rounded-2xl px-4 py-2 max-w-[70%] my-[2] flex-row items-end';
+      'rounded-2xl px-4 py-2 max-w-[70%] my-[2] flex-row items-end shadow-xs';
 
     const common =
       item.fromMe
-        ? 'self-end bg-[#FCFCFC] dark:bg-[#323131]'
+        ? 'self-end bg-[#FCFCFC] dark:bg-[#706f6e]'
         : 'self-start bg-[#D4D4D3] dark:bg-[#3d3d3d]';
 
     const corner =
@@ -270,7 +270,7 @@ export default function ConversationScreen() {
     }
 
     return (
-      <View>                                         {/* ← contenedor nuevo */}
+      <View>
         <View className={`${bubbleBase} ${fromMeStyles}`}>
           <Text className={`text-sm leading-5 flex-shrink ${textColor}`}>
             {item.text}
@@ -304,11 +304,11 @@ export default function ConversationScreen() {
   // • MAIN UI
   // ---------------------------------------------------------------------------
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]">
     <SafeTop edges={['top']} className="bg-[#fcfcfc] dark:bg-[#202020] rounded-b-[30px]">
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
 
-      {/* Header -------------------------------------------------------------- */}
+      {/* Header */}
 
       <View
         className="flex-row items-center px-2 pt-4 pb-8 dark:border-[#3d3d3d]"
@@ -352,7 +352,7 @@ export default function ConversationScreen() {
       >
         <View
           className=" flex-row items-end px-3 py-2 bg-[#f4f4f4] dark:bg-[#272626]
-                    space-x-2"                /* separación entre adjunto y campo */
+                    space-x-2"                
         >
           {/* Attachment – bolita aparte */}
           <Pressable
@@ -373,37 +373,41 @@ export default function ConversationScreen() {
           >
             <View className="flex-1 justify-center">
             <TextInput
-              className="my-2 mr-2 font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]"
+              className="my-2 mr-2 font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc] "
               placeholder={t('your_message')}
               placeholderTextColor="#979797"
               multiline={true}
               value={text}
               onChangeText={setText}
+              keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
               style={{ paddingVertical: 0 }}
-              textAlignVertical="center" 
+              textAlignVertical="center"
             />
-
-            <Pressable
-              onPress={handleSend}
-              disabled={!text.trim()}
-              className={`h-8 w-8 my-2 rounded-full items-center justify-center
-                          ${text.trim()
-                            ? 'bg-[#323131] dark:bg-[#fcfcfc]'
-                            : 'bg-[#d4d4d3] dark:bg-[#474646]'}`}
-            >
-              <ArrowUpIcon
-                height={14}
-                width={14}
-                strokeWidth={3}
-                color={
-                  text.trim()
-                    ? colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'
-                    : '#ffffff'
-                }
-              />
-            </Pressable>
             </View>
-          </View>
+            <View className="self-stretch items-center justify-end">
+              <Pressable
+                onPress={handleSend}
+                disabled={!text.trim()}
+                className={`h-8 w-8 my-2 rounded-full items-center justify-center
+                            ${text.trim()
+                              ? 'bg-[#323131] dark:bg-[#fcfcfc]'
+                              : 'bg-[#d4d4d3] dark:bg-[#474646]'}`}
+              >
+                <ArrowUpIcon
+                  height={14}
+                  width={14}
+                  strokeWidth={3}
+                  color={
+                    text.trim()
+                      ? colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'
+                      : '#ffffff'
+                  }
+                />
+              </Pressable>
+            </View>
+            </View>
+
+          
         </View>
 
       </KeyboardAvoidingView>

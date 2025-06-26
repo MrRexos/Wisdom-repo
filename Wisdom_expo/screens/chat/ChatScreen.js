@@ -6,6 +6,7 @@ import {
   Platform,
   TouchableOpacity,
   Text,
+  TextInput,
   FlatList,
   ScrollView,
   Image,
@@ -32,12 +33,20 @@ export default function ChatScreen() {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [userId, setUserId] = useState();
   const [conversations, setConversations] = useState([]);
+  const [searchActive, setSearchActive] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const suggestions = [
     { label: t('all'), value: 'all', id: 1 },
     { label: t('professionals'), value: 'professionals', id: 2 },
     { label: t('help'), value: 'help', id: 3 },
   ];
+
+  const filteredConversations = searchActive
+    ? conversations.filter(c =>
+        c.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : conversations;
 
   useEffect(() => {
     let unsubscribe;
@@ -84,12 +93,35 @@ export default function ChatScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
-        <View className="px-6 pt-[55] pb-4 ">
-          <Text className="mb-2 font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
+        <View className="px-6 pt-[55] pb-4 flex-row items-center">
+          <Text className="flex-1 mb-2 font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
             {t('chat')}
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Conversation')} className="p-[12] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
-            <Search height={18} width={18} color={iconColor} strokeWidth={2.1} />
+          {searchActive && (
+            <TextInput
+              className="font-inter-medium flex-1 mr-2 px-3 py-[11px] rounded-full bg-[#fcfcfc] dark:bg-[#323131] text-[#323131] dark:text-[#fcfcfc]"
+              placeholder={t('search')}
+              placeholderTextColor="#979797"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          )}
+          <TouchableOpacity
+            onPress={() => {
+              if (searchActive) {
+                setSearchActive(false);
+                setSearchQuery('');
+              } else {
+                setSearchActive(true);
+              }
+            }}
+            className={`bg-[#fcfcfc] dark:bg-[#323131] rounded-full ${searchActive ? 'p-[10px]' : 'p-[12px]'}`}
+          >
+            {searchActive ? (
+              <XMarkIcon height={22} width={22} color={iconColor} strokeWidth={2.1} />
+            ) : (
+              <Search height={18} width={18} color={iconColor} strokeWidth={2.1} />
+            )}
           </TouchableOpacity>
         </View>
 
@@ -111,7 +143,7 @@ export default function ChatScreen() {
         </View>
         
 
-        {conversations.length < 1 ? (
+        {filteredConversations.length < 1 ? (
           <View className="flex-1 justify-center items-center">
             <ChatBubbleLeftRightIcon height={65} width={70} fill={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
             <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
@@ -125,7 +157,7 @@ export default function ChatScreen() {
         ) : (
 
           <FlatList
-            data={conversations}
+            data={filteredConversations}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <TouchableOpacity
@@ -137,11 +169,11 @@ export default function ChatScreen() {
                   })
                 }
               >
-                <View className="flex-row items-center px-6 py-4 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-                  <View className="h-11 w-11 rounded-full bg-[#e0e0e0] dark:bg-[#3d3d3d] mr-3" />
+                <View className="flex-row items-center px-6 py-4 ">
+                  <View className="h-[50px] w-[50px] rounded-full bg-[#e0e0e0] dark:bg-[#3d3d3d] mr-3" />
                   <View className="flex-1">
-                    <Text className="font-inter-semibold text-[15px] text-[#323131] dark:text-[#fcfcfc]">{item.name}</Text>
-                    <Text className="text-[13px] text-[#706F6E] dark:text-[#B6B5B5]" numberOfLines={1}>{item.lastMessage}</Text>
+                    <Text className="font-inter-semibold text-[16px] text-[#323131] dark:text-[#fcfcfc]">{item.name}</Text>
+                    <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]" numberOfLines={1}>{item.lastMessage}</Text>
                   </View>
                 </View>
               </TouchableOpacity>
