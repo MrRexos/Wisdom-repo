@@ -277,6 +277,12 @@
     ,"book_a_consult": "احجز استشارة"
     ,"book_without_date": "احجز بدون تاريخ"
     ,"select_date_time_and_duration": "اختر التاريخ والوقت والمدّة"
+    ,"booking_details": "تفاصيل الحجز"
+    ,"save_changes": "حفظ التغييرات"
+    ,"cancel_booking": "إلغاء الحجز"
+    ,"confirm_cancel_booking": "هل أنت متأكد أنك تريد إلغاء هذا الحجز؟"
+    ,"reject": "رفض"
+    ,"edit": "تعديل"
     ,"select_a_time": "اختر وقتًا"
     ,"select_a_duration": "اختر المدّة"
   }

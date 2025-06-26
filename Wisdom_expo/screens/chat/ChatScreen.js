@@ -1,14 +1,26 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+  View,
+  StatusBar,
+  SafeAreaView,
+  Platform,
+  TouchableOpacity,
+  Text,
+  FlatList,
+  ScrollView,
+  Image,
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
-import '../../languages/i18n';
+import i18n from '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIco, CalendarDaysIcon } from 'react-native-heroicons/outline';
 import { ChatBubbleLeftRightIcon } from 'react-native-heroicons/solid';
 import { Calendar, Search } from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
+import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { db } from '../../utils/firebase';
 
 
 export default function ChatScreen() {
@@ -19,12 +31,34 @@ export default function ChatScreen() {
   const navigation = useNavigation();
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [userId, setUserId] = useState();
+  const [conversations, setConversations] = useState([]);
 
   const suggestions = [
     { label: t('all'), value: 'all', id: 1 },
     { label: t('professionals'), value: 'professionals', id: 2 },
     { label: t('help'), value: 'help', id: 3 },
   ];
+
+  useEffect(() => {
+    let unsubscribe;
+    const load = async () => {
+      const userData = await getDataLocally('user');
+      if (!userData) return;
+      const user = JSON.parse(userData);
+      setUserId(user.id);
+      const q = query(
+        collection(db, 'conversations'),
+        where('participants', 'array-contains', user.id),
+        orderBy('updatedAt', 'desc')
+      );
+      unsubscribe = onSnapshot(q, snap => {
+        const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        setConversations(data);
+      });
+    };
+    load();
+    return () => unsubscribe && unsubscribe();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -33,7 +67,7 @@ export default function ChatScreen() {
         console.log(userData);
 
         // Comprobar si userData indica que no hay usuario
-        if (userData === '{"token":false}') {
+        if (userData === '{"userToken":false}') {
           navigation.reset({
             index: 0,
             routes: [{ name: 'GetStarted' }],
@@ -49,9 +83,8 @@ export default function ChatScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
-      <View className="flex-1 pt-[55] pb-3">
 
-        <View className="mb-4 px-6 w-full flex-row justify-between items-center">
+        <View className="px-6 pt-[55] pb-4 ">
           <Text className="mb-2 font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
             {t('chat')}
           </Text>
@@ -76,8 +109,9 @@ export default function ChatScreen() {
             ))}
           </ScrollView>
         </View>
+        
 
-        {true ? (
+        {conversations.length < 1 ? (
           <View className="flex-1 justify-center items-center">
             <ChatBubbleLeftRightIcon height={65} width={70} fill={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
             <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
@@ -90,12 +124,32 @@ export default function ChatScreen() {
 
         ) : (
 
-          <View className="flex-1 justify-center items-center">
-          </View>
+          <FlatList
+            data={conversations}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('Conversation', {
+                    conversationId: item.id,
+                    name: item.name,
+                    participants: item.participants,
+                  })
+                }
+              >
+                <View className="flex-row items-center px-6 py-4 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+                  <View className="h-11 w-11 rounded-full bg-[#e0e0e0] dark:bg-[#3d3d3d] mr-3" />
+                  <View className="flex-1">
+                    <Text className="font-inter-semibold text-[15px] text-[#323131] dark:text-[#fcfcfc]">{item.name}</Text>
+                    <Text className="text-[13px] text-[#706F6E] dark:text-[#B6B5B5]" numberOfLines={1}>{item.lastMessage}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
 
         )}
 
-      </View>
     </SafeAreaView>
   );
 }

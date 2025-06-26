@@ -277,6 +277,12 @@
     ,"book_a_consult": "Reserva una consulta"
     ,"book_without_date": "Reservar sense data"
     ,"select_date_time_and_duration": "Selecciona data, hora i durada"
+    ,"booking_details": "Detalls de la reserva"
+    ,"save_changes": "Desar canvis"
+    ,"cancel_booking": "Cancel·lar reserva"
+    ,"confirm_cancel_booking": "Segur que vols cancel·lar aquesta reserva?"
+    ,"reject": "Rebutjar"
+    ,"edit": "Editar"
     ,"select_a_time": "Selecciona una hora"
     ,"select_a_duration": "Selecciona una durada"
   }

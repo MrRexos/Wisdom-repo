@@ -277,6 +277,12 @@
     ,"book_a_consult": "Réserver une consultation"
     ,"book_without_date": "Réserver sans date"
     ,"select_date_time_and_duration": "Sélectionnez date, heure et durée"
+    ,"booking_details": "Détails de la réservation"
+    ,"save_changes": "Enregistrer les modifications"
+    ,"cancel_booking": "Annuler la réservation"
+    ,"confirm_cancel_booking": "Êtes-vous sûr de vouloir annuler cette réservation ?"
+    ,"reject": "Rejeter"
+    ,"edit": "Modifier"
     ,"select_a_time": "Sélectionnez une heure"
     ,"select_a_duration": "Sélectionnez une durée"
   }

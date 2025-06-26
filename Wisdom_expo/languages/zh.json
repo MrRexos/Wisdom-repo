@@ -277,6 +277,12 @@
     ,"book_a_consult": "预约咨询"
     ,"book_without_date": "无日期预约"
     ,"select_date_time_and_duration": "选择日期、时间和时长"
+    ,"booking_details": "预订详情"
+    ,"save_changes": "保存更改"
+    ,"cancel_booking": "取消预订"
+    ,"confirm_cancel_booking": "确定要取消此预订吗？"
+    ,"reject": "拒绝"
+    ,"edit": "编辑"
     ,"select_a_time": "选择时间"
     ,"select_a_duration": "选择时长"
   }
