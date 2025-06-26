@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
   Image,
   Linking,
+  TouchableOpacity,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -20,11 +21,10 @@ import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {
   ChevronLeftIcon,
-  EllipsisHorizontalIcon,
   PaperClipIcon,
   ArrowUpIcon,
 } from 'react-native-heroicons/outline';
-import { CheckIcon } from 'react-native-heroicons/solid';
+import { MoreHorizontal, Image as ImageIcon, Folder, Check } from "react-native-feather";
 import { useTranslation } from 'react-i18next';
 import {
   collection,
@@ -34,11 +34,16 @@ import {
   addDoc,
   doc,
   setDoc,
+  updateDoc,
   serverTimestamp,
+  arrayUnion,
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../utils/firebase';
 import { getDataLocally } from '../../utils/asyncStorage';
+import api from '../../utils/api.js';
+import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
+import DoubleCheck from '../../assets/DoubleCheck'
 
 
 export default function ConversationScreen() {
@@ -60,6 +65,7 @@ export default function ConversationScreen() {
   const [text, setText] = useState('');
   const [messages, setMessages] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [otherUserInfo, setOtherUserInfo] = useState(null);
   const otherUserId = participants?.find((id) => id !== userId);
   const isLastOfStreak = (msgs, idx) =>
     idx === msgs.length - 1 || msgs[idx].fromMe !== msgs[idx + 1].fromMe;
@@ -75,7 +81,7 @@ export default function ConversationScreen() {
         collection(db, 'conversations', conversationId, 'messages'),
         orderBy('createdAt')
       );
-      unsub = onSnapshot(q, (snap) => {
+      unsub = onSnapshot(q, async (snap) => {
         const data = snap.docs.map((d) => {
           const msg = d.data();
           return {
@@ -86,11 +92,32 @@ export default function ConversationScreen() {
         });
         setMessages(data);
         flatListRef.current?.scrollToEnd({ animated: true });
+        data.forEach(async m => {
+          if (!m.fromMe && !m.read) {
+            await updateDoc(doc(db, 'conversations', conversationId, 'messages', m.id), { read: true });
+          }
+        });
+        await updateDoc(doc(db, 'conversations', conversationId), { readBy: arrayUnion(user.id) });
       });
     };
     init();
     return () => unsub && unsub();
   }, [conversationId]);
+
+  useEffect(() => {
+    const loadInfo = async () => {
+      if (!otherUserId) return;
+      try {
+        const res = await api.get(`/api/user/${otherUserId}`);
+        setOtherUserInfo(res.data);
+      } catch (err) {
+        console.error('load other user error:', err);
+      }
+    };
+    loadInfo();
+  }, [otherUserId]);
+
+
 
   // ---------------------------------------------------------------------------
   // • ACTIONS
@@ -111,6 +138,8 @@ export default function ConversationScreen() {
         name,
         lastMessage: text.trim(),
         updatedAt: serverTimestamp(),
+        lastMessageSenderId: userId,
+        readBy: [userId],
       },
       { merge: true }
     );
@@ -146,6 +175,8 @@ export default function ConversationScreen() {
           name,
           lastMessage: '📷',
           updatedAt: serverTimestamp(),
+          lastMessageSenderId: userId,
+          readBy: [userId],
         },
         { merge: true }
       );
@@ -177,6 +208,8 @@ export default function ConversationScreen() {
           name,
           lastMessage: '📎',
           updatedAt: serverTimestamp(),
+          lastMessageSenderId: userId,
+          readBy: [userId],
         },
         { merge: true }
       );
@@ -228,7 +261,7 @@ export default function ConversationScreen() {
               className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}
             >
               {item.fromMe && item.read && (
-                <CheckIcon height={14} width={14} color="#9ca3af" />
+                <Check height={14} width={14} color="#9ca3af" strokeWidth={3}/>
               )}
               <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
                 {item.createdAt &&
@@ -246,15 +279,15 @@ export default function ConversationScreen() {
     if (item.type === 'file') {
       return (
         <View>
-          <Pressable onPress={() => Linking.openURL(item.uri)} className={`${bubbleBase} ${fromMeStyles}`}> 
+          <TouchableOpacity onPress={() => Linking.openURL(item.uri)} className={`${bubbleBase} ${fromMeStyles}`}> 
             <Text className={textColor}>{item.name}</Text>
-          </Pressable>
+          </TouchableOpacity>
           {lastOfStreak && (
             <View
               className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}
             >
               {item.fromMe && item.read && (
-                <CheckIcon height={14} width={14} color="#9ca3af" />
+                <Check height={14} width={14} color="#9ca3af" strokeWidth={3}/>
               )}
               <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
                 {item.createdAt &&
@@ -285,7 +318,7 @@ export default function ConversationScreen() {
             `}
           >
             {item.fromMe && item.read && (
-              <CheckIcon height={14} width={14} color="#9ca3af" />
+              <Check height={14} width={14} color="#9ca3af" strokeWidth={3}/>
             )}
             <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
               {item.createdAt &&
@@ -317,18 +350,21 @@ export default function ConversationScreen() {
           borderBottomRightRadius: 28,
         }}
       >
-        <Pressable onPress={() => navigation.goBack()} hitSlop={8} className="p-1">
+        <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={8} className="p-1">
           <ChevronLeftIcon height={24} width={24} color={iconColor} strokeWidth={2} />
-        </Pressable>
+        </TouchableOpacity>
 
-        <View className="h-8 w-8 rounded-full bg-gray-300 dark:bg-[#3d3d3d] mx-2" />
-        <Text className="flex-1 text-base font-inter-semibold text-[#444343] dark:text-[#f2f2f2]">
-          {name}
+        <Image
+          source={otherUserInfo?.profile_picture ? { uri: otherUserInfo.profile_picture } : defaultProfilePic}
+          className="h-10 w-10 rounded-full bg-gray-300 dark:bg-[#3d3d3d] mx-2"
+        />
+        <Text className="flex-1 text-[16px] font-inter-semibold text-[#444343] dark:text-[#f2f2f2]">
+          {otherUserInfo ? `${otherUserInfo.first_name} ${otherUserInfo.surname}` : name}
         </Text>
 
-        <Pressable hitSlop={8} className="p-1">
-          <EllipsisHorizontalIcon height={24} width={24} color={iconColor} strokeWidth={2} />
-        </Pressable>
+        <TouchableOpacity hitSlop={8} className="p-1 mr-4">
+          <MoreHorizontal height={24} width={24} color={iconColor} strokeWidth={2} />
+        </TouchableOpacity>
       </View>
     </SafeTop>
 
@@ -355,7 +391,7 @@ export default function ConversationScreen() {
                     space-x-2"                
         >
           {/* Attachment – bolita aparte */}
-          <Pressable
+          <TouchableOpacity
             onPress={() => attachSheet.current.open()}
             hitSlop={8}
             className="h-11 w-11 rounded-full              /* idéntico alto-ancho */
@@ -363,7 +399,7 @@ export default function ConversationScreen() {
                       bg-[#e5e5e5] dark:bg-[#3d3d3d]"
           >
             <PaperClipIcon height={24} width={24} color={"#979797"} strokeWidth={1.5} />
-          </Pressable>
+          </TouchableOpacity>
 
           {/* Campo de texto + botón send dentro del mismo “pill” ---------------- */}
           <View
@@ -385,7 +421,7 @@ export default function ConversationScreen() {
             />
             </View>
             <View className="self-stretch items-center justify-end">
-              <Pressable
+              <TouchableOpacity
                 onPress={handleSend}
                 disabled={!text.trim()}
                 className={`h-8 w-8 my-2 rounded-full items-center justify-center
@@ -403,7 +439,7 @@ export default function ConversationScreen() {
                       : '#ffffff'
                   }
                 />
-              </Pressable>
+              </TouchableOpacity>
             </View>
             </View>
 
@@ -426,13 +462,15 @@ export default function ConversationScreen() {
           draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
         }}
       >
-        <View className="p-4 space-y-4">
-          <Pressable onPress={handleImagePick} className="py-2">
-            <Text className="text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">Choose image</Text>
-          </Pressable>
-          <Pressable onPress={handleFilePick} className="py-2">
-            <Text className="text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">Choose file</Text>
-          </Pressable>
+        <View className="py-4 px-7 space-y-4">
+          <TouchableOpacity onPress={handleImagePick} className="py-2 flex-row justify-start items-center ">
+            <ImageIcon height={24} width={24} color={iconColor} strokeWidth={2} />
+            <Text className=" ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">Choose image</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleFilePick} className="py-1 flex-row justify-start items-center">
+            <Folder height={24} width={24} color={iconColor} strokeWidth={2} />
+            <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">Choose file</Text>
+          </TouchableOpacity>
         </View>
       </RBSheet>
 
