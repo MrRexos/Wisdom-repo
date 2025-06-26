@@ -7,7 +7,6 @@ const SVGComponent = ({ color = "#323131", ...props }) => (
     height={7}
     viewBox="0 0 13 7"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <Path
