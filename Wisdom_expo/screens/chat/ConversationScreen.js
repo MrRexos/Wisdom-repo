@@ -53,6 +53,8 @@ export default function ConversationScreen() {
   const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
+  const statusReadColor = colorScheme === 'dark' ? '#d4d4d3' : '#515150';
+  const statusUnreadColor = '#9ca3af';
   const navigation = useNavigation();
   const flatListRef = useRef(null);
   const attachSheet = useRef(null);
@@ -260,8 +262,12 @@ export default function ConversationScreen() {
             <View
               className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}
             >
-              {item.fromMe && item.read && (
-                <Check height={14} width={14} color="#9ca3af" strokeWidth={3}/>
+              {item.fromMe && (
+                item.read ? (
+                  <DoubleCheck height={14} width={14} color={statusReadColor} />
+                ) : (
+                  <Check height={14} width={14} color={statusUnreadColor} strokeWidth={3} />
+                )
               )}
               <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
                 {item.createdAt &&
@@ -286,8 +292,12 @@ export default function ConversationScreen() {
             <View
               className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}
             >
-              {item.fromMe && item.read && (
-                <Check height={14} width={14} color="#9ca3af" strokeWidth={3}/>
+              {item.fromMe && (
+                item.read ? (
+                  <DoubleCheck height={14} width={14} color={statusReadColor} />
+                ) : (
+                  <Check height={14} width={14} color={statusUnreadColor} strokeWidth={3} />
+                )
               )}
               <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
                 {item.createdAt &&
@@ -317,8 +327,12 @@ export default function ConversationScreen() {
               ${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'}
             `}
           >
-            {item.fromMe && item.read && (
-              <Check height={14} width={14} color="#9ca3af" strokeWidth={3}/>
+            {item.fromMe && (
+              item.read ? (
+                <DoubleCheck height={14} width={14} color={statusReadColor} />
+              ) : (
+                <Check height={14} width={14} color={statusUnreadColor} strokeWidth={3} />
+              )
             )}
             <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
               {item.createdAt &&
