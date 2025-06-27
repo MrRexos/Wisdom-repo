@@ -171,119 +171,121 @@
     "street": "Carrer",
     "postal_code": "Codi postal",
     "street_number": "Número",
-    "floor_door_stair_optional": "Pis, porta, escala (opcional)"
-    ,"switch_to_professional_version": "Canvia a la versió professional"
-    ,"dark_mode": "Mode fosc"
-    ,"language": "Idioma"
-    ,"back": "Enrere"
-    ,"start": "Començar"
-    ,"continue": "Continuar"
-    ,"create_your_service": "Crea el teu servei,"
-    ,"tell_the_world_what_you_do": "explica al món què fas"
-    ,"what_is_the_title_of_your_service": "Quin és el títol del teu servei?"
-    ,"this_will_be_the_public_title": "Aquest serà el títol públic"
-    ,"service_title_placeholder": "Títol del servei..."
-    ,"choose_family": "Tria família"
-    ,"choose_category": "Tria categoria"
-    ,"what_family_and_category_does_it_belong_to": "A quina família i categoria pertany?"
-    ,"add_a_description": "Afegeix una descripció"
-    ,"faq": "FAQ"
-    ,"write_us": "Escriu-nos"
-    ,"edit_direction": "Edita l'adreça"
-    ,"delete_account": "Eliminar compte"
-    ,"are_you_sure_you_want_to_delete_this_account": "Segur que vols eliminar aquest compte?"
-    ,"doing_this_will_delete_all_your_data": "Això esborrarà permanentment totes les teves dades"
-    ,"bookings": "Reserves"
-    ,"payment_methods": "Mètodes de pagament"
-    ,"money_in_wallet": "Diners al moneder:"
-    ,"edit_profile": "Editar perfil"
-    ,"must_enter_name_and_surname": "Has d'introduir el teu nom i cognom"
-    ,"must_enter_your_surname": "Has d'introduir el teu cognom"
-    ,"update_profile_photo": "Actualitza la foto de perfil"
-    ,"username": "Nom d'usuari"
-    ,"full_name": "Nom complet"
-    ,"error_updating_user_please_try_again": "Error en actualitzar l'usuari. Torna-ho a provar."
-    ,"explore_plans": "Explora els plans"
-    ,"overview": "Resum"
-    ,"confirm_your_expert_plan": "Confirma el teu pla expert"
-    ,"your_next_bill_will_be_on": "La teva pròxima factura serà el"
-    ,"give_some_information": "Dona una mica d'informació"
-    ,"languages": "Idiomes"
-    ,"about_you": "Sobre tu"
-    ,"are_you_an_individual": "Ets un particular?"
-    ,"hobbies_optional_placeholder": "Aficions (opcional)..."
-    ,"tags": "Etiquetes"
-    ,"add_a_tag_placeholder": "Afegeix una etiqueta..."
-    ,"maximum_15_tags": "Màxim 15 etiquetes"
-    ,"locate_your_service": "Ubica el teu servei"
-    ,"exact_location_never_public": "La ubicació exacta mai es farà pública"
-    ,"action_rate_dash": "Radi d'acció -"
-    ,"full": "complet"
-    ,"unlocated_service": "Servei sense ubicació"
-    ,"unlocated_or_online_service": "Servei sense ubicació o en línia"
-    ,"unlocated": "Sense ubicació"
-    ,"location": "Ubicació"
-    ,"your_location": "La teva ubicació"
-    ,"your_experience": "La teva experiència"
-    ,"show_your_entire_career_with_this_service": "Mostra tota la teva trajectòria amb aquest servei"
-    ,"add_an_experience": "+ Afegir una experiència"
-    ,"position_or_study_placeholder": "Posició o estudi..."
-    ,"place_or_company_placeholder": "Lloc o empresa..."
-    ,"started": "Inici"
-    ,"end": "Fi"
-    ,"still_here": "Encara aquí"
-    ,"upload_some_photos": "Puja algunes fotos"
-    ,"we_recommend_you_upload_at_least_five_images": "Et recomanem pujar almenys 5 imatges"
-    ,"add_more": "+ Afegir més"
-    ,"main_photo": "Foto principal"
-    ,"permission_denied": "Permís denegat"
-    ,"need_gallery_access_service": "Necessitem accés a la teva galeria per poder pujar imatges i mostrar els teus serveis."
-    ,"price": "Preu"
-    ,"the_client_pays": "El client paga"
-    ,"you_recibes": "Tu reps"
-    ,"quality_commission": "Comissió de qualitat"
-    ,"client_final_price": "Preu final del client"
-    ,"price_per_hour": "Preu per hora"
-    ,"service_charged_hourly": "El servei es cobra per hora"
-    ,"price_according_to_budget": "Preu segons pressupost"
-    ,"price_by_professional_budget": "El preu es determinarà segons el pressupost del professional"
-    ,"fixed_price": "Preu fix"
-    ,"non_negotiable_price": "Un preu únic no negociable per tot el servei"
-    ,"price_type": "Tipus de preu"
-    ,"allow_discounts": "Permetre descomptes"
-    ,"dont_add_discounts": "No afegir descomptes"
-    ,"add_discounts_for_recurrent_bookings": "Afegir descomptes per reserves recurrents"
-    ,"allow_consults": "Permetre consultes"
-    ,"dont_allow_consults": "No permetre consultes"
-    ,"allows_clients_to_book_personalized_consultations": "Permet als clients reservar consultes personalitzades"
-    ,"via": "Via"
-    ,"example_zoom_meet_in_person": "Ex. Zoom, Meet, Presencial..."
-    ,"allow_clients_to_ask": "Permetre preguntes dels clients"
-    ,"allows_clients_to_write_you_3_messages_without_booking": "Permet als clients escriure't 3 missatges sense reservar"
-    ,"dont_allow_to_ask": "No permetre preguntes"
-    ,"allow_to_ask": "Permetre preguntes"
-    ,"remember": "Recorda"
-    ,"communications_warning": "totes les comunicacions i pagaments s'han de fer a través de l'aplicació, en cas contrari rebràs strikes que poden provocar la suspensió del compte i incompliments legals."
-    ,"accept_wisdom_terms": "Acceptar els termes de Wisdom"
-    ,"check_your_service": "Revisa el teu servei"
-    ,"publish_service": "Publica el servei"
-    ,"become_a_professional": "Fes-te professional"
-    ,"make_money_serving": "I guanya diners oferint serveis"
-    ,"create": "Crear"
-    ,"visit": "Visita"
-    ,"search": "Cercar"
-    ,"search_a_location": "Cerca una ubicació..."
-    ,"write": "Escriu"
-    ,"book_a_consult": "Reserva una consulta"
-    ,"book_without_date": "Reservar sense data"
-    ,"select_date_time_and_duration": "Selecciona data, hora i durada"
-    ,"booking_details": "Detalls de la reserva"
-    ,"save_changes": "Desar canvis"
-    ,"cancel_booking": "Cancel·lar reserva"
-    ,"confirm_cancel_booking": "Segur que vols cancel·lar aquesta reserva?"
-    ,"reject": "Rebutjar"
-    ,"edit": "Editar"
-    ,"select_a_time": "Selecciona una hora"
-    ,"select_a_duration": "Selecciona una durada"
+    "floor_door_stair_optional": "Pis, porta, escala (opcional)",
+    "switch_to_professional_version": "Canvia a la versió professional",
+    "dark_mode": "Mode fosc",
+    "language": "Idioma",
+    "back": "Enrere",
+    "start": "Començar",
+    "continue": "Continuar",
+    "create_your_service": "Crea el teu servei,",
+    "tell_the_world_what_you_do": "explica al món què fas",
+    "what_is_the_title_of_your_service": "Quin és el títol del teu servei?",
+    "this_will_be_the_public_title": "Aquest serà el títol públic",
+    "service_title_placeholder": "Títol del servei...",
+    "choose_family": "Tria família",
+    "choose_category": "Tria categoria",
+    "what_family_and_category_does_it_belong_to": "A quina família i categoria pertany?",
+    "add_a_description": "Afegeix una descripció",
+    "faq": "FAQ",
+    "write_us": "Escriu-nos",
+    "edit_direction": "Edita l'adreça",
+    "delete_account": "Eliminar compte",
+    "are_you_sure_you_want_to_delete_this_account": "Segur que vols eliminar aquest compte?",
+    "doing_this_will_delete_all_your_data": "Això esborrarà permanentment totes les teves dades",
+    "bookings": "Reserves",
+    "payment_methods": "Mètodes de pagament",
+    "money_in_wallet": "Diners al moneder:",
+    "edit_profile": "Editar perfil",
+    "must_enter_name_and_surname": "Has d'introduir el teu nom i cognom",
+    "must_enter_your_surname": "Has d'introduir el teu cognom",
+    "update_profile_photo": "Actualitza la foto de perfil",
+    "username": "Nom d'usuari",
+    "full_name": "Nom complet",
+    "error_updating_user_please_try_again": "Error en actualitzar l'usuari. Torna-ho a provar.",
+    "explore_plans": "Explora els plans",
+    "overview": "Resum",
+    "confirm_your_expert_plan": "Confirma el teu pla expert",
+    "your_next_bill_will_be_on": "La teva pròxima factura serà el",
+    "give_some_information": "Dona una mica d'informació",
+    "languages": "Idiomes",
+    "about_you": "Sobre tu",
+    "are_you_an_individual": "Ets un particular?",
+    "hobbies_optional_placeholder": "Aficions (opcional)...",
+    "tags": "Etiquetes",
+    "add_a_tag_placeholder": "Afegeix una etiqueta...",
+    "maximum_15_tags": "Màxim 15 etiquetes",
+    "locate_your_service": "Ubica el teu servei",
+    "exact_location_never_public": "La ubicació exacta mai es farà pública",
+    "action_rate_dash": "Radi d'acció -",
+    "full": "complet",
+    "unlocated_service": "Servei sense ubicació",
+    "unlocated_or_online_service": "Servei sense ubicació o en línia",
+    "unlocated": "Sense ubicació",
+    "location": "Ubicació",
+    "your_location": "La teva ubicació",
+    "your_experience": "La teva experiència",
+    "show_your_entire_career_with_this_service": "Mostra tota la teva trajectòria amb aquest servei",
+    "add_an_experience": "+ Afegir una experiència",
+    "position_or_study_placeholder": "Posició o estudi...",
+    "place_or_company_placeholder": "Lloc o empresa...",
+    "started": "Inici",
+    "end": "Fi",
+    "still_here": "Encara aquí",
+    "upload_some_photos": "Puja algunes fotos",
+    "we_recommend_you_upload_at_least_five_images": "Et recomanem pujar almenys 5 imatges",
+    "add_more": "+ Afegir més",
+    "main_photo": "Foto principal",
+    "permission_denied": "Permís denegat",
+    "need_gallery_access_service": "Necessitem accés a la teva galeria per poder pujar imatges i mostrar els teus serveis.",
+    "price": "Preu",
+    "the_client_pays": "El client paga",
+    "you_recibes": "Tu reps",
+    "quality_commission": "Comissió de qualitat",
+    "client_final_price": "Preu final del client",
+    "price_per_hour": "Preu per hora",
+    "service_charged_hourly": "El servei es cobra per hora",
+    "price_according_to_budget": "Preu segons pressupost",
+    "price_by_professional_budget": "El preu es determinarà segons el pressupost del professional",
+    "fixed_price": "Preu fix",
+    "non_negotiable_price": "Un preu únic no negociable per tot el servei",
+    "price_type": "Tipus de preu",
+    "allow_discounts": "Permetre descomptes",
+    "dont_add_discounts": "No afegir descomptes",
+    "add_discounts_for_recurrent_bookings": "Afegir descomptes per reserves recurrents",
+    "allow_consults": "Permetre consultes",
+    "dont_allow_consults": "No permetre consultes",
+    "allows_clients_to_book_personalized_consultations": "Permet als clients reservar consultes personalitzades",
+    "via": "Via",
+    "example_zoom_meet_in_person": "Ex. Zoom, Meet, Presencial...",
+    "allow_clients_to_ask": "Permetre preguntes dels clients",
+    "allows_clients_to_write_you_3_messages_without_booking": "Permet als clients escriure't 3 missatges sense reservar",
+    "dont_allow_to_ask": "No permetre preguntes",
+    "allow_to_ask": "Permetre preguntes",
+    "remember": "Recorda",
+    "communications_warning": "totes les comunicacions i pagaments s'han de fer a través de l'aplicació, en cas contrari rebràs strikes que poden provocar la suspensió del compte i incompliments legals.",
+    "accept_wisdom_terms": "Acceptar els termes de Wisdom",
+    "check_your_service": "Revisa el teu servei",
+    "publish_service": "Publica el servei",
+    "become_a_professional": "Fes-te professional",
+    "make_money_serving": "I guanya diners oferint serveis",
+    "create": "Crear",
+    "visit": "Visita",
+    "search": "Cercar",
+    "search_a_location": "Cerca una ubicació...",
+    "write": "Escriu",
+    "book_a_consult": "Reserva una consulta",
+    "book_without_date": "Reservar sense data",
+    "select_date_time_and_duration": "Selecciona data, hora i durada",
+    "booking_details": "Detalls de la reserva",
+    "save_changes": "Desar canvis",
+    "cancel_booking": "Cancel·lar reserva",
+    "confirm_cancel_booking": "Segur que vols cancel·lar aquesta reserva?",
+    "reject": "Rebutjar",
+    "edit": "Editar",
+    "select_a_time": "Selecciona una hora",
+    "select_a_duration": "Selecciona una durada",
+    "date": "Data",
+    "description": "Descripció"
   }
 }

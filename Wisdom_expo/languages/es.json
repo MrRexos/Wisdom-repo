@@ -171,119 +171,121 @@
     "street": "Calle",
     "postal_code": "Código postal",
     "street_number": "Número",
-    "floor_door_stair_optional": "Piso, puerta, escalera (opcional)"
-    ,"switch_to_professional_version": "Cambiar a versión profesional"
-    ,"dark_mode": "Modo oscuro"
-    ,"language": "Idioma"
-    ,"back": "Atrás"
-    ,"start": "Empezar"
-    ,"continue": "Continuar"
-    ,"create_your_service": "Crea tu servicio,"
-    ,"tell_the_world_what_you_do": "cuenta al mundo a qué te dedicas"
-    ,"what_is_the_title_of_your_service": "¿Cuál es el título de tu servicio?"
-    ,"this_will_be_the_public_title": "Este será el título público"
-    ,"service_title_placeholder": "Título del servicio..."
-    ,"choose_family": "Elige familia"
-    ,"choose_category": "Elige categoría"
-    ,"what_family_and_category_does_it_belong_to": "¿A qué familia y categoría pertenece?"
-    ,"add_a_description": "Añade una descripción"
-    ,"faq": "FAQ"
-    ,"write_us": "Escríbenos"
-    ,"edit_direction": "Editar dirección"
-    ,"delete_account": "Eliminar cuenta"
-    ,"are_you_sure_you_want_to_delete_this_account": "¿Seguro que quieres eliminar esta cuenta?"
-    ,"doing_this_will_delete_all_your_data": "Hacer esto eliminará permanentemente todos tus datos"
-    ,"bookings": "Reservas"
-    ,"payment_methods": "Métodos de pago"
-    ,"money_in_wallet": "Dinero en la cartera:"
-    ,"edit_profile": "Editar perfil"
-    ,"must_enter_name_and_surname": "Debes introducir tu nombre y apellido"
-    ,"must_enter_your_surname": "Debes introducir tu apellido"
-    ,"update_profile_photo": "Actualizar foto de perfil"
-    ,"username": "Nombre de usuario"
-    ,"full_name": "Nombre completo"
-    ,"error_updating_user_please_try_again": "Error al actualizar el usuario. Por favor, inténtalo de nuevo."
-    ,"explore_plans": "Explorar planes"
-    ,"overview": "Resumen"
-    ,"confirm_your_expert_plan": "Confirma tu plan experto"
-    ,"your_next_bill_will_be_on": "Tu próxima factura será el"
-    ,"give_some_information": "Da alguna información"
-    ,"languages": "Idiomas"
-    ,"about_you": "Sobre ti"
-    ,"are_you_an_individual": "¿Eres un particular?"
-    ,"hobbies_optional_placeholder": "Aficiones (opcional)..."
-    ,"tags": "Etiquetas"
-    ,"add_a_tag_placeholder": "Añade una etiqueta..."
-    ,"maximum_15_tags": "Máximo 15 etiquetas"
-    ,"locate_your_service": "Ubica tu servicio"
-    ,"exact_location_never_public": "La ubicación exacta nunca se hará pública"
-    ,"action_rate_dash": "Radio de acción -"
-    ,"full": "completo"
-    ,"unlocated_service": "Servicio sin ubicación"
-    ,"unlocated_or_online_service": "Servicio sin ubicación o en línea"
-    ,"unlocated": "Sin ubicación"
-    ,"location": "Ubicación"
-    ,"your_location": "Tu ubicación"
-    ,"your_experience": "Tu experiencia"
-    ,"show_your_entire_career_with_this_service": "Muestra toda tu carrera con este servicio"
-    ,"add_an_experience": "+ Añadir una experiencia"
-    ,"position_or_study_placeholder": "Posición o estudio..."
-    ,"place_or_company_placeholder": "Lugar o empresa..."
-    ,"started": "Empezó"
-    ,"end": "Fin"
-    ,"still_here": "Actualmente"
-    ,"upload_some_photos": "Sube algunas fotos"
-    ,"we_recommend_you_upload_at_least_five_images": "Te recomendamos subir al menos 5 imágenes"
-    ,"add_more": "+ Añadir más"
-    ,"main_photo": "Foto principal"
-    ,"permission_denied": "Permiso denegado"
-    ,"need_gallery_access_service": "Necesitamos acceso a tu galería para que puedas subir imágenes y mostrar tus servicios."
-    ,"price": "Precio"
-    ,"the_client_pays": "El cliente paga"
-    ,"you_recibes": "Tú recibes"
-    ,"quality_commission": "Comisión de calidad"
-    ,"client_final_price": "Precio final del cliente"
-    ,"price_per_hour": "Precio por hora"
-    ,"service_charged_hourly": "El servicio se cobra por hora"
-    ,"price_according_to_budget": "Precio según presupuesto"
-    ,"price_by_professional_budget": "El precio se determinará según el presupuesto del profesional"
-    ,"fixed_price": "Precio fijo"
-    ,"non_negotiable_price": "Un único precio no negociable por todo el servicio"
-    ,"price_type": "Tipo de precio"
-    ,"allow_discounts": "Permitir descuentos"
-    ,"dont_add_discounts": "No añadir descuentos"
-    ,"add_discounts_for_recurrent_bookings": "Añadir descuentos para reservas recurrentes"
-    ,"allow_consults": "Permitir consultas"
-    ,"dont_allow_consults": "No permitir consultas"
-    ,"allows_clients_to_book_personalized_consultations": "Permite a los clientes reservar consultas personalizadas"
-    ,"via": "Vía"
-    ,"example_zoom_meet_in_person": "Ej. Zoom, Meet, En persona..."
-    ,"allow_clients_to_ask": "Permitir preguntas"
-    ,"allows_clients_to_write_you_3_messages_without_booking": "Permite a tus clientes enviarte 3 mensajes sin reservar"
-    ,"dont_allow_to_ask": "No permitir preguntas"
-    ,"allow_to_ask": "Permitir preguntas"
-    ,"remember": "Recuerda"
-    ,"communications_warning": "todas las comunicaciones y pagos deben hacerse a través de la aplicación, de lo contrario recibirás strikes que pueden llevar a la suspensión de la cuenta y violaciones legales."
-    ,"accept_wisdom_terms": "Aceptar términos de Wisdom"
-    ,"check_your_service": "Revisa tu servicio"
-    ,"publish_service": "Publicar servicio"
-    ,"become_a_professional": "Hazte profesional"
-    ,"make_money_serving": "Y gana dinero ofreciendo servicios"
-    ,"create": "Crear"
-    ,"visit": "Visitar"
-    ,"search": "Buscar"
-    ,"search_a_location": "Buscar una ubicación..."
-    ,"write": "Escribir"
-    ,"book_a_consult": "Reservar consulta"
-    ,"book_without_date": "Reservar sin fecha"
-    ,"select_date_time_and_duration": "Selecciona fecha, hora y duración"
-    ,"booking_details": "Detalles de la reserva"
-    ,"save_changes": "Guardar cambios"
-    ,"cancel_booking": "Cancelar reserva"
-    ,"confirm_cancel_booking": "¿Seguro que deseas cancelar esta reserva?"
-    ,"reject": "Rechazar"
-    ,"edit": "Editar"
-    ,"select_a_time": "Selecciona una hora"
-    ,"select_a_duration": "Selecciona una duración"
+    "floor_door_stair_optional": "Piso, puerta, escalera (opcional)",
+    "switch_to_professional_version": "Cambiar a versión profesional",
+    "dark_mode": "Modo oscuro",
+    "language": "Idioma",
+    "back": "Atrás",
+    "start": "Empezar",
+    "continue": "Continuar",
+    "create_your_service": "Crea tu servicio,",
+    "tell_the_world_what_you_do": "cuenta al mundo a qué te dedicas",
+    "what_is_the_title_of_your_service": "¿Cuál es el título de tu servicio?",
+    "this_will_be_the_public_title": "Este será el título público",
+    "service_title_placeholder": "Título del servicio...",
+    "choose_family": "Elige familia",
+    "choose_category": "Elige categoría",
+    "what_family_and_category_does_it_belong_to": "¿A qué familia y categoría pertenece?",
+    "add_a_description": "Añade una descripción",
+    "faq": "FAQ",
+    "write_us": "Escríbenos",
+    "edit_direction": "Editar dirección",
+    "delete_account": "Eliminar cuenta",
+    "are_you_sure_you_want_to_delete_this_account": "¿Seguro que quieres eliminar esta cuenta?",
+    "doing_this_will_delete_all_your_data": "Hacer esto eliminará permanentemente todos tus datos",
+    "bookings": "Reservas",
+    "payment_methods": "Métodos de pago",
+    "money_in_wallet": "Dinero en la cartera:",
+    "edit_profile": "Editar perfil",
+    "must_enter_name_and_surname": "Debes introducir tu nombre y apellido",
+    "must_enter_your_surname": "Debes introducir tu apellido",
+    "update_profile_photo": "Actualizar foto de perfil",
+    "username": "Nombre de usuario",
+    "full_name": "Nombre completo",
+    "error_updating_user_please_try_again": "Error al actualizar el usuario. Por favor, inténtalo de nuevo.",
+    "explore_plans": "Explorar planes",
+    "overview": "Resumen",
+    "confirm_your_expert_plan": "Confirma tu plan experto",
+    "your_next_bill_will_be_on": "Tu próxima factura será el",
+    "give_some_information": "Da alguna información",
+    "languages": "Idiomas",
+    "about_you": "Sobre ti",
+    "are_you_an_individual": "¿Eres un particular?",
+    "hobbies_optional_placeholder": "Aficiones (opcional)...",
+    "tags": "Etiquetas",
+    "add_a_tag_placeholder": "Añade una etiqueta...",
+    "maximum_15_tags": "Máximo 15 etiquetas",
+    "locate_your_service": "Ubica tu servicio",
+    "exact_location_never_public": "La ubicación exacta nunca se hará pública",
+    "action_rate_dash": "Radio de acción -",
+    "full": "completo",
+    "unlocated_service": "Servicio sin ubicación",
+    "unlocated_or_online_service": "Servicio sin ubicación o en línea",
+    "unlocated": "Sin ubicación",
+    "location": "Ubicación",
+    "your_location": "Tu ubicación",
+    "your_experience": "Tu experiencia",
+    "show_your_entire_career_with_this_service": "Muestra toda tu carrera con este servicio",
+    "add_an_experience": "+ Añadir una experiencia",
+    "position_or_study_placeholder": "Posición o estudio...",
+    "place_or_company_placeholder": "Lugar o empresa...",
+    "started": "Empezó",
+    "end": "Fin",
+    "still_here": "Actualmente",
+    "upload_some_photos": "Sube algunas fotos",
+    "we_recommend_you_upload_at_least_five_images": "Te recomendamos subir al menos 5 imágenes",
+    "add_more": "+ Añadir más",
+    "main_photo": "Foto principal",
+    "permission_denied": "Permiso denegado",
+    "need_gallery_access_service": "Necesitamos acceso a tu galería para que puedas subir imágenes y mostrar tus servicios.",
+    "price": "Precio",
+    "the_client_pays": "El cliente paga",
+    "you_recibes": "Tú recibes",
+    "quality_commission": "Comisión de calidad",
+    "client_final_price": "Precio final del cliente",
+    "price_per_hour": "Precio por hora",
+    "service_charged_hourly": "El servicio se cobra por hora",
+    "price_according_to_budget": "Precio según presupuesto",
+    "price_by_professional_budget": "El precio se determinará según el presupuesto del profesional",
+    "fixed_price": "Precio fijo",
+    "non_negotiable_price": "Un único precio no negociable por todo el servicio",
+    "price_type": "Tipo de precio",
+    "allow_discounts": "Permitir descuentos",
+    "dont_add_discounts": "No añadir descuentos",
+    "add_discounts_for_recurrent_bookings": "Añadir descuentos para reservas recurrentes",
+    "allow_consults": "Permitir consultas",
+    "dont_allow_consults": "No permitir consultas",
+    "allows_clients_to_book_personalized_consultations": "Permite a los clientes reservar consultas personalizadas",
+    "via": "Vía",
+    "example_zoom_meet_in_person": "Ej. Zoom, Meet, En persona...",
+    "allow_clients_to_ask": "Permitir preguntas",
+    "allows_clients_to_write_you_3_messages_without_booking": "Permite a tus clientes enviarte 3 mensajes sin reservar",
+    "dont_allow_to_ask": "No permitir preguntas",
+    "allow_to_ask": "Permitir preguntas",
+    "remember": "Recuerda",
+    "communications_warning": "todas las comunicaciones y pagos deben hacerse a través de la aplicación, de lo contrario recibirás strikes que pueden llevar a la suspensión de la cuenta y violaciones legales.",
+    "accept_wisdom_terms": "Aceptar términos de Wisdom",
+    "check_your_service": "Revisa tu servicio",
+    "publish_service": "Publicar servicio",
+    "become_a_professional": "Hazte profesional",
+    "make_money_serving": "Y gana dinero ofreciendo servicios",
+    "create": "Crear",
+    "visit": "Visitar",
+    "search": "Buscar",
+    "search_a_location": "Buscar una ubicación...",
+    "write": "Escribir",
+    "book_a_consult": "Reservar consulta",
+    "book_without_date": "Reservar sin fecha",
+    "select_date_time_and_duration": "Selecciona fecha, hora y duración",
+    "booking_details": "Detalles de la reserva",
+    "save_changes": "Guardar cambios",
+    "cancel_booking": "Cancelar reserva",
+    "confirm_cancel_booking": "¿Seguro que deseas cancelar esta reserva?",
+    "reject": "Rechazar",
+    "edit": "Editar",
+    "select_a_time": "Selecciona una hora",
+    "select_a_duration": "Selecciona una duración",
+    "date": "Fecha",
+    "description": "Descripción"
   }
 }

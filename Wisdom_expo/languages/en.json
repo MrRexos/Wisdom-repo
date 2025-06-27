@@ -171,119 +171,121 @@
     "street": "Street",
     "postal_code": "Postal code",
     "street_number": "Street number",
-    "floor_door_stair_optional": "Floor, door, stair (optional)"
-    ,"switch_to_professional_version": "Switch to professional version"
-    ,"dark_mode": "Dark Mode"
-    ,"language": "Language"
-    ,"back": "Back"
-    ,"start": "Start"
-    ,"continue": "Continue"
-    ,"create_your_service": "Create your service,"
-    ,"tell_the_world_what_you_do": "tell the world what you do"
-    ,"what_is_the_title_of_your_service": "What is the title of your service?"
-    ,"this_will_be_the_public_title": "This will be the public title"
-    ,"service_title_placeholder": "Service title..."
-    ,"choose_family": "Choose family"
-    ,"choose_category": "Choose category"
-    ,"what_family_and_category_does_it_belong_to": "What family and category does it belong to?"
-    ,"add_a_description": "Add a description"
-    ,"faq": "FAQ"
-    ,"write_us": "Write us"
-    ,"edit_direction": "Edit direction"
-    ,"delete_account": "Delete account"
-    ,"are_you_sure_you_want_to_delete_this_account": "Are you sure you want to delete this account?"
-    ,"doing_this_will_delete_all_your_data": "Doing this will permanetly delete all your data"
-    ,"bookings": "Bookings"
-    ,"payment_methods": "Payment methods"
-    ,"money_in_wallet": "Money in wallet:"
-    ,"edit_profile": "Edit Profile"
-    ,"must_enter_name_and_surname": "Must enter your name and surname"
-    ,"must_enter_your_surname": "Must enter your surname"
-    ,"update_profile_photo": "Update profile photo"
-    ,"username": "Username"
-    ,"full_name": "Full name"
-    ,"error_updating_user_please_try_again": "Error updating user. Please try again."
-    ,"explore_plans": "Explore Plans"
-    ,"overview": "Overview"
-    ,"confirm_your_expert_plan": "Confirm your expert plan"
-    ,"your_next_bill_will_be_on": "Your next bill will be on"
-    ,"give_some_information": "Give some information"
-    ,"languages": "Languages"
-    ,"about_you": "About you"
-    ,"are_you_an_individual": "Are you an individual?"
-    ,"hobbies_optional_placeholder": "Hobbies (optional)..."
-    ,"tags": "Tags"
-    ,"add_a_tag_placeholder": "Add a tag..."
-    ,"maximum_15_tags": "Maximum 15 tags"
-    ,"locate_your_service": "Locate your service"
-    ,"exact_location_never_public": "The exact location will never be made public"
-    ,"action_rate_dash": "Action rate -"
-    ,"full": "full"
-    ,"unlocated_service": "Unlocated service"
-    ,"unlocated_or_online_service": "Unlocated or online service"
-    ,"unlocated": "Unlocated"
-    ,"location": "Location"
-    ,"your_location": "Your location"
-    ,"your_experience": "Your experience"
-    ,"show_your_entire_career_with_this_service": "Show your entire career with this service"
-    ,"add_an_experience": "+ Add an experience"
-    ,"position_or_study_placeholder": "Position or study..."
-    ,"place_or_company_placeholder": "Place or company..."
-    ,"started": "Started"
-    ,"end": "End"
-    ,"still_here": "Still here"
-    ,"upload_some_photos": "Upload some photos"
-    ,"we_recommend_you_upload_at_least_five_images": "We recommend you to upload at least 5 images"
-    ,"add_more": "+ Add More"
-    ,"main_photo": "Main photo"
-    ,"permission_denied": "Permission Denied"
-    ,"need_gallery_access_service": "We need access to your photo library so you can upload images to showcase your services."
-    ,"price": "Price"
-    ,"the_client_pays": "The client pays"
-    ,"you_recibes": "You recibes"
-    ,"quality_commission": "Quality commission"
-    ,"client_final_price": "Client final price"
-    ,"price_per_hour": "Price per hour"
-    ,"service_charged_hourly": "The service is charged on an hourly basis"
-    ,"price_according_to_budget": "Price according to budget"
-    ,"price_by_professional_budget": "The price will be determined according to the professional's budget"
-    ,"fixed_price": "Fixed price"
-    ,"non_negotiable_price": "A single, non-negotiable price for the entire service"
-    ,"price_type": "Price type"
-    ,"allow_discounts": "Allow discounts"
-    ,"dont_add_discounts": "Don’t add discounts"
-    ,"add_discounts_for_recurrent_bookings": "Add discounts for recurrent bookings"
-    ,"allow_consults": "Allow consults"
-    ,"dont_allow_consults": "Don't allow consults"
-    ,"allows_clients_to_book_personalized_consultations": "Allows clients to book personalized consultations"
-    ,"via": "Via"
-    ,"example_zoom_meet_in_person": "Ex. Zoom, Meet, In person..."
-    ,"allow_clients_to_ask": "Allow clients to ask"
-    ,"allows_clients_to_write_you_3_messages_without_booking": "Allows your clients to writte you 3 messages without booking"
-    ,"dont_allow_to_ask": "Don't allow to ask"
-    ,"allow_to_ask": "Allow to ask"
-    ,"remember": "Remember"
-    ,"communications_warning": "all communications and payments must be made through the application, otherwise, you will get strikes that can lead to account suspension and legal violations."
-    ,"accept_wisdom_terms": "Accept Wisdom terms"
-    ,"check_your_service": "Check your service"
-    ,"publish_service": "Publish service"
-    ,"become_a_professional": "Become a professional"
-    ,"make_money_serving": "And make money serving"
-    ,"create": "Create"
-    ,"visit": "Visit"
-    ,"search": "Search"
-    ,"search_a_location": "Search a location..."
-    ,"write": "Write"
-    ,"book_a_consult": "Book a consult"
-    ,"book_without_date": "Book without date"
-    ,"select_date_time_and_duration": "Select a date, time, and duration"
-    ,"booking_details": "Booking details"
-    ,"save_changes": "Save changes"
-    ,"cancel_booking": "Cancel Booking"
-    ,"confirm_cancel_booking": "Are you sure you want to cancel this booking?"
-    ,"reject": "Reject"
-    ,"edit": "Edit"
-    ,"select_a_time": "Select a time"
-    ,"select_a_duration": "Select a duration"
+    "floor_door_stair_optional": "Floor, door, stair (optional)",
+    "switch_to_professional_version": "Switch to professional version",
+    "dark_mode": "Dark Mode",
+    "language": "Language",
+    "back": "Back",
+    "start": "Start",
+    "continue": "Continue",
+    "create_your_service": "Create your service,",
+    "tell_the_world_what_you_do": "tell the world what you do",
+    "what_is_the_title_of_your_service": "What is the title of your service?",
+    "this_will_be_the_public_title": "This will be the public title",
+    "service_title_placeholder": "Service title...",
+    "choose_family": "Choose family",
+    "choose_category": "Choose category",
+    "what_family_and_category_does_it_belong_to": "What family and category does it belong to?",
+    "add_a_description": "Add a description",
+    "faq": "FAQ",
+    "write_us": "Write us",
+    "edit_direction": "Edit direction",
+    "delete_account": "Delete account",
+    "are_you_sure_you_want_to_delete_this_account": "Are you sure you want to delete this account?",
+    "doing_this_will_delete_all_your_data": "Doing this will permanetly delete all your data",
+    "bookings": "Bookings",
+    "payment_methods": "Payment methods",
+    "money_in_wallet": "Money in wallet:",
+    "edit_profile": "Edit Profile",
+    "must_enter_name_and_surname": "Must enter your name and surname",
+    "must_enter_your_surname": "Must enter your surname",
+    "update_profile_photo": "Update profile photo",
+    "username": "Username",
+    "full_name": "Full name",
+    "error_updating_user_please_try_again": "Error updating user. Please try again.",
+    "explore_plans": "Explore Plans",
+    "overview": "Overview",
+    "confirm_your_expert_plan": "Confirm your expert plan",
+    "your_next_bill_will_be_on": "Your next bill will be on",
+    "give_some_information": "Give some information",
+    "languages": "Languages",
+    "about_you": "About you",
+    "are_you_an_individual": "Are you an individual?",
+    "hobbies_optional_placeholder": "Hobbies (optional)...",
+    "tags": "Tags",
+    "add_a_tag_placeholder": "Add a tag...",
+    "maximum_15_tags": "Maximum 15 tags",
+    "locate_your_service": "Locate your service",
+    "exact_location_never_public": "The exact location will never be made public",
+    "action_rate_dash": "Action rate -",
+    "full": "full",
+    "unlocated_service": "Unlocated service",
+    "unlocated_or_online_service": "Unlocated or online service",
+    "unlocated": "Unlocated",
+    "location": "Location",
+    "your_location": "Your location",
+    "your_experience": "Your experience",
+    "show_your_entire_career_with_this_service": "Show your entire career with this service",
+    "add_an_experience": "+ Add an experience",
+    "position_or_study_placeholder": "Position or study...",
+    "place_or_company_placeholder": "Place or company...",
+    "started": "Started",
+    "end": "End",
+    "still_here": "Still here",
+    "upload_some_photos": "Upload some photos",
+    "we_recommend_you_upload_at_least_five_images": "We recommend you to upload at least 5 images",
+    "add_more": "+ Add More",
+    "main_photo": "Main photo",
+    "permission_denied": "Permission Denied",
+    "need_gallery_access_service": "We need access to your photo library so you can upload images to showcase your services.",
+    "price": "Price",
+    "the_client_pays": "The client pays",
+    "you_recibes": "You recibes",
+    "quality_commission": "Quality commission",
+    "client_final_price": "Client final price",
+    "price_per_hour": "Price per hour",
+    "service_charged_hourly": "The service is charged on an hourly basis",
+    "price_according_to_budget": "Price according to budget",
+    "price_by_professional_budget": "The price will be determined according to the professional's budget",
+    "fixed_price": "Fixed price",
+    "non_negotiable_price": "A single, non-negotiable price for the entire service",
+    "price_type": "Price type",
+    "allow_discounts": "Allow discounts",
+    "dont_add_discounts": "Don't add discounts",
+    "add_discounts_for_recurrent_bookings": "Add discounts for recurrent bookings",
+    "allow_consults": "Allow consults",
+    "dont_allow_consults": "Don't allow consults",
+    "allows_clients_to_book_personalized_consultations": "Allows clients to book personalized consultations",
+    "via": "Via",
+    "example_zoom_meet_in_person": "Ex. Zoom, Meet, In person...",
+    "allow_clients_to_ask": "Allow clients to ask",
+    "allows_clients_to_write_you_3_messages_without_booking": "Allows your clients to writte you 3 messages without booking",
+    "dont_allow_to_ask": "Don't allow to ask",
+    "allow_to_ask": "Allow to ask",
+    "remember": "Remember",
+    "communications_warning": "all communications and payments must be made through the application, otherwise, you will get strikes that can lead to account suspension and legal violations.",
+    "accept_wisdom_terms": "Accept Wisdom terms",
+    "check_your_service": "Check your service",
+    "publish_service": "Publish service",
+    "become_a_professional": "Become a professional",
+    "make_money_serving": "And make money serving",
+    "create": "Create",
+    "visit": "Visit",
+    "search": "Search",
+    "search_a_location": "Search a location...",
+    "write": "Write",
+    "book_a_consult": "Book a consult",
+    "book_without_date": "Book without date",
+    "select_date_time_and_duration": "Select a date, time, and duration",
+    "booking_details": "Booking details",
+    "save_changes": "Save changes",
+    "cancel_booking": "Cancel Booking",
+    "confirm_cancel_booking": "Are you sure you want to cancel this booking?",
+    "reject": "Reject",
+    "edit": "Edit",
+    "select_a_time": "Select a time",
+    "select_a_duration": "Select a duration",
+    "date": "Date",
+    "description": "Description"
   }
 }

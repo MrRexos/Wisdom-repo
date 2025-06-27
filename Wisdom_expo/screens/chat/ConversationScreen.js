@@ -241,7 +241,7 @@ export default function ConversationScreen() {
     const common =
       item.fromMe
         ? 'self-end bg-[#FCFCFC] dark:bg-[#706f6e]'
-        : 'self-start bg-[#D4D4D3] dark:bg-[#3d3d3d]';
+        : 'self-start bg-[#D4D4D3] dark:bg-[#474646]';
 
     const corner =
       item.fromMe

@@ -53,7 +53,7 @@ export default function BookingDetailsScreen() {
       if (response.data.booking_start_datetime) {
         const date = new Date(response.data.booking_start_datetime);
         const dateString = date.toISOString().split('T')[0];
-        const timeString = date.toISOString().split('T')[1].slice(0,5);
+        const timeString = date.toISOString().split('T')[1].slice(0, 5);
         setSelectedDate({
           [dateString]: {
             selected: true,
@@ -270,25 +270,25 @@ export default function BookingDetailsScreen() {
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
       <View className='flex-row items-center justify-between px-2 pt-3  pb-3 '>
-      
-        <View className="flex-[1] justify-center "> 
-            <TouchableOpacity onPress={() => navigation.goBack()} className='flex-1 p-2'>
-                <XMarkIcon size={24} color={iconColor} strokeWidth={2} />
-            </TouchableOpacity>
+
+        <View className="flex-[1] justify-center ">
+          <TouchableOpacity onPress={() => navigation.goBack()} className='flex-1 p-2'>
+            <XMarkIcon size={24} color={iconColor} strokeWidth={2} />
+          </TouchableOpacity>
         </View>
 
         <View className="flex-[2] justify-center items-center  ">
-            <Text className='font-inter-bold text-[17px] text-[#444343] dark:text-[#f2f2f2]'>
+          <Text className='font-inter-bold text-[17px] text-[#444343] dark:text-[#f2f2f2]'>
             {t('booking_details')}
-            </Text>
+          </Text>
         </View>
 
         <View className="flex-[1] justify-center items-end">
-            <TouchableOpacity onPress={() => setEditMode(!editMode)} className='mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
-                <Text className='font-inter-medium text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>
-                    {editMode ? t('save') : t('edit')}
-                </Text>
-            </TouchableOpacity>
+          <TouchableOpacity onPress={() => setEditMode(!editMode)} className='mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
+            <Text className='font-inter-medium text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>
+                {editMode ? t('cancel') : t('edit')}
+            </Text>
+          </TouchableOpacity>
         </View>
 
       </View>
@@ -373,7 +373,7 @@ export default function BookingDetailsScreen() {
         </View>
 
         <View className='mb-4'>
-          <Text className='font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('date')}</Text>
+          <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('date')}</Text>
           {editMode ? (
             <>
               <Calendar
@@ -395,11 +395,11 @@ export default function BookingDetailsScreen() {
                   arrowColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
                   calendarBackground: 'transparent',
                 }}
-                style={{ backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', padding:20, borderRadius:20 }}
+                style={{ backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', padding: 20, borderRadius: 20 }}
               />
-              <View className='mt-2'>
+              <View className='mt-4'>
                 <TouchableOpacity onPress={() => setShowPicker(true)}>
-                  <Text className='ml-1 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('start_time')}</Text>
+                  <Text className='ml-1 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('start_time')}</Text>
                 </TouchableOpacity>
                 {showPicker && (
                   <DateTimePicker
@@ -412,7 +412,7 @@ export default function BookingDetailsScreen() {
                 )}
               </View>
               <View className='mt-4'>
-                <Text className='ml-1 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('duration')}: {formatDuration(selectedDuration)}</Text>
+                <Text className='ml-1 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('duration')}: {formatDuration(selectedDuration)}</Text>
                 <Slider
                   style={{ width: '100%', height: 10 }}
                   minimumValue={1}
@@ -427,53 +427,64 @@ export default function BookingDetailsScreen() {
               </View>
             </>
           ) : (
-            <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>{formatDateTime(booking.booking_start_datetime)}</Text>
+            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>{formatDateTime(booking.booking_start_datetime)}</Text>
           )}
         </View>
 
         <View className='mb-4'>
-          <Text className='font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('description')}</Text>
-          
+          <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('description')}</Text>
+
           {editMode ? (
             <TextInput
               value={edited.description || ''}
               onChangeText={(text) => setEdited({ ...edited, description: text })}
               multiline
-              className='px-3 py-2 rounded-xl bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
+              className='px-3 py-3 rounded-lg font-inter-medium bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
             />
           ) : (
-            <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>{booking.description || '-'}</Text>
+            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>{booking.description || '-'}</Text>
           )}
         </View>
-        {editMode && (
-          <TouchableOpacity onPress={saveChanges} className='mt-2 mb-4 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-3'>
-            <Text className='font-inter-medium text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+
+        
+
+      </ScrollView>
+
+      {editMode ? (
+        <View className='px-6 pb-4'>
+          <TouchableOpacity onPress={saveChanges} className='mt-2 mb-4 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
+            <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
               {t('save_changes')}
             </Text>
           </TouchableOpacity>
-        )}
+        </View>
+      ) : (
+        <View className='px-6 pb-4'>
+          <TouchableOpacity onPress={startChat} className='mt-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
+            <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>{t('write')}</Text>
+          </TouchableOpacity>
 
-        {role === 'pro' && booking.booking_status === 'requested' && (
-          <View className='flex-row justify-between mt-4 mb-5'>
-            <TouchableOpacity onPress={() => updateStatus('rejected')} className='flex-[2] mr-1 bg-red-600 rounded-full items-center py-[18px]'>
-              <Text className='font-inter-medium text-[15px] text-[#fcfcfc]'>{t('reject')}</Text>
+          {role !== 'pro' || booking.booking_status !== 'requested' && (
+          <TouchableOpacity onPress={confirmCancel} className='mt-4 justify-center items-center w-full'>
+            <Text className='font-inter-semibold text-[15px] text-[#ff633e]/50 '>{t('cancel_booking')}</Text>
+          </TouchableOpacity>
+          )}
+
+          {role === 'pro' && booking.booking_status === 'requested' && (
+          <View className='flex-row justify-between mt-3'>
+            <TouchableOpacity onPress={() => updateStatus('rejected')} className='flex-[1] mr-1 bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-full items-center py-[18px]'>
+              <Text className='font-inter-semibold text-[15px] text-[#fcfcfc]'>{t('reject')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => updateStatus('accepted')} className='flex-[3] ml-1 bg-green-600 rounded-full items-center py-[18px]'>
-              <Text className='font-inter-medium text-[15px] text-[#fcfcfc]'>{t('accept')}</Text>
+            <TouchableOpacity onPress={() => updateStatus('accepted')} className='flex-[2] ml-1 bg-[#74A34F] rounded-full items-center py-[18px]'>
+              <Text className='font-inter-semibold text-[15px] text-[#fcfcfc]'>{t('accept')}</Text>
             </TouchableOpacity>
           </View>
         )}
 
-      </ScrollView>
+        </View>
 
-      <View className='px-6 pb-4'>
-        <TouchableOpacity onPress={startChat} className='mt-2 mb-4 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
-          <Text className='font-inter-medium text-[15px] text-[#fcfcfc] dark:text-[#323131]'>{t('write')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={confirmCancel} className='justify-center items-center w-full'>
-          <Text className='font-inter-semibold text-[15px] text-[#ff633e]/50 '>{t('cancel_booking')}</Text>
-        </TouchableOpacity>
-      </View>
+      )}
+      
     </SafeAreaView>
   );
 }
