@@ -90,7 +90,10 @@ export default function BookingScreen() {
   const formatCurrency = (value, currency = 'EUR') => {
     if (value === null || value === undefined) return '';
     const symbol = currencySymbols[currency] || '€';
-    return `${parseFloat(value).toFixed(1).replace('.', ',')} ${symbol}`;
+    const numeric = parseFloat(value);
+    const formatted =
+      numeric % 1 === 0 ? numeric.toFixed(0) : numeric.toFixed(1);
+    return `${formatted.replace('.', ',')} ${symbol}`;
   };
 
   useEffect(() => {

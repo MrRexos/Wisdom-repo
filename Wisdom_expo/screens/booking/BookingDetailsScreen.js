@@ -191,7 +191,10 @@ export default function BookingDetailsScreen() {
   const formatCurrency = (value, currency = 'EUR') => {
     if (value === null || value === undefined) return '';
     const symbol = currencySymbols[currency] || '€';
-    return `${parseFloat(value).toFixed(1).replace('.', ',')} ${symbol}`;
+    const numeric = parseFloat(value);
+    const formatted =
+      numeric % 1 === 0 ? numeric.toFixed(0) : numeric.toFixed(1);
+    return `${formatted.replace('.', ',')} ${symbol}`;
   };
 
   const getFormattedPrice = () => {
@@ -321,22 +324,36 @@ export default function BookingDetailsScreen() {
       const userData = await getDataLocally('user');
       if (!userData) return;
       const me = JSON.parse(userData);
-      const otherId = booking.service_user_id || booking.service_userid || booking.user_id;
-      if (!otherId) return;
+      
+      let otherId;
+      if (role === 'pro') {
+        // Profesional contactando al cliente
+        otherId = booking.user_id;
+      } else {
+        // Cliente contactando al profesional
+        otherId = (service && service.user_id) || booking.service_user_id || booking.service_userid;
+      }
+
+      if (!otherId || otherId === me.id) return;
+
       const participants = [me.id, otherId];
       const conversationId = [...participants].sort().join('_');
       const data = {
         participants,
         updatedAt: serverTimestamp(),
       };
-      if (booking.service_title) {
+
+      if (service && service.first_name && service.surname) {
+        data.name = `${service.first_name} ${service.surname}`;
+      } else if (booking.service_title) {
         data.name = booking.service_title;
       }
+
       await setDoc(doc(db, 'conversations', conversationId), data, { merge: true });
       navigation.navigate('Conversation', {
         conversationId,
         participants,
-        name: booking.service_title,
+        name: data.name,
       });
     } catch (err) {
       console.error('startChat error:', err);
@@ -770,7 +787,9 @@ export default function BookingDetailsScreen() {
                         <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
                           {'.'.repeat(80)}
                         </Text>
-                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>1 {currencySymbols[priceSource.currency]}</Text>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {formatCurrency(1, priceSource.currency)}
+                        </Text>
                       </View>
                     </>
                   );
@@ -790,7 +809,9 @@ export default function BookingDetailsScreen() {
                         <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
                           {'.'.repeat(80)}
                         </Text>
-                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>1 {currencySymbols[priceSource.currency]}</Text>
+                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {formatCurrency(1, priceSource.currency)}
+                        </Text>
                       </View>
 
                       <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]'></View>
@@ -800,7 +821,9 @@ export default function BookingDetailsScreen() {
                         <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
                           {'.'.repeat(80)}
                         </Text>
-                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>1 {currencySymbols[priceSource.currency]}</Text>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {formatCurrency(1, priceSource.currency)}
+                        </Text>
                       </View>
                     </>
                   );
@@ -882,48 +905,6 @@ export default function BookingDetailsScreen() {
           </View>
         </View>
 
-        {/* Others */}
-        <View className='mt-8 px-2  justify-center items-start pb-7'>
-          <Text className='mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]'>{t('others')}</Text>
-          <TouchableOpacity className='mb-3  flex-row w-full justify-between items-start'>
-            <View className='mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#fcfcfc] dark:bg-[#323131] rounded-full'>
-              <WisdomLogo  width={23} height={23} color={iconColor}/>
-            </View>
-            <View className='pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]'>
-              <Text className='font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]'>{t('operation_of_the_reserves')}</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth='2' className='p-6'/>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity className='mb-3 flex-row w-full justify-between items-start'>
-            <View className='mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#fcfcfc] dark:bg-[#323131] rounded-full'>
-              <XCircleIcon  width={24} height={24} color={iconColor} strokeWidth={1.4}/>
-            </View>
-            <View className='pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]'>
-              <Text className='font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]'>{t('cancellation_policy')}</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth='2' className='p-6'/>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity className='mb-3 flex-row w-full justify-between items-start'>
-            <View className='mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#fcfcfc] dark:bg-[#323131] rounded-full'>
-              <AlertTriangle  width={22} height={22} color={iconColor} strokeWidth={1.6}/>
-            </View>
-            <View className='pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]'>
-              <Text className='font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]'>{t('follow_the_rules')}</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth='2' className='p-6'/>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity className='mb-3 flex-row w-full justify-between items-start'>
-            <View className='mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#fcfcfc] dark:bg-[#323131] rounded-full'>
-              <Phone  width={22} height={22} color={iconColor} strokeWidth={1.4} />
-            </View>
-            <View className='pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]'>
-              <Text className='font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]'>{t('contact_wisdom')}</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth='2' className='p-6'/>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        
 
       </ScrollView>
 
