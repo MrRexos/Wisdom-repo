@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
-import { XMarkIcon, LockClosedIcon } from 'react-native-heroicons/outline';
+import { XMarkIcon, LockClosedIcon, ChevronRightIcon, XCircleIcon } from 'react-native-heroicons/outline';
 import { Calendar } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import { Check, Lock } from 'react-native-feather';
+import { Check, Lock, Calendar as CalendarIcon, Edit3, Clock, MapPin, CreditCard, AlertTriangle, Phone } from 'react-native-feather';
+import WisdomLogo from '../../assets/wisdomLogo.tsx';
 import SliderThumbDark from '../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../assets/SliderThumbLight.png';
 import { getDataLocally } from '../../utils/asyncStorage';
@@ -204,8 +205,28 @@ export default function BookingDetailsScreen() {
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { weekday: 'long', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+  };
+
+  const getEndTime = () => {
+    const end = new Date(`1970-01-01T${selectedTime}:00`);
+    end.setMinutes(end.getMinutes() + selectedDuration);
+    return end.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+  };
+
   const combineDateTime = () => {
     return `${selectedDay}T${selectedTime}:00`;
+  };
+
+  const calculateEndDateTime = () => {
+    const startDateTime = new Date(`${selectedDay}T${selectedTime}:00`);
+    startDateTime.setMinutes(startDateTime.getMinutes() + selectedDuration);
+    const endDate = startDateTime.toISOString().split('T')[0];
+    const endTime = startDateTime.toTimeString().split(' ')[0];
+    return `${endDate} ${endTime}`;
   };
 
   const formatDateTime = (dateString) => {
@@ -224,6 +245,7 @@ export default function BookingDetailsScreen() {
       const payload = {
         ...edited,
         booking_start_datetime: combineDateTime(),
+        booking_end_datetime: calculateEndDateTime(),
         service_duration: selectedDuration,
       };
       await api.put(`/api/bookings/${bookingId}`, payload);
@@ -415,123 +437,338 @@ export default function BookingDetailsScreen() {
       </TouchableOpacity>
     </View>
 
-        <View className='mb-4'>
-          <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>Address</Text>
+        {/* Date and time */}
+        <View className='mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
+          <View className='w-full flex-row justify-between items-center '>
+            <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Date and time</Text>
+            {editMode && (
+              <TouchableOpacity onPress={() => setShowPicker(true)}>
+                <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          <View className='mt-4 flex-1'>
+            {editMode ? (
+              <>
+                <Calendar
+                  onDayPress={onDayPress}
+                  markedDates={selectedDate}
+                  firstDay={1}
+                  theme={{
+                    todayTextColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
+                    monthTextColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
+                    textMonthFontSize: 15,
+                    textMonthFontWeight: 'bold',
+                    dayTextColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                    textDayFontWeight: 'bold',
+                    textInactiveColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                    textSectionTitleColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                    textDisabledColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                    selectedDayBackgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3',
+                    selectedDayTextColor: '#ffffff',
+                    arrowColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
+                    calendarBackground: 'transparent',
+                  }}
+                  style={{ backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', padding: 20, borderRadius: 20 }}
+                />
+                <View className='mt-4'>
+                  <TouchableOpacity onPress={() => setShowPicker(true)}>
+                    <Text className='ml-1 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('start_time')}</Text>
+                  </TouchableOpacity>
+                  {showPicker && (
+                    <DateTimePicker
+                      value={tempDate}
+                      mode='time'
+                      display='spinner'
+                      onChange={handleHourSelected}
+                      style={{ width: 320, height: 150 }}
+                    />
+                  )}
+                </View>
+                <View className='mt-4'>
+                  <Text className='ml-1 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('duration')}: {formatDuration(selectedDuration)}</Text>
+                  <Slider
+                    style={{ width: '100%', height: 10 }}
+                    minimumValue={1}
+                    maximumValue={34}
+                    step={1}
+                    thumbImage={thumbImage}
+                    minimumTrackTintColor='#b6b5b5'
+                    maximumTrackTintColor='#474646'
+                    value={sliderValue}
+                    onValueChange={handleSliderChange}
+                  />
+                </View>
+              </>
+            ) : (
+              selectedTime ? (
+                <View className='flex-1 justify-center items-center'>
+                  <View className='w-full flex-row justify-between items-center'>
+                    <View className='flex-row justify-start items-center'>
+                      <CalendarIcon height={15} width={15} color={colorScheme === 'dark' ? '#d4d4d3' : '#515150'} strokeWidth={2.2} />
+                      <Text className='ml-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]'>{formatDate(selectedDay)}</Text>
+                    </View>
+                    <View className='justify-end items-center'>
+                      <Text className='font-inter-semibold text-[14px] text-[#515150] dark:text-[#979797]'>{formatDuration(selectedDuration)}</Text>
+                    </View>
+                  </View>
+                  <View className='mt-4 justify-end items-center'>
+                    <Text className=' font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]'>{selectedTime} - {getEndTime()}</Text>
+                  </View>
+                </View>
+              ) : (
+                <View className='mt-1 flex-1 justify-center items-center'>
+                  <Clock height={40} width={40} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+                  <Text className='mt-4 font-inter-semibold text-[16px] text-[#979797]'>
+                    {t('undefined_time')}
+                  </Text>
+                </View>
+              )
+            )}
+          </View>
+        </View>
+
+        {/* Address */}
+        <View className='mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
+          <View className='w-full flex-row justify-between items-center '>
+            <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Address</Text>
+            {editMode && (
+              <TouchableOpacity>
+                <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
+              </TouchableOpacity>
+            )}
+          </View>
+
           {editMode ? (
             <TextInput
               value={edited.address_1 || ''}
               onChangeText={(text) => setEdited({ ...edited, address_1: text })}
-              className='px-3 py-3 rounded-lg font-inter-medium bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
+              className='mt-4 px-3 py-3 rounded-lg font-inter-medium bg-[#f2f2f2] dark:bg-[#272626] text-[#444343] dark:text-[#f2f2f2]'
             />
           ) : (
-            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
-              {booking.address_1 || '-'} {booking.city ? `, ${booking.city}` : ''}
-            </Text>
+            <View className='mt-4 flex-row justify-center items-center'>
+              <View className='w-11 h-11 items-center justify-center'>
+                <MapPin height={25} width={25} strokeWidth={1.6} color={iconColor} />
+              </View>
+              <View className='pl-3 pr-3 flex-1 justify-center items-start'>
+                <Text numberOfLines={1} className='mb-[6] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+                  {[booking.address_1, booking.street_number].filter(Boolean).join(', ')}
+                </Text>
+                <Text numberOfLines={1} className='font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]'>
+                  {[booking.postal_code, booking.city, booking.state, booking.country].filter(Boolean).join(', ')}
+                </Text>
+              </View>
+            </View>
           )}
         </View>
 
-        <View className='mb-4'>
-          <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>Price</Text>
-          {editMode ? (
-            <TextInput
-              value={edited.price ? String(edited.price) : ''}
-              onChangeText={(text) => setEdited({ ...edited, price: text })}
-              keyboardType='numeric'
-              className='px-3 py-3 rounded-lg font-inter-medium bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
-            />
-          ) : (
-            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
-              {booking.price} {currencySymbols[booking.currency]} ({booking.price_type})
-            </Text>
-          )}
+        {/* Price details */}
+        <View className='mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
+          <View className='w-full flex-row justify-between items-center '>
+            <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Price details</Text>
+          </View>
+
+          <View className='mt-5 px-3 flex-1'>
+            <View className='flex-1 justify-center items-center'>
+              {(() => {
+                const priceSource = service || booking;
+                if (priceSource.price_type === 'hour') {
+                  return (
+                    <>
+                      <View className='flex-row'>
+                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Service price x {(selectedDuration / 60).toFixed(0)}h</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {(parseFloat(priceSource.price) * (selectedDuration / 60)).toFixed(0)} {currencySymbols[priceSource.currency]}
+                        </Text>
+                      </View>
+
+                      <View className='mt-3 flex-row'>
+                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Quality commission</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {(((parseFloat(priceSource.price) * (selectedDuration / 60)) * 1.1) - (parseFloat(priceSource.price) * (selectedDuration / 60))).toFixed(1)} {currencySymbols[priceSource.currency]}
+                        </Text>
+                      </View>
+
+                      <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]'></View>
+
+                      <View className='mt-4 flex-row'>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Final price</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {(((parseFloat(priceSource.price) * (selectedDuration / 60)) * 1.1)).toFixed(1)} {currencySymbols[priceSource.currency]}
+                        </Text>
+                      </View>
+
+                      <View className='mt-4 flex-row'>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Deposit</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>1 {currencySymbols[priceSource.currency]}</Text>
+                      </View>
+                    </>
+                  );
+                } else if (priceSource.price_type === 'fix') {
+                  return (
+                    <>
+                      <View className='flex-row'>
+                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Fixed price</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {parseFloat(priceSource.price).toFixed(0)} {currencySymbols[priceSource.currency]}
+                        </Text>
+                      </View>
+
+                      <View className='mt-3 flex-row'>
+                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Quality commission</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {(parseFloat(priceSource.price) * 0.1).toFixed(1)} {currencySymbols[priceSource.currency]}
+                        </Text>
+                      </View>
+
+                      <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]'></View>
+
+                      <View className='mt-4 flex-row'>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Final price</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {(parseFloat(priceSource.price)+(parseFloat(priceSource.price) * 0.1)).toFixed(0)} {currencySymbols[priceSource.currency]}
+                        </Text>
+                      </View>
+
+                      <View className='mt-4 flex-row'>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Deposit</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>1 {currencySymbols[priceSource.currency]}</Text>
+                      </View>
+                    </>
+                  );
+                } else {
+                  return (
+                    <>
+                      <View className='flex-row'>
+                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Service price</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>budget</Text>
+                      </View>
+
+                      <View className='mt-3 flex-row'>
+                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Deposit</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>1 {currencySymbols[priceSource.currency]}</Text>
+                      </View>
+
+                      <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]'></View>
+
+                      <View className='mt-4 flex-row'>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Final price</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>1 {currencySymbols[priceSource.currency]}</Text>
+                      </View>
+                    </>
+                  );
+                }
+              })()}
+            </View>
+          </View>
         </View>
 
-        <View className='mb-4'>
-          <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('date')}</Text>
-          {editMode ? (
-            <>
-              <Calendar
-                onDayPress={onDayPress}
-                markedDates={selectedDate}
-                firstDay={1}
-                theme={{
-                  todayTextColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
-                  monthTextColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
-                  textMonthFontSize: 15,
-                  textMonthFontWeight: 'bold',
-                  dayTextColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
-                  textDayFontWeight: 'bold',
-                  textInactiveColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                  textSectionTitleColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                  textDisabledColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                  selectedDayBackgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3',
-                  selectedDayTextColor: '#ffffff',
-                  arrowColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
-                  calendarBackground: 'transparent',
-                }}
-                style={{ backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', padding: 20, borderRadius: 20 }}
+        {/* Payment Method */}
+        <View className='mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
+          <View className='w-full flex-row justify-between items-center '>
+            <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Payment method</Text>
+            {editMode && paymentMethod && (
+              <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod')}>
+                <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          <View className='mt-4 flex-1'>
+            {paymentMethod ? (
+              <View className='flex-1 my-3 justify-center items-center '>
+                <View className='px-7 pb-5 pt-[50] bg-[#EEEEEE] dark:bg-[#111111] rounded-xl'>
+                  <Text>
+                    <Text className='font-inter-medium text-[16px] text-[#444343] dark:text-[#f2f2f2]'>••••   ••••   ••••   </Text>
+                    <Text className='font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.cardNumber.slice(-4)}</Text>
+                  </Text>
+
+                  <View className='mt-6 flex-row justify-between items-center'>
+                    <View className='flex-row items-center'>
+                      <View className='justify-center items-center'>
+                        <Text className='font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.expiration}</Text>
+                      </View>
+                      <View className='ml-3 justify-center items-center'>
+                        <Text className=' font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.cvv}</Text>
+                      </View>
+                    </View>
+
+                    <View className='h-5 w-8 bg-[#fcfcfc] dark:bg-[#323131] rounded-md'/>
+                  </View>
+                </View>
+              </View>
+            ) : (
+              <View className='mt-1 flex-1 justify-center items-center'>
+                <CreditCard height={55} width={55} strokeWidth={1.3} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+                <View className='flex-row justify-center items-center px-6'>
+                  <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod') } style={{ opacity: 1 }} className='bg-[#706f6e] my-2 mt-3 dark:bg-[#b6b5b5] w-full py-[14] rounded-full items-center justify-center'>
+                    <Text>
+                      <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                        {t('add_credit_card')}
+                      </Text>
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          </View>
+        </View>
+
+        {/* Description */}
+        <View className='mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
+          <View className='w-full flex-row justify-between items-center '>
+            <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>{t('booking_description')}</Text>
+          </View>
+
+          <View className='flex-1 w-full mt-6'>
+            {editMode ? (
+              <TextInput
+                value={edited.description || ''}
+                onChangeText={(text) => setEdited({ ...edited, description: text })}
+                multiline
+                className='w-full min-h-[150] bg-[#f2f2f2] dark:bg-[#272626] rounded-2xl py-4 px-5 text-[15px] text-[#515150] dark:text-[#d4d4d3]'
+                style={{ textAlignVertical: 'top' }}
               />
-              <View className='mt-4'>
-                <TouchableOpacity onPress={() => setShowPicker(true)}>
-                  <Text className='ml-1 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('start_time')}</Text>
-                </TouchableOpacity>
-                {showPicker && (
-                  <DateTimePicker
-                    value={tempDate}
-                    mode='time'
-                    display='spinner'
-                    onChange={handleHourSelected}
-                    style={{ width: 320, height: 150 }}
-                  />
-                )}
-              </View>
-              <View className='mt-4'>
-                <Text className='ml-1 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('duration')}: {formatDuration(selectedDuration)}</Text>
-                <Slider
-                  style={{ width: '100%', height: 10 }}
-                  minimumValue={1}
-                  maximumValue={34}
-                  step={1}
-                  thumbImage={thumbImage}
-                  minimumTrackTintColor='#b6b5b5'
-                  maximumTrackTintColor='#474646'
-                  value={sliderValue}
-                  onValueChange={handleSliderChange}
-                />
-              </View>
-            </>
-          ) : (
-            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>{formatDateTime(booking.booking_start_datetime)}</Text>
-          )}
+            ) : (
+              <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>{booking.description || '-'}</Text>
+            )}
+          </View>
         </View>
-
-        <View className='mb-4'>
-          <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('description')}</Text>
-
-          {editMode ? (
-            <TextInput
-              value={edited.description || ''}
-              onChangeText={(text) => setEdited({ ...edited, description: text })}
-              multiline
-              className='px-3 py-3 rounded-lg font-inter-medium bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
-            />
-          ) : (
-            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>{booking.description || '-'}</Text>
-          )}
-        </View>
-
-        <View className='mb-4'>
-          <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>Payment method</Text>
-          {paymentMethod ? (
-            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>•••• {paymentMethod.cardNumber.slice(-4)}</Text>
-          ) : (
-            <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod')}>
-              <Text className='font-inter-semibold text-[15px] text-[#ff633e]'>Add payment method</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
-        
+     
 
       </ScrollView>
 
