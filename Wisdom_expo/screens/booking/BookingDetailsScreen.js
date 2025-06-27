@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import * as Localization from 'expo-localization';
 import { View, Text, SafeAreaView, Platform, StatusBar, TouchableOpacity, TextInput, ScrollView, Alert, Image } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { useTranslation } from 'react-i18next';
@@ -252,6 +253,10 @@ export default function BookingDetailsScreen() {
     return date.toLocaleDateString('en-US', options);
   };
 
+  const getLocalDate = (date) => {
+    return new Date(date.toLocaleString('en-US', { timeZone: Localization.timezone }));
+  };
+
   const getEndTime = () => {
     const end = new Date(`1970-01-01T${selectedTime}:00`);
     end.setMinutes(end.getMinutes() + selectedDuration);
@@ -371,9 +376,9 @@ export default function BookingDetailsScreen() {
 
   const isBookingInactive = () => {
     if (!booking) return false;
-    const now = new Date();
+    const now = getLocalDate(new Date());
     const startDate = booking.booking_start_datetime
-      ? new Date(booking.booking_start_datetime)
+      ? getLocalDate(new Date(booking.booking_start_datetime))
       : null;
     return (
       booking.booking_status === 'canceled' ||
@@ -389,18 +394,22 @@ export default function BookingDetailsScreen() {
     return t('booking_expired');
   };
 
-  const now = new Date();
+  const now = getLocalDate(new Date());
   const startDate = booking && booking.booking_start_datetime
-    ? new Date(booking.booking_start_datetime)
+    ? getLocalDate(new Date(booking.booking_start_datetime))
     : null;
   const endDate = booking && booking.booking_end_datetime
-    ? new Date(booking.booking_end_datetime)
+    ? getLocalDate(new Date(booking.booking_end_datetime))
     : null;
 
   const showInProgress =
     booking &&
     booking.booking_status === 'accepted' &&
-    (!startDate || (endDate && now >= startDate && now < endDate));
+    (
+      (!startDate && !endDate) ||
+      (startDate && !endDate && now >= startDate) ||
+      (startDate && endDate && now >= startDate && now < endDate)
+    );
 
   const showServiceFinished =
     booking &&
