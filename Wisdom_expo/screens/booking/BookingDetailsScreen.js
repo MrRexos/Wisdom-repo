@@ -188,9 +188,10 @@ export default function BookingDetailsScreen() {
     RMB: '¥',
   };
 
-  const formatCurrency = (value, currency) => {
+  const formatCurrency = (value, currency = 'EUR') => {
     if (value === null || value === undefined) return '';
-    return `${parseFloat(value).toFixed(1).replace('.', ',')} ${currencySymbols[currency]}`;
+    const symbol = currencySymbols[currency] || '€';
+    return `${parseFloat(value).toFixed(1).replace('.', ',')} ${symbol}`;
   };
 
   const getFormattedPrice = () => {
@@ -279,14 +280,19 @@ export default function BookingDetailsScreen() {
 
   const saveChanges = async () => {
     try {
+      const id = bookingId || (booking && booking.id);
+      if (!id) {
+        console.error('No booking ID available');
+        return;
+      }
       const payload = {
         ...edited,
-        id: bookingId,
+        id,
         booking_start_datetime: selectedTimeUndefined ? null : combineDateTime(),
         booking_end_datetime: selectedTimeUndefined ? null : calculateEndDateTime(),
         service_duration: selectedTimeUndefined ? null : selectedDuration,
       };
-      await api.put(`/api/bookings/${bookingId}`, payload);
+      await api.put(`/api/bookings/${id}`, payload);
       setBooking((prev) => ({ ...prev, ...payload }));
       setEditMode(false);
     } catch (error) {

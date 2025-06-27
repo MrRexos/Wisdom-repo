@@ -87,9 +87,10 @@ export default function BookingScreen() {
     RMB: '¥',
   };
 
-  const formatCurrency = (value, currency) => {
+  const formatCurrency = (value, currency = 'EUR') => {
     if (value === null || value === undefined) return '';
-    return `${parseFloat(value).toFixed(1).replace('.', ',')} ${currencySymbols[currency]}`;
+    const symbol = currencySymbols[currency] || '€';
+    return `${parseFloat(value).toFixed(1).replace('.', ',')} ${symbol}`;
   };
 
   useEffect(() => {
