@@ -426,21 +426,24 @@ export default function ServiceProfileScreen() {
       const userData = await getDataLocally('user');
       if (!userData) return;
       const me = JSON.parse(userData);
-      const participants = [me.id, serviceData.user_id];
+      const otherId = serviceData.user_id;
+      if (!otherId) return;
+      const participants = [me.id, otherId];
       const conversationId = [...participants].sort().join('_');
-      await setDoc(
-        doc(db, 'conversations', conversationId),
-        {
-          participants,
-          name: `${serviceData.first_name} ${serviceData.surname}`,
-          updatedAt: serverTimestamp(),
-        },
-        { merge: true }
-      );
+      const data = {
+        participants,
+        updatedAt: serverTimestamp(),
+      };
+      if (serviceData.first_name && serviceData.surname) {
+        data.name = `${serviceData.first_name} ${serviceData.surname}`;
+      } else if (serviceData.service_title) {
+        data.name = serviceData.service_title;
+      }
+      await setDoc(doc(db, 'conversations', conversationId), data, { merge: true });
       navigation.navigate('Conversation', {
         conversationId,
         participants,
-        name: `${serviceData.first_name} ${serviceData.surname}`,
+        name: data.name,
       });
     } catch (err) {
       console.error('startChat error:', err);

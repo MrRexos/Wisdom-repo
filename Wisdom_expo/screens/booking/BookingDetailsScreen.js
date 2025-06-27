@@ -3,7 +3,7 @@ import { View, Text, SafeAreaView, Platform, StatusBar, TouchableOpacity, TextIn
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { XMarkIcon, LockClosedIcon } from 'react-native-heroicons/outline';
 import { Calendar } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -35,13 +35,21 @@ export default function BookingDetailsScreen() {
   const [selectedTime, setSelectedTime] = useState('');
   const [selectedDuration, setSelectedDuration] = useState(60);
   const [sliderValue, setSliderValue] = useState(12);
+  const [paymentMethod, setPaymentMethod] = useState();
   const sliderTimeoutId = useRef(null);
   const [showPicker, setShowPicker] = useState(false);
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
 
   useEffect(() => {
     fetchBooking();
+    loadPaymentMethod();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadPaymentMethod();
+    }, [])
+  );
 
   const fetchBooking = async () => {
     try {
@@ -107,6 +115,13 @@ export default function BookingDetailsScreen() {
       setSliderValue(value);
       setSelectedDuration(adjusted);
     }, 100);
+  };
+
+  const loadPaymentMethod = async () => {
+    const raw = await getDataLocally('paymentMethod');
+    if (raw) {
+      setPaymentMethod(JSON.parse(raw));
+    }
   };
 
   const sliderValueToMinutes = (value) => {
@@ -190,7 +205,7 @@ export default function BookingDetailsScreen() {
   };
 
   const combineDateTime = () => {
-    return `${selectedDay} ${selectedTime}:00`;
+    return `${selectedDay}T${selectedTime}:00`;
   };
 
   const formatDateTime = (dateString) => {
@@ -240,17 +255,18 @@ export default function BookingDetailsScreen() {
       const userData = await getDataLocally('user');
       if (!userData) return;
       const me = JSON.parse(userData);
-      const participants = [me.id, booking.service_user_id || booking.service_userid || booking.user_id];
+      const otherId = booking.service_user_id || booking.service_userid || booking.user_id;
+      if (!otherId) return;
+      const participants = [me.id, otherId];
       const conversationId = [...participants].sort().join('_');
-      await setDoc(
-        doc(db, 'conversations', conversationId),
-        {
-          participants,
-          name: booking.service_title,
-          updatedAt: serverTimestamp(),
-        },
-        { merge: true }
-      );
+      const data = {
+        participants,
+        updatedAt: serverTimestamp(),
+      };
+      if (booking.service_title) {
+        data.name = booking.service_title;
+      }
+      await setDoc(doc(db, 'conversations', conversationId), data, { merge: true });
       navigation.navigate('Conversation', {
         conversationId,
         participants,
@@ -380,23 +396,54 @@ export default function BookingDetailsScreen() {
               )}
             </View>
 
-            {service && service.images && (
-              <View className='px-2 pb-2 mt-4'>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} className='flex-1'>
-                  {service.images.map((image, index) => (
-                    <View key={index} className='pr-[6]'>
-                      <View className='ml-1'>
-                        <Image
-                          source={image.image_url ? { uri: image.image_url } : null}
-                          className='h-[65] w-[55] rounded-lg bg-[#706B5B]'
-                        />
-                      </View>
-                    </View>
-                  ))}
-                </ScrollView>
-              </View>
-            )}
-          </TouchableOpacity>
+        {service && service.images && (
+          <View className='px-2 pb-2 mt-4'>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className='flex-1'>
+              {service.images.map((image, index) => (
+                <View key={index} className='pr-[6]'>
+                  <View className='ml-1'>
+                    <Image
+                      source={image.image_url ? { uri: image.image_url } : null}
+                      className='h-[65] w-[55] rounded-lg bg-[#706B5B]'
+                    />
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+      </TouchableOpacity>
+    </View>
+
+        <View className='mb-4'>
+          <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>Address</Text>
+          {editMode ? (
+            <TextInput
+              value={edited.address_1 || ''}
+              onChangeText={(text) => setEdited({ ...edited, address_1: text })}
+              className='px-3 py-3 rounded-lg font-inter-medium bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
+            />
+          ) : (
+            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+              {booking.address_1 || '-'} {booking.city ? `, ${booking.city}` : ''}
+            </Text>
+          )}
+        </View>
+
+        <View className='mb-4'>
+          <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>Price</Text>
+          {editMode ? (
+            <TextInput
+              value={edited.price ? String(edited.price) : ''}
+              onChangeText={(text) => setEdited({ ...edited, price: text })}
+              keyboardType='numeric'
+              className='px-3 py-3 rounded-lg font-inter-medium bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
+            />
+          ) : (
+            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+              {booking.price} {currencySymbols[booking.currency]} ({booking.price_type})
+            </Text>
+          )}
         </View>
 
         <View className='mb-4'>
@@ -470,6 +517,17 @@ export default function BookingDetailsScreen() {
             />
           ) : (
             <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>{booking.description || '-'}</Text>
+          )}
+        </View>
+
+        <View className='mb-4'>
+          <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>Payment method</Text>
+          {paymentMethod ? (
+            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>•••• {paymentMethod.cardNumber.slice(-4)}</Text>
+          ) : (
+            <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod')}>
+              <Text className='font-inter-semibold text-[15px] text-[#ff633e]'>Add payment method</Text>
+            </TouchableOpacity>
           )}
         </View>
 

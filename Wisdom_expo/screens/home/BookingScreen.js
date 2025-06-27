@@ -361,7 +361,7 @@ export default function BookingScreen() {
 
   const combineDateTime = () => {
 
-    let startDateTime = `${startDate} ${startTime}:00`;
+    let startDateTime = `${startDate}T${startTime}:00`;
 
     return startDateTime;
   }
