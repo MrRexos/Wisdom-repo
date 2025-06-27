@@ -387,6 +387,28 @@ export default function BookingDetailsScreen() {
     return t('booking_expired');
   };
 
+  const now = new Date();
+  const startDate = booking.booking_start_datetime
+    ? new Date(booking.booking_start_datetime)
+    : null;
+  const endDate = booking.booking_end_datetime
+    ? new Date(booking.booking_end_datetime)
+    : null;
+
+  const showInProgress =
+    booking.booking_status === 'accepted' &&
+    (!startDate || (endDate && now >= startDate && now < endDate));
+
+  const showServiceFinished =
+    booking.booking_status === 'completed' ||
+    (endDate && endDate - now <= 3600000 && endDate - now >= 0);
+
+  const statusMessage = showServiceFinished
+    ? t('service_completed')
+    : showInProgress
+    ? t('in_progress')
+    : null;
+
   if (!booking) {
     return null;
   }
@@ -546,6 +568,14 @@ export default function BookingDetailsScreen() {
         </View>
 
       </View>
+
+      {statusMessage && (
+        <View className='items-center mt-1'>
+          <Text className='font-inter-semibold text-[14px] text-[#74A34F]'>
+            {statusMessage}
+          </Text>
+        </View>
+      )}
 
       <ScrollView className='flex-1 px-6 mt-4'>
 
@@ -932,16 +962,44 @@ export default function BookingDetailsScreen() {
             </>
           ) : (
             <>
-              <TouchableOpacity onPress={startChat} className='mt-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
-                <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                  {t('write')}
-                </Text>
-              </TouchableOpacity>
+              {showServiceFinished ? (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('ConfirmPayment')}
+                  className='mt-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'
+                  style={{
+                    opacity: 1,
+                    shadowColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131',
+                    shadowOffset: { width: 0, height: 0 },
+                    shadowOpacity: 0.6,
+                    shadowRadius: 10,
+                    elevation: 10,
+                  }}>
+                  <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                    {t('final_payment')}
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity onPress={startChat} className='mt-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
+                  <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                    {t('write')}
+                  </Text>
+                </TouchableOpacity>
+              )}
 
               {role !== 'pro' || booking.booking_status !== 'requested' ? (
-                <TouchableOpacity onPress={confirmCancel} className='mt-4 justify-center items-center w-full'>
-                  <Text className='font-inter-semibold text-[15px] text-[#ff633e]/50'>{t('cancel_booking')}</Text>
-                </TouchableOpacity>
+                showInProgress ? (
+                  <TouchableOpacity onPress={() => updateStatus('completed')} className='mt-4 justify-center items-center w-full'>
+                    <Text className='font-inter-semibold text-[15px] text-[#979797]'>
+                      {t('service_completed')}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  !showServiceFinished && (
+                    <TouchableOpacity onPress={confirmCancel} className='mt-4 justify-center items-center w-full'>
+                      <Text className='font-inter-semibold text-[15px] text-[#ff633e]/50'>{t('cancel_booking')}</Text>
+                    </TouchableOpacity>
+                  )
+                )
               ) : null}
 
               {role === 'pro' && booking.booking_status === 'requested' && (

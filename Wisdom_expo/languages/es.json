@@ -288,6 +288,8 @@
     "date": "Fecha",
     "description": "Descripción",
     "delete_booking": "Eliminar reserva",
+    "service_completed": "Servicio finalizado",
+    "final_payment": "Pago final",
     "booking_canceled": "Reserva cancelada",
     "booking_rejected": "Reserva rechazada",
     "booking_expired": "La fecha de inicio ha pasado"
