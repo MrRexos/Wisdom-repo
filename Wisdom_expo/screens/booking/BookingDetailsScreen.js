@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { XMarkIcon } from 'react-native-heroicons/outline';
+import { XMarkIcon, LockClosedIcon } from 'react-native-heroicons/outline';
 import { Calendar } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
@@ -261,6 +261,33 @@ export default function BookingDetailsScreen() {
     }
   };
 
+  const deleteBooking = async () => {
+    try {
+      await api.delete(`/api/delete_booking/${bookingId}`);
+      navigation.goBack();
+    } catch (err) {
+      console.error('deleteBooking error:', err);
+    }
+  };
+
+  const isBookingInactive = () => {
+    const now = new Date();
+    const startDate = booking.booking_start_datetime
+      ? new Date(booking.booking_start_datetime)
+      : null;
+    return (
+      booking.booking_status === 'canceled' ||
+      booking.booking_status === 'rejected' ||
+      (startDate && startDate < now && booking.booking_status !== 'accepted')
+    );
+  };
+
+  const getInactiveMessage = () => {
+    if (booking.booking_status === 'canceled') return t('booking_canceled');
+    if (booking.booking_status === 'rejected') return t('booking_rejected');
+    return t('booking_expired');
+  };
+
   if (!booking) {
     return null;
   }
@@ -450,7 +477,7 @@ export default function BookingDetailsScreen() {
 
       </ScrollView>
 
-      {editMode ? (
+        {editMode ? (
         <View className='px-6 pb-4'>
           <TouchableOpacity onPress={saveChanges} className='mt-2 mb-4 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
             <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
@@ -460,27 +487,48 @@ export default function BookingDetailsScreen() {
         </View>
       ) : (
         <View className='px-6 pb-4'>
-          <TouchableOpacity onPress={startChat} className='mt-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
-            <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>{t('write')}</Text>
-          </TouchableOpacity>
+          {isBookingInactive() ? (
+            <>
+              <TouchableOpacity disabled className='mt-2 flex-row bg-[#3D3D3D] dark:bg-[#E0E0E0] rounded-full items-center justify-center py-[18px]'>
+                <LockClosedIcon size={20} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
+                <Text className='ml-2 font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                  {getInactiveMessage()}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={deleteBooking} className='mt-4 justify-center items-center w-full'>
+                <Text className='font-inter-semibold text-[15px] text-[#ff633e]/50'>{t('delete_booking')}</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <TouchableOpacity onPress={startChat} className='mt-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
+                <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                  {t('write')}
+                </Text>
+              </TouchableOpacity>
 
-          {role !== 'pro' || booking.booking_status !== 'requested' && (
-          <TouchableOpacity onPress={confirmCancel} className='mt-4 justify-center items-center w-full'>
-            <Text className='font-inter-semibold text-[15px] text-[#ff633e]/50 '>{t('cancel_booking')}</Text>
-          </TouchableOpacity>
+              {role !== 'pro' || booking.booking_status !== 'requested' ? (
+                <TouchableOpacity onPress={confirmCancel} className='mt-4 justify-center items-center w-full'>
+                  <Text className='font-inter-semibold text-[15px] text-[#ff633e]/50'>{t('cancel_booking')}</Text>
+                </TouchableOpacity>
+              ) : null}
+
+              {role === 'pro' && booking.booking_status === 'requested' && (
+                <View className='flex-row justify-between mt-3'>
+                  <TouchableOpacity onPress={() => updateStatus('rejected')} className='flex-[1] mr-1 bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-full items-center py-[18px]'>
+                    <Text className='font-inter-semibold text-[15px] text-[#fcfcfc]'>
+                      {t('reject')}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => updateStatus('accepted')} className='flex-[2] ml-1 bg-[#74A34F] rounded-full items-center py-[18px]'>
+                    <Text className='font-inter-semibold text-[15px] text-[#fcfcfc]'>
+                      {t('accept')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </>
           )}
-
-          {role === 'pro' && booking.booking_status === 'requested' && (
-          <View className='flex-row justify-between mt-3'>
-            <TouchableOpacity onPress={() => updateStatus('rejected')} className='flex-[1] mr-1 bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-full items-center py-[18px]'>
-              <Text className='font-inter-semibold text-[15px] text-[#fcfcfc]'>{t('reject')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => updateStatus('accepted')} className='flex-[2] ml-1 bg-[#74A34F] rounded-full items-center py-[18px]'>
-              <Text className='font-inter-semibold text-[15px] text-[#fcfcfc]'>{t('accept')}</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
         </View>
 
       )}

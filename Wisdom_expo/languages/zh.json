@@ -286,6 +286,10 @@
     "select_a_time": "选择时间",
     "select_a_duration": "选择时长",
     "date": "日期",
-    "description": "描述"
+    "description": "描述",
+    "delete_booking": "删除预订",
+    "booking_canceled": "预订已取消",
+    "booking_rejected": "预订已拒绝",
+    "booking_expired": "开始日期已过"
   }
 }

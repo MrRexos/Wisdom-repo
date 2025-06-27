@@ -286,6 +286,10 @@
     "select_a_time": "Select a time",
     "select_a_duration": "Select a duration",
     "date": "Date",
-    "description": "Description"
+    "description": "Description",
+    "delete_booking": "Delete booking",
+    "booking_canceled": "Booking canceled",
+    "booking_rejected": "Booking rejected",
+    "booking_expired": "Booking date has passed"
   }
 }
