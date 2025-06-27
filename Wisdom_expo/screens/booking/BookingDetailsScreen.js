@@ -9,7 +9,7 @@ import { Calendar } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import { Check } from 'react-native-feather';
+import { Check, Lock } from 'react-native-feather';
 import SliderThumbDark from '../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../assets/SliderThumbLight.png';
 import { getDataLocally } from '../../utils/asyncStorage';
@@ -489,8 +489,8 @@ export default function BookingDetailsScreen() {
         <View className='px-6 pb-4'>
           {isBookingInactive() ? (
             <>
-              <TouchableOpacity disabled className='mt-2 flex-row bg-[#3D3D3D] dark:bg-[#E0E0E0] rounded-full items-center justify-center py-[18px]'>
-                <LockClosedIcon size={20} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
+              <TouchableOpacity disabled className='mt-2 flex-row bg-[#3D3D3D] dark:bg-[#E0E0E0] rounded-full items-center justify-center py-[18px] opacity-[.5]'>
+                <LockClosedIcon strokeWidth={2.1} size={18} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
                 <Text className='ml-2 font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
                   {getInactiveMessage()}
                 </Text>
