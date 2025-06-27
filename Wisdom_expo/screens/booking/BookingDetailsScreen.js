@@ -221,6 +221,14 @@ export default function BookingDetailsScreen() {
     return `${selectedDay}T${selectedTime}:00`;
   };
 
+  const calculateEndDateTime = () => {
+    const startDateTime = new Date(`${selectedDay}T${selectedTime}:00`);
+    startDateTime.setMinutes(startDateTime.getMinutes() + selectedDuration);
+    const endDate = startDateTime.toISOString().split('T')[0];
+    const endTime = startDateTime.toTimeString().split(' ')[0];
+    return `${endDate} ${endTime}`;
+  };
+
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString('en-US', {
@@ -237,6 +245,7 @@ export default function BookingDetailsScreen() {
       const payload = {
         ...edited,
         booking_start_datetime: combineDateTime(),
+        booking_end_datetime: calculateEndDateTime(),
         service_duration: selectedDuration,
       };
       await api.put(`/api/bookings/${bookingId}`, payload);
