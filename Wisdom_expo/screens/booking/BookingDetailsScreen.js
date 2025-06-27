@@ -281,12 +281,13 @@ export default function BookingDetailsScreen() {
     try {
       const payload = {
         ...edited,
+        id: bookingId,
         booking_start_datetime: selectedTimeUndefined ? null : combineDateTime(),
         booking_end_datetime: selectedTimeUndefined ? null : calculateEndDateTime(),
         service_duration: selectedTimeUndefined ? null : selectedDuration,
       };
       await api.put(`/api/bookings/${bookingId}`, payload);
-      setBooking(payload);
+      setBooking((prev) => ({ ...prev, ...payload }));
       setEditMode(false);
     } catch (error) {
       console.error('Error saving booking:', error);
