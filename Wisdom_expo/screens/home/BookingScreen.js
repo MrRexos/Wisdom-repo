@@ -87,6 +87,11 @@ export default function BookingScreen() {
     RMB: '¥',
   };
 
+  const formatCurrency = (value, currency) => {
+    if (value === null || value === undefined) return '';
+    return `${parseFloat(value).toFixed(1).replace('.', ',')} ${currencySymbols[currency]}`;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
         try {
@@ -386,9 +391,9 @@ export default function BookingScreen() {
     const durationInHours = duration / 60;
 
     if (serviceData.price_type === 'hour') {
-        final_price = ((parseFloat(serviceData.price) * durationInHours) * 1.1).toFixed(2);
+        final_price = ((parseFloat(serviceData.price) * durationInHours) * 1.1).toFixed(1);
     } else if (serviceData.price_type === 'fix') {
-        final_price = (parseFloat(serviceData.price) + (parseFloat(serviceData.price) * 0.1)).toFixed(2);
+        final_price = (parseFloat(serviceData.price) + (parseFloat(serviceData.price) * 0.1)).toFixed(1);
     }
 
     return final_price; 
@@ -962,7 +967,7 @@ export default function BookingScreen() {
                         {'.'.repeat(80)}
                       </Text>
                       <Text className="font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]">
-                        {(((parseFloat(serviceData.price) * (duration / 60)) * 1.1) - (parseFloat(serviceData.price) * (duration / 60))).toFixed(1)} €
+                        {formatCurrency(((parseFloat(serviceData.price) * (duration / 60)) * 1.1) - (parseFloat(serviceData.price) * (duration / 60)), serviceData.currency)}
                       </Text>
                     </View>
 
@@ -979,7 +984,7 @@ export default function BookingScreen() {
                         {'.'.repeat(80)}
                       </Text>
                       <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
-                        {(((parseFloat(serviceData.price) * (duration / 60)) * 1.1)).toFixed(1)} €
+                        {formatCurrency(((parseFloat(serviceData.price) * (duration / 60)) * 1.1), serviceData.currency)}
                       </Text>
                     </View>
 
@@ -994,7 +999,7 @@ export default function BookingScreen() {
                         {'.'.repeat(80)}
                       </Text>
                       <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
-                        1 €
+                        {formatCurrency(1, serviceData.currency)}
                       </Text>
                     </View>
                   </>
@@ -1028,7 +1033,7 @@ export default function BookingScreen() {
                         {'.'.repeat(80)}
                       </Text>
                       <Text className="font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]">
-                        {(parseFloat(serviceData.price) * 0.1).toFixed(1)} €
+                        {formatCurrency(parseFloat(serviceData.price) * 0.1, serviceData.currency)}
                       </Text>
                     </View>
 
@@ -1045,7 +1050,7 @@ export default function BookingScreen() {
                         {'.'.repeat(80)}
                       </Text>
                       <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
-                        {(parseFloat(serviceData.price)+(parseFloat(serviceData.price) * 0.1)).toFixed(0)} €
+                        {formatCurrency(parseFloat(serviceData.price)+(parseFloat(serviceData.price) * 0.1), serviceData.currency)}
                       </Text>
                     </View>
 
@@ -1060,7 +1065,7 @@ export default function BookingScreen() {
                         {'.'.repeat(80)}
                       </Text>
                       <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
-                        1 €
+                        {formatCurrency(1, serviceData.currency)}
                       </Text>
                     </View>
                   </>
@@ -1094,7 +1099,7 @@ export default function BookingScreen() {
                         {'.'.repeat(80)}
                       </Text>
                       <Text className="font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]">
-                        1 €
+                        {formatCurrency(1, serviceData.currency)}
                       </Text>
                     </View>
 
@@ -1111,7 +1116,7 @@ export default function BookingScreen() {
                         {'.'.repeat(80)}
                       </Text>
                       <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
-                        1 €
+                        {formatCurrency(1, serviceData.currency)}
                       </Text>
                     </View>
                   </>
