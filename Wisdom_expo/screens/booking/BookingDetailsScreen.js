@@ -370,6 +370,7 @@ export default function BookingDetailsScreen() {
   };
 
   const isBookingInactive = () => {
+    if (!booking) return false;
     const now = new Date();
     const startDate = booking.booking_start_datetime
       ? new Date(booking.booking_start_datetime)
@@ -382,26 +383,29 @@ export default function BookingDetailsScreen() {
   };
 
   const getInactiveMessage = () => {
+    if (!booking) return '';
     if (booking.booking_status === 'canceled') return t('booking_canceled');
     if (booking.booking_status === 'rejected') return t('booking_rejected');
     return t('booking_expired');
   };
 
   const now = new Date();
-  const startDate = booking.booking_start_datetime
+  const startDate = booking && booking.booking_start_datetime
     ? new Date(booking.booking_start_datetime)
     : null;
-  const endDate = booking.booking_end_datetime
+  const endDate = booking && booking.booking_end_datetime
     ? new Date(booking.booking_end_datetime)
     : null;
 
   const showInProgress =
+    booking &&
     booking.booking_status === 'accepted' &&
     (!startDate || (endDate && now >= startDate && now < endDate));
 
   const showServiceFinished =
-    booking.booking_status === 'completed' ||
-    (endDate && endDate - now <= 3600000 && endDate - now >= 0);
+    booking &&
+    (booking.booking_status === 'completed' ||
+    (endDate && endDate - now <= 3600000 && endDate - now >= 0));
 
   const statusMessage = showServiceFinished
     ? t('service_completed')
