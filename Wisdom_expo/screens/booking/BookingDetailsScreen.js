@@ -37,10 +37,13 @@ export default function BookingDetailsScreen() {
   const [sliderValue, setSliderValue] = useState(12);
   const sliderTimeoutId = useRef(null);
   const [showPicker, setShowPicker] = useState(false);
+  const [timeUndefined, setTimeUndefined] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState(null);
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
 
   useEffect(() => {
     fetchBooking();
+    loadPaymentMethod();
   }, []);
 
   const fetchBooking = async () => {
@@ -51,9 +54,9 @@ export default function BookingDetailsScreen() {
       const serviceResp = await api.get(`/api/services/${response.data.service_id}`);
       setService(serviceResp.data);
       if (response.data.booking_start_datetime) {
-        const date = new Date(response.data.booking_start_datetime);
+        const date = new Date(response.data.booking_start_datetime.replace(' ', 'T'));
         const dateString = date.toISOString().split('T')[0];
-        const timeString = date.toISOString().split('T')[1].slice(0, 5);
+        const timeString = date.toTimeString().slice(0, 5);
         setSelectedDate({
           [dateString]: {
             selected: true,
@@ -64,6 +67,8 @@ export default function BookingDetailsScreen() {
         setSelectedDay(dateString);
         setSelectedTime(timeString);
         setTempDate(date);
+      } else {
+        setTimeUndefined(true);
       }
       if (response.data.service_duration) {
         const dur = parseInt(response.data.service_duration);
@@ -72,6 +77,13 @@ export default function BookingDetailsScreen() {
       }
     } catch (error) {
       console.error('Error fetching booking:', error);
+    }
+  };
+
+  const loadPaymentMethod = async () => {
+    const data = await getDataLocally('paymentMethod');
+    if (data) {
+      setPaymentMethod(JSON.parse(data));
     }
   };
 
@@ -193,6 +205,14 @@ export default function BookingDetailsScreen() {
     return `${selectedDay} ${selectedTime}:00`;
   };
 
+  const calculateEndDateTime = () => {
+    let startDateTime = new Date(`${selectedDay}T${selectedTime}:00`);
+    startDateTime.setMinutes(startDateTime.getMinutes() + selectedDuration);
+    const endDate = startDateTime.toISOString().split('T')[0];
+    const endTime = startDateTime.toTimeString().split(' ')[0];
+    return `${endDate} ${endTime}`;
+  };
+
   const formatDateTime = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleString('en-US', {
@@ -208,8 +228,9 @@ export default function BookingDetailsScreen() {
     try {
       const payload = {
         ...edited,
-        booking_start_datetime: combineDateTime(),
-        service_duration: selectedDuration,
+        booking_start_datetime: timeUndefined ? null : combineDateTime(),
+        booking_end_datetime: timeUndefined ? null : calculateEndDateTime(),
+        service_duration: timeUndefined ? null : selectedDuration,
       };
       await api.put(`/api/bookings/${bookingId}`, payload);
       setBooking(payload);
@@ -246,7 +267,7 @@ export default function BookingDetailsScreen() {
         doc(db, 'conversations', conversationId),
         {
           participants,
-          name: booking.service_title,
+          name: booking.service_title || (service && service.service_title) || 'Chat',
           updatedAt: serverTimestamp(),
         },
         { merge: true }
@@ -254,7 +275,7 @@ export default function BookingDetailsScreen() {
       navigation.navigate('Conversation', {
         conversationId,
         participants,
-        name: booking.service_title,
+        name: booking.service_title || (service && service.service_title) || 'Chat',
       });
     } catch (err) {
       console.error('startChat error:', err);
@@ -302,6 +323,73 @@ export default function BookingDetailsScreen() {
           <TouchableOpacity onPress={() => navigation.goBack()} className='flex-1 p-2'>
             <XMarkIcon size={24} color={iconColor} strokeWidth={2} />
           </TouchableOpacity>
+        </View>
+
+        <View className='mb-4'>
+          <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>Address</Text>
+          {editMode ? (
+            <>
+              <TextInput
+                placeholder={t('street')}
+                value={edited.address_1 || ''}
+                onChangeText={(text) => setEdited({ ...edited, address_1: text })}
+                className='mb-2 px-3 py-3 rounded-lg font-inter-medium bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
+              />
+              <TextInput
+                placeholder={t('street_number')}
+                value={edited.street_number ? String(edited.street_number) : ''}
+                onChangeText={(text) => setEdited({ ...edited, street_number: text })}
+                className='mb-2 px-3 py-3 rounded-lg font-inter-medium bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
+              />
+              <TextInput
+                placeholder={t('city_town')}
+                value={edited.city || ''}
+                onChangeText={(text) => setEdited({ ...edited, city: text })}
+                className='mb-2 px-3 py-3 rounded-lg font-inter-medium bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
+              />
+              <TextInput
+                placeholder={t('postal_code')}
+                value={edited.postal_code || ''}
+                onChangeText={(text) => setEdited({ ...edited, postal_code: text })}
+                className='mb-2 px-3 py-3 rounded-lg font-inter-medium bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
+              />
+              <TextInput
+                placeholder={t('country_region')}
+                value={edited.country || ''}
+                onChangeText={(text) => setEdited({ ...edited, country: text })}
+                className='px-3 py-3 rounded-lg font-inter-medium bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
+              />
+            </>
+          ) : (
+            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+              {`${booking.address_1 || ''} ${booking.street_number || ''}, ${booking.city || ''} ${booking.postal_code || ''}, ${booking.country || ''}`}
+            </Text>
+          )}
+        </View>
+
+        <View className='mb-4'>
+          <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>
+            {t('payment_method')}
+          </Text>
+          {paymentMethod ? (
+            editMode ? (
+              <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod')}>
+                <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+                  •••• {paymentMethod.cardNumber.slice(-4)} ({t('edit')})
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+                •••• {paymentMethod.cardNumber.slice(-4)}
+              </Text>
+            )
+          ) : (
+            <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod')}>
+              <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+                {t('add_payment_method')}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <View className="flex-[2] justify-center items-center  ">
@@ -400,6 +488,33 @@ export default function BookingDetailsScreen() {
         </View>
 
         <View className='mb-4'>
+          <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>
+            {t('price')}
+          </Text>
+          {editMode ? (
+            <>
+              <TextInput
+                placeholder={t('price')}
+                keyboardType='numeric'
+                value={edited.price ? String(edited.price) : ''}
+                onChangeText={(text) => setEdited({ ...edited, price: text })}
+                className='mb-2 px-3 py-3 rounded-lg font-inter-medium bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
+              />
+              <TextInput
+                placeholder={t('price_type')}
+                value={edited.price_type || ''}
+                onChangeText={(text) => setEdited({ ...edited, price_type: text })}
+                className='px-3 py-3 rounded-lg font-inter-medium bg-[#fcfcfc] dark:bg-[#323131] text-[#444343] dark:text-[#f2f2f2]'
+              />
+            </>
+          ) : (
+            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+              {booking.price ? `${booking.price}${currencySymbols[booking.currency]} (${booking.price_type})` : '-'}
+            </Text>
+          )}
+        </View>
+
+        <View className='mb-4'>
           <Text className='mb-2 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('date')}</Text>
           {editMode ? (
             <>
@@ -454,7 +569,11 @@ export default function BookingDetailsScreen() {
               </View>
             </>
           ) : (
-            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>{formatDateTime(booking.booking_start_datetime)}</Text>
+            <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+              {booking.booking_start_datetime
+                ? `${formatDateTime(booking.booking_start_datetime)}${booking.booking_end_datetime ? ` - ${formatDateTime(booking.booking_end_datetime)}` : ''}`
+                : t('undefined_time')}
+            </Text>
           )}
         </View>
 
