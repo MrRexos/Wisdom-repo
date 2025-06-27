@@ -396,10 +396,10 @@ export default function BookingDetailsScreen() {
 
   const now = getLocalDate(new Date());
   const startDate = booking && booking.booking_start_datetime
-    ? getLocalDate(new Date(booking.booking_start_datetime))
+    ? booking.booking_start_datetime
     : null;
   const endDate = booking && booking.booking_end_datetime
-    ? getLocalDate(new Date(booking.booking_end_datetime))
+    ? booking.booking_end_datetime
     : null;
 
   const showInProgress =
@@ -410,6 +410,8 @@ export default function BookingDetailsScreen() {
       (startDate && !endDate && now >= startDate) ||
       (startDate && endDate && now >= startDate && now < endDate)
     );
+
+    console.log(now)
 
   const showServiceFinished =
     booking &&
