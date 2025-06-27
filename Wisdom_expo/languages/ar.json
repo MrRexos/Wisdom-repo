@@ -286,6 +286,10 @@
     "select_a_time": "اختر وقتًا",
     "select_a_duration": "اختر المدّة",
     "date": "تاريخ",
-    "description": "الوصف"
+    "description": "الوصف",
+    "delete_booking": "حذف الحجز",
+    "booking_canceled": "تم إلغاء الحجز",
+    "booking_rejected": "تم رفض الحجز",
+    "booking_expired": "انتهى تاريخ البدء"
   }
 }

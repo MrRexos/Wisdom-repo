@@ -286,6 +286,10 @@
     "select_a_time": "Selecciona una hora",
     "select_a_duration": "Selecciona una duración",
     "date": "Fecha",
-    "description": "Descripción"
+    "description": "Descripción",
+    "delete_booking": "Eliminar reserva",
+    "booking_canceled": "Reserva cancelada",
+    "booking_rejected": "Reserva rechazada",
+    "booking_expired": "La fecha de inicio ha pasado"
   }
 }
