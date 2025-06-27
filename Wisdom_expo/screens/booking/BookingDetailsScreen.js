@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, SafeAreaView, Platform, StatusBar, TouchableOpacity, TextInput, ScrollView, Alert, Image } from 'react-native';
+import RBSheet from 'react-native-raw-bottom-sheet';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -39,6 +40,9 @@ export default function BookingDetailsScreen() {
   const [paymentMethod, setPaymentMethod] = useState();
   const sliderTimeoutId = useRef(null);
   const [showPicker, setShowPicker] = useState(false);
+  const [selectedTimeUndefined, setSelectedTimeUndefined] = useState(false);
+  const sheet = useRef();
+  const [sheetHeight, setSheetHeight] = useState(450);
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
 
   useEffect(() => {
@@ -49,6 +53,7 @@ export default function BookingDetailsScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadPaymentMethod();
+      loadSearchedDirection();
     }, [])
   );
 
@@ -73,6 +78,9 @@ export default function BookingDetailsScreen() {
         setSelectedDay(dateString);
         setSelectedTime(timeString);
         setTempDate(date);
+        setSelectedTimeUndefined(false);
+      } else {
+        setSelectedTimeUndefined(true);
       }
       if (response.data.service_duration) {
         const dur = parseInt(response.data.service_duration);
@@ -125,6 +133,23 @@ export default function BookingDetailsScreen() {
     }
   };
 
+  const loadSearchedDirection = async () => {
+    const raw = await getDataLocally('searchedDirection');
+    if (raw) {
+      const dir = JSON.parse(raw);
+      setEdited((prev) => ({
+        ...prev,
+        address_1: dir.address_1,
+        street_number: dir.street_number,
+        postal_code: dir.postal_code,
+        city: dir.city,
+        state: dir.state,
+        country: dir.country,
+        address_2: dir.address_2,
+      }));
+    }
+  };
+
   const sliderValueToMinutes = (value) => {
     if (value <= 12) {
       return value * 5;
@@ -149,11 +174,23 @@ export default function BookingDetailsScreen() {
     }
   };
 
+  const openSheetWithInput = (height) => {
+    setSheetHeight(height);
+    setTimeout(() => {
+      sheet.current.open();
+    }, 0);
+  };
+
   const currencySymbols = {
     EUR: '€',
     USD: '$',
     MAD: 'د.م.',
     RMB: '¥',
+  };
+
+  const formatCurrency = (value, currency) => {
+    if (value === null || value === undefined) return '';
+    return `${parseFloat(value).toFixed(1).replace('.', ',')} ${currencySymbols[currency]}`;
   };
 
   const getFormattedPrice = () => {
@@ -244,9 +281,9 @@ export default function BookingDetailsScreen() {
     try {
       const payload = {
         ...edited,
-        booking_start_datetime: combineDateTime(),
-        booking_end_datetime: calculateEndDateTime(),
-        service_duration: selectedDuration,
+        booking_start_datetime: selectedTimeUndefined ? null : combineDateTime(),
+        booking_end_datetime: selectedTimeUndefined ? null : calculateEndDateTime(),
+        service_duration: selectedTimeUndefined ? null : selectedDuration,
       };
       await api.put(`/api/bookings/${bookingId}`, payload);
       setBooking(payload);
@@ -331,6 +368,134 @@ export default function BookingDetailsScreen() {
   }
 
   return (
+    <>
+      <RBSheet
+        height={sheetHeight}
+        openDuration={300}
+        closeDuration={300}
+        draggable={true}
+        ref={sheet}
+        customStyles={{
+          container: {
+            borderTopRightRadius: 25,
+            borderTopLeftRadius: 25,
+            backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+          },
+          draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
+        }}
+      >
+        <View className='flex-1 justify-start items-center'>
+          <View className='mt-4 mb-2 flex-row justify-center items-center'>
+            <Text className='text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]'>
+              {t('select_a_date')}
+            </Text>
+          </View>
+
+          <ScrollView showsVerticalScrollIndicator={false} className='flex-1'>
+            <View className='w-full px-6'>
+              <Calendar
+                onDayPress={onDayPress}
+                markedDates={selectedDate}
+                firstDay={1}
+                theme={{
+                  todayTextColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
+                  monthTextColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
+                  textMonthFontSize: 15,
+                  textMonthFontWeight: 'bold',
+                  dayTextColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                  textDayFontWeight: 'bold',
+                  textInactiveColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                  textSectionTitleColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                  textDisabledColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                  selectedDayBackgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3',
+                  selectedDayTextColor: '#ffffff',
+                  arrowColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
+                  calendarBackground: 'transparent',
+                }}
+                style={{ backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', padding: 20, borderRadius: 20 }}
+              />
+            </View>
+
+            <View className='mt-2 w-full px-6'>
+              <TouchableOpacity onPress={() => setShowPicker(true)}>
+                <Text className='ml-3 mb-2 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]'>
+                  {t('start_time')}
+                </Text>
+              </TouchableOpacity>
+
+              {showPicker && (
+                <DateTimePicker
+                  value={tempDate}
+                  mode='time'
+                  display='spinner'
+                  onChange={handleHourSelected}
+                  style={{ width: 320, height: 150 }}
+                />
+              )}
+            </View>
+
+            <View className='mt-6 mb-10 w-full px-6'>
+              <Text className='ml-3 mb-8 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]'>
+                {t('duration')}: {formatDuration(selectedDuration)}
+              </Text>
+              <View className='flex-1 px-4 justify-center items-center'>
+                <Slider
+                  style={{ width: '100%', height: 10 }}
+                  minimumValue={1}
+                  maximumValue={34}
+                  step={1}
+                  thumbImage={thumbImage}
+                  minimumTrackTintColor='#b6b5b5'
+                  maximumTrackTintColor='#474646'
+                  value={sliderValue}
+                  onValueChange={handleSliderChange}
+                />
+              </View>
+            </View>
+
+            <View className='pl-10 flex-row w-full justify-start  items-center'>
+              <TouchableOpacity
+                onPress={() => setSelectedTimeUndefined(!selectedTimeUndefined)}
+                style={{
+                  width: 22,
+                  height: 22,
+                  borderWidth: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 4,
+                  borderColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                  backgroundColor: selectedTimeUndefined ? (colorScheme === 'dark' ? '#fcfcfc' : '#323131') : 'transparent',
+                }}
+              >
+                {selectedTimeUndefined && (
+                  <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5} />
+                )}
+              </TouchableOpacity>
+              <Text className='ml-3 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>
+                {t('undefined_time')}
+              </Text>
+            </View>
+
+            <View className='mt-6 pb-3 px-6 flex-row justify-center items-center'>
+              <TouchableOpacity
+                disabled={!(selectedDay && selectedTime && selectedDuration) && !selectedTimeUndefined}
+                onPress={() => sheet.current.close()}
+                style={{
+                  opacity: !(selectedDay && selectedTime && selectedDuration) && !selectedTimeUndefined ? 0.5 : 1,
+                }}
+                className='bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17] rounded-full items-center justify-center'
+              >
+                <Text className='text-center font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                  {t('accept')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View className='h-[20]' />
+          </ScrollView>
+        </View>
+      </RBSheet>
+
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
@@ -442,67 +607,14 @@ export default function BookingDetailsScreen() {
           <View className='w-full flex-row justify-between items-center '>
             <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Date and time</Text>
             {editMode && (
-              <TouchableOpacity onPress={() => setShowPicker(true)}>
+              <TouchableOpacity onPress={() => { setShowPicker(true); openSheetWithInput(650); }}>
                 <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
               </TouchableOpacity>
             )}
           </View>
 
           <View className='mt-4 flex-1'>
-            {editMode ? (
-              <>
-                <Calendar
-                  onDayPress={onDayPress}
-                  markedDates={selectedDate}
-                  firstDay={1}
-                  theme={{
-                    todayTextColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
-                    monthTextColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
-                    textMonthFontSize: 15,
-                    textMonthFontWeight: 'bold',
-                    dayTextColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
-                    textDayFontWeight: 'bold',
-                    textInactiveColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                    textSectionTitleColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                    textDisabledColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                    selectedDayBackgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3',
-                    selectedDayTextColor: '#ffffff',
-                    arrowColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
-                    calendarBackground: 'transparent',
-                  }}
-                  style={{ backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', padding: 20, borderRadius: 20 }}
-                />
-                <View className='mt-4'>
-                  <TouchableOpacity onPress={() => setShowPicker(true)}>
-                    <Text className='ml-1 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('start_time')}</Text>
-                  </TouchableOpacity>
-                  {showPicker && (
-                    <DateTimePicker
-                      value={tempDate}
-                      mode='time'
-                      display='spinner'
-                      onChange={handleHourSelected}
-                      style={{ width: 320, height: 150 }}
-                    />
-                  )}
-                </View>
-                <View className='mt-4'>
-                  <Text className='ml-1 font-inter-bold text-[16px] text-[#706f6e] dark:text-[#b6b5b5]'>{t('duration')}: {formatDuration(selectedDuration)}</Text>
-                  <Slider
-                    style={{ width: '100%', height: 10 }}
-                    minimumValue={1}
-                    maximumValue={34}
-                    step={1}
-                    thumbImage={thumbImage}
-                    minimumTrackTintColor='#b6b5b5'
-                    maximumTrackTintColor='#474646'
-                    value={sliderValue}
-                    onValueChange={handleSliderChange}
-                  />
-                </View>
-              </>
-            ) : (
-              selectedTime ? (
+            {selectedTime && !selectedTimeUndefined ? (
                 <View className='flex-1 justify-center items-center'>
                   <View className='w-full flex-row justify-between items-center'>
                     <View className='flex-row justify-start items-center'>
@@ -524,8 +636,7 @@ export default function BookingDetailsScreen() {
                     {t('undefined_time')}
                   </Text>
                 </View>
-              )
-            )}
+              )}
           </View>
         </View>
 
@@ -534,20 +645,13 @@ export default function BookingDetailsScreen() {
           <View className='w-full flex-row justify-between items-center '>
             <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Address</Text>
             {editMode && (
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate('SearchDirectionAlone', { prevScreen: 'BookingDetails' })}>
                 <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
               </TouchableOpacity>
             )}
           </View>
 
-          {editMode ? (
-            <TextInput
-              value={edited.address_1 || ''}
-              onChangeText={(text) => setEdited({ ...edited, address_1: text })}
-              className='mt-4 px-3 py-3 rounded-lg font-inter-medium bg-[#f2f2f2] dark:bg-[#272626] text-[#444343] dark:text-[#f2f2f2]'
-            />
-          ) : (
-            <View className='mt-4 flex-row justify-center items-center'>
+          <View className='mt-4 flex-row justify-center items-center'>
               <View className='w-11 h-11 items-center justify-center'>
                 <MapPin height={25} width={25} strokeWidth={1.6} color={iconColor} />
               </View>
@@ -560,7 +664,7 @@ export default function BookingDetailsScreen() {
                 </Text>
               </View>
             </View>
-          )}
+          
         </View>
 
         {/* Price details */}
@@ -582,7 +686,7 @@ export default function BookingDetailsScreen() {
                           {'.'.repeat(80)}
                         </Text>
                         <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {(parseFloat(priceSource.price) * (selectedDuration / 60)).toFixed(0)} {currencySymbols[priceSource.currency]}
+                          {formatCurrency(parseFloat(priceSource.price) * (selectedDuration / 60), priceSource.currency)}
                         </Text>
                       </View>
 
@@ -592,7 +696,7 @@ export default function BookingDetailsScreen() {
                           {'.'.repeat(80)}
                         </Text>
                         <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {(((parseFloat(priceSource.price) * (selectedDuration / 60)) * 1.1) - (parseFloat(priceSource.price) * (selectedDuration / 60))).toFixed(1)} {currencySymbols[priceSource.currency]}
+                          {formatCurrency(((parseFloat(priceSource.price) * (selectedDuration / 60)) * 1.1) - (parseFloat(priceSource.price) * (selectedDuration / 60)), priceSource.currency)}
                         </Text>
                       </View>
 
@@ -604,7 +708,7 @@ export default function BookingDetailsScreen() {
                           {'.'.repeat(80)}
                         </Text>
                         <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {(((parseFloat(priceSource.price) * (selectedDuration / 60)) * 1.1)).toFixed(1)} {currencySymbols[priceSource.currency]}
+                          {formatCurrency(((parseFloat(priceSource.price) * (selectedDuration / 60)) * 1.1), priceSource.currency)}
                         </Text>
                       </View>
 
@@ -613,7 +717,9 @@ export default function BookingDetailsScreen() {
                         <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
                           {'.'.repeat(80)}
                         </Text>
-                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>1 {currencySymbols[priceSource.currency]}</Text>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {formatCurrency(1, priceSource.currency)}
+                        </Text>
                       </View>
                     </>
                   );
@@ -648,7 +754,7 @@ export default function BookingDetailsScreen() {
                           {'.'.repeat(80)}
                         </Text>
                         <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {(parseFloat(priceSource.price)+(parseFloat(priceSource.price) * 0.1)).toFixed(0)} {currencySymbols[priceSource.currency]}
+                          {formatCurrency(parseFloat(priceSource.price)+(parseFloat(priceSource.price) * 0.1), priceSource.currency)}
                         </Text>
                       </View>
 
@@ -872,5 +978,6 @@ export default function BookingDetailsScreen() {
       )}
       
     </SafeAreaView>
+    </>
   );
 }
