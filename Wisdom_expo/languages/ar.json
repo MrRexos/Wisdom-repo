@@ -288,6 +288,8 @@
     "date": "تاريخ",
     "description": "الوصف",
     "delete_booking": "حذف الحجز",
+    "service_completed": "الخدمة منتهية",
+    "final_payment": "الدفع النهائي",
     "booking_canceled": "تم إلغاء الحجز",
     "booking_rejected": "تم رفض الحجز",
     "booking_expired": "انتهى تاريخ البدء"
