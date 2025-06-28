@@ -241,6 +241,7 @@ export default function ConversationScreen() {
   const handleCopyMessage = async () => {
     if (!selectedMsg) return;
     await Clipboard.setStringAsync(selectedMsg.text);
+
     msgSheet.current.close();
   };
 
