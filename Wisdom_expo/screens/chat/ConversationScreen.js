@@ -24,8 +24,9 @@ import {
   ChevronLeftIcon,
   PaperClipIcon,
   ArrowUpIcon,
+  DocumentDuplicateIcon,
 } from 'react-native-heroicons/outline';
-import { MoreHorizontal, Image as ImageIcon, Folder, Check } from "react-native-feather";
+import { MoreHorizontal, Image as ImageIcon, Folder, Check, Edit2, Trash2 } from "react-native-feather";
 import { useTranslation } from 'react-i18next';
 import {
   collection,
@@ -121,6 +122,7 @@ export default function ConversationScreen() {
       });
     };
     init();
+    
     return () => unsub && unsub();
   }, [conversationId]);
 
@@ -248,7 +250,7 @@ export default function ConversationScreen() {
   const renderMessage = ({ item, index }) => {           
     if (item.type === 'label') {
       return (
-        <View className="flex-1 justify-center items-center">
+        <View className="justify-center items-center ">
           <View className="rounded-full px-4 py-1 mt-4 mb-4">
             <Text className="text-[12px] font-medium text-[#979797]">
               {item.text}
@@ -543,14 +545,17 @@ export default function ConversationScreen() {
         }}
       >
         <View className="py-4 px-7 space-y-4">
-          <TouchableOpacity onPress={handleDeleteMessage} className="py-2">
-            <Text className="text-base font-inter-medium text-red-500">{t('delete')}</Text>
+          <TouchableOpacity onPress={handleDeleteMessage} className="py-2 flex-row justify-start items-center ">
+            <Trash2 height={22} width={22} color={'#FF633E'} strokeWidth={2} />
+            <Text className="ml-3 text-base font-inter-medium text-[#FF633E]">{t('delete')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleEditMessage} className="py-2">
-            <Text className="text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit')}</Text>
+          <TouchableOpacity onPress={handleEditMessage} className="pt-1 pb-2 flex-row justify-start items-center">
+            <Edit2 height={23} width={23} color={iconColor} strokeWidth={2} />
+            <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleCopyMessage} className="py-2">
-            <Text className="text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('copy')}</Text>
+          <TouchableOpacity onPress={handleCopyMessage} className="py-1 flex-row justify-start items-center">
+            <DocumentDuplicateIcon height={23} width={23} color={iconColor} strokeWidth={2} />
+            <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('copy')}</Text>
           </TouchableOpacity>
         </View>
       </RBSheet>
@@ -570,8 +575,9 @@ export default function ConversationScreen() {
         }}
       >
         <View className="py-4 px-7 space-y-4">
-          <TouchableOpacity onPress={async () => { await updateDoc(doc(db, 'conversations', conversationId), { deletedFor: arrayUnion(userId) }); convSheet.current.close(); navigation.goBack(); }} className="py-2">
-            <Text className="text-base font-inter-medium text-red-500">{t('delete')}</Text>
+          <TouchableOpacity onPress={async () => { await updateDoc(doc(db, 'conversations', conversationId), { deletedFor: arrayUnion(userId) }); convSheet.current.close(); navigation.goBack(); }} className="py-2 flex-row justify-start items-center ">
+            <Trash2 height={22} width={22} color={'#FF633E'} strokeWidth={2} />
+            <Text className="ml-3 text-base font-inter-medium text-[#FF633E]">{t('delete')}</Text>
           </TouchableOpacity>
         </View>
       </RBSheet>
