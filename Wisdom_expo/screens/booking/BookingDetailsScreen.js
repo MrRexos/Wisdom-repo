@@ -61,9 +61,19 @@ export default function BookingDetailsScreen() {
   const fetchBooking = async () => {
     try {
       const response = await api.get(`/api/bookings/${bookingId}`);
-      setBooking(response.data);
-      setEdited(response.data);
-      const serviceResp = await api.get(`/api/services/${response.data.service_id}`);
+      let data = response.data;
+      if (
+        data.booking_status === 'accepted' &&
+        data.booking_end_datetime &&
+        new Date(getLocalDate(new Date(data.booking_end_datetime))) <
+          new Date(getLocalDate(new Date()))
+      ) {
+        await api.patch(`/api/bookings/${bookingId}/status`, { status: 'completed' });
+        data.booking_status = 'completed';
+      }
+      setBooking(data);
+      setEdited(data);
+      const serviceResp = await api.get(`/api/services/${data.service_id}`);
       setService(serviceResp.data);
       if (response.data.booking_start_datetime) {
         const date = new Date(response.data.booking_start_datetime);
@@ -425,7 +435,7 @@ export default function BookingDetailsScreen() {
     return (
       booking.booking_status === 'canceled' ||
       booking.booking_status === 'rejected' ||
-      (startDate && startDate < now && booking.booking_status !== 'accepted')
+      (startDate && startDate < now && booking.booking_status === 'requested')
     );
   };
 
@@ -462,8 +472,8 @@ export default function BookingDetailsScreen() {
 
   const showServiceFinished =
     booking &&
-    (booking.booking_status === 'completed' ||
-    (endDate && endDate - now <= 3600000 && endDate - now >= 0));
+    booking.booking_status === 'completed' &&
+    !booking.is_paid;
 
   const statusMessage = showServiceFinished
     ? t('service_completed')
@@ -624,11 +634,13 @@ export default function BookingDetailsScreen() {
         </View>
 
         <View className="flex-[1] justify-center items-end">
-          <TouchableOpacity onPress={() => setEditMode(!editMode)} className='mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
-            <Text className='font-inter-medium text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>
+          {booking && booking.booking_status !== 'completed' && (
+            <TouchableOpacity onPress={() => setEditMode(!editMode)} className='mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
+              <Text className='font-inter-medium text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>
                 {editMode ? t('cancel') : t('edit')}
-            </Text>
-          </TouchableOpacity>
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
       </View>
@@ -1025,6 +1037,13 @@ export default function BookingDetailsScreen() {
                 <Text className='font-inter-semibold text-[15px] text-[#ff633e]/50'>{t('delete_booking')}</Text>
               </TouchableOpacity>
             </>
+          ) : booking.is_paid ? (
+            <TouchableOpacity disabled className='mt-2 flex-row bg-[#3D3D3D] dark:bg-[#E0E0E0] rounded-full items-center justify-center py-[18px] opacity-[.5]'>
+              <LockClosedIcon strokeWidth={2.1} size={18} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
+              <Text className='ml-2 font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                {t('finished_paid')}
+              </Text>
+            </TouchableOpacity>
           ) : (
             <>
               {showServiceFinished ? (
