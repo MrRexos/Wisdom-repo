@@ -65,8 +65,7 @@ export default function BookingDetailsScreen() {
       if (
         data.booking_status === 'accepted' &&
         data.booking_end_datetime &&
-        new Date(getLocalDate(new Date(data.booking_end_datetime))) <
-          new Date(getLocalDate(new Date()))
+        new Date(data.booking_end_datetime) < new Date(getLocalDate(new Date()))
       ) {
         await api.patch(`/api/bookings/${bookingId}/status`, { status: 'completed' });
         data.booking_status = 'completed';
@@ -271,7 +270,7 @@ export default function BookingDetailsScreen() {
       .toLocaleString('sv-SE', { timeZone: tz, hourCycle: 'h23' })
       .replace(' ', 'T');
     
-    return isoLocal;   // ya NO será NaN
+    return `${isoLocal}.000Z`;   // ya NO será NaN
   };
 
   const getEndTime = () => {
@@ -331,7 +330,7 @@ export default function BookingDetailsScreen() {
       await api.patch(`/api/bookings/${bookingId}/status`, payload);
 
       if (status === 'accepted' && (!booking || !booking.booking_start_datetime)) {
-        const startDate = getLocalDate(new Date());
+        const startDate = new Date(getLocalDate(new Date()));
         const updatePayload = {
           id: bookingId,
           booking_start_datetime: startDate,
@@ -428,9 +427,9 @@ export default function BookingDetailsScreen() {
 
   const isBookingInactive = () => {
     if (!booking) return false;
-    const now = getLocalDate(new Date());
+    const now = new Date(getLocalDate(new Date()));
     const startDate = booking.booking_start_datetime
-      ? getLocalDate(new Date(booking.booking_start_datetime))
+      ? new Date(booking.booking_start_datetime)
       : null;
     return (
       booking.booking_status === 'canceled' ||
@@ -452,12 +451,12 @@ export default function BookingDetailsScreen() {
   const startDate =
     booking && booking.booking_start_datetime
       ? new Date(
-          getLocalDate(new Date(booking.booking_start_datetime))
+          booking.booking_start_datetime
         )
       : null;
   const endDate =
     booking && booking.booking_end_datetime
-      ? new Date(getLocalDate(new Date(booking.booking_end_datetime)))
+      ? new Date(booking.booking_end_datetime)
       : null;
 
   const showInProgress =
@@ -468,6 +467,11 @@ export default function BookingDetailsScreen() {
       (startDate && !endDate && now >= startDate) ||
       (startDate && endDate && now >= startDate && now < endDate)
     );
+
+    console.log(showInProgress)
+    console.log(endDate)
+
+    
     
 
   const showServiceFinished =
