@@ -251,10 +251,12 @@ export default function ConversationScreen() {
   const renderMessage = ({ item, index }) => {           
     if (item.type === 'label') {
       return (
-        <View className="self-start bg-[#D4D4D3] dark:bg-[#3d3d3d] rounded-full px-3 py-2 my-1">
-          <Text className="text-[15px] font-medium text-[#515150] dark:text-[#d4d4d3]">
-            {item.text}
-          </Text>
+        <View className="flex-1 justify-center items-center">
+          <View className="rounded-full px-4 py-1 mt-4 mb-4">
+            <Text className="text-[12px] font-medium text-[#979797]">
+              {item.text}
+            </Text>
+          </View>
         </View>
 
       );

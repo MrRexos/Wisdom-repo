@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import './languages/i18n';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
 export default function App() {
@@ -41,7 +42,9 @@ export default function App() {
   }
 
   return (
-    <Navigation />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Navigation />
+    </GestureHandlerRootView>
   );
 }
 
