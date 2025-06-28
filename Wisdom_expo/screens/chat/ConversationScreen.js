@@ -17,7 +17,7 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import Clipboard from '@react-native-clipboard/clipboard';
+import * as Clipboard from 'expo-clipboard';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {
@@ -238,9 +238,10 @@ export default function ConversationScreen() {
     msgSheet.current.close();
   };
 
-  const handleCopyMessage = () => {
+  const handleCopyMessage = async () => {
     if (!selectedMsg) return;
-    Clipboard.setString(selectedMsg.text);
+    await Clipboard.setStringAsync(selectedMsg.text);
+
     msgSheet.current.close();
   };
 
