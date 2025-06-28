@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
-import { XMarkIcon, LockClosedIcon, ChevronRightIcon, XCircleIcon } from 'react-native-heroicons/outline';
+import { XMarkIcon, LockClosedIcon, ChevronRightIcon, XCircleIcon, ClockIcon } from 'react-native-heroicons/outline';
 import { Calendar } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
@@ -1047,21 +1047,30 @@ export default function BookingDetailsScreen() {
           ) : (
             <>
               {showServiceFinished ? (
-                <TouchableOpacity
-                  onPress={handleFinalPayment}
-                  className='mt-2 mb-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'
-                  style={{
-                    opacity: 1,
-                    shadowColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131',
-                    shadowOffset: { width: 0, height: 0 },
-                    shadowOpacity: 0.6,
-                    shadowRadius: 10,
-                    elevation: 10,
-                  }}>
-                  <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                    {t('final_payment')}
-                  </Text>
-                </TouchableOpacity>
+                role === 'pro' ? (
+                  <TouchableOpacity disabled className='mt-2 flex-row bg-[#3D3D3D] dark:bg-[#E0E0E0] rounded-full items-center justify-center py-[18px] opacity-[.5]'>
+                    <ClockIcon strokeWidth={2.1} size={18} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
+                    <Text className='ml-2 font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                      {t('waiting_final_payment')}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    onPress={handleFinalPayment}
+                    className='mt-2 mb-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'
+                    style={{
+                      opacity: 1,
+                      shadowColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131',
+                      shadowOffset: { width: 0, height: 0 },
+                      shadowOpacity: 0.6,
+                      shadowRadius: 10,
+                      elevation: 10,
+                    }}>
+                    <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                      {t('final_payment')}
+                    </Text>
+                  </TouchableOpacity>
+                )
               ) : (
                 <TouchableOpacity onPress={startChat} className='mt-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
                   <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
