@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView } from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -89,7 +89,6 @@ export default function ServiceProfileScreen() {
 
 
   const verifyRegistered  = async () => {
-
     const userData = await getDataLocally('user');
     console.log(userData);
 
@@ -100,9 +99,14 @@ export default function ServiceProfileScreen() {
         routes: [{ name: 'GetStarted' }],
       });
     } else {
+      const me = JSON.parse(userData);
+      if (me.id === serviceData.user_id) {
+        Alert.alert(t('cannot_book_own_service'));
+        return;
+      }
       openSheetWithInput(700); setIsAddingDate(true)
     }
-  
+
   }
 
 
@@ -428,6 +432,10 @@ export default function ServiceProfileScreen() {
       const me = JSON.parse(userData);
       const otherId = serviceData.user_id;
       if (!otherId) return;
+      if (otherId === me.id) {
+        Alert.alert(t('cannot_write_to_yourself'));
+        return;
+      }
       const participants = [me.id, otherId];
       const conversationId = [...participants].sort().join('_');
       const data = {
