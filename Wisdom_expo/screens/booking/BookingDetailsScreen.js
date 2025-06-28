@@ -317,10 +317,45 @@ export default function BookingDetailsScreen() {
 
   const updateStatus = async (status) => {
     try {
-      await api.patch(`/api/bookings/${bookingId}/status`, { status });
+      const payload = { status };
+      await api.patch(`/api/bookings/${bookingId}/status`, payload);
+
+      if (status === 'accepted' && (!booking || !booking.booking_start_datetime)) {
+        const startDate = getLocalDate(new Date());
+        const updatePayload = {
+          id: bookingId,
+          booking_start_datetime: startDate,
+          booking_end_datetime: booking ? booking.booking_end_datetime : null,
+          service_duration: booking ? booking.service_duration : null,
+          final_price: booking ? booking.final_price : null,
+          description: booking ? booking.description : null,
+        };
+        await api.put(`/api/bookings/${bookingId}`, updatePayload);
+        setBooking((prev) => ({ ...prev, booking_start_datetime: startDate, booking_status: status }));
+      }
+
       fetchBooking();
     } catch (error) {
       console.error('Error updating status:', error);
+    }
+  };
+
+  const updateIsPaid = async (isPaid) => {
+    try {
+      await api.patch(`/api/bookings/${bookingId}/is_paid`, { is_paid: isPaid });
+      fetchBooking();
+    } catch (error) {
+      console.error('Error updating is_paid:', error);
+    }
+  };
+
+  const handleFinalPayment = async () => {
+    try {
+      await updateIsPaid(true);
+    } catch (e) {
+      console.error('handleFinalPayment error:', e);
+    } finally {
+      navigation.navigate('ConfirmPayment', { serviceId: booking.service_id });
     }
   };
 
@@ -402,20 +437,24 @@ export default function BookingDetailsScreen() {
   };
 
   
-  const now = getLocalDate(new Date());
-  
-  const startDate = booking && booking.booking_start_datetime
-    ? booking.booking_start_datetime
-    : null;
-  const endDate = booking && booking.booking_end_datetime
-    ? booking.booking_end_datetime
-    : null;
+  const now = new Date(getLocalDate(new Date()));
+
+  const startDate =
+    booking && booking.booking_start_datetime
+      ? new Date(
+          getLocalDate(new Date(booking.booking_start_datetime))
+        )
+      : null;
+  const endDate =
+    booking && booking.booking_end_datetime
+      ? new Date(getLocalDate(new Date(booking.booking_end_datetime)))
+      : null;
 
   const showInProgress =
     booking &&
     booking.booking_status === 'accepted' &&
     (
-      (!startDate && !endDate) ||
+      (startDate && !endDate) ||
       (startDate && !endDate && now >= startDate) ||
       (startDate && endDate && now >= startDate && now < endDate)
     );
@@ -990,7 +1029,7 @@ export default function BookingDetailsScreen() {
             <>
               {showServiceFinished ? (
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('ConfirmPayment')}
+                  onPress={handleFinalPayment}
                   className='mt-2 mb-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'
                   style={{
                     opacity: 1,

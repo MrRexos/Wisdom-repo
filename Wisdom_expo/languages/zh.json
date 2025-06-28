@@ -292,6 +292,10 @@
     "final_payment": "最终付款",
     "booking_canceled": "预订已取消",
     "booking_rejected": "预订已拒绝",
-    "booking_expired": "开始日期已过"
+    "booking_expired": "开始日期已过",
+    "skip": "跳过",
+    "rate_service": "为服务评分",
+    "write_comment": "写下评论...",
+    "submit_review": "提交评价"
   }
 }

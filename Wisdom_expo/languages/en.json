@@ -292,6 +292,10 @@
     "final_payment": "Final payment",
     "booking_canceled": "Booking canceled",
     "booking_rejected": "Booking rejected",
-    "booking_expired": "Booking date has passed"
+    "booking_expired": "Booking date has passed",
+    "skip": "Skip",
+    "rate_service": "Rate the service",
+    "write_comment": "Write a comment...",
+    "submit_review": "Submit review"
   }
 }

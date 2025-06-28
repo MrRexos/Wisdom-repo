@@ -292,6 +292,10 @@
     "final_payment": "Pagament final",
     "booking_canceled": "Reserva cancel·lada",
     "booking_rejected": "Reserva rebutjada",
-    "booking_expired": "La data d'inici ha passat"
+    "booking_expired": "La data d'inici ha passat",
+    "skip": "Saltar",
+    "rate_service": "Valora el servei",
+    "write_comment": "Escriu un comentari...",
+    "submit_review": "Enviar ressenya"
   }
 }

@@ -292,6 +292,10 @@
     "final_payment": "Pago final",
     "booking_canceled": "Reserva cancelada",
     "booking_rejected": "Reserva rechazada",
-    "booking_expired": "La fecha de inicio ha pasado"
+    "booking_expired": "La fecha de inicio ha pasado",
+    "skip": "Saltar",
+    "rate_service": "Valora el servicio",
+    "write_comment": "Escribe un comentario...",
+    "submit_review": "Enviar reseña"
   }
 }

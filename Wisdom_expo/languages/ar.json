@@ -292,6 +292,10 @@
     "final_payment": "الدفع النهائي",
     "booking_canceled": "تم إلغاء الحجز",
     "booking_rejected": "تم رفض الحجز",
-    "booking_expired": "انتهى تاريخ البدء"
+    "booking_expired": "انتهى تاريخ البدء",
+    "skip": "تخطي",
+    "rate_service": "قيّم الخدمة",
+    "write_comment": "اكتب تعليقًا...",
+    "submit_review": "إرسال المراجعة"
   }
 }

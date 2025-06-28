@@ -72,6 +72,7 @@ import SearchServiceScreen from '../screens/home/SearchServiceScreen';
 import ServiceProfileScreen from '../screens/home/ServiceProfileScreen';
 import DisplayImagesScreen from '../screens/home/DisplayImagesScreen';
 import DisplayReviewsScreen from '../screens/home/DisplayReviewsScreen';
+import AddReviewScreen from '../screens/home/AddReviewScreen';
 import EnlargedImageScreen from '../screens/home/EnlargedImageScreen';
 import BookingDetailsScreen from '../screens/booking/BookingDetailsScreen';
 
@@ -170,6 +171,7 @@ export default function Navigation() {
         <Stack.Screen name="SearchDirectionAlone" component={SearchDirectionScreen} />
         <Stack.Screen name="DisplayImages" component={DisplayImagesScreen} />
         <Stack.Screen name="DisplayReviews" component={DisplayReviewsScreen} />
+        <Stack.Screen name="AddReview" component={AddReviewScreen} />
         <Stack.Screen name="EnlargedImage" component={EnlargedImageScreen} />
         <Stack.Screen name="BookingDetails" component={BookingDetailsScreen} />
         <Stack.Screen name="CalendarPro" component={CalendarProScreen} options={{ animation: 'none', gestureEnabled: false }} />
@@ -479,6 +481,7 @@ function HomeStackNavigator() {
       <Stack.Screen name="SearchDirection" component={SearchDirectionScreen} options={{ animation: 'none', gestureEnabled: false }} />
       <Stack.Screen name="DisplayImages" component={DisplayImagesScreen} />
       <Stack.Screen name="DisplayReviews" component={DisplayReviewsScreen} />
+      <Stack.Screen name="AddReview" component={AddReviewScreen} />
       <Stack.Screen name="EnlargedImage" component={EnlargedImageScreen} />
     </Stack.Navigator>
   );

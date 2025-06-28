@@ -30,8 +30,14 @@ export default function ConfirmPaymentScreen() {
       <View className="flex-1 justify-start items-center">
 
         <View className="w-full items-end px-6 mt-2">
-          <TouchableOpacity onPress={() => navigation.navigate('Home')} className="ml-3">
-              <XMarkIcon height={24} width={24} strokeWidth={1.8} color={iconColor}/>  
+          <TouchableOpacity onPress={() => {
+            if (route.params && route.params.serviceId) {
+              navigation.navigate('AddReview', { serviceId: route.params.serviceId });
+            } else {
+              navigation.navigate('Home');
+            }
+          }} className="ml-3">
+              <XMarkIcon height={24} width={24} strokeWidth={1.8} color={iconColor}/>
           </TouchableOpacity> 
         </View>
 
