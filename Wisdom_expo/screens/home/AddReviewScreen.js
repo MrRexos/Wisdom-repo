@@ -34,24 +34,28 @@ export default function AddReviewScreen() {
     } catch (error) {
       console.error('sendReview error:', error);
     } finally {
-      navigation.navigate('Home');
+      navigation.navigate('HomeScreen', { screen: 'Home', params: { screen: 'HomeScreen' } });
     }
   };
 
   const skip = () => {
-    navigation.navigate('Home');
+    navigation.navigate('HomeScreen', { screen: 'Home', params: { screen: 'HomeScreen' } });
   };
 
   const renderStars = () => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
-        <TouchableOpacity key={i} onPress={() => setRating(i)} className="mx-1">
-          <StarFillIcon color={i <= rating ? '#F4B618' : '#D4D4D3'} />
+        <TouchableOpacity key={i} onPress={() => setRating(i)} className="mx-[6px]">
+          <StarFillIcon style={{ transform: [{ scale: 1.4 }] }} color={i <= rating ? '#F4B618' : '#D4D4D3'} />
         </TouchableOpacity>
       );
     }
     return <View className="flex-row justify-center items-center">{stars}</View>;
+  };
+
+  const handleClearText = () => {
+    setComment('');
   };
 
   return (
@@ -60,14 +64,15 @@ export default function AddReviewScreen() {
       <View className="flex-1 px-6 pt-5 pb-6 justify-between">
         <View>
           <TouchableOpacity onPress={skip}>
-            <Text className="font-inter-medium text-[15px] text-right text-[#B6B5B5] dark:text-[#706f6e]">{t('skip')}</Text>
+            <Text className="font-inter-medium text-[14px] text-right text-[#B6B5B5] dark:text-[#706f6e]">{t('skip')}</Text>
           </TouchableOpacity>
           <Text className="mt-6 font-inter-bold text-[24px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('rate_service')}</Text>
-          <View className="mt-5 justify-center items-center">
+          <View className="mt-6 justify-center items-center">
             {renderStars()}
           </View>
+
           <TextInput
-            className="mt-6 py-2 px-4 h-[100] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-2xl text-[#444343] dark:text-[#f2f2f2]"
+            className="mt-12 py-3 px-4 font-inter-medium h-[100] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-2xl text-[#444343] dark:text-[#f2f2f2]"
             placeholder={t('write_comment')}
             placeholderTextColor={placeHolderTextColorChange}
             selectionColor={cursorColorChange}
@@ -76,6 +81,7 @@ export default function AddReviewScreen() {
             onChangeText={setComment}
             value={comment}
           />
+
         </View>
         <TouchableOpacity onPress={sendReview} className='mt-6 bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center'>
           <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>{t('submit_review')}</Text>
