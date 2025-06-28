@@ -290,6 +290,7 @@
     "delete_booking": "حذف الحجز",
     "service_completed": "الخدمة منتهية",
     "final_payment": "الدفع النهائي",
+    "waiting_final_payment": "في انتظار الدفعة النهائية",
     "booking_canceled": "تم إلغاء الحجز",
     "booking_rejected": "تم رفض الحجز",
     "booking_expired": "انتهى تاريخ البدء",

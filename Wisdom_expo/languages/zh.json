@@ -290,6 +290,7 @@
     "delete_booking": "删除预订",
     "service_completed": "服务完成",
     "final_payment": "最终付款",
+    "waiting_final_payment": "等待最终付款",
     "booking_canceled": "预订已取消",
     "booking_rejected": "预订已拒绝",
     "booking_expired": "开始日期已过",

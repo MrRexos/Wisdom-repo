@@ -290,6 +290,7 @@
     "delete_booking": "Eliminar reserva",
     "service_completed": "Servei finalitzat",
     "final_payment": "Pagament final",
+    "waiting_final_payment": "Esperant pagament final",
     "booking_canceled": "Reserva cancel·lada",
     "booking_rejected": "Reserva rebutjada",
     "booking_expired": "La data d'inici ha passat",

@@ -290,6 +290,7 @@
     "delete_booking": "Supprimer la réservation",
     "service_completed": "Service terminé",
     "final_payment": "Paiement final",
+    "waiting_final_payment": "En attente du paiement final",
     "booking_canceled": "Réservation annulée",
     "booking_rejected": "Réservation rejetée",
     "booking_expired": "La date de début est passée",
