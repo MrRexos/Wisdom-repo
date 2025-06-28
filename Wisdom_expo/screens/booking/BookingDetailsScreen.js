@@ -273,6 +273,17 @@ export default function BookingDetailsScreen() {
     return `${isoLocal}.000Z`;   // ya NO será NaN
   };
 
+  const getLocalDateSql = (date) => {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;      // p. ej. "Europe/Madrid"
+  
+    // "2025-06-28 16:10:37"  →  "2025-06-28T16:10:37"
+    const isoLocal = date
+      .toLocaleString('sv-SE', { timeZone: tz, hourCycle: 'h23' })
+      .replace(' ', 'T');
+    
+    return isoLocal;   // ya NO será NaN
+  };
+
   const getEndTime = () => {
     const end = new Date(`1970-01-01T${selectedTime}:00`);
     end.setMinutes(end.getMinutes() + selectedDuration);
@@ -330,7 +341,7 @@ export default function BookingDetailsScreen() {
       await api.patch(`/api/bookings/${bookingId}/status`, payload);
 
       if (status === 'accepted' && (!booking || !booking.booking_start_datetime)) {
-        const startDate = new Date(getLocalDate(new Date()));
+        const startDate = getLocalDateSql(new Date());
         const updatePayload = {
           id: bookingId,
           booking_start_datetime: startDate,
