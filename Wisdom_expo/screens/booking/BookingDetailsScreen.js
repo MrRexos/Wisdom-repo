@@ -254,7 +254,14 @@ export default function BookingDetailsScreen() {
   };
 
   const getLocalDate = (date) => {
-    return new Date(date.toLocaleString('en-US', { timeZone: Localization.timezone }));
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;      // p. ej. "Europe/Madrid"
+  
+    // "2025-06-28 16:10:37"  →  "2025-06-28T16:10:37"
+    const isoLocal = date
+      .toLocaleString('sv-SE', { timeZone: tz, hourCycle: 'h23' })
+      .replace(' ', 'T');
+    
+    return isoLocal;   // ya NO será NaN
   };
 
   const getEndTime = () => {
@@ -394,7 +401,9 @@ export default function BookingDetailsScreen() {
     return t('booking_expired');
   };
 
+  
   const now = getLocalDate(new Date());
+  
   const startDate = booking && booking.booking_start_datetime
     ? booking.booking_start_datetime
     : null;
@@ -410,8 +419,7 @@ export default function BookingDetailsScreen() {
       (startDate && !endDate && now >= startDate) ||
       (startDate && endDate && now >= startDate && now < endDate)
     );
-
-    console.log(now)
+    
 
   const showServiceFinished =
     booking &&
@@ -560,7 +568,9 @@ export default function BookingDetailsScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
-      <View className='flex-row items-center justify-between px-2 pt-3  pb-3 '>
+      <View className='items-center justify-center px-2 pt-3  pb-3'>
+
+      <View className='flex-row items-center justify-between'>
 
         <View className="flex-[1] justify-center ">
           <TouchableOpacity onPress={() => navigation.goBack()} className='flex-1 p-2'>
@@ -591,6 +601,7 @@ export default function BookingDetailsScreen() {
           </Text>
         </View>
       )}
+      </View>
 
       <ScrollView className='flex-1 px-6 mt-4'>
 
@@ -980,7 +991,7 @@ export default function BookingDetailsScreen() {
               {showServiceFinished ? (
                 <TouchableOpacity
                   onPress={() => navigation.navigate('ConfirmPayment')}
-                  className='mt-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'
+                  className='mt-2 mb-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'
                   style={{
                     opacity: 1,
                     shadowColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131',

@@ -376,15 +376,18 @@ export default function BookingScreen() {
   }
 
   const calculateEndDateTime = () => {
-
     let startDateTime = new Date(`${startDate}T${startTime}:00`); // Convertir a objeto Date
 
     // Sumar la duración en minutos
     startDateTime.setMinutes(startDateTime.getMinutes() + duration);
 
-    // Obtener el nuevo valor de fecha y hora final en el formato deseado
-    const endDate = startDateTime.toISOString().split('T')[0]; // YYYY-MM-DD
-    const endTime = startDateTime.toTimeString().split(' ')[0]; // HH:MM:SS
+    const pad = (n) => String(n).padStart(2, '0');
+    const endDate = `${startDateTime.getFullYear()}-${pad(
+      startDateTime.getMonth() + 1
+    )}-${pad(startDateTime.getDate())}`;
+    const endTime = `${pad(startDateTime.getHours())}:${pad(
+      startDateTime.getMinutes()
+    )}:${pad(startDateTime.getSeconds())}`;
 
     return `${endDate} ${endTime}`;
   }
