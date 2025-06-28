@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, SafeAreaView, Platform, StatusBar, TouchableOpacity, TextInput } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, SafeAreaView, Platform, StatusBar, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -20,6 +20,8 @@ export default function AddReviewScreen() {
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+  const maxLength = 1000;
+  const inputRef = useRef(null);
 
   const sendReview = async () => {
     try {
@@ -59,8 +61,9 @@ export default function AddReviewScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]">
-      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]">
+        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <View className="flex-1 px-6 pt-5 pb-6 justify-between">
         <View>
           <TouchableOpacity onPress={skip}>
@@ -71,16 +74,35 @@ export default function AddReviewScreen() {
             {renderStars()}
           </View>
 
-          <TextInput
-            className="mt-12 py-3 px-4 font-inter-medium h-[100] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-2xl text-[#444343] dark:text-[#f2f2f2]"
-            placeholder={t('write_comment')}
-            placeholderTextColor={placeHolderTextColorChange}
-            selectionColor={cursorColorChange}
-            multiline
-            numberOfLines={4}
-            onChangeText={setComment}
-            value={comment}
-          />
+          <View className="mt-12">
+            <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
+              <View className="w-full min-h-[150] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-2xl py-4 px-5">
+                {comment.length > 0 ? (
+                  <View className="flex-row justify-end">
+                    <TouchableOpacity onPress={handleClearText}>
+                      <Text className="mb-1 font-inter-medium text-[13px] text-[#d4d4d3] dark:text-[#474646]">{t('clear')}</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : null}
+                <TextInput
+                  placeholder={t('write_comment')}
+                  selectionColor={cursorColorChange}
+                  placeholderTextColor={placeHolderTextColorChange}
+                  onChangeText={setComment}
+                  value={comment}
+                  ref={inputRef}
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="w-full text-[15px] text-[#515150] dark:text-[#d4d4d3]"
+                  multiline
+                  maxLength={maxLength}
+                  style={{ textAlignVertical: 'top' }}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+            <View className="w-full flex-row justify-end">
+              <Text className="pt-2 pr-2 font-inter-medium text-[12px] text-[#979797] dark:text-[#979797]">{comment.length}/{maxLength}</Text>
+            </View>
+          </View>
 
         </View>
         <TouchableOpacity onPress={sendReview} className='mt-6 bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center'>
@@ -88,5 +110,6 @@ export default function AddReviewScreen() {
         </TouchableOpacity>
       </View>
     </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }

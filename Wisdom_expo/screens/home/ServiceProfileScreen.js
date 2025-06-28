@@ -1130,8 +1130,7 @@ export default function ServiceProfileScreen() {
 
                   </View>
 
-                  <Text className="mt-5 mb-3 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{review.rating}</Text>
-                  <Text numberOfLines={3} className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{review.comment}</Text>
+                  <Text numberOfLines={3} className=" mt-5 mb-2 font-inter-medium text-[13px] text-[#706F6E] dark:text-[#b6b5b5]">{review.comment}</Text>
 
                   {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="mt-5 w-full">
                     <View className="mr-1 w-12 h-12 bg-[#D4D4D3] dark:bg-[#474646] rounded-md" />
