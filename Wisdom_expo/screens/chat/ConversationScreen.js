@@ -38,6 +38,7 @@ import {
   updateDoc,
   serverTimestamp,
   arrayUnion,
+  deleteDoc,
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../utils/firebase';
@@ -111,7 +112,6 @@ export default function ConversationScreen() {
           processed.push(m);
         });
         setMessages(processed);
-        flatListRef.current?.scrollToEnd({ animated: true });
         raw.forEach(async m => {
           if (!m.fromMe && !m.read) {
             await updateDoc(doc(db, 'conversations', conversationId, 'messages', m.id), { read: true });
@@ -223,10 +223,7 @@ export default function ConversationScreen() {
 
   const handleDeleteMessage = async () => {
     if (!selectedMsg) return;
-    await updateDoc(doc(db, 'conversations', conversationId, 'messages', selectedMsg.id), {
-      text: 'Mensaje eliminado',
-      type: 'label',
-    });
+    await deleteDoc(doc(db, 'conversations', conversationId, 'messages', selectedMsg.id));
     setSelectedMsg(null);
     msgSheet.current.close();
   };
