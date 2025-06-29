@@ -33,6 +33,8 @@
     "list_will_disappear_for_everyone": "Esta lista no se podrá recuperar y desaparecerá para todos.",
     "cancel": "Cancelar",
     "delete": "Eliminar",
+    "delete_message": "Eliminar mensaje",
+    "delete_chat": "Eliminar chat",
     "empty": "vacía",
     "service": "servicio",
     "services": "Servicios",
