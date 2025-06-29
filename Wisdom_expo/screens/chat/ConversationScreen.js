@@ -17,6 +17,7 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import * as Clipboard from 'expo-clipboard';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {
@@ -68,7 +69,12 @@ export default function ConversationScreen() {
   const [messages, setMessages] = useState([]);
   const [userId, setUserId] = useState(null);
   const [otherUserInfo, setOtherUserInfo] = useState(null);
+  const [attachment, setAttachment] = useState(null);
+  const [selectedMsg, setSelectedMsg] = useState(null);
+  const [editingId, setEditingId] = useState(null);
   const otherUserId = participants?.find((id) => id !== userId);
+  const msgSheet = useRef(null);
+  const convSheet = useRef(null);
   const isLastOfStreak = (msgs, idx) =>
     idx === msgs.length - 1 || msgs[idx].fromMe !== msgs[idx + 1].fromMe;
 
@@ -84,7 +90,7 @@ export default function ConversationScreen() {
         orderBy('createdAt')
       );
       unsub = onSnapshot(q, async (snap) => {
-        const data = snap.docs.map((d) => {
+        const raw = snap.docs.map((d) => {
           const msg = d.data();
           return {
             id: d.id,
@@ -92,9 +98,21 @@ export default function ConversationScreen() {
             ...msg,
           };
         });
-        setMessages(data);
+        const processed = [];
+        let lastDate = null;
+        raw.forEach((m) => {
+          const dateStr = m.createdAt?.seconds
+            ? new Date(m.createdAt.seconds * 1000).toDateString()
+            : null;
+          if (dateStr && dateStr !== lastDate) {
+            processed.push({ id: `label-${m.id}`, type: 'label', text: dateStr });
+            lastDate = dateStr;
+          }
+          processed.push(m);
+        });
+        setMessages(processed);
         flatListRef.current?.scrollToEnd({ animated: true });
-        data.forEach(async m => {
+        raw.forEach(async m => {
           if (!m.fromMe && !m.read) {
             await updateDoc(doc(db, 'conversations', conversationId, 'messages', m.id), { read: true });
           }
@@ -125,26 +143,63 @@ export default function ConversationScreen() {
   // • ACTIONS
   // ---------------------------------------------------------------------------
   const handleSend = async () => {
-    if (!text.trim()) return;
-    const newMsg = {
-      senderId: userId,
-      type: 'text',
-      text: text.trim(),
-      createdAt: serverTimestamp(),
-    };
-    await addDoc(collection(db, 'conversations', conversationId, 'messages'), newMsg);
-    await setDoc(
-      doc(db, 'conversations', conversationId),
-      {
-        participants,
-        name,
-        lastMessage: text.trim(),
-        updatedAt: serverTimestamp(),
-        lastMessageSenderId: userId,
-        readBy: [userId],
-      },
-      { merge: true }
-    );
+    if (editingId) {
+      await updateDoc(doc(db, 'conversations', conversationId, 'messages', editingId), {
+        text: text.trim(),
+      });
+      setEditingId(null);
+    } else if (attachment) {
+      const response = await fetch(attachment.uri);
+      const blob = await response.blob();
+      const fileRef = ref(
+        storage,
+        `chat/${conversationId}/${Date.now()}_${attachment.name}`
+      );
+      await uploadBytes(fileRef, blob);
+      const downloadURL = await getDownloadURL(fileRef);
+      await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
+        senderId: userId,
+        type: attachment.type,
+        uri: downloadURL,
+        name: attachment.name,
+        createdAt: serverTimestamp(),
+      });
+      await setDoc(
+        doc(db, 'conversations', conversationId),
+        {
+          participants,
+          name,
+          lastMessage: attachment.type === 'image' ? '📷' : '📎',
+          updatedAt: serverTimestamp(),
+          lastMessageSenderId: userId,
+          readBy: [userId],
+        },
+        { merge: true }
+      );
+      setAttachment(null);
+    } else if (text.trim()) {
+      const newMsg = {
+        senderId: userId,
+        type: 'text',
+        text: text.trim(),
+        createdAt: serverTimestamp(),
+      };
+      await addDoc(collection(db, 'conversations', conversationId, 'messages'), newMsg);
+      await setDoc(
+        doc(db, 'conversations', conversationId),
+        {
+          participants,
+          name,
+          lastMessage: text.trim(),
+          updatedAt: serverTimestamp(),
+          lastMessageSenderId: userId,
+          readBy: [userId],
+        },
+        { merge: true }
+      );
+    } else {
+      return;
+    }
     setText('');
   };
 
@@ -155,67 +210,38 @@ export default function ConversationScreen() {
     });
     if (!result.canceled) {
       const asset = result.assets[0];
-      const response = await fetch(asset.uri);
-      const blob = await response.blob();
-      const fileRef = ref(
-        storage,
-        `chat/${conversationId}/${Date.now()}_${asset.fileName || 'image.jpg'}`
-      );
-      await uploadBytes(fileRef, blob);
-      const downloadURL = await getDownloadURL(fileRef);
-      await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
-        senderId: userId,
-        type: 'image',
-        uri: downloadURL,
-        name: asset.fileName || 'image',
-        createdAt: serverTimestamp(),
-      });
-      await setDoc(
-        doc(db, 'conversations', conversationId),
-        {
-          participants,
-          name,
-          lastMessage: '📷',
-          updatedAt: serverTimestamp(),
-          lastMessageSenderId: userId,
-          readBy: [userId],
-        },
-        { merge: true }
-      );
+      setAttachment({ type: 'image', uri: asset.uri, name: asset.fileName || 'image.jpg' });
     }
   };
 
   const handleFilePick = async () => {
     const result = await DocumentPicker.getDocumentAsync({});
     if (result.type === 'success') {
-      const response = await fetch(result.uri);
-      const blob = await response.blob();
-      const fileRef = ref(
-        storage,
-        `chat/${conversationId}/${Date.now()}_${result.name}`
-      );
-      await uploadBytes(fileRef, blob);
-      const downloadURL = await getDownloadURL(fileRef);
-      await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
-        senderId: userId,
-        type: 'file',
-        uri: downloadURL,
-        name: result.name,
-        createdAt: serverTimestamp(),
-      });
-      await setDoc(
-        doc(db, 'conversations', conversationId),
-        {
-          participants,
-          name,
-          lastMessage: '📎',
-          updatedAt: serverTimestamp(),
-          lastMessageSenderId: userId,
-          readBy: [userId],
-        },
-        { merge: true }
-      );
+      setAttachment({ type: 'file', uri: result.uri, name: result.name });
     }
+  };
+
+  const handleDeleteMessage = async () => {
+    if (!selectedMsg) return;
+    await updateDoc(doc(db, 'conversations', conversationId, 'messages', selectedMsg.id), {
+      text: 'Mensaje eliminado',
+      type: 'label',
+    });
+    setSelectedMsg(null);
+    msgSheet.current.close();
+  };
+
+  const handleEditMessage = () => {
+    if (!selectedMsg) return;
+    setText(selectedMsg.text);
+    setEditingId(selectedMsg.id);
+    msgSheet.current.close();
+  };
+
+  const handleCopyMessage = async () => {
+    if (!selectedMsg) return;
+    await Clipboard.setStringAsync(selectedMsg.text);
+    msgSheet.current.close();
   };
 
   // ---------------------------------------------------------------------------
@@ -253,11 +279,14 @@ export default function ConversationScreen() {
     const textColor = 'text-[15px] font-medium text-[#515150] dark:text-[#d4d4d3]';
 
     if (item.type === 'image') {
+      const content = (
+        <View className={`${bubbleBase} ${fromMeStyles}`}>
+          <Image source={{ uri: item.uri }} className="w-40 h-40 rounded-lg" />
+        </View>
+      );
       return (
-        <View>
-          <View className={`${bubbleBase} ${fromMeStyles}`}>
-            <Image source={{ uri: item.uri }} className="w-40 h-40 rounded-lg" />
-          </View>
+        <TouchableOpacity onLongPress={() => { setSelectedMsg(item); msgSheet.current.open(); }}>
+          {content}
           {lastOfStreak && (
             <View
               className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}
@@ -278,16 +307,19 @@ export default function ConversationScreen() {
               </Text>
             </View>
           )}
-        </View>
+        </TouchableOpacity>
       );
     }
 
     if (item.type === 'file') {
+      const content = (
+        <TouchableOpacity onPress={() => Linking.openURL(item.uri)} className={`${bubbleBase} ${fromMeStyles}`}>
+          <Text className={textColor}>{item.name}</Text>
+        </TouchableOpacity>
+      );
       return (
-        <View>
-          <TouchableOpacity onPress={() => Linking.openURL(item.uri)} className={`${bubbleBase} ${fromMeStyles}`}> 
-            <Text className={textColor}>{item.name}</Text>
-          </TouchableOpacity>
+        <TouchableOpacity onLongPress={() => { setSelectedMsg(item); msgSheet.current.open(); }}>
+          {content}
           {lastOfStreak && (
             <View
               className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}
@@ -308,18 +340,19 @@ export default function ConversationScreen() {
               </Text>
             </View>
           )}
-        </View>
+        </TouchableOpacity>
       );
     }
 
+    const content = (
+      <View className={`${bubbleBase} ${fromMeStyles}`}>
+        <Text className={`text-sm leading-5 flex-shrink ${textColor}`}>{item.text}</Text>
+      </View>
+    );
     return (
-      <View>
-        <View className={`${bubbleBase} ${fromMeStyles}`}>
-          <Text className={`text-sm leading-5 flex-shrink ${textColor}`}>
-            {item.text}
-          </Text>
-        </View>
-  
+      <TouchableOpacity onLongPress={() => { setSelectedMsg(item); msgSheet.current.open(); }}>
+        {content}
+
         {lastOfStreak && (
           <View
             className={`
@@ -343,7 +376,7 @@ export default function ConversationScreen() {
             </Text>
           </View>
         )}
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -376,7 +409,7 @@ export default function ConversationScreen() {
           {otherUserInfo ? `${otherUserInfo.first_name} ${otherUserInfo.surname}` : name}
         </Text>
 
-        <TouchableOpacity hitSlop={8} className="p-1 mr-4">
+        <TouchableOpacity hitSlop={8} className="p-1 mr-4" onPress={() => convSheet.current.open()}>
           <MoreHorizontal height={24} width={24} color={iconColor} strokeWidth={2} />
         </TouchableOpacity>
       </View>
@@ -421,6 +454,13 @@ export default function ConversationScreen() {
                       bg-[#e0e0e0] dark:bg-[#3d3d3d]
                       rounded-3xl pl-4 pr-2 "
           >
+            {attachment && (
+              attachment.type === 'image' ? (
+                <Image source={{ uri: attachment.uri }} className="h-10 w-10 mr-2 rounded-lg" />
+              ) : (
+                <Text className="mr-2 text-[15px] text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>{attachment.name}</Text>
+              )
+            )}
             <View className="flex-1 justify-center">
             <TextInput
               className="my-2 mr-2 font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc] "
@@ -437,9 +477,9 @@ export default function ConversationScreen() {
             <View className="self-stretch items-center justify-end">
               <TouchableOpacity
                 onPress={handleSend}
-                disabled={!text.trim()}
+                disabled={!text.trim() && !attachment}
                 className={`h-8 w-8 my-2 rounded-full items-center justify-center
-                            ${text.trim()
+                            ${text.trim() || attachment
                               ? 'bg-[#323131] dark:bg-[#fcfcfc]'
                               : 'bg-[#d4d4d3] dark:bg-[#474646]'}`}
               >
@@ -484,6 +524,54 @@ export default function ConversationScreen() {
           <TouchableOpacity onPress={handleFilePick} className="py-1 flex-row justify-start items-center">
             <Folder height={24} width={24} color={iconColor} strokeWidth={2} />
             <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">Choose file</Text>
+          </TouchableOpacity>
+        </View>
+      </RBSheet>
+
+      <RBSheet
+        ref={msgSheet}
+        height={200}
+        openDuration={200}
+        closeDuration={200}
+        customStyles={{
+          container: {
+            borderTopRightRadius: 25,
+            borderTopLeftRadius: 25,
+            backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+          },
+          draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
+        }}
+      >
+        <View className="py-4 px-7 space-y-4">
+          <TouchableOpacity onPress={handleDeleteMessage} className="py-2">
+            <Text className="text-base font-inter-medium text-red-500">{t('delete')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleEditMessage} className="py-2">
+            <Text className="text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleCopyMessage} className="py-2">
+            <Text className="text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('copy')}</Text>
+          </TouchableOpacity>
+        </View>
+      </RBSheet>
+
+      <RBSheet
+        ref={convSheet}
+        height={120}
+        openDuration={200}
+        closeDuration={200}
+        customStyles={{
+          container: {
+            borderTopRightRadius: 25,
+            borderTopLeftRadius: 25,
+            backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+          },
+          draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
+        }}
+      >
+        <View className="py-4 px-7 space-y-4">
+          <TouchableOpacity onPress={async () => { await updateDoc(doc(db, 'conversations', conversationId), { deletedFor: arrayUnion(userId) }); convSheet.current.close(); navigation.goBack(); }} className="py-2">
+            <Text className="text-base font-inter-medium text-red-500">{t('delete')}</Text>
           </TouchableOpacity>
         </View>
       </RBSheet>

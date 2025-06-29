@@ -283,6 +283,7 @@
     "confirm_cancel_booking": "¿Seguro que deseas cancelar esta reserva?",
     "reject": "Rechazar",
     "edit": "Editar",
+    "copy": "Copiar",
     "select_a_time": "Selecciona una hora",
     "select_a_duration": "Selecciona una duración",
     "date": "Fecha",

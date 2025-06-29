@@ -20,7 +20,9 @@ import { ChatBubbleLeftRightIcon } from 'react-native-heroicons/solid';
 import { Calendar, Search } from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
-import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import { RectButton } from 'react-native-gesture-handler';
 import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 import { db } from '../../utils/firebase';
 
@@ -43,6 +45,16 @@ export default function ChatScreen() {
     { label: t('professionals'), value: 'professionals', id: 2 },
     { label: t('help'), value: 'help', id: 3 },
   ];
+
+  const handleDeleteConversation = async (id) => {
+    try {
+      await updateDoc(doc(db, 'conversations', id), {
+        deletedFor: arrayUnion(userId),
+      });
+    } catch (err) {
+      console.error('delete conversation error:', err);
+    }
+  };
 
   const fetchUserInfo = async (uid) => {
     try {
@@ -74,7 +86,8 @@ export default function ChatScreen() {
       );
       unsubscribe = onSnapshot(q, snap => {
         const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        setConversations(data);
+        const filtered = data.filter(c => !(c.deletedFor || []).includes(user.id));
+        setConversations(filtered);
       });
     };
     load();
@@ -189,21 +202,31 @@ export default function ChatScreen() {
                 ? new Date(item.updatedAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 : '';
 
-              return (
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate('Conversation', {
-                      conversationId: item.id,
-                      participants: item.participants,
-                      name: displayName,
-                    })
-                  }
+              const renderRightActions = () => (
+                <RectButton
+                  onPress={() => handleDeleteConversation(item.id)}
+                  style={{ backgroundColor: '#ff4d4d', justifyContent: 'center', alignItems: 'center', width: 80 }}
                 >
-                  <View className="flex-row items-center px-6 py-4">
+                  <Text className="text-white font-inter-semibold">{t('delete')}</Text>
+                </RectButton>
+              );
 
-                    <Image source={profilePic ? { uri: profilePic } : defaultProfilePic} className="h-[55px] w-[55px] rounded-full bg-[#e0e0e0] dark:bg-[#3d3d3d] mr-3" />
-                    
-                    <View className="flex-1 flex-row justify-between items-center">
+              return (
+                <Swipeable renderRightActions={renderRightActions} overshootRight={false}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('Conversation', {
+                        conversationId: item.id,
+                        participants: item.participants,
+                        name: displayName,
+                      })
+                    }
+                  >
+                    <View className="flex-row items-center px-6 py-4">
+
+                      <Image source={profilePic ? { uri: profilePic } : defaultProfilePic} className="h-[55px] w-[55px] rounded-full bg-[#e0e0e0] dark:bg-[#3d3d3d] mr-3" />
+
+                      <View className="flex-1 flex-row justify-between items-center">
 
                       <View className="flex-1 justify-center items-start">
                         <Text className="font-inter-semibold text-[16px] text-[#323131] dark:text-[#fcfcfc]">{displayName}</Text>
@@ -216,8 +239,10 @@ export default function ChatScreen() {
                       </View>
                     </View>
 
-                  </View>
-                </TouchableOpacity>
+                    </View>
+
+                  </TouchableOpacity>
+                </Swipeable>
               );
             }}
           />
