@@ -43,7 +43,9 @@ export default function ChatScreen() {
   const suggestions = [
     { label: t('all'), value: 'all', id: 1 },
     { label: t('professionals'), value: 'professionals', id: 2 },
-    { label: t('help'), value: 'help', id: 3 },
+    { label: t('clients'), value: 'clients', id: 3 },
+    { label: t('not_read'), value: 'not_read', id: 4 },
+    { label: t('help'), value: 'help', id: 5 },
   ];
 
   const handleDeleteConversation = async (id) => {
@@ -66,11 +68,29 @@ export default function ChatScreen() {
     }
   };
 
-  const filteredConversations = searchActive
-    ? conversations.filter(c =>
-      c.name?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    : conversations;
+  const filteredConversations = conversations.filter(c => {
+    const base = searchActive
+      ? c.name?.toLowerCase().includes(searchQuery.toLowerCase())
+      : true;
+    if (!base) return false;
+
+    const otherId = c.participants?.find(id => id !== userId);
+    const info = otherId ? usersInfo[otherId] : null;
+    const unread = c.lastMessageSenderId !== userId && !(c.readBy || []).includes(userId);
+
+    switch (selectedStatus) {
+      case 'professionals':
+        return info?.is_professional;
+      case 'clients':
+        return info && info.is_professional === false;
+      case 'not_read':
+        return unread;
+      case 'help':
+        return c.isHelp || c.help || c.type === 'help';
+      default:
+        return true;
+    }
+  });
 
   useEffect(() => {
     let unsubscribe;

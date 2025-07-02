@@ -42,6 +42,7 @@ import {
   updateDoc,
   serverTimestamp,
   arrayUnion,
+  arrayRemove,
   deleteDoc,
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -146,6 +147,12 @@ export default function ConversationScreen() {
     loadInfo();
   }, [otherUserId]);
 
+  useEffect(() => {
+    if (flatListRef.current && messages.length > 0) {
+      flatListRef.current.scrollToEnd({ animated: false });
+    }
+  }, [messages]);
+
 
 
   // ---------------------------------------------------------------------------
@@ -185,6 +192,7 @@ export default function ConversationScreen() {
           updatedAt: serverTimestamp(),
           lastMessageSenderId: userId,
           readBy: [userId],
+          deletedFor: arrayRemove(userId),
         },
         { merge: true }
       );
@@ -209,6 +217,7 @@ export default function ConversationScreen() {
           updatedAt: serverTimestamp(),
           lastMessageSenderId: userId,
           readBy: [userId],
+          deletedFor: arrayRemove(userId),
         },
         { merge: true }
       );
@@ -323,12 +332,12 @@ export default function ConversationScreen() {
         <Swipeable
           ref={ref => { swipeRefs.current[item.id] = ref; }}
           renderLeftActions={LeftStub}        // ← se muestra al arrastrar a la derecha
-          renderRightActions={RightStub} 
+          renderRightActions={RightStub}
           friction={1.5}
           activeOffsetX={[-10, 10]}           // margen para evitar falsos taps
           onSwipeableOpen={(dir) => {
             console.log(dir)         // callback nuevo
-            if (dir === 'left') {  
+            if (dir === 'left') {
               swipeRefs.current[item.id]?.close();
               setReplyTo(item);
             }
@@ -383,13 +392,13 @@ export default function ConversationScreen() {
         <Swipeable
           ref={ref => { swipeRefs.current[item.id] = ref; }}
           renderLeftActions={LeftStub}        // ← se muestra al arrastrar a la derecha
-          renderRightActions={RightStub} 
+          renderRightActions={RightStub}
           friction={1.5}
           activeOffsetX={[-10, 10]}           // margen para evitar falsos taps
           onSwipeableOpen={(dir) => {         // callback nuevo
-            if (dir === 'left') {  
+            if (dir === 'left') {
               swipeRefs.current[item.id]?.close();           // 'left' = swipe hacia la derecha
-              setReplyTo(item);     
+              setReplyTo(item);
             }
           }}
         >
@@ -441,7 +450,7 @@ export default function ConversationScreen() {
       <Swipeable
         ref={ref => { swipeRefs.current[item.id] = ref; }}
         renderLeftActions={LeftStub}        // ← se muestra al arrastrar a la derecha
-        renderRightActions={RightStub} 
+        renderRightActions={RightStub}
         friction={1.5}
         activeOffsetX={[-10, 10]}           // margen para evitar falsos taps
         onSwipeableOpen={(dir) => {         // callback nuevo
@@ -525,8 +534,12 @@ export default function ConversationScreen() {
           data={messages}
           keyExtractor={(item) => item.id}
           renderItem={renderMessage}
-          contentContainerStyle={{ padding: 16, flexGrow: 1, justifyContent: 'flex-end' }}
+          contentContainerStyle={{ padding: 16}}
           showsVerticalScrollIndicator={false}
+          onContentSizeChange={() =>
+            flatListRef.current?.scrollToEnd({ animated: false })
+          }
+          
         />
       </View>
 
@@ -663,7 +676,7 @@ export default function ConversationScreen() {
         <View className="pt-7 pb-4 px-7 ">
           {selectedMsg?.fromMe && (
             <>
-              <TouchableOpacity onPress={handleDeleteMessage} className=" pb-6 flex-row justify-start items-center ">
+              <TouchableOpacity onPress={handleDeleteMessage} className="pb-6 flex-row justify-start items-center ">
                 <Trash2 height={22} width={22} color={'#FF633E'} strokeWidth={2} />
                 <Text className="ml-3 text-base font-inter-medium text-[#FF633E]">{t('delete_message')}</Text>
               </TouchableOpacity>
@@ -673,7 +686,7 @@ export default function ConversationScreen() {
               </TouchableOpacity>
             </>
           )}
-          <TouchableOpacity onPress={handleReplyMessage} className="py-1 flex-row justify-start items-center ">
+          <TouchableOpacity onPress={handleReplyMessage} className="pt-1 pb-6 flex-row justify-start items-center ">
             <CornerUpLeft height={23} width={23} color={iconColor} strokeWidth={2} />
             <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('reply')}</Text>
           </TouchableOpacity>

@@ -15,7 +15,7 @@ import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import MapView, { Marker, Circle } from 'react-native-maps';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import axios from 'axios'; 
 import { Calendar } from 'react-native-calendars';
@@ -447,7 +447,11 @@ export default function ServiceProfileScreen() {
       } else if (serviceData.service_title) {
         data.name = serviceData.service_title;
       }
-      await setDoc(doc(db, 'conversations', conversationId), data, { merge: true });
+      await setDoc(
+        doc(db, 'conversations', conversationId),
+        { ...data, deletedFor: arrayRemove(me.id) },
+        { merge: true }
+      );
       navigation.navigate('Conversation', {
         conversationId,
         participants,

@@ -24,6 +24,8 @@
     "chat": "Chat",
     "all": "Todos",
     "professionals": "Profesionales",
+    "clients": "Clientes",
+    "not_read": "No leídos",
     "help": "Ayuda",
     "no_chats_found": "No hay chats",
     "write_to_professionals_and_talk_about_your_bookings": "Escribe a profesionales y habla sobre tus reservas.",

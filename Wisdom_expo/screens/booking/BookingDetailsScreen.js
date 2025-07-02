@@ -16,7 +16,7 @@ import WisdomLogo from '../../assets/wisdomLogo.tsx';
 import SliderThumbDark from '../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../assets/SliderThumbLight.png';
 import { getDataLocally } from '../../utils/asyncStorage';
-import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { setDoc, doc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import api from '../../utils/api.js';
 
@@ -416,7 +416,7 @@ export default function BookingDetailsScreen() {
         data.name = booking.service_title;
       }
 
-      await setDoc(doc(db, 'conversations', conversationId), data, { merge: true });
+      await setDoc(doc(db, 'conversations', conversationId), { ...data, deletedFor: arrayRemove(me.id) }, { merge: true });
       navigation.navigate('Conversation', {
         conversationId,
         participants,
