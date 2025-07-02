@@ -29,7 +29,7 @@ import {
   XMarkIcon,
   DocumentDuplicateIcon,
 } from 'react-native-heroicons/outline';
-import { MoreHorizontal, Image as ImageIcon, Folder, Check, Edit2, Trash2 } from "react-native-feather";
+import { MoreHorizontal, Image as ImageIcon, Folder, Check, Edit2, Trash2, File } from "react-native-feather";
 import { useTranslation } from 'react-i18next';
 import {
   collection,
@@ -570,7 +570,7 @@ export default function ConversationScreen() {
               attachment.type === 'image' ? (
                 <Image source={{ uri: attachment.uri }} className="h-10 w-10 mr-2 rounded-lg" />
               ) : (
-                <Text className="mr-2 text-[15px] text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>{attachment.name}</Text>
+                <File height={24} width={24} color={iconColor} strokeWidth={2} className="h-10 w-10 mr-2 rounded-lg bg-[#323131] dark:bg-[#fcfcfc]" />
               )
             )}
             <View className="flex-1 justify-center">
@@ -654,20 +654,20 @@ export default function ConversationScreen() {
           draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
         }}
       >
-        <View className="py-4 px-7 space-y-4">
+        <View className="pt-7 pb-4 px-7 ">
           {selectedMsg?.fromMe && (
             <>
-              <TouchableOpacity onPress={handleDeleteMessage} className="py-2 flex-row justify-start items-center ">
+              <TouchableOpacity onPress={handleDeleteMessage} className=" pb-6 flex-row justify-start items-center ">
                 <Trash2 height={22} width={22} color={'#FF633E'} strokeWidth={2} />
                 <Text className="ml-3 text-base font-inter-medium text-[#FF633E]">{t('delete_message')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleEditMessage} className="pt-1 pb-2 flex-row justify-start items-center">
+              <TouchableOpacity onPress={handleEditMessage} className="pt-1 pb-6 flex-row justify-start items-center ">
                 <Edit2 height={23} width={23} color={iconColor} strokeWidth={2} />
                 <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit')}</Text>
               </TouchableOpacity>
             </>
           )}
-          <TouchableOpacity onPress={handleCopyMessage} className="py-1 flex-row justify-start items-center">
+          <TouchableOpacity onPress={handleCopyMessage} className="py-1 flex-row justify-start items-center ">
             <DocumentDuplicateIcon height={23} width={23} color={iconColor} strokeWidth={2} />
             <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('copy')}</Text>
           </TouchableOpacity>
