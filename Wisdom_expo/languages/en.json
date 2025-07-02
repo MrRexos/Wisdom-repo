@@ -285,6 +285,7 @@
     "confirm_cancel_booking": "Are you sure you want to cancel this booking?",
     "reject": "Reject",
     "edit": "Edit",
+    "reply": "Reply",
     "copy": "Copy",
     "select_a_time": "Select a time",
     "select_a_duration": "Select a duration",

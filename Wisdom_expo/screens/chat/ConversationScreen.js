@@ -29,7 +29,7 @@ import {
   XMarkIcon,
   DocumentDuplicateIcon,
 } from 'react-native-heroicons/outline';
-import { MoreHorizontal, Image as ImageIcon, Folder, Check, Edit2, Trash2, File } from "react-native-feather";
+import { MoreHorizontal, Image as ImageIcon, Folder, Check, Edit2, Trash2, File, CornerUpLeft } from "react-native-feather";
 import { useTranslation } from 'react-i18next';
 import {
   collection,
@@ -258,6 +258,12 @@ export default function ConversationScreen() {
     msgSheet.current.close();
   };
 
+  const handleReplyMessage = () => {
+    if (!selectedMsg) return;
+    setReplyTo(selectedMsg);
+    msgSheet.current.close();
+  };
+
   // ---------------------------------------------------------------------------
   // • RENDER HELPERS
   // ---------------------------------------------------------------------------
@@ -328,7 +334,7 @@ export default function ConversationScreen() {
             }
           }}
         >
-          <Pressable onLongPress={() => { setSelectedMsg(item); msgSheet.current.open(); }}>
+          <Pressable onLongPress={() => { setSelectedMsg(item); setTimeout(() => msgSheet.current.open(), 0); }}>
             {content}
             {lastOfStreak && (
               <View
@@ -387,7 +393,7 @@ export default function ConversationScreen() {
             }
           }}
         >
-          <Pressable onLongPress={() => { setSelectedMsg(item); msgSheet.current.open(); }}>
+          <Pressable onLongPress={() => { setSelectedMsg(item); setTimeout(() => msgSheet.current.open(), 0); }}>
             {content}
             {lastOfStreak && (
               <View
@@ -446,7 +452,7 @@ export default function ConversationScreen() {
           }
         }}
       >
-        <Pressable onLongPress={() => { setSelectedMsg(item); msgSheet.current.open(); }}>
+        <Pressable onLongPress={() => { setSelectedMsg(item); setTimeout(() => msgSheet.current.open(), 0); }}>
           {content}
 
           {lastOfStreak && (
@@ -642,7 +648,7 @@ export default function ConversationScreen() {
 
       <RBSheet
         ref={msgSheet}
-        height={200}
+        height={selectedMsg?.fromMe ? 260 : 160}
         openDuration={200}
         closeDuration={200}
         customStyles={{
@@ -667,6 +673,10 @@ export default function ConversationScreen() {
               </TouchableOpacity>
             </>
           )}
+          <TouchableOpacity onPress={handleReplyMessage} className="py-1 flex-row justify-start items-center ">
+            <CornerUpLeft height={23} width={23} color={iconColor} strokeWidth={2} />
+            <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('reply')}</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleCopyMessage} className="py-1 flex-row justify-start items-center ">
             <DocumentDuplicateIcon height={23} width={23} color={iconColor} strokeWidth={2} />
             <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('copy')}</Text>
