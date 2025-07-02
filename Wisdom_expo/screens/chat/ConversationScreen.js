@@ -281,7 +281,7 @@ export default function ConversationScreen() {
 
 
     const bubbleBase =
-      'rounded-2xl px-4 py-2 max-w-[70%] my-[2] flex-row items-end shadow-xs';
+      'rounded-2xl px-3 py-2 max-w-[70%] my-[2] flex-row items-end shadow-xs';
 
     const common =
       item.fromMe
@@ -416,17 +416,19 @@ export default function ConversationScreen() {
 
     const content = (
       <View className={`${bubbleBase} ${fromMeStyles}`}>
-        {item.replyTo && (
-          <View className="border-l-2 border-[#3695FF] pl-2 mb-1">
-            <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]">
-              {item.replyTo.senderId === userId ? 'You' : otherUserInfo?.first_name}
-            </Text>
-            <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-              {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? '📷 Image' : '📎 File'}
-            </Text>
-          </View>
-        )}
-        <Text className={`text-sm leading-5 flex-shrink ${textColor}`}>{item.text}</Text>
+        <View>
+          {item.replyTo && (
+            <View className="border-l-2 border-[#3695FF] py-1 pl-2 pr-2 rounded-lg mb-2 bg-[#f2f2f2]/80 dark:bg-[#272626]/20">
+              <Text className="font-inter-semibold text-xs text-[#515150] dark:text-[#d4d4d3]">
+                {item.replyTo.senderId === userId ? 'You' : otherUserInfo?.first_name}
+              </Text>
+              <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
+                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? '📷 Image' : '📎 File'}
+              </Text>
+            </View>
+          )}
+          <Text className={`text-sm leading-5  flex-shrink ${textColor} `}>{item.text}</Text>
+        </View>
       </View>
     );
     return (
@@ -529,9 +531,9 @@ export default function ConversationScreen() {
         style={{ backgroundColor: colorScheme === 'dark' ? '#272626' : '#f4f4f4', flex: 0, marginBottom: 30 }}
       >
         {replyTo && (
-          <View className="flex-row items-center px-4 py-2 bg-[#e0e0e0] dark:bg-[#3d3d3d]">
-            <View className="flex-1 border-l-4 border-[#3695FF] pl-2">
-              <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]">
+          <View className="flex-row items-center px-4 py-2 bg-[#e0e0e0] dark:bg-[#3d3d3d] rounded-t-xl ">
+            <View className="flex-1 border-l-[3px] border-[#3695FF] pl-2">
+              <Text className="font-inter-semibold text-xs text-[#515150] dark:text-[#d4d4d3]">
                 {replyTo.senderId === userId ? 'You' : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
@@ -539,7 +541,7 @@ export default function ConversationScreen() {
               </Text>
             </View>
             <TouchableOpacity onPress={() => setReplyTo(null)} className="p-1 ml-2">
-              <XMarkIcon height={18} width={18} color={iconColor} strokeWidth={2} />
+              <XMarkIcon height={20} width={20} color={iconColor} strokeWidth={2.2} />
             </TouchableOpacity>
           </View>
         )}
