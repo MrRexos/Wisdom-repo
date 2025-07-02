@@ -17,8 +17,8 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import { RectButton } from 'react-native-gesture-handler';
+import { Swipeable } from 'react-native-gesture-handler';
+
 import * as Clipboard from 'expo-clipboard';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -277,6 +277,7 @@ export default function ConversationScreen() {
 
     const lastOfStreak = isLastOfStreak(messages, index);
     const LeftStub = () => <View style={{ width: 64 }} />
+    const RightStub = () => null;
 
 
     const bubbleBase =
@@ -316,12 +317,14 @@ export default function ConversationScreen() {
         <Swipeable
           ref={ref => { swipeRefs.current[item.id] = ref; }}
           renderLeftActions={LeftStub}        // ← se muestra al arrastrar a la derecha
+          renderRightActions={RightStub} 
           friction={1.5}
           activeOffsetX={[-10, 10]}           // margen para evitar falsos taps
-          onSwipeableOpen={(dir) => {         // callback nuevo
-            if (dir === 'left') {             // 'left' = swipe hacia la derecha
-              setReplyTo(item);
+          onSwipeableOpen={(dir) => {
+            console.log(dir)         // callback nuevo
+            if (dir === 'left') {  
               swipeRefs.current[item.id]?.close();
+              setReplyTo(item);
             }
           }}
         >
@@ -374,12 +377,13 @@ export default function ConversationScreen() {
         <Swipeable
           ref={ref => { swipeRefs.current[item.id] = ref; }}
           renderLeftActions={LeftStub}        // ← se muestra al arrastrar a la derecha
+          renderRightActions={RightStub} 
           friction={1.5}
           activeOffsetX={[-10, 10]}           // margen para evitar falsos taps
           onSwipeableOpen={(dir) => {         // callback nuevo
-            if (dir === 'left') {             // 'left' = swipe hacia la derecha
-              setReplyTo(item);
-              swipeRefs.current[item.id]?.close();
+            if (dir === 'left') {  
+              swipeRefs.current[item.id]?.close();           // 'left' = swipe hacia la derecha
+              setReplyTo(item);     
             }
           }}
         >
@@ -429,12 +433,14 @@ export default function ConversationScreen() {
       <Swipeable
         ref={ref => { swipeRefs.current[item.id] = ref; }}
         renderLeftActions={LeftStub}        // ← se muestra al arrastrar a la derecha
+        renderRightActions={RightStub} 
         friction={1.5}
         activeOffsetX={[-10, 10]}           // margen para evitar falsos taps
         onSwipeableOpen={(dir) => {         // callback nuevo
-          if (dir === 'left') {             // 'left' = swipe hacia la derecha
-            setReplyTo(item);
+          if (dir === 'left') {
+            console.log("swipe left");              // 'left' = swipe hacia la derecha
             swipeRefs.current[item.id]?.close();
+            setReplyTo(item);
           }
         }}
       >
