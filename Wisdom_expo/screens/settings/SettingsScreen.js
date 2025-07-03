@@ -168,7 +168,7 @@ export default function SettingsScreen() {
       
       <ScrollView
         className="flex-1 px-6 pt-[55] gap-y-9"
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={[colorScheme === 'dark' ? '#f2f2f2' : '#434343']} colors={[colorScheme === 'dark' ? '#f2f2f2' : '#434343']}/>}
       >
         <View className="flex-row justify-between">
           <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">

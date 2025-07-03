@@ -10,6 +10,6 @@ export const containsContactInfo = (text) => {
   if (phoneRegex.test(text)) return true;
   if (digits.length >= 8) return true;
 
-  const contactWords = /(whats?app|telegram|instagram|facebook|snapchat|t\.me|phone|tel[eéfono]*|gmail|hotmail|contacto?)/i;
+  const contactWords = /(whats?app|telegram|instagram|facebook|snapchat|t\.me|phone|gmail|hotmail|email|mail|contact?)/i;
   return contactWords.test(lower);
 };
