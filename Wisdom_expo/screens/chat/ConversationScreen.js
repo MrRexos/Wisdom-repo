@@ -375,9 +375,8 @@ export default function ConversationScreen() {
               </Text>
             </View>
           )}
-          <TouchableOpacity onPress={() => navigation.navigate('ChatImageViewer', { images: imageMessages, index: imgIndex })}>
-            <Image source={{ uri: item.uri }} className="w-40 h-[200px] rounded-xl" />
-          </TouchableOpacity>
+          <Image source={{ uri: item.uri }} className="w-40 h-[200px] rounded-xl" />
+          
         </View>
       );
       return (
@@ -395,7 +394,7 @@ export default function ConversationScreen() {
             }
           }}
         >
-          <Pressable onLongPress={() => { setSelectedMsg(item); setTimeout(() => msgSheet.current.open(), 0); }}>
+          <Pressable onPress={() => navigation.navigate('ChatImageViewer', { images: imageMessages, index: imgIndex })} onLongPress={() => { setSelectedMsg(item); setTimeout(() => msgSheet.current.open(), 0); }}>
             {content}
             {lastOfStreak && (
               <View
