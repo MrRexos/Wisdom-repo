@@ -45,7 +45,7 @@ import {
   arrayRemove,
   deleteDoc,
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../utils/firebase';
 import { getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
@@ -153,6 +153,35 @@ export default function ConversationScreen() {
     }
   }, [messages]);
 
+  const uploadFile = async (uri, path, mime, onProgress) => {
+    // 1) URI → Blob fiable
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = () => resolve(xhr.response);
+      xhr.onerror = () => reject(new TypeError('Network request failed'));
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+      xhr.send(null);
+    });
+  
+    // 2) Subida reanudable
+    const fileRef = ref(storage, path);            // ya tienes `storage` importado arriba
+    const task = uploadBytesResumable(fileRef, blob, { contentType: mime });
+  
+    return new Promise((resolve, reject) => {
+      task.on(
+        'state_changed',
+        snap => onProgress && onProgress((snap.bytesTransferred / snap.totalBytes) * 100),
+        reject,
+        async () => {
+          blob.close?.();                          // libera memoria en iOS
+          const url = await getDownloadURL(task.snapshot.ref);
+          resolve(url);
+        }
+      );
+    });
+  };
+
 
 
   // ---------------------------------------------------------------------------
@@ -165,38 +194,46 @@ export default function ConversationScreen() {
       });
       setEditingId(null);
     } else if (attachment) {
-      const response = await fetch(attachment.uri);
-      const blob = await response.blob();
-      const fileRef = ref(
-        storage,
-        `chat/${conversationId}/${Date.now()}_${attachment.name}`
-      );
-      await uploadBytes(fileRef, blob);
-      const downloadURL = await getDownloadURL(fileRef);
-      await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
-        senderId: userId,
-        type: attachment.type,
-        uri: downloadURL,
-        name: attachment.name,
-        createdAt: serverTimestamp(),
-        replyTo: replyTo
-          ? { id: replyTo.id, text: replyTo.text, type: replyTo.type, senderId: replyTo.senderId }
-          : null,
-      });
-      await setDoc(
-        doc(db, 'conversations', conversationId),
-        {
-          participants,
-          name,
-          lastMessage: attachment.type === 'image' ? '📷' : '📎',
-          updatedAt: serverTimestamp(),
-          lastMessageSenderId: userId,
-          readBy: [userId],
-          deletedFor: arrayRemove(userId),
-        },
-        { merge: true }
-      );
-      setAttachment(null);
+      try {
+        const filePath = `chat/${conversationId}/${Date.now()}_${attachment.name}`;
+        const url = await uploadFile(
+          attachment.uri,
+          filePath,
+          attachment.type     // "image/jpeg", "application/pdf", etc.
+        );
+    
+        await addDoc(
+          collection(db, 'conversations', conversationId, 'messages'),
+          {
+            senderId: userId,
+            type: attachment.type.startsWith('image') ? 'image' : 'file',
+            uri: url,
+            name: attachment.name,
+            createdAt: serverTimestamp(),
+            replyTo: replyTo
+              ? { id: replyTo.id, text: replyTo.text, type: replyTo.type, senderId: replyTo.senderId }
+              : null,
+          }
+        );
+    
+        await updateDoc(
+          doc(db, 'conversations', conversationId),
+          {
+            participants,
+            name,
+            lastMessage: attachment.type.startsWith('image') ? '📷' : '📎',
+            updatedAt: serverTimestamp(),
+            lastMessageSenderId: userId,
+            readBy: arrayUnion(userId),   // arrayUnion en vez de arrayRemove
+          }
+        );
+    
+        setAttachment(null);
+      } catch (err) {
+        console.error('Error subiendo archivo', err);
+        // aquí podrías notificar al usuario
+      }
+    
     } else if (text.trim()) {
       const newMsg = {
         senderId: userId,
