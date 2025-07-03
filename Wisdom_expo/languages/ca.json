@@ -312,6 +312,7 @@
     "file": "Fitxer",
     "choose_image": "Triar imatge",
     "choose_file": "Triar fitxer",
+    "contact_not_allowed": "Està prohibit compartir informació de contacte. Si us plau, fes totes les comunicacions i pagaments dins de l'aplicació.",
     "you": "Tu"
   }
 }

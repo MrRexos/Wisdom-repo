@@ -13,6 +13,7 @@ import {
   Image,
   Linking,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -49,6 +50,7 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/
 import { db, storage } from '../../utils/firebase';
 import { getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
+import { containsContactInfo } from '../../utils/moderation';
 import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 import DoubleCheck from '../../assets/DoubleCheck'
 
@@ -75,6 +77,7 @@ export default function ConversationScreen() {
   const [text, setText] = useState('');
   const [messages, setMessages] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const [otherUserInfo, setOtherUserInfo] = useState(null);
   const [attachment, setAttachment] = useState(null);
   const [selectedMsg, setSelectedMsg] = useState(null);
@@ -99,6 +102,7 @@ export default function ConversationScreen() {
       if (!userData) return;
       const user = JSON.parse(userData);
       setUserId(user.id);
+      setCurrentUser(user);
       const q = query(
         collection(db, 'conversations', conversationId, 'messages'),
         orderBy('createdAt')
@@ -192,6 +196,18 @@ export default function ConversationScreen() {
   // • ACTIONS
   // ---------------------------------------------------------------------------
   const handleSend = async () => {
+    const trimmed = text.trim();
+    if (!attachment && trimmed && containsContactInfo(trimmed)) {
+      Alert.alert(t('contact_not_allowed'));
+      if (currentUser?.is_professional) {
+        try {
+          await api.post(`/api/user/${currentUser.id}/strike`);
+        } catch (err) {
+          console.error('strike error', err);
+        }
+      }
+      return;
+    }
     const replyData = replyTo
       ? (() => {
           const base = { id: replyTo.id, type: replyTo.type, senderId: replyTo.senderId };
@@ -201,7 +217,7 @@ export default function ConversationScreen() {
       : null;
     if (editingId) {
       await updateDoc(doc(db, 'conversations', conversationId, 'messages', editingId), {
-        text: text.trim(),
+        text: trimmed,
       });
       setEditingId(null);
     } else if (attachment) {
@@ -243,11 +259,11 @@ export default function ConversationScreen() {
         // aquí podrías notificar al usuario
       }
     
-    } else if (text.trim()) {
+    } else if (trimmed) {
       const newMsg = {
         senderId: userId,
         type: 'text',
-        text: text.trim(),
+        text: trimmed,
         createdAt: serverTimestamp(),
         replyTo: replyData,
       };
@@ -257,7 +273,7 @@ export default function ConversationScreen() {
         {
           participants,
           name,
-          lastMessage: text.trim(),
+          lastMessage: trimmed,
           updatedAt: serverTimestamp(),
           lastMessageSenderId: userId,
           readBy: [userId],

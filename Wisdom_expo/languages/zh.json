@@ -312,6 +312,7 @@
     "file": "文件",
     "choose_image": "选择图片",
     "choose_file": "选择文件",
+    "contact_not_allowed": "禁止分享联系方式，请在应用内完成所有沟通和支付。",
     "you": "你"
   }
 }
