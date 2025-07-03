@@ -312,6 +312,7 @@
     "file": "File",
     "choose_image": "Choose image",
     "choose_file": "Choose file",
+    "contact_not_allowed": "Sharing contact information is not allowed. Please keep all communication and payments within the app.",
     "you": "You"
   }
 }

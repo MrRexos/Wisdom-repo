@@ -312,6 +312,7 @@
     "file": "Fichier",
     "choose_image": "Choisir une image",
     "choose_file": "Choisir un fichier",
+    "contact_not_allowed": "Il est interdit de partager des informations de contact. Veuillez effectuer toutes les communications et paiements dans l'application.",
     "you": "Vous"
   }
 }
