@@ -230,19 +230,24 @@ export default function ConversationScreen() {
 
   const handleImagePick = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: 'Images',
       quality: 0.7,
     });
     if (!result.canceled) {
       const asset = result.assets[0];
       setAttachment({ type: 'image', uri: asset.uri, name: asset.fileName || 'image.jpg' });
+      attachSheet.current.close();
     }
+    
   };
 
   const handleFilePick = async () => {
     const result = await DocumentPicker.getDocumentAsync({});
-    if (result.type === 'success') {
-      setAttachment({ type: 'file', uri: result.uri, name: result.name });
+    if (!result.canceled) {
+      console.log(result.assets?.[0]);
+      const asset = result.assets?.[0] || result;
+      setAttachment({ type: 'file', uri: asset.uri, name: asset.name });
+      attachSheet.current.close();
     }
   };
 
@@ -534,12 +539,12 @@ export default function ConversationScreen() {
           data={messages}
           keyExtractor={(item) => item.id}
           renderItem={renderMessage}
-          contentContainerStyle={{ padding: 16}}
+          contentContainerStyle={{ padding: 16 }}
           showsVerticalScrollIndicator={false}
           onContentSizeChange={() =>
             flatListRef.current?.scrollToEnd({ animated: false })
           }
-          
+
         />
       </View>
 
@@ -572,7 +577,7 @@ export default function ConversationScreen() {
           <TouchableOpacity
             onPress={() => attachSheet.current.open()}
             hitSlop={8}
-            className="h-11 w-11 rounded-full              /* idéntico alto-ancho */
+            className="h-11 w-11 rounded-full              
                       items-center justify-center
                       bg-[#e5e5e5] dark:bg-[#3d3d3d]"
           >
@@ -586,11 +591,22 @@ export default function ConversationScreen() {
                       rounded-3xl pl-4 pr-2 "
           >
             {attachment && (
-              attachment.type === 'image' ? (
-                <Image source={{ uri: attachment.uri }} className="h-10 w-10 mr-2 rounded-lg" />
+              <View className="relative mr-2">
+              {attachment.type === 'image' ? (
+                <Image source={{ uri: attachment.uri }} className="h-10 w-10 rounded-lg" />
               ) : (
-                <File height={24} width={24} color={iconColor} strokeWidth={2} className="h-10 w-10 mr-2 rounded-lg bg-[#323131] dark:bg-[#fcfcfc]" />
-              )
+                <View className="h-10 w-10 rounded-lg bg-[#323131] dark:bg-[#fcfcfc] items-center justify-center">
+                  <File height={24} width={24} color={iconColor} strokeWidth={2} />
+                </View>
+              )}
+              <TouchableOpacity
+                onPress={() => setAttachment(null)}
+                hitSlop={8}
+                className="absolute -top-1 -right-1 bg-[#d4d4d3] dark:bg-[#474646] rounded-full p-[1]"
+              >
+                <XMarkIcon height={14} width={14} color={iconColor} strokeWidth={2} />
+              </TouchableOpacity>
+            </View>
             )}
             <View className="flex-1 justify-center">
               <TextInput
@@ -619,7 +635,7 @@ export default function ConversationScreen() {
                   width={14}
                   strokeWidth={3}
                   color={
-                    text.trim()
+                    text.trim() || attachment
                       ? colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'
                       : '#ffffff'
                   }
