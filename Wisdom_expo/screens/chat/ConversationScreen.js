@@ -221,7 +221,7 @@ export default function ConversationScreen() {
           {
             participants,
             name,
-            lastMessage: attachment.type.startsWith('image') ? '📷' : '📎',
+            lastMessage: attachment.type.startsWith('image') ? 'Image' : 'File',
             updatedAt: serverTimestamp(),
             lastMessageSenderId: userId,
             readBy: arrayUnion(userId),   // arrayUnion en vez de arrayRemove
@@ -281,7 +281,7 @@ export default function ConversationScreen() {
   const handleFilePick = async () => {
     const result = await DocumentPicker.getDocumentAsync({});
     if (!result.canceled) {
-      console.log(result.assets?.[0]);
+      
       const asset = result.assets?.[0] || result;
       setAttachment({ type: 'file', uri: asset.uri, name: asset.name });
       attachSheet.current.close();
@@ -356,18 +356,18 @@ export default function ConversationScreen() {
 
     if (item.type === 'image') {
       const content = (
-        <View className={`${bubbleBase} ${fromMeStyles}`}>
+        <View className={`${item.replyTo ? fromMeStyles && bubbleBase : `py-1 flex-row items-end shadow-xs ${item.fromMe? 'self-end': 'self-start'}`}`}>
           {item.replyTo && (
             <View className="border-l-2 border-[#3695FF] pl-2 mb-1">
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]">
                 {item.replyTo.senderId === userId ? 'You' : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? '📷 Image' : '📎 File'}
+                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? 'Image' : 'File'}
               </Text>
             </View>
           )}
-          <Image source={{ uri: item.uri }} className="w-40 h-40 rounded-lg" />
+          <Image source={{ uri: item.uri }} className="w-40 h-[200px] rounded-xl" />
         </View>
       );
       return (
@@ -421,12 +421,18 @@ export default function ConversationScreen() {
                 {item.replyTo.senderId === userId ? 'You' : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? '📷 Image' : '📎 File'}
+                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? 'Image' : 'File'}
               </Text>
             </View>
           )}
-          <TouchableOpacity onPress={() => Linking.openURL(item.uri)}>
-            <Text className={textColor}>{item.name}</Text>
+          <TouchableOpacity onPress={() => Linking.openURL(item.uri)} className="flex-row space-x-2">
+            <View className="h-10 w-10 my-1 rounded-lg bg-[#323131] dark:bg-[#fcfcfc] items-center justify-center">
+              <File height={22} width={22} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
+            </View>
+            <View className="flex-1 justify-center">
+              <Text numberOfLines={1} className={`${textColor} `}>{item.name} </Text>
+              <Text numberOfLines={1} className='text-[14px] font-medium text-[#979797] '>{item.name?.includes(".") ? item.name.split(".").pop().toUpperCase() : "Desconocido"}</Text>
+            </View>
           </TouchableOpacity>
         </View>
       );
@@ -480,7 +486,7 @@ export default function ConversationScreen() {
                 {item.replyTo.senderId === userId ? 'You' : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? '📷 Image' : '📎 File'}
+                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? 'Image' : 'File'}
               </Text>
             </View>
           )}
@@ -598,7 +604,7 @@ export default function ConversationScreen() {
                 {replyTo.senderId === userId ? 'You' : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {replyTo.type === 'text' ? replyTo.text : replyTo.type === 'image' ? '📷 Image' : '📎 File'}
+                {replyTo.type === 'text' ? replyTo.text : replyTo.type === 'image' ? 'Image' : 'File'}
               </Text>
             </View>
             <TouchableOpacity onPress={() => setReplyTo(null)} className="p-1 ml-2">
@@ -633,7 +639,7 @@ export default function ConversationScreen() {
                 <Image source={{ uri: attachment.uri }} className="h-10 w-10 rounded-lg" />
               ) : (
                 <View className="h-10 w-10 rounded-lg bg-[#323131] dark:bg-[#fcfcfc] items-center justify-center">
-                  <File height={24} width={24} color={iconColor} strokeWidth={2} />
+                  <File height={22} width={22} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
                 </View>
               )}
               <TouchableOpacity
