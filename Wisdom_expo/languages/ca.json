@@ -306,6 +306,12 @@
     "skip": "Saltar",
     "rate_service": "Valora el servei",
     "write_comment": "Escriu un comentari...",
-    "submit_review": "Enviar ressenya"
+    "submit_review": "Enviar ressenya",
+    "image": "Imatge",
+    "images": "Imatges",
+    "file": "Fitxer",
+    "choose_image": "Triar imatge",
+    "choose_file": "Triar fitxer",
+    "you": "Tu"
   }
 }

@@ -306,6 +306,12 @@
     "skip": "跳过",
     "rate_service": "为服务评分",
     "write_comment": "写下评论...",
-    "submit_review": "提交评价"
+    "submit_review": "提交评价",
+    "image": "图片",
+    "images": "图片",
+    "file": "文件",
+    "choose_image": "选择图片",
+    "choose_file": "选择文件",
+    "you": "你"
   }
 }

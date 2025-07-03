@@ -306,6 +306,12 @@
     "skip": "تخطي",
     "rate_service": "قيّم الخدمة",
     "write_comment": "اكتب تعليقًا...",
-    "submit_review": "إرسال المراجعة"
+    "submit_review": "إرسال المراجعة",
+    "image": "صورة",
+    "images": "صور",
+    "file": "ملف",
+    "choose_image": "اختر صورة",
+    "choose_file": "اختر ملف",
+    "you": "أنت"
   }
 }

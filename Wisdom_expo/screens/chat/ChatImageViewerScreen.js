@@ -46,7 +46,7 @@ export default function ChatImageViewerScreen() {
 
           <View className="flex-[2] justify-center items-center  ">
             <Text className='font-inter-bold text-[17px] text-[#444343] dark:text-[#f2f2f2]'>
-                Images
+                {t('images')}
             </Text>
           </View>
 
