@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { SafeAreaView as SafeTop, SafeAreaView as SafeBottom } from 'react-native-safe-area-context';
 import {
   SafeAreaView,
@@ -87,6 +87,10 @@ export default function ConversationScreen() {
     idx === msgs.length - 1 || msgs[idx].fromMe !== msgs[idx + 1].fromMe;
   // Objeto de refs para Swipeable
   const swipeRefs = useRef({});
+  const imageMessages = useMemo(
+    () => messages.filter(m => m.type === 'image'),
+    [messages]
+  );
 
   useEffect(() => {
     let unsub;
@@ -188,6 +192,13 @@ export default function ConversationScreen() {
   // • ACTIONS
   // ---------------------------------------------------------------------------
   const handleSend = async () => {
+    const replyData = replyTo
+      ? (() => {
+          const base = { id: replyTo.id, type: replyTo.type, senderId: replyTo.senderId };
+          if (replyTo.text) base.text = replyTo.text;
+          return base;
+        })()
+      : null;
     if (editingId) {
       await updateDoc(doc(db, 'conversations', conversationId, 'messages', editingId), {
         text: text.trim(),
@@ -210,9 +221,7 @@ export default function ConversationScreen() {
             uri: url,
             name: attachment.name,
             createdAt: serverTimestamp(),
-            replyTo: replyTo
-              ? { id: replyTo.id, text: replyTo.text, type: replyTo.type, senderId: replyTo.senderId }
-              : null,
+            replyTo: replyData,
           }
         );
     
@@ -240,9 +249,7 @@ export default function ConversationScreen() {
         type: 'text',
         text: text.trim(),
         createdAt: serverTimestamp(),
-        replyTo: replyTo
-          ? { id: replyTo.id, text: replyTo.text, type: replyTo.type, senderId: replyTo.senderId }
-          : null,
+        replyTo: replyData,
       };
       await addDoc(collection(db, 'conversations', conversationId, 'messages'), newMsg);
       await setDoc(
@@ -355,6 +362,7 @@ export default function ConversationScreen() {
     const textColor = 'text-[15px] font-medium text-[#515150] dark:text-[#d4d4d3]';
 
     if (item.type === 'image') {
+      const imgIndex = imageMessages.findIndex(img => img.id === item.id);
       const content = (
         <View className={`${item.replyTo ? fromMeStyles && bubbleBase : `py-1 flex-row items-end shadow-xs ${item.fromMe? 'self-end': 'self-start'}`}`}>
           {item.replyTo && (
@@ -367,7 +375,9 @@ export default function ConversationScreen() {
               </Text>
             </View>
           )}
-          <Image source={{ uri: item.uri }} className="w-40 h-[200px] rounded-xl" />
+          <TouchableOpacity onPress={() => navigation.navigate('ChatImageViewer', { images: imageMessages, index: imgIndex })}>
+            <Image source={{ uri: item.uri }} className="w-40 h-[200px] rounded-xl" />
+          </TouchableOpacity>
         </View>
       );
       return (
@@ -477,6 +487,7 @@ export default function ConversationScreen() {
       );
     }
 
+    //Normal message
     const content = (
       <View className={`${bubbleBase} ${fromMeStyles}`}>
         <View>

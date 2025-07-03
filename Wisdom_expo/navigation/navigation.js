@@ -45,6 +45,7 @@ import ListScreen from '../screens/favorites/ListScreen';
 import ChatScreen from '../screens/chat/ChatScreen';
 import ServicesScreen from '../screens/services/ServicesScreen';
 import ConversationScreen from '../screens/chat/ConversationScreen';
+import ChatImageViewerScreen from '../screens/chat/ChatImageViewerScreen';
 import PreferencesScreen from '../screens/settings/PreferencesScreen';
 import LanguageScreen from '../screens/settings/LanguageScreen';
 import CreateService1Screen from '../screens/settings/CreateService1Screen';
@@ -141,6 +142,7 @@ export default function Navigation() {
         <Stack.Screen name="ServicesScreen" component={ServicesScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="Conversation" component={ConversationScreen} />
+        <Stack.Screen name="ChatImageViewer" component={ChatImageViewerScreen} />
         <Stack.Screen name="Preferences" component={PreferencesScreen} />
         <Stack.Screen name="Language" component={LanguageScreen} />
         <Stack.Screen name="List" component={ListScreen} />
