@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, TouchableWithoutFeedback, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -22,6 +22,7 @@ import SliderThumbDark from '../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../assets/SliderThumbLight.png';
 import { format } from 'date-fns';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 
 
@@ -47,8 +48,9 @@ export default function BookingScreen() {
   const [selectedDuration, setSelectedDuration] = useState(60);
   const [sliderValue, setSliderValue] = useState(12);
   const sliderTimeoutId = useRef(null);
-  const [selectedTimeUndefined, setSelectedTimeUndefined] = useState(false); 
-
+  const [selectedTimeUndefined, setSelectedTimeUndefined] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  
   const [startDate, setStartDate] = useState();
   const [duration, setDuration] = useState();
   const [startTime, setStartTime] = useState();
@@ -301,6 +303,18 @@ export default function BookingScreen() {
     } catch (error) {
       console.error('Error fetching directions:', error);
     }
+  };
+
+  const refreshData = async () => {
+    await fetchDirections();
+  };
+
+  useRefreshOnFocus(refreshData);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refreshData();
+    setRefreshing(false);
   };
 
   const handleConfirm = async () => {
@@ -808,7 +822,7 @@ export default function BookingScreen() {
 
       <View className="h-[70] w-full justify-end"/>
 
-      <ScrollView showsVerticalScrollIndicator={false}  className="flex-1 px-3">
+      <ScrollView showsVerticalScrollIndicator={false}  className="flex-1 px-3" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
 
         {/* Profile */}

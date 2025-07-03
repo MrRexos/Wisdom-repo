@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Keyboard, ActivityIndicator, Alert  } from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Keyboard, ActivityIndicator, Alert, RefreshControl  } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -10,6 +10,7 @@ import {Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X} fro
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
 import { CheckCircleIcon, XCircleIcon } from 'react-native-heroicons/solid';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import * as ImagePicker from 'expo-image-picker';
 
 
@@ -35,6 +36,7 @@ export default function EditProfileScreen() {
   const [errorMessage, setErrorMessage] = useState('');
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getUserData = async () => {
     const userData = await getDataLocally('user');
@@ -49,6 +51,14 @@ export default function EditProfileScreen() {
   useEffect(() => {
     getUserData();
   }, []);
+
+  useRefreshOnFocus(getUserData);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getUserData();
+    setRefreshing(false);
+  };
 
   const inputUsernameChanged = (text) => {
     setUsername(text);
@@ -269,7 +279,7 @@ export default function EditProfileScreen() {
         </View>
       </View>
       
-      <ScrollView className="flex-1 px-6 pt-[75]">
+      <ScrollView className="flex-1 px-6 pt-[75]" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
        
         <View className="w-full justify-center items-center"> 
             <TouchableOpacity onPress={handleImagePicker}>

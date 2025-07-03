@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image} from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image, RefreshControl} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -10,6 +10,7 @@ import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRigh
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import api from '../../utils/api.js';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 
 
@@ -22,6 +23,7 @@ export default function WalletScreen() {
   const currentLanguage = i18n.language;
   const [userId, setUserId] = useState();
   const [moneyWallet, setMoneyWallet] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const Sections = [
     {
@@ -47,11 +49,20 @@ export default function WalletScreen() {
   useEffect(() => {
     const loadMoney = async () => {
       const money = await fetchMoneyWallet
-      ();
+      (); 
       setMoneyWallet(money);
     };
     loadMoney();
   }, []);
+
+  useRefreshOnFocus(fetchMoneyWallet);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    const money = await fetchMoneyWallet();
+    setMoneyWallet(money);
+    setRefreshing(false);
+  };
 
 
 
@@ -74,7 +85,7 @@ export default function WalletScreen() {
         </View>
       </View>
       
-      <ScrollView className="flex-1 px-6 pt-[75] gap-y-9">
+      <ScrollView className="flex-1 px-6 pt-[75] gap-y-9" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
         <View className="p-7 justify-center items-center rounded-3xl bg-[#fcfcfc]  dark:bg-[#323131]">
           <Text className="mb-4 font-inter-semibold text-[16px] text-[#B6B5B5] dark:text-[#706f6e]">{t('money_in_wallet')}</Text>

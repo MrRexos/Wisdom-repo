@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image} from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image, RefreshControl} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -10,6 +10,7 @@ import {Plus, Calendar as CalendarIcon} from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import api from '../../utils/api.js';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import { Calendar } from 'react-native-calendars';
 
 
@@ -24,6 +25,7 @@ export default function CalendarScreen() {
   const [markedDates, setMarkedDates] = useState({});
   const [bookings, setBookings] = useState([]);
   const [bookingsEvents, setBookingsEvents] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const currencySymbols = {
     EUR: '€',
     USD: '$',
@@ -47,6 +49,14 @@ export default function CalendarScreen() {
   useEffect(() => {
     fetchBookings();
   }, []);
+
+  useRefreshOnFocus(fetchBookings);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchBookings();
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     const dates = {};
@@ -173,7 +183,7 @@ export default function CalendarScreen() {
           </TouchableOpacity> */}
         </View>
 
-        <ScrollView className="pt-8 flex-1 w-full px-6">
+        <ScrollView className="pt-8 flex-1 w-full px-6" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
           <Calendar
             onDayPress={onDayPress}
             markedDates={markedDates}

@@ -11,6 +11,7 @@ import {
   ScrollView,
   Image,
   Pressable,
+  RefreshControl,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
@@ -25,6 +26,7 @@ import { collection, query, where, orderBy, onSnapshot, doc, updateDoc, arrayUni
 import { SwipeListView } from 'react-native-swipe-list-view';
 import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 import { db } from '../../utils/firebase';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 
 export default function ChatScreen() {
@@ -39,6 +41,8 @@ export default function ChatScreen() {
   const [usersInfo, setUsersInfo] = useState({});
   const [searchActive, setSearchActive] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+  const unsubscribeRef = useRef(null);
 
   const suggestions = [
     { label: t('all'), value: 'all', id: 1 },
@@ -92,27 +96,36 @@ export default function ChatScreen() {
     }
   });
 
+  const loadConversations = async () => {
+    const userData = await getDataLocally('user');
+    if (!userData) return;
+    const user = JSON.parse(userData);
+    setUserId(user.id);
+    const q = query(
+      collection(db, 'conversations'),
+      where('participants', 'array-contains', user.id),
+      orderBy('updatedAt', 'desc')
+    );
+    if (unsubscribeRef.current) unsubscribeRef.current();
+    unsubscribeRef.current = onSnapshot(q, snap => {
+      const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const filtered = data.filter(c => !(c.deletedFor || []).includes(user.id));
+      setConversations(filtered);
+    });
+  };
+
   useEffect(() => {
-    let unsubscribe;
-    const load = async () => {
-      const userData = await getDataLocally('user');
-      if (!userData) return;
-      const user = JSON.parse(userData);
-      setUserId(user.id);
-      const q = query(
-        collection(db, 'conversations'),
-        where('participants', 'array-contains', user.id),
-        orderBy('updatedAt', 'desc')
-      );
-      unsubscribe = onSnapshot(q, snap => {
-        const data = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        const filtered = data.filter(c => !(c.deletedFor || []).includes(user.id));
-        setConversations(filtered);
-      });
-    };
-    load();
-    return () => unsubscribe && unsubscribe();
+    loadConversations();
+    return () => unsubscribeRef.current && unsubscribeRef.current();
   }, []);
+
+  useRefreshOnFocus(loadConversations);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadConversations();
+    setRefreshing(false);
+  };
 
   useEffect(() => {
     if (!userId) return;
@@ -211,6 +224,8 @@ export default function ChatScreen() {
 
         <SwipeListView
           data={filteredConversations}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             const otherId = item.participants?.find(id => id !== userId);

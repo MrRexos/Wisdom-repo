@@ -1,12 +1,13 @@
 
 import React, { useState, useCallback } from 'react';
-import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { storeDataLocally } from '../../utils/asyncStorage';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import {ChevronRightIcon, ChevronLeftIcon} from 'react-native-heroicons/outline';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 
 
@@ -39,6 +40,7 @@ export default function PreferencesScreen() {
     darkMode: colorScheme === 'dark',
     language: languageMap[currentLanguage]
   });
+  const [refreshing, setRefreshing] = useState(false);
 
   const handleToggleColorScheme = () => {
     toggleColorScheme();
@@ -54,6 +56,13 @@ export default function PreferencesScreen() {
       }));
     }, [i18n.language])
   );
+
+  useRefreshOnFocus(() => {});
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setRefreshing(false);
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
@@ -73,7 +82,7 @@ export default function PreferencesScreen() {
         </View>
       </View>
       
-      <ScrollView className="flex-1 px-6 pt-[75] gap-y-9">
+      <ScrollView className="flex-1 px-6 pt-[75] gap-y-9" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
         
         {Sections.map(({items}, sectionIndex) => (

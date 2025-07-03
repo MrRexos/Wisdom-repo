@@ -1,12 +1,13 @@
 
 import React, {useState, useEffect, useCallback} from 'react';
-import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Image, Linking } from 'react-native';
+import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Image, Linking, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import api from '../../utils/api.js';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 
 import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram, Link } from "react-native-feather";
@@ -29,6 +30,7 @@ export default function SettingsScreen() {
   const [surname, setSurname] = useState('');
   const [username, setUsername] = useState('');
   const [allowNotis, setAllowNotis] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
   const [form, setForm] = useState({
     notifications: false,
   });
@@ -139,13 +141,21 @@ export default function SettingsScreen() {
     }, [])
   );
 
+  useRefreshOnFocus(loadUserData);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadUserData();
+    setRefreshing(false);
+  };
+
   
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
       
-      <ScrollView className="flex-1 px-6 pt-[55] gap-y-9">
+      <ScrollView className="flex-1 px-6 pt-[55] gap-y-9" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         <View className="flex-row justify-between">
           <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
               {t('profile')}

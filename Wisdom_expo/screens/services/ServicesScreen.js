@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image} from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image, RefreshControl} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -9,6 +9,7 @@ import { Calendar } from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
 import Clipboard from "../../assets/Clipboard";
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 export default function ServicesScreen() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
@@ -18,6 +19,7 @@ export default function ServicesScreen() {
   const [bookings, setBookings] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState('accepted');
   const [userId, setUserId] = useState();
+  const [refreshing, setRefreshing] = useState(false);
 
   const suggestions = [
     { label: t('upcoming'), value:'accepted', id:1 },
@@ -65,6 +67,15 @@ export default function ServicesScreen() {
     };
     loadBookings();
   }, [selectedStatus]);
+
+  useRefreshOnFocus(() => fetchBookings(selectedStatus));
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    const bookingsData = await fetchBookings(selectedStatus);
+    setBookings(bookingsData);
+    setRefreshing(false);
+  };
 
   const formatDate = (dateString) => {
     // Convertir la cadena a un objeto Date
@@ -172,6 +183,8 @@ export default function ServicesScreen() {
               renderItem={renderBooking}
               keyExtractor={(booking, index) => index.toString()}
               showsVerticalScrollIndicator={false}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
               className="p-5"
             />
           </View>

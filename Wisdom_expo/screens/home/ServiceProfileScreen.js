@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Alert } from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Alert, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -14,6 +14,7 @@ import HeartFill from "../../assets/HeartFill.tsx"
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import MapView, { Marker, Circle } from 'react-native-maps';
 import { doc, setDoc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
@@ -66,6 +67,7 @@ export default function ServiceProfileScreen() {
   const sliderTimeoutId = useRef(null);
   const [timeUndefined, setTimeUndefined] = useState(false); 
   const [showPicker, setShowPicker] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   
   const languagesMap = {
     es: 'Spanish',
@@ -119,6 +121,18 @@ export default function ServiceProfileScreen() {
     } catch (error) {
       console.error('Error:', error);
     }
+  };
+
+  const refreshData = async () => {
+    await getServiceInfo();
+  };
+
+  useRefreshOnFocus(refreshData);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refreshData();
+    setRefreshing(false);
   };
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
@@ -720,7 +734,7 @@ export default function ServiceProfileScreen() {
 
       </RBSheet>
 
-      <ScrollView showsVerticalScrollIndicator={false} className="px-5 pt-6 flex-1">
+      <ScrollView showsVerticalScrollIndicator={false} className="px-5 pt-6 flex-1" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
         {/* Top FALTA */}
 
