@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView } from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -14,6 +14,7 @@ import HeartFill from "../../assets/HeartFill.tsx"
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 
 export default function ResultsScreen() {
@@ -38,6 +39,7 @@ export default function ResultsScreen() {
   const [categoryId, setCategoryId] = useState();
   const [categoryName, setCategoryName] = useState();
   const [searchedService, setSearchedService] = useState();
+  const [refreshing, setRefreshing] = useState(false);
   const [duration, setDuration] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
@@ -119,6 +121,22 @@ export default function ResultsScreen() {
     } catch (error) {
       console.error('Error fetching lists:', error);
     } 
+  };
+
+  const loadResults = async () => {
+    if (route.params && route.params.category !== undefined) {
+      await fetchResultsByCategory(route.params.category);
+    } else if (route.params && route.params.searchedService !== undefined) {
+      await fetchResultsBySearch(route.params.searchedService);
+    }
+  };
+
+  useRefreshOnFocus(loadResults);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadResults();
+    setRefreshing(false);
   };
 
   const heartClicked = async (serviceId) => {
@@ -561,6 +579,8 @@ export default function ResultsScreen() {
             data={results}
             keyExtractor={(item, index) => index.toString()}
             renderItem={renderItem}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
             contentContainerStyle={{
               justifyContent: 'space-between',
               paddingBottom:200,

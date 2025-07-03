@@ -1,12 +1,13 @@
   import React, { useEffect, useState, useCallback } from 'react'
-  import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, ScrollView, FlatList, Alert, Image } from 'react-native';
+import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, ScrollView, FlatList, Alert, Image, RefreshControl } from 'react-native';
   import { useTranslation } from 'react-i18next';
   import { useColorScheme } from 'nativewind'
   import '../../languages/i18n';
   import { useNavigation, useFocusEffect } from '@react-navigation/native';
   import { Edit2, X, Check } from "react-native-feather"; 
   import { getDataLocally } from '../../utils/asyncStorage';
-  import api from '../../utils/api.js';
+import api from '../../utils/api.js';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
   import { formatDistanceToNowStrict } from 'date-fns';
 
   export default function FavoritesScreen() {
@@ -18,6 +19,7 @@
     const [loading, setLoading] = useState(true);
     const [userId, setUserId] = useState();
     const [editing, setEditing] = useState(false);  // Nuevo estado para controlar el modo de edición
+    const [refreshing, setRefreshing] = useState(false);
 
     useFocusEffect(
       useCallback(() => {
@@ -73,7 +75,7 @@
       setUserId(user.id);
       try {
         const response = await api.get(`/api/user/${user.id}/lists`);  // Usa userData.id directamente
-        setLists(response.data);        
+        setLists(response.data);
       } catch (error) {
         console.error('Error fetching lists:', error);
       } finally {
@@ -81,11 +83,14 @@
       }
     };
 
-    useFocusEffect(
-      useCallback(() => {
-        fetchLists();
-      }, [])
-    );
+    const onRefresh = async () => {
+      setRefreshing(true);
+      await fetchLists();
+      setRefreshing(false);
+    };
+
+
+    useRefreshOnFocus(fetchLists);
 
     if (loading) {
       return <View className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]"></View>;
@@ -145,6 +150,8 @@
             keyExtractor={(item) => item.id}
             numColumns={2} // Define el número de columnas
             renderItem={renderItem}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
             contentContainerStyle={{
               justifyContent: 'space-between',
             }}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { Text, View, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Platform, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Check } from "react-native-feather";
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 
 
@@ -17,6 +18,7 @@ export default function LanguageScreen() {
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
+  const [refreshing, setRefreshing] = useState(false);
 
   const Sections = [
     {
@@ -44,6 +46,13 @@ export default function LanguageScreen() {
     }
   };
 
+  useRefreshOnFocus(() => {});
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setRefreshing(false);
+  };
+
   return (
     <SafeAreaView
       style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
@@ -64,7 +73,7 @@ export default function LanguageScreen() {
         </View>
       </View>
 
-      <ScrollView className="flex-1 px-6 pt-[75] gap-y-9">
+      <ScrollView className="flex-1 px-6 pt-[75] gap-y-9" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         {Sections.map(({ items }, sectionIndex) => (
           <View key={sectionIndex} style={{ borderRadius: 12, overflow: 'hidden' }}>
             {items.map(({ label, id }, index) => (

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, ImageBackground, Button, TouchableWithoutFeedback } from 'react-native';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, ImageBackground, Button, TouchableWithoutFeedback, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -8,6 +8,7 @@ import { useNavigation, useRoute, useFocusEffect, useIsFocused } from '@react-na
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon } from 'react-native-heroicons/outline';
 import { Search } from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import api from '../../utils/api.js';
 import MapView, { Marker, Circle } from 'react-native-maps';
 import { Calendar } from 'react-native-calendars';
@@ -50,6 +51,7 @@ export default function HomeScreen() {
   const [searchedDirection, setSearchedDirection] = useState();
   const [searchedService, setSearchedService] = useState();
   const [showPicker, setShowPicker] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
 
@@ -59,6 +61,13 @@ export default function HomeScreen() {
       return response.data;
     } catch (error) {
       console.error('Error fetching lists:', error);
+    }
+  };
+
+  const loadProfessionals = async () => {
+    const professionals = await fetchProfessionals();
+    if (Array.isArray(professionals)) {
+      setSuggestedProfessionals([{ service_id: 0 }, ...professionals]);
     }
   };
 
@@ -86,14 +95,16 @@ export default function HomeScreen() {
 
 
   useEffect(() => {
-    const loadProfessionals = async () => {
-      const professionals = await fetchProfessionals();
-      if (Array.isArray(professionals)) {
-        setSuggestedProfessionals([{ service_id: 0 }, ...professionals]);
-      }
-    };
     loadProfessionals();
   }, []);
+
+  useRefreshOnFocus(loadProfessionals);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadProfessionals();
+    setRefreshing(false);
+  };
 
   const removeProfessional = (id) => {
     setSuggestedProfessionals((prevProfessionals) =>
@@ -832,6 +843,8 @@ export default function HomeScreen() {
           renderItem={renderFamily}
           keyExtractor={(family) => family.family}
           showsVerticalScrollIndicator={false}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
           className="py-5"
         />
 

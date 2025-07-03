@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image} from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image, RefreshControl} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -10,6 +10,7 @@ import {Plus} from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import api from '../../utils/api.js';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 
 export default function ListingsProScreen() {
@@ -19,6 +20,7 @@ export default function ListingsProScreen() {
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const [listings, setListings] = useState();
   const [userId, setUserId] = useState();
+  const [refreshing, setRefreshing] = useState(false);
   const currencySymbols = {
     EUR: '€',
     USD: '$',
@@ -39,8 +41,16 @@ export default function ListingsProScreen() {
   };
 
   useEffect(() => {
-    fetchListings();  
+    fetchListings();
   }, []);
+
+  useRefreshOnFocus(fetchListings);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchListings();
+    setRefreshing(false);
+  };
 
   const renderItem = ({ item, index }) => {
 
@@ -170,6 +180,8 @@ export default function ListingsProScreen() {
               data={listings}
               keyExtractor={(item, index) => index.toString()}
               renderItem={renderItem}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
               contentContainerStyle={{
                 justifyContent: 'space-between',
                 paddingBottom:200,

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as Localization from 'expo-localization';
-import { View, Text, SafeAreaView, Platform, StatusBar, TouchableOpacity, TextInput, ScrollView, Alert, Image } from 'react-native';
+import { View, Text, SafeAreaView, Platform, StatusBar, TouchableOpacity, TextInput, ScrollView, Alert, Image, RefreshControl } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
@@ -19,6 +19,7 @@ import { getDataLocally } from '../../utils/asyncStorage';
 import { setDoc, doc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import api from '../../utils/api.js';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 export default function BookingDetailsScreen() {
   const { colorScheme } = useColorScheme();
@@ -45,6 +46,7 @@ export default function BookingDetailsScreen() {
   const sheet = useRef();
   const [sheetHeight, setSheetHeight] = useState(450);
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchBooking();
@@ -101,6 +103,14 @@ export default function BookingDetailsScreen() {
       console.error('Error fetching booking:', error);
     }
   };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchBooking();
+    setRefreshing(false);
+  };
+
+  useRefreshOnFocus(fetchBooking);
 
   const onDayPress = (day) => {
     setSelectedDate({
@@ -669,7 +679,7 @@ export default function BookingDetailsScreen() {
       )}
       </View>
 
-      <ScrollView className='flex-1 px-6 mt-4'>
+      <ScrollView className='flex-1 px-6 mt-4' refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
         <View className='mb-4'>
           <TouchableOpacity

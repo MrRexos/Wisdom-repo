@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert, StyleSheet } from 'react-native';
+import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert, StyleSheet, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -7,6 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronRightIcon, ChevronLeftIcon } from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
 import api from '../../utils/api.js';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import {EllipsisHorizontalIcon} from 'react-native-heroicons/outline';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import BookMarksFillIcon from 'react-native-bootstrap-icons/icons/bookmarks-fill';
@@ -27,6 +28,7 @@ export default function ListScreen() {
   const [sheetHeight, setSheetHeight] = useState(350);
   const [optionsText, setOptionsText] = useState('');
   const [showDone, setShowDone] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const currencySymbols = {
     EUR: '€',
     USD: '$',
@@ -46,9 +48,17 @@ export default function ListScreen() {
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchItems();
+    setRefreshing(false);
+  };
+
   useEffect(() => {
-    fetchItems();  
+    fetchItems();
   }, []);
+
+  useRefreshOnFocus(fetchItems);
   
   useEffect(() => {
     if (!items.empty) {
@@ -370,6 +380,8 @@ export default function ListScreen() {
           data={items}
           keyExtractor={(item) => item.item_id.toString()}
           renderItem={renderItem}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
           contentContainerStyle={{
             justifyContent: 'space-between',
           }}
