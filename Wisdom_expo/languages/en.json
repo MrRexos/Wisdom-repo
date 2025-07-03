@@ -306,6 +306,12 @@
     "skip": "Skip",
     "rate_service": "Rate the service",
     "write_comment": "Write a comment...",
-    "submit_review": "Submit review"
+    "submit_review": "Submit review",
+    "image": "Image",
+    "images": "Images",
+    "file": "File",
+    "choose_image": "Choose image",
+    "choose_file": "Choose file",
+    "you": "You"
   }
 }

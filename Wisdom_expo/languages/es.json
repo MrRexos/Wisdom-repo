@@ -306,6 +306,12 @@
     "skip": "Saltar",
     "rate_service": "Valora el servicio",
     "write_comment": "Escribe un comentario...",
-    "submit_review": "Enviar reseña"
+    "submit_review": "Enviar reseña",
+    "image": "Imagen",
+    "images": "Imágenes",
+    "file": "Archivo",
+    "choose_image": "Elegir imagen",
+    "choose_file": "Elegir archivo",
+    "you": "Tú"
   }
 }

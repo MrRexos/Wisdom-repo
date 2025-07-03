@@ -230,7 +230,7 @@ export default function ConversationScreen() {
           {
             participants,
             name,
-            lastMessage: attachment.type.startsWith('image') ? 'Image' : 'File',
+          lastMessage: attachment.type.startsWith('image') ? t('image') : t('file'),
             updatedAt: serverTimestamp(),
             lastMessageSenderId: userId,
             readBy: arrayUnion(userId),   // arrayUnion en vez de arrayRemove
@@ -368,10 +368,10 @@ export default function ConversationScreen() {
           {item.replyTo && (
             <View className="border-l-2 border-[#3695FF] pl-2 mb-1">
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]">
-                {item.replyTo.senderId === userId ? 'You' : otherUserInfo?.first_name}
+                {item.replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? 'Image' : 'File'}
+                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? t('image') : t('file')}
               </Text>
             </View>
           )}
@@ -427,10 +427,10 @@ export default function ConversationScreen() {
           {item.replyTo && (
             <View className="border-l-2 border-[#3695FF] pl-2 mb-1">
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]">
-                {item.replyTo.senderId === userId ? 'You' : otherUserInfo?.first_name}
+                {item.replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? 'Image' : 'File'}
+                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? t('image') : t('file')}
               </Text>
             </View>
           )}
@@ -493,10 +493,10 @@ export default function ConversationScreen() {
           {item.replyTo && (
             <View className="border-l-2 border-[#3695FF] py-1 pl-2 pr-2 rounded-lg mb-2 bg-[#f2f2f2]/80 dark:bg-[#272626]/20">
               <Text className="font-inter-semibold text-xs text-[#515150] dark:text-[#d4d4d3]">
-                {item.replyTo.senderId === userId ? 'You' : otherUserInfo?.first_name}
+                {item.replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? 'Image' : 'File'}
+                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? t('image') : t('file')}
               </Text>
             </View>
           )}
@@ -611,10 +611,10 @@ export default function ConversationScreen() {
           <View className="flex-row items-center px-4 py-2 bg-[#e0e0e0] dark:bg-[#3d3d3d] rounded-t-xl ">
             <View className="flex-1 border-l-[3px] border-[#3695FF] pl-2">
               <Text className="font-inter-semibold text-xs text-[#515150] dark:text-[#d4d4d3]">
-                {replyTo.senderId === userId ? 'You' : otherUserInfo?.first_name}
+                {replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {replyTo.type === 'text' ? replyTo.text : replyTo.type === 'image' ? 'Image' : 'File'}
+                {replyTo.type === 'text' ? replyTo.text : replyTo.type === 'image' ? t('image') : t('file')}
               </Text>
             </View>
             <TouchableOpacity onPress={() => setReplyTo(null)} className="p-1 ml-2">
@@ -719,11 +719,11 @@ export default function ConversationScreen() {
         <View className="py-4 px-7 space-y-4">
           <TouchableOpacity onPress={handleImagePick} className="py-2 flex-row justify-start items-center ">
             <ImageIcon height={24} width={24} color={iconColor} strokeWidth={2} />
-            <Text className=" ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">Choose image</Text>
+            <Text className=" ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_image')}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleFilePick} className="py-1 flex-row justify-start items-center">
             <Folder height={24} width={24} color={iconColor} strokeWidth={2} />
-            <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">Choose file</Text>
+            <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_file')}</Text>
           </TouchableOpacity>
         </View>
       </RBSheet>
