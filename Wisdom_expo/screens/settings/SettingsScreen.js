@@ -8,6 +8,7 @@ import '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
+import eventEmitter from '../../utils/eventEmitter';
 
 
 import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram, Link } from "react-native-feather";
@@ -93,6 +94,7 @@ export default function SettingsScreen() {
   const logOut = async () => {
     let emptyUser = { token: false}
     await storeDataLocally('user', JSON.stringify(emptyUser));
+    eventEmitter.emit('profileUpdated');
     navigation.navigate('GetStarted');
   };
 

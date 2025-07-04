@@ -12,6 +12,7 @@ import api from '../../utils/api.js';
 import { CheckCircleIcon, XCircleIcon } from 'react-native-heroicons/solid';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import * as ImagePicker from 'expo-image-picker';
+import eventEmitter from '../../utils/eventEmitter';
 
 
 
@@ -37,8 +38,10 @@ export default function EditProfileScreen() {
     const [keyboardOpen, setKeyboardOpen] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    const [editingLocal, setEditingLocal] = useState(false);
 
     const getUserData = async () => {
+        if (editingLocal) return;
         const userData = await getDataLocally('user');
         const user = JSON.parse(userData);
         setUser(user);
@@ -153,6 +156,11 @@ export default function EditProfileScreen() {
 
                 // Almacenar los datos localmente
                 await storeDataLocally('user', JSON.stringify(user));
+                
+                setEditingLocal(false);
+
+                // Notificar que el perfil fue actualizado
+                eventEmitter.emit('profileUpdated');
 
                 // Navegar hacia atrás
                 navigation.goBack();
@@ -164,8 +172,8 @@ export default function EditProfileScreen() {
         }
     };
 
-
     const handleImagePicker = async () => {
+        
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
         if (status !== 'granted') {
@@ -181,6 +189,8 @@ export default function EditProfileScreen() {
             return;
         }
 
+        setEditingLocal(true);
+
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: 'Images',
             allowsEditing: true,
@@ -191,6 +201,8 @@ export default function EditProfileScreen() {
         if (!result.canceled) {
             setImage(result.assets[0].uri); // Guarda la imagen seleccionada en el estado          
             setImageFull(result.assets[0]);
+        } else {
+            setEditingLocal(false);
         }
     };
 
