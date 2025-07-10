@@ -96,17 +96,17 @@ export default function ChangePasswordScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[95] w-full z-10 justify-end">
+      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[95px] w-full z-10 justify-end">
         <View className="flex-row justify-between items-center pb-4 px-2">
-          <View className="flex-[1] ">
+          <View className="flex-[1px] ">
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <ChevronLeftIcon size={24} strokeWidth={1.7} color={iconColor} />
             </TouchableOpacity>
           </View>
-          <View className="flex-[2] justify-center items-center  ">
+          <View className="flex-[2px] justify-center items-center  ">
             <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('change_password')}</Text>
           </View>
-          <View className="flex-[1] justify-center items-end ">
+          <View className="flex-[1px] justify-center items-end ">
           <TouchableOpacity
             disabled={!formValid}
             onPress={handleChangePassword}
@@ -124,9 +124,9 @@ export default function ChangePasswordScreen() {
         </View>
       </View>
       <KeyboardAwareScrollView style={{ flex: 1, width: '100%' }} enableOnAndroid={true} scrollEnabled={keyboardOpen}>
-        <View className="px-5 pt-[75] w-full">
+        <View className="px-5 pt-[75px] w-full">
           <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">{t('current_password')}</Text>
-          <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#706F6E]/20">
+          <View className="mt-3 px-5 h-[55px] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#706F6E]/20">
             <TextInput
               placeholder={t('current_password')}
               secureTextEntry={isSecureCurrent}
@@ -135,7 +135,7 @@ export default function ChangePasswordScreen() {
               onChangeText={(text) => { setCurrentPassword(text); setShowError(false); }}
               value={currentPassword}
               keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-              className="text-[15px] h-[55] flex-1 text-[#444343] dark:text-[#f2f2f2]"
+              className="text-[15px] h-[55px] flex-1 text-[#444343] dark:text-[#f2f2f2]"
             />
             <TouchableOpacity onPress={() => setIsSecureCurrent(!isSecureCurrent)}>
               {isSecureCurrent ? (
@@ -146,7 +146,7 @@ export default function ChangePasswordScreen() {
             </TouchableOpacity>
           </View>
           <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">{t('new_password')}</Text>
-          <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+          <View className="mt-3 px-5 h-[55px] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
             <TextInput
               placeholder={t('new_password')}
               secureTextEntry={isSecurePassword}
@@ -156,7 +156,7 @@ export default function ChangePasswordScreen() {
               onEndEditing={validatePasswords}
               value={newPassword}
               keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-              className="text-[15px] h-[55] flex-1 text-[#444343] dark:text-[#f2f2f2]"
+              className="text-[15px] h-[55px] flex-1 text-[#444343] dark:text-[#f2f2f2]"
             />
             <TouchableOpacity onPress={() => setIsSecurePassword(!isSecurePassword)}>
               {isSecurePassword ? (
@@ -167,7 +167,7 @@ export default function ChangePasswordScreen() {
             </TouchableOpacity>
           </View>
           <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">{t('confirm_new_password')}</Text>
-          <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+          <View className="mt-3 px-5 h-[55px] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
             <TextInput
               placeholder={t('type_it_again')}
               secureTextEntry={isSecureConfirm}
@@ -177,7 +177,7 @@ export default function ChangePasswordScreen() {
               onEndEditing={validatePasswords}
               value={confirmPassword}
               keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-              className="h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"
+              className="h-[55px] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"
             />
             <TouchableOpacity onPress={() => setIsSecureConfirm(!isSecureConfirm)}>
               {isSecureConfirm ? (

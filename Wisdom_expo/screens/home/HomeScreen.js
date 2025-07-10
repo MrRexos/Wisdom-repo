@@ -285,7 +285,7 @@ export default function HomeScreen() {
     <TouchableOpacity onPress={() => navigation.navigate('Results', { category: item.id, category_name: item.category })}>
       <ImageBackground
         source={{ uri: item.url }}
-        className="mr-2 w-[270] h-[145] p-4 flex-row justify-between items-end "
+        className="mr-2 w-[270px] h-[145px] p-4 flex-row justify-between items-end "
         imageStyle={{ borderRadius: 12, opacity: colorScheme === 'dark' ? 0.6 : 0.8 }}
       >
         <Text className="ml-2 font-inter-semibold text-[18px] text-[#ffffff] dark:text-[#e0e0e0]" style={{ textShadowColor: 'rgba(0, 0, 0, 0.4)', textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 4, }}>{item.category}</Text>
@@ -303,9 +303,9 @@ export default function HomeScreen() {
 
         <View className="p-3 mr-4 justify-start items-center rounded-2xl bg-[#d4d4d3] dark:bg-[#474646]">
           <View className="w-full justify-start items-end">
-            <View className="h-[19]" />
+            <View className="h-[19px]" />
           </View>
-          <Image source={require('../../assets/defaultProfilePic.jpg')} className="mb-4 w-[90] h-[90] rounded-full bg-slate-500" />
+          <Image source={require('../../assets/defaultProfilePic.jpg')} className="mb-4 w-[90px] h-[90px] rounded-full bg-slate-500" />
           <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('become_a_professional')}</Text>
           <Text className="mb-3 font-inter-medium text-[10px] text-[#706F6E] dark:text-[#b6b5b5]">{t('make_money_serving')}</Text>
           <View className="justify-center items-center">
@@ -319,10 +319,10 @@ export default function HomeScreen() {
 
         <View className="p-3 mr-4 justify-start items-center">
           <TouchableOpacity onPress={() => removeProfessional(item.service_id)} className="w-full justify-start items-end">
-            <XMarkIcon height={19} color={iconColor} strokeWidth="2" />
+            <XMarkIcon height={19} color={iconColor} strokeWidth={2} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.service_id })} className="justify-center items-center">
-            <Image source={{ uri: item.profile_picture }} className="mb-4 w-[90] h-[90] rounded-full bg-slate-500" />
+            <Image source={{ uri: item.profile_picture }} className="mb-4 w-[90px] h-[90px] rounded-full bg-slate-500" />
             <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
             <Text className="mb-3 font-inter-medium text-[10px] text-[#706F6E] dark:text-[#b6b5b5]">{item.first_name} {item.surname}</Text>
           </TouchableOpacity>
@@ -554,7 +554,7 @@ export default function HomeScreen() {
                 }}
                   className="px-5 w-full justify-center items-center rounded-3xl bg-[#fcfcfc] dark:bg-[#323131]">
 
-                  <View className="mt-[70] flex-row justify-between items-center pb-4 ">
+                  <View className="mt-[70px] flex-row justify-between items-center pb-4 ">
                     <View className="flex-1 ">
                       <TouchableOpacity onPress={() => { setSearchOptionsVisible(false); setSearchDateOptionSelected('frequency'); setSearchOption('service') }}>
                         <ChevronLeftIcon size={24} strokeWidth={1.8} color={iconColor} />
@@ -570,8 +570,8 @@ export default function HomeScreen() {
                   {searchOption === 'service' ? (
 
                     <TouchableOpacity onPress={() => { navigation.navigate('SearchService', { blurVisible: true, prevScreen: 'HomeScreen' }); setSearchOptionsVisible(false); }} className="mt-8 mb-7 w-full justify-center items-center ">
-                      <View className="py-[20] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
-                        <Search height={19} color={iconColor} strokeWidth="2" />
+                      <View className="py-[20px] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
+                        <Search height={19} color={iconColor} strokeWidth={2} />
                         <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService ? getValue(searchedService) : t('search_a_service')}</Text>
                       </View>
                     </TouchableOpacity>
@@ -613,8 +613,8 @@ export default function HomeScreen() {
                     <View className="w-full justify-start items-center">
 
                       <TouchableOpacity onPress={() => { setSearchOptionsVisible(false); navigation.navigate('SearchDirection', { blurVisible: true, prevScreen: 'HomeScreen' }) }} className="mt-8 mb-6 w-full justify-center items-center ">
-                        <View className="py-[20] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
-                          <Search height={19} color={iconColor} strokeWidth="2" />
+                        <View className="py-[20px] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
+                          <Search height={19} color={iconColor} strokeWidth={2} />
                           <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedDirection ? searchedDirection.address_1 : t('search_a_location')}</Text>
                         </View>
                       </TouchableOpacity>
@@ -652,7 +652,7 @@ export default function HomeScreen() {
                   shadowRadius: 15,
                   elevation: 5,
                 }}
-                  className="mt-2 px-[20] w-full justify-center items-center rounded-3xl bg-[#fcfcfc] dark:bg-[#323131]">
+                  className="mt-2 px-[20px] w-full justify-center items-center rounded-3xl bg-[#fcfcfc] dark:bg-[#323131]">
 
                   {searchOption === 'date' ? (
 
@@ -789,7 +789,7 @@ export default function HomeScreen() {
                     disabled={!searchedService}
                     onPress={() => { navigation.navigate('Results', { searchedService: searchedService, duration, selectedTime, selectedDay, searchedDirection }) }}
                     style={{ opacity: searchedService ? 1 : 0.3 }}
-                    className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center"
+                    className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
                   >
                     <Text>
                       <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
@@ -813,8 +813,8 @@ export default function HomeScreen() {
       )}
 
       <TouchableOpacity onPress={() => { removeSearchedDirection(); removeSearchedService(); setSearchedDirection(); setSearchedService(); setSearchOptionsVisible(true); toggleTabs(); setDuration(); setSelectedDay(), setSelectedTime() }} className="justify-center items-center pt-8 px-10">
-        <View className="h-[55] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
-          <Search height={19} color={iconColor} strokeWidth="2" />
+        <View className="h-[55px] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+          <Search height={19} color={iconColor} strokeWidth={2} />
           <Text className="ml-2 font-inter-medium text-[14px] text-[#979797]">{t('search_a_service')}</Text>
         </View>
       </TouchableOpacity>

@@ -45,7 +45,7 @@ export default function ConfirmPaymentScreen() {
 
           <CheckCircleIcon height={130} width={130} strokeWidth={1.5} color={iconColor} />
 
-          <View className="mt-10 w-[300] justify-center items-center">
+          <View className="mt-10 w-[300px] justify-center items-center">
             <Text className="font-inter-bold text-center text-[25px] text-[#444343] dark:text-[#f2f2f2]">{t('booking_successfully_completed')}</Text>
           </View>
 

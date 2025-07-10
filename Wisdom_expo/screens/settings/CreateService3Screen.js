@@ -82,23 +82,23 @@ export default function CreateService3Screen() {
         <View className="flex-1 px-6 pt-5 pb-6">
             <TouchableOpacity onPress={() => navigation.pop(3)}>
                 <View className="flex-row justify-start">
-                    <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
+                    <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
                 </View> 
             </TouchableOpacity>
             <View className=" justify-center items-center ">
-              <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('what_family_and_category_does_it_belong_to')}</Text>
+              <Text className="mt-[55px] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('what_family_and_category_does_it_belong_to')}</Text>
             </View>
 
-            <View className="flex-1 px-9 pb-[80] justify-center items-center">
+            <View className="flex-1 px-9 pb-[80px] justify-center items-center">
 
               <TouchableOpacity onPress={() => {setShowFamilyDropdown(!showFamilyDropdown); setShowCategoryDropdown(false);}} className="w-full px-6 py-4 bg-[#fcfcfc] dark:bg-[#323131] rounded-xl flex-row justify-between items-center">
                 <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">
                   {family ? family.service_family : t('choose_family')}
                 </Text>
                 {showFamilyDropdown? (
-                  <ChevronUpIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2" />
+                  <ChevronUpIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth={2} />
                 ): (
-                  <ChevronDownIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2" />
+                  <ChevronDownIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth={2} />
                 )}
               </TouchableOpacity>
 
@@ -112,7 +112,7 @@ export default function CreateService3Screen() {
                 <View className="flex-row w-full justify-end pr-5">
                   <Triangle fill={colorScheme=='dark'? '#323131': '#fcfcfc'} width={30} height={14}/>
                 </View>
-                <View className="w-full h-[190] bg-[#fcfcfc] dark:bg-[#323131] rounded-xl px-2 pt-3">
+                <View className="w-full h-[190px] bg-[#fcfcfc] dark:bg-[#323131] rounded-xl px-2 pt-3">
                 <FlatList
                   data={families}
                   renderItem={renderFamilyItem}
@@ -128,9 +128,9 @@ export default function CreateService3Screen() {
                   {category ? category.service_category_name : t('choose_category')}
                 </Text>
                 {showCategoryDropdown? (
-                  <ChevronUpIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2" />
+                  <ChevronUpIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth={2} />
                 ): (
-                  <ChevronDownIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2" />
+                  <ChevronDownIcon size={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth={2} />
                 )}
               </TouchableOpacity>
 
@@ -144,7 +144,7 @@ export default function CreateService3Screen() {
                 <View className="flex-row w-full justify-end pr-5">
                   <Triangle fill={colorScheme=='dark'? '#323131': '#fcfcfc'} width={30} height={14}/>
                 </View>
-                <View className="w-full h-[190] bg-[#fcfcfc] dark:bg-[#323131] rounded-xl px-2 pt-3">
+                <View className="w-full h-[190px] bg-[#fcfcfc] dark:bg-[#323131] rounded-xl px-2 pt-3">
                 <FlatList
                   data={categories}
                   renderItem={renderCategoryItem}
@@ -163,7 +163,7 @@ export default function CreateService3Screen() {
               disabled={false}
               onPress={() => navigation.goBack()}
               style={{opacity: 1}}
-              className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
+              className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
                   <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
               </TouchableOpacity>
 
@@ -171,7 +171,7 @@ export default function CreateService3Screen() {
               disabled={!family && !category}
               onPress={() => {navigation.navigate('CreateService4', {title, family, category}); console.log(category.service_category_id)}}
               style={{opacity: family && category? 1.0: 0.5}}
-              className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
+              className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                   <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
               </TouchableOpacity>
 

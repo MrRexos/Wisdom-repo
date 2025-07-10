@@ -108,20 +108,20 @@ export default function CreateService6Screen() {
 
             <TouchableOpacity onPress={() => navigation.pop(6)}>
                 <View className="flex-row justify-start">
-                    <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
+                    <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
                 </View> 
             </TouchableOpacity>
 
             <View className=" justify-center items-center ">
-                <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('locate_your_service')}</Text>
+                <Text className="mt-[55px] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('locate_your_service')}</Text>
                 <Text className="mt-5 font-inter-bold text-[14px] text-center text-[#b6b5b5] dark:text-[#706f6e]">{t('exact_location_never_public')}</Text>
             </View>
 
-            <View className="flex-1 pb-[80] justify-start items-center ">
+            <View className="flex-1 pb-[80px] justify-start items-center ">
 
               <TouchableOpacity onPress={() => navigation.navigate('SearchDirectionCreateService', {prevScreen:'CreateService6'})} className="mt-5 px-3 justify-center items-center w-full">
-                <View className="mt-7 h-[50] px-4 w-full flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
-                    <Search height={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth="2"/>
+                <View className="mt-7 h-[50px] px-4 w-full flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                    <Search height={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth={2}/>
                     <Text 
                       className="pl-2 truncate text-[15px] text-[#444343] dark:text-[#f2f2f2]"
                       style={{ flexShrink: 1 }} 
@@ -222,7 +222,7 @@ export default function CreateService6Screen() {
               disabled={false}
               onPress={() => navigation.goBack()}
               style={{opacity: 1}}
-              className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
+              className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
                   <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
               </TouchableOpacity>
 
@@ -230,7 +230,7 @@ export default function CreateService6Screen() {
               disabled={!isUnlocated && !direction}
               onPress={() => navigation.navigate('CreateService7', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate})}
               style={{opacity: isUnlocated || direction? 1.0: 0.5}}
-              className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
+              className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                   <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
               </TouchableOpacity>
 

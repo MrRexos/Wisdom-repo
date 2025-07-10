@@ -165,12 +165,12 @@ export default function CreateService8Screen() {
 
           <TouchableOpacity onPress={() => navigation.pop(8)}>
             <View className="flex-row justify-start">
-              <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
+              <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
             </View>
           </TouchableOpacity>
 
           <View className="justify-center items-center">
-            <Text className="mt-[55] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('upload_some_photos')}</Text>
+            <Text className="mt-[55px] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('upload_some_photos')}</Text>
             <Text className="mt-5 font-inter-bold text-[14px] text-center text-[#b6b5b5] dark:text-[#706f6e]">{t('we_recommend_you_upload_at_least_five_images')}</Text>
           </View>
 
@@ -180,9 +180,9 @@ export default function CreateService8Screen() {
             </TouchableOpacity>
           )}
 
-          {serviceImages.length < 2 ? ( <View className="h-[30]"/>) : null}
+          {serviceImages.length < 2 ? ( <View className="h-[30px]"/>) : null}
 
-          <View className="flex-1 w-full mt-[20] justify-start items-center">
+          <View className="flex-1 w-full mt-[20px] justify-start items-center">
 
             {serviceImages.length < 1 ? (
 
@@ -196,7 +196,7 @@ export default function CreateService8Screen() {
               <View className="justify-center items-center">
 
                 <TouchableOpacity onPress={handlePickMainImage}>
-                  <Image source={{ uri: serviceImages[0].uri }} className="w-[260] h-[148] rounded-xl border-[3px] border-[#fcfcfc] dark:border-[#202020]" />
+                  <Image source={{ uri: serviceImages[0].uri }} className="w-[260px] h-[148px] rounded-xl border-[3px] border-[#fcfcfc] dark:border-[#202020]" />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.removeButton} onPress={() => handleRemoveImage(0)}>
@@ -230,7 +230,7 @@ export default function CreateService8Screen() {
 
       <View className="flex-row justify-center items-center pt-4 pb-6 px-6">
 
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center">
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center">
           <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
         </TouchableOpacity>
 
@@ -238,7 +238,7 @@ export default function CreateService8Screen() {
           disabled={false}
           onPress={() => navigation.navigate('CreateService9_0', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages})}
           style={{ opacity: 1 }}
-          className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center"
+          className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
         >
           <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
         </TouchableOpacity>

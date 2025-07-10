@@ -169,14 +169,14 @@ export default function SettingsScreen() {
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
       
       <ScrollView
-        className="flex-1 px-6 pt-[55] gap-y-9"
+        className="flex-1 px-6 pt-[55px] space-y-9"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={[colorScheme === 'dark' ? '#f2f2f2' : '#434343']} colors={[colorScheme === 'dark' ? '#f2f2f2' : '#434343']}/>}
       >
         <View className="flex-row justify-between">
           <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
               {t('profile')}
           </Text>
-          <TouchableOpacity className="h-[43] w-[43] rounded-full items-center justify-center bg-[#fcfcfc] dark:bg-[#323131]">
+          <TouchableOpacity className="h-[43px] w-[43px] rounded-full items-center justify-center bg-[#fcfcfc] dark:bg-[#323131]">
             <Share height={22} strokeWidth={1.7} color={iconColor}/>
           </TouchableOpacity>
         </View>
@@ -186,7 +186,7 @@ export default function SettingsScreen() {
             <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}>
               <Image source={image ? {uri: image} : require('../../assets/defaultProfilePic.jpg')} style={{resizeMode: 'cover', width: 75, height: 75 }} className="rounded-full bg-slate-500" />
             </TouchableOpacity>
-            <View className="justify-center px-3 gap-y-1 " >
+            <View className="justify-center px-3 space-y-1 " >
               <TouchableOpacity onPress={() => navigation.navigate('EditProfile')}> 
                 <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{name} {surname}</Text>
               </TouchableOpacity>
@@ -217,7 +217,7 @@ export default function SettingsScreen() {
                 >
                   <View className=" flex-row items-center justify-start ">
                     <Icon  color={iconColor} strokeWidth={1.4} className="mr-4" style={{ transform: [{ scale: 1 }]}} ></Icon>
-                    <View className="py-[10] flex-1 flex-row items-center justify-start pr-[14] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{borderTopWidth: 1}, index===0 && {borderTopWidth: 0 }]}>                   
+                    <View className="py-[10px] flex-1 flex-row items-center justify-start pr-[14px] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{borderTopWidth: 1}, index===0 && {borderTopWidth: 0 }]}>                   
                       <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{label}</Text>
                       <View className="flex-1"/>
                       
@@ -245,10 +245,10 @@ export default function SettingsScreen() {
         <View className="justify-center items-center w-full px-8">
           <TouchableOpacity 
                   onPress={logOut}
-                  className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-full h-[55] rounded-full items-center justify-center" >
+                  className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-full h-[55px] rounded-full items-center justify-center" >
                       <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('log_out')}</Text>
           </TouchableOpacity>
-          <Text className="pt-4 pb-[85] text-[#e0e0e0] dark:text-[#3d3d3d]">{t('version_1_0_3')}</Text>
+          <Text className="pt-4 pb-[85px] text-[#e0e0e0] dark:text-[#3d3d3d]">{t('version_1_0_3')}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

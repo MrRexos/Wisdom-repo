@@ -111,7 +111,7 @@ export default function NewPasswordScreen({ route }) {
         <View className="flex-row justify-between">
           <View className="flex-1">
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6" />
+              <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
           </TouchableOpacity>
           </View>
           <View className="items-center pt-3">
@@ -127,7 +127,7 @@ export default function NewPasswordScreen({ route }) {
           {t('code')}
         </Text>
 
-        <View className="mt-3 px-5 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+        <View className="mt-3 px-5 h-[55px] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
             <TextInput
             placeholder={t('code')}
             autoFocus={true}
@@ -136,14 +136,14 @@ export default function NewPasswordScreen({ route }) {
             onChange={inputCodeChanged}
             value={code}
             keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-            className=" h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
+            className=" h-[55px] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
         </View>
 
         <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">
           {t('new_password')}
         </Text>
         
-        <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+        <View className="mt-3 px-5 h-[55px] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
             <TextInput 
             placeholder={t('new_password')}
             autoFocus={false} 
@@ -154,7 +154,7 @@ export default function NewPasswordScreen({ route }) {
             value={password}
             onSubmitEditing={nextPressed}
             keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-            className=" text-[15px] h-[55] flex-1 text-[#444343] dark:text-[#f2f2f2]"/>
+            className=" text-[15px] h-[55px] flex-1 text-[#444343] dark:text-[#f2f2f2]"/>
                         
             <TouchableOpacity onPress={() => setIsSecurePassword(!isSecurePassword)}>
                 {isSecurePassword ? (
@@ -167,7 +167,7 @@ export default function NewPasswordScreen({ route }) {
         <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">
           {t('confirm_new_password')}
         </Text>
-        <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+        <View className="mt-3 px-5 h-[55px] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
           <TextInput
             placeholder={t('type_it_again')}
             autoFocus={false}
@@ -178,7 +178,7 @@ export default function NewPasswordScreen({ route }) {
             value={confirmPassword}
             onSubmitEditing={nextPressed}
             keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-            className="h-[55] flex-1 text-[15px]  text-[#444343] dark:text-[#f2f2f2]"
+            className="h-[55px] flex-1 text-[15px]  text-[#444343] dark:text-[#f2f2f2]"
           />
           <TouchableOpacity onPress={() => setIsSecureConfirmation(!isSecureConfirmation)}>
             {isSecureConfirmation ? (
@@ -199,7 +199,7 @@ export default function NewPasswordScreen({ route }) {
           disabled={confirmPassword.length < 1 || password.length < 1}
           onPress={nextPressed}
           style={{opacity: confirmPassword.length < 1 || password.length < 1 ? 0.5 : 1.0}}
-          className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center">
+          className="bg-[#323131] dark:bg-[#fcfcfc] w-[320px] h-[55px] rounded-full items-center justify-center">
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('safe_and_login')}</Text>
           </TouchableOpacity>
         </View>

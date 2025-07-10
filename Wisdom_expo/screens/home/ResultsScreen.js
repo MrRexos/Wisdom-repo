@@ -239,7 +239,7 @@ export default function ResultsScreen() {
           {item.tags && (
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="flex-1">
               {item.tags.map((tag, index) => (
-                <View key={index} className="pr-[6]">
+                <View key={index} className="pr-[6px]">
                   <TouchableOpacity className='px-3 py-1 rounded-full bg-[#f2f2f2] dark:bg-[#272626]'>
                     <Text className='font-inter-medium text-[12px] text-[#979797] '>
                       {tag}
@@ -255,7 +255,7 @@ export default function ResultsScreen() {
         <View className="flex-row justify-between items-end mx-5 mt-4 mb-6">
 
             <View className="flex-row justify-start items-center">
-              <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[45] w-[45] bg-[#706B5B] rounded-lg" />
+              <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[45px] w-[45px] bg-[#706B5B] rounded-lg" />
               <View className="ml-3 justify-center items-start">
                 <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{item.first_name} {item.surname}</Text>
                 <Text className="font-inter-semibold text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">Place</Text>
@@ -265,7 +265,7 @@ export default function ResultsScreen() {
             {item.review_count > 0 && (
               <View className="flex-row items-center ">
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.85 }] }} />
-                <Text className="ml-[3]">
+                <Text className="ml-[3px]">
                   <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(item.average_rating).toFixed(1)}</Text>
                   <Text> </Text>
                   <Text className="font-inter-medium text-[11px] text-[#706F6E] dark:text-[#B6B5B5]">({item.review_count === 1 ? `${item.review_count} review` : `${item.review_count} reviews`})</Text>
@@ -279,10 +279,10 @@ export default function ResultsScreen() {
         <View className="px-6 pb-6">
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="flex-1 roundex-lg">
               {item.images.map((image, index) => (
-                <View key={index} className="pr-[6]">
+                <View key={index} className="pr-[6px]">
 
                   <TouchableOpacity className='ml-1'>
-                    <Image source={image.image_url ? { uri: image.image_url } : null} className="h-[65] w-[55] bg-[#706B5B] rounded-lg" />
+                    <Image source={image.image_url ? { uri: image.image_url } : null} className="h-[65px] w-[55px] bg-[#706B5B] rounded-lg" />
                   </TouchableOpacity>
                 </View>
               ))}
@@ -384,7 +384,7 @@ export default function ResultsScreen() {
 
               <View className="w-full px-5">
 
-                <View className="w-full h-[55] px-4  bg-[#f2f2f2] dark:bg-[#272626] rounded-full flex-row justify-start items-center">
+                <View className="w-full h-[55px] px-4  bg-[#f2f2f2] dark:bg-[#272626] rounded-full flex-row justify-start items-center">
          
                 <TextInput
                   placeholder='Name*'
@@ -399,8 +399,8 @@ export default function ResultsScreen() {
 
                 {listName.length>0 ? (
                   <TouchableOpacity onPress={handleClearText}>
-                      <View className='h-[23] w-[23] justify-center items-center rounded-full bg-[#fcfcfc] dark:bg-[#323131]'>
-                          <XMarkIcon height={13} color={iconColor} strokeWidth="2.6"/>
+                      <View className='h-[23px] w-[23px] justify-center items-center rounded-full bg-[#fcfcfc] dark:bg-[#323131]'>
+                          <XMarkIcon height={13} color={iconColor} strokeWidth={2.6}/>
                       </View>
                   </TouchableOpacity>
                 ) : null }
@@ -438,14 +438,14 @@ export default function ResultsScreen() {
                     <TouchableOpacity onPress={() => addItemList(list.id)} className="mb-4 flex-row justify-between items-center w-full">
 
                       <View className="flex-row justify-start items-center">
-                        <Image source={list.services[0]? list.services[0].image_url? { uri: list.services[0].image_url } : null : null} className="h-[50] w-[50] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-lg mr-4"/>
+                        <Image source={list.services[0]? list.services[0].image_url? { uri: list.services[0].image_url } : null : null} className="h-[50px] w-[50px] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-lg mr-4"/>
                         <View className="justify-center items-start">
                           <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{list.title}</Text>
                           <Text className="text-center font-inter-medium text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{list.item_count === 0 ? '0 services' : list.item_count === 1 ? `${list.item_count} service` : `${list.item_count} services`}</Text>
                         </View>
                       </View>
 
-                      <View className="p-[5] rounded-full border-[1.8px] border-[#b6b5b5] dark:border-[#706f6e]">
+                      <View className="p-[5px] rounded-full border-[1.8px] border-[#b6b5b5] dark:border-[#706f6e]">
                         <Plus height={15} width={15} strokeWidth={2.5} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} />
                       </View>
 
@@ -454,7 +454,7 @@ export default function ResultsScreen() {
                 ))}
 
                 <TouchableOpacity onPress={() => {setShowAddList(true), openSheetWithInput(250)}} className="flex-row justify-start items-center w-full ">
-                  <View className="h-[50] w-[50] bg-[#444343] dark:bg-[#f2f2f2] rounded-lg mr-4 justify-center items-center">
+                  <View className="h-[50px] w-[50px] bg-[#444343] dark:bg-[#f2f2f2] rounded-lg mr-4 justify-center items-center">
                     <Plus height={23} width={23} strokeWidth={2.5} color={colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'} />
                   </View>
                   <View className="justify-center items-start">
@@ -480,8 +480,8 @@ export default function ResultsScreen() {
 
         <View className="flex-1">
           <TouchableOpacity onPress={() => navigation.navigate('Results')} className="justify-center items-center">
-            <View className="h-[55] pl-5 pr-1 w-full flex-row justify-between items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
-              <Search height={19} color={iconColor} strokeWidth="2"/>
+            <View className="h-[55px] pl-5 pr-1 w-full flex-row justify-between items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              <Search height={19} color={iconColor} strokeWidth={2}/>
               <View className="justify-center items-center px-2">
                 <Text className="mb-1 font-inter-semibold text-center text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService? getValue(searchedService):categoryName?categoryName:''}</Text>
                 {searchedService && (
@@ -490,7 +490,7 @@ export default function ResultsScreen() {
               </View> 
               {/* DE MOMENTO ESTA BORRADO FILTERS BUTON */}
               <TouchableOpacity className="rounded-full px-3 py-4 bg- [#fcfcfc] dark:bg- [#323131]"> 
-                {/*<Sliders height={17} color={iconColor} strokeWidth="1.8"/>*/}
+                {/*<Sliders height={17} color={iconColor} strokeWidth={1.8}/>*/}
               </TouchableOpacity>
             </View>
           </TouchableOpacity> 
@@ -540,7 +540,7 @@ export default function ResultsScreen() {
                 overflow: 'hidden',
               }}
             >
-              <ScrollView className="max-h-[200] rounded-2xl pb-1">
+              <ScrollView className="max-h-[200px] rounded-2xl pb-1">
                 {orderByOptions.map((option, index) => (
                   <TouchableOpacity
                     key={index}
@@ -569,7 +569,7 @@ export default function ResultsScreen() {
         <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
           Services not found
         </Text>
-        <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-4 w-[250]">
+        <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-4 w-[250px]">
           Try later.
         </Text>
       </View>

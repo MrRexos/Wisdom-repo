@@ -28,7 +28,7 @@ export default function TurnExpertScreen() {
 
         <View className="flex-1 w-full justify-center items-start">
 
-          <View className="pb-[80] w-full justify-center items-center ">
+          <View className="pb-[80px] w-full justify-center items-center ">
             <WisdomLogo width={90} height={90} color={iconColor}/>
             <View className="px-4 py-2 rounded-full bg-[#fcfcfc] dark:bg-[#323131]">
               <Text className="font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">Expert</Text>
@@ -80,7 +80,7 @@ export default function TurnExpertScreen() {
         <View className="mb-3 justify-center items-center">
             <TouchableOpacity 
               onPress={() => navigation.navigate('ExpertPlans')} 
-              className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center" 
+              className="bg-[#323131] dark:bg-[#fcfcfc] w-[320px] h-[55px] rounded-full items-center justify-center" 
               style={{
                 opacity: 1,
                 shadowColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131',

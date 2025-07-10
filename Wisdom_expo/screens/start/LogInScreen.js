@@ -110,7 +110,7 @@ export default function LogInScreen() {
         <View className="flex-row justify-between">
           <View className="flex-1">
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6" />
+              <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
             </TouchableOpacity>
           </View>
           <View className="items-center pt-3">
@@ -126,7 +126,7 @@ export default function LogInScreen() {
           {t('email_or_username')}
         </Text>
         
-        <View className="mt-3 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+        <View [px] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
             <TextInput
             placeholder={t('email_or_username')}
             autoFocus={true} 
@@ -142,7 +142,7 @@ export default function LogInScreen() {
         <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">
           {t('password')}
         </Text>
-        <View className="mt-3 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+        <View [px] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
           <TextInput
             placeholder={t('password')}
             autoFocus={false}
@@ -178,7 +178,7 @@ export default function LogInScreen() {
           disabled={password.length < 1 || userEmail.length < 1}
           onPress={nextPressed}
           style={{opacity: password.length < 1 || userEmail.length < 1 ? 0.5 : 1.0}}
-          className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center">
+          [px] rounded-full items-center justify-center">
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('next')}</Text>
           </TouchableOpacity>
         </View>

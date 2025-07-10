@@ -90,7 +90,7 @@ export default function ListingsProScreen() {
           {item.tags && (
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="flex-1">
               {item.tags.map((tag, index) => (
-                <View key={index} className="pr-[6]">
+                <View key={index} className="pr-[6px]">
                   <TouchableOpacity className='px-3 py-1 rounded-full bg-[#f2f2f2] dark:bg-[#272626]'>
                     <Text className='font-inter-medium text-[12px] text-[#979797] '>
                       {tag}
@@ -106,7 +106,7 @@ export default function ListingsProScreen() {
         <View className="flex-row justify-between items-end mx-5 mt-4 mb-6 ">
 
             <View className="flex-row justify-start items-center">
-              <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[45] w-[45] bg-[#706B5B] rounded-lg" />
+              <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[45px] w-[45px] bg-[#706B5B] rounded-lg" />
               <View className="ml-3 justify-center items-start">
                 <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{item.first_name} {item.surname}</Text>
                 <Text className="font-inter-semibold text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">{t('place')}</Text>
@@ -116,7 +116,7 @@ export default function ListingsProScreen() {
             {item.review_count > 0 && (
               <View className="flex-row items-center ">
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.85 }] }} />
-                <Text className="ml-[3]">
+                <Text className="ml-[3px]">
                   <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(item.average_rating).toFixed(1)}</Text>
                   <Text> </Text>
                   <Text className="font-inter-medium text-[11px] text-[#706F6E] dark:text-[#B6B5B5]">({item.review_count === 1 ? `${item.review_count} review` : `${item.review_count} reviews`})</Text>
@@ -131,10 +131,10 @@ export default function ListingsProScreen() {
           
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="flex-1 roundex-lg">
               {item.images.map((image, index) => (
-                <View key={index} className="pr-[6]">
+                <View key={index} className="pr-[6px]">
 
                   <TouchableOpacity className='ml-1'>
-                    <Image source={image.image_url ? { uri: image.image_url } : null} className="h-[65] w-[55] bg-[#706B5B] rounded-lg" />
+                    <Image source={image.image_url ? { uri: image.image_url } : null} className="h-[65px] w-[55px] bg-[#706B5B] rounded-lg" />
                   </TouchableOpacity>
                 </View>
               ))}
@@ -150,13 +150,13 @@ export default function ListingsProScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
-      <View className="flex-1 justify-start items-center pt-[55]">
+      <View className="flex-1 justify-start items-center pt-[55px]">
         
         <View className="px-6 w-full flex-row justify-between items-center">
           <Text className=" mb-2 font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2]">
               {t('your_listings')}
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('CreateService1')} className="p-[8] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+          <TouchableOpacity onPress={() => navigation.navigate('CreateService1')} className="p-[8px] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
             <Plus height={23} width={23} color={iconColor} strokeWidth={1.7}/>
           </TouchableOpacity>
         </View>
@@ -168,7 +168,7 @@ export default function ListingsProScreen() {
             <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
               {t('listings_not_found')}
             </Text>
-            <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-4 w-[250]">
+            <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-4 w-[250px]">
               {t('publish_service_to_see_them')}
             </Text>
           </View>

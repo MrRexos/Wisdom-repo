@@ -597,7 +597,7 @@ export default function ServiceProfileScreen() {
                   disabled={!(selectedDay && selectedTime && duration) && !timeUndefined}
                   onPress={() => {sheet.current.close(); navigation.navigate('Booking', { serviceData, location, bookingStartDate:selectedDay, bookingStartTime:selectedTime, bookingDuration:duration, bookingDateUndefined:timeUndefined})} }
                   style={{ opacity: !(selectedDay && selectedTime && duration) && !timeUndefined? 0.5 : 1 }}
-                  className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17] rounded-full items-center justify-center"
+                  className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17px] rounded-full items-center justify-center"
                 >
                   <Text className="text-center">
                     <Text className="text-center font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
@@ -608,7 +608,7 @@ export default function ServiceProfileScreen() {
 
               </View>
 
-              <View className="h-[20]"/>
+              <View className="h-[20px]"/>
 
               </ScrollView>
 
@@ -644,7 +644,7 @@ export default function ServiceProfileScreen() {
 
                 <View className="w-full px-5">
 
-                  <View className="w-full h-[55] px-4  bg-[#f2f2f2] dark:bg-[#272626] rounded-full flex-row justify-start items-center">
+                  <View className="w-full h-[55px] px-4  bg-[#f2f2f2] dark:bg-[#272626] rounded-full flex-row justify-start items-center">
           
                   <TextInput
                     placeholder='Name*'
@@ -659,8 +659,8 @@ export default function ServiceProfileScreen() {
 
                   {listName.length>0 ? (
                     <TouchableOpacity onPress={handleClearText}>
-                        <View className='h-[23] w-[23] justify-center items-center rounded-full bg-[#fcfcfc] dark:bg-[#323131]'>
-                            <XMarkIcon height={13} color={iconColor} strokeWidth="2.6"/>
+                        <View className='h-[23px] w-[23px] justify-center items-center rounded-full bg-[#fcfcfc] dark:bg-[#323131]'>
+                            <XMarkIcon height={13} color={iconColor} strokeWidth={2.6}/>
                         </View>
                     </TouchableOpacity>
                   ) : null }
@@ -698,14 +698,14 @@ export default function ServiceProfileScreen() {
                       <TouchableOpacity onPress={() => addItemList(list.id)} className="mb-4 flex-row justify-between items-center w-full">
 
                         <View className="flex-row justify-start items-center">
-                          <Image source={list.services[0]? list.services[0].image_url? { uri: list.services[0].image_url } : null : null} className="h-[50] w-[50] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-lg mr-4"/>
+                          <Image source={list.services[0]? list.services[0].image_url? { uri: list.services[0].image_url } : null : null} className="h-[50px] w-[50px] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-lg mr-4"/>
                           <View className="justify-center items-start">
                             <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{list.title}</Text>
                             <Text className="text-center font-inter-medium text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{list.item_count === 0 ? '0 services' : list.item_count === 1 ? `${list.item_count} service` : `${list.item_count} services`}</Text>
                           </View>
                         </View>
 
-                        <View className="p-[5] rounded-full border-[1.8px] border-[#b6b5b5] dark:border-[#706f6e]">
+                        <View className="p-[5px] rounded-full border-[1.8px] border-[#b6b5b5] dark:border-[#706f6e]">
                           <Plus height={15} width={15} strokeWidth={2.5} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} />
                         </View>
 
@@ -714,7 +714,7 @@ export default function ServiceProfileScreen() {
                   ))}
 
                   <TouchableOpacity onPress={() => {setShowAddList(true), openSheetWithInput(250)}} className="flex-row justify-start items-center w-full ">
-                    <View className="h-[50] w-[50] bg-[#444343] dark:bg-[#f2f2f2] rounded-lg mr-4 justify-center items-center">
+                    <View className="h-[50px] w-[50px] bg-[#444343] dark:bg-[#f2f2f2] rounded-lg mr-4 justify-center items-center">
                       <Plus height={23} width={23} strokeWidth={2.5} color={colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'} />
                     </View>
                     <View className="justify-center items-start">
@@ -741,7 +741,7 @@ export default function ServiceProfileScreen() {
         <View className="flex-row justify-between items-center">
           
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6"/>
+            <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6"/>
           </TouchableOpacity>
           
           <View className="flex-row justify-end items-center">
@@ -766,7 +766,7 @@ export default function ServiceProfileScreen() {
 
         <View className="justify-start items-center mt-10"> 
 
-          <Image source={serviceData.profile_picture ? {uri: serviceData.profile_picture} : require('../../assets/defaultProfilePic.jpg')} className="h-[100] w-[100] bg-[#d4d4d3] dark:bg-[#474646] rounded-full"/>
+          <Image source={serviceData.profile_picture ? {uri: serviceData.profile_picture} : require('../../assets/defaultProfilePic.jpg')} className="h-[100px] w-[100px] bg-[#d4d4d3] dark:bg-[#474646] rounded-full"/>
 
           <Text className="mt-3 font-inter-bold text-center text-[23px] text-[#444343] dark:text-[#f2f2f2]">{serviceData.first_name} {serviceData.surname}</Text>
 
@@ -788,7 +788,7 @@ export default function ServiceProfileScreen() {
             <View className="flex-1 justify-center items-center ">
               <View className="flex-row justify-center items-center">
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 1.3 }] }} />
-                <Text className="ml-[6] font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.average_rating).toFixed(1)}</Text>
+                <Text className="ml-[6px] font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.average_rating).toFixed(1)}</Text>
               </View>
               <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Rating</Text>
             </View>
@@ -839,7 +839,7 @@ export default function ServiceProfileScreen() {
           <View className="mb-5 w-full flex-row justify-between items-center">
             <Text className=" flex-1 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Galery</Text>
             <TouchableOpacity onPress={() => navigation.navigate('DisplayImages', {images:serviceData.images})} >
-              <ChevronRightIcon size={20} color={colorScheme === 'dark' ? '#b6b5b5' : '#706F6E'} strokeWidth="2.1"/>
+              <ChevronRightIcon size={20} color={colorScheme === 'dark' ? '#b6b5b5' : '#706F6E'} strokeWidth={2.1}/>
             </TouchableOpacity>
           </View>
 
@@ -851,7 +851,7 @@ export default function ServiceProfileScreen() {
               key={image.id ? image.id : index}
               onPress={() => navigation.navigate('EnlargedImage', {images:serviceData.images, index:index})}
               >
-                <Image source={{uri: image.image_url}} className="mr-3 h-[110] w-[100] bg-[#d4d4d3] dark:bg-[#474646] rounded-2xl"/>
+                <Image source={{uri: image.image_url}} className="mr-3 h-[110px] w-[100px] bg-[#d4d4d3] dark:bg-[#474646] rounded-2xl"/>
               </TouchableOpacity>
 
             ))}
@@ -973,7 +973,7 @@ export default function ServiceProfileScreen() {
 
               <View key={index} className="flex-row w-full justify-center items-center">
 
-                <View className="w-[30] h-full items-center pr-5">
+                <View className="w-[30px] h-full items-center pr-5">
                   <View className={`flex-1  bg-[#b6b5b5] dark:bg-[#706F6E] ${index>0 && 'w-[2]'}`}/>
                   <View className={`w-4 h-4 rounded-full border-2 border-[#444343] dark:border-[#f2f2f2] ${experience.experience_end_date? null : colorScheme == 'dark' ? 'bg-[#f2f2f2]' : 'bg-[#444343]'}`}>
                   </View>
@@ -986,7 +986,7 @@ export default function ServiceProfileScreen() {
                     <Text className="font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2]">{experience.experience_title}</Text>
                   </View>
 
-                  <View className="mt-3 flex-row justify-between items-center mb-[6]">
+                  <View className="mt-3 flex-row justify-between items-center mb-[6px]">
                     <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{experience.place_name}</Text>
                     <Text>
                       <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(experience.experience_started_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</Text>
@@ -1085,7 +1085,7 @@ export default function ServiceProfileScreen() {
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
-                <View className="w-[170] h-[4] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
+                <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
                   <View style={{ width: `${width5}%` }} className={`h-full bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
                 </View>
               </View>
@@ -1094,7 +1094,7 @@ export default function ServiceProfileScreen() {
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
-                <View className="w-[170] h-[4] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
+                <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
                   <View style={{ width: `${width4}%` }} className={`h-full   bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
                 </View>
               </View>
@@ -1102,20 +1102,20 @@ export default function ServiceProfileScreen() {
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
-                <View className="w-[170] h-[4] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
+                <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
                   <View style={{ width: `${width3}%` }} className={`h-full bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
                 </View>
               </View>
               <View className="mb-[-5] flex-row justify-end items-center">
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
-                <View className="w-[170] h-[4] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
+                <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
                   <View style={{ width: `${width2}%` }} className={`h-full bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
                 </View>
               </View>
               <View className="flex-row justify-end items-center">
                 <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
-                <View className="w-[170] h-[4] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
+                <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
                   <View style={{ width: `${width1}%` }} className={`h-full bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
                 </View>
               </View>
@@ -1136,7 +1136,7 @@ export default function ServiceProfileScreen() {
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}  className="mt-5 w-full">
 
               {filteredReviews.slice(0, 10).map((review, index) => (
-                <TouchableOpacity onPress={() => navigation.navigate('DisplayReviews', {reviews:filteredReviews}) } key={index} className="mr-2 py-5 px-4 w-[300] bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
+                <TouchableOpacity onPress={() => navigation.navigate('DisplayReviews', {reviews:filteredReviews}) } key={index} className="mr-2 py-5 px-4 w-[300px] bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
 
                   <View className="flex-row justify-between items-center">
 
@@ -1169,7 +1169,7 @@ export default function ServiceProfileScreen() {
             <TouchableOpacity
               onPress={() => navigation.navigate('DisplayReviews', {reviews:filteredReviews}) }
               style={{ opacity: 1 }}
-              className="mt-6 bg-[#F2F2F2] dark:bg-[#272626] w-full h-[45] rounded-full items-center justify-center"
+              className="mt-6 bg-[#F2F2F2] dark:bg-[#272626] w-full h-[45px] rounded-full items-center justify-center"
             >
               <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">See all reviews</Text>
             </TouchableOpacity>
@@ -1238,7 +1238,7 @@ export default function ServiceProfileScreen() {
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Wisdom Warranty</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
             </View>
           </TouchableOpacity>
 
@@ -1248,7 +1248,7 @@ export default function ServiceProfileScreen() {
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Cancellation Policy</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
             </View>
           </TouchableOpacity>
 
@@ -1258,7 +1258,7 @@ export default function ServiceProfileScreen() {
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Help</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
             </View>
           </TouchableOpacity>
 
@@ -1268,7 +1268,7 @@ export default function ServiceProfileScreen() {
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Contact Wisdom</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
             </View>
           </TouchableOpacity>
 
@@ -1278,7 +1278,7 @@ export default function ServiceProfileScreen() {
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Reservation policy</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
             </View>
           </TouchableOpacity>
 
@@ -1288,13 +1288,13 @@ export default function ServiceProfileScreen() {
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Report this service</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
             </View>
           </TouchableOpacity>
 
         </View>
 
-        <View className="h-[50]"/>
+        <View className="h-[50px]"/>
       </ScrollView >
 
       {/* Button book */}
@@ -1304,7 +1304,7 @@ export default function ServiceProfileScreen() {
         <TouchableOpacity
           onPress={() => {verifyRegistered(); }  }
           style={{ opacity: 1 }}
-          className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center"
+          className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
         >
           <Text>
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">

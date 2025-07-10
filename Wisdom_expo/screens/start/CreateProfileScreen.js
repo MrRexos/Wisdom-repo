@@ -145,12 +145,12 @@ export default function CreateProfileScreen() {
             <View className="flex-1 w-full justify-between items-center ">
                 <View className="w-full px-5 py-3 ">
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6" />
+                        <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
                     </TouchableOpacity>
                     <View>
                         <View className="items-center pt-6">
                             <TouchableOpacity onPress={handleImagePicker}>
-                                <Image source={image ? { uri: image.uri } : require('../../assets/defaultProfilePic.jpg')} className="w-[120] h-[120] rounded-full bg-slate-500" />
+                                <Image source={image ? { uri: image.uri } : require('../../assets/defaultProfilePic.jpg')} className="w-[120px] h-[120px] rounded-full bg-slate-500" />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -159,7 +159,7 @@ export default function CreateProfileScreen() {
                             {t('add_profile_picture_and_username')}
                         </Text>
                     </View>
-                    <View className="mt-8 mb-1 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+                    <View className="mt-8 mb-1 h-[55px] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
                         <Text className="pl-4 pr-2 text-[15px] text-[#444343] dark:text-[#f2f2f2]">
                             @
                         </Text>
@@ -172,7 +172,7 @@ export default function CreateProfileScreen() {
                             value={username}
                             onSubmitEditing={nextPressed}
                             keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                            className="pr-4 h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]" />
+                            className="pr-4 h-[55px] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]" />
 
                         {isLoading ? (
                             <ActivityIndicator size="15" color={iconColor} height={30} width={30} style={{ marginRight: 25, transform: [{ scale: 1 }] }} />
@@ -194,7 +194,7 @@ export default function CreateProfileScreen() {
                             disabled={username.length < 1}
                             onPress={nextPressed}
                             style={{ opacity: username.length < 1 ? 0.5 : 1.0 }}
-                            className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
+                            className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">{t('create_account')}</Text>
                         </TouchableOpacity>
                     </View>

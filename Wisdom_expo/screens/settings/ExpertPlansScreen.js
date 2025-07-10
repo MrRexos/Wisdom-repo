@@ -61,7 +61,7 @@ export default function ExpertPlansScreen() {
             <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">{t('confirm_your_expert_plan')}</Text>
         </View>
 
-        <View className="flex-1 px-10 pt-[80] justify-start items-start">
+        <View className="flex-1 px-10 pt-[80px] justify-start items-start">
 
 
             {options.map(({label, value, price}, index) => {
@@ -75,14 +75,14 @@ export default function ExpertPlansScreen() {
                         { value === 'yearly' && (
                             <View 
                                 style={{ position: 'absolute', top: -15, left: '46%'}}
-                                className="bg-[#74a450] rounded-full p-[7]"
+                                className="bg-[#74a450] rounded-full p-[7px]"
                             >
                                 <Text className="font-inter-medium text-[11px] text-[#d4d4d3]">Save 25%</Text>
                             </View>
                         )}
                         <View className="flex-row w-full justify-between items-center">
                             <View className="flex-row  items-center">
-                                <View className="mr-5 p-[3] h-5 w-5 rounded-full border-[1px] border-[#b6b5b5] dark:border-[#706f6e]">
+                                <View className="mr-5 p-[3px] h-5 w-5 rounded-full border-[1px] border-[#b6b5b5] dark:border-[#706f6e]">
                                     {isActive && (<View className="flex-1 rounded-full bg-[#515150] dark:bg-[#d4d4d3]"/>)}
                                 </View>
                                 <Text className={isActive? `font-inter-medium text-[14px] text-[#515150] dark:text-[#d4d4d3]`: `font-inter-medium text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>{label}</Text>
@@ -142,7 +142,7 @@ export default function ExpertPlansScreen() {
         </View>
 
         <View className="mb-3 justify-center items-center">
-            <TouchableOpacity onPress={() => navigation.pop(2)} className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center" >
+            <TouchableOpacity onPress={() => navigation.pop(2)} className="bg-[#323131] dark:bg-[#fcfcfc] w-[320px] h-[55px] rounded-full items-center justify-center" >
               <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue_to_payment')}</Text>
             </TouchableOpacity>
             <View >

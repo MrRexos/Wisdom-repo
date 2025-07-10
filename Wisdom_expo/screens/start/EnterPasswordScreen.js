@@ -46,12 +46,12 @@ export default function EnterPasswordScreen() {
         <View className="flex-1 w-full justify-between items-center">
       <View className="px-5 py-3 w-full">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6" />
+          <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
         </TouchableOpacity>
         <Text className="font-inter-bold text-xl pt-11 text-[#444343] dark:text-[#f2f2f2]">
           {t('set_a_password')}
         </Text>
-        <View className="mt-7 px-5 h-[55] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+        <View className="mt-7 px-5 h-[55px] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
           <TextInput
             placeholder={t('eight_characters_or_more')}
             autoFocus={true}
@@ -62,7 +62,7 @@ export default function EnterPasswordScreen() {
             value={password}
             onSubmitEditing={nextPressed}
             keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-            className=" text-[15px] h-[55] flex-1 text-[#444343] dark:text-[#f2f2f2]"
+            className=" text-[15px] h-[55px] flex-1 text-[#444343] dark:text-[#f2f2f2]"
           />
           <TouchableOpacity onPress={() => setIsSecure(!isSecure)}>
             {isSecure ? (
@@ -84,7 +84,7 @@ export default function EnterPasswordScreen() {
           disabled={password.length < 1}
           onPress={nextPressed}
           style={{opacity: password.length < 1 ? 0.5 : 1.0}}
-          className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center">
+          className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center">
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('next')}</Text>
           </TouchableOpacity>
         </View>

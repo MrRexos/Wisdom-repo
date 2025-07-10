@@ -44,7 +44,7 @@ export default function ChatImageViewerScreen() {
             <ChevronLeftIcon size={24} strokeWidth={1.9} color={iconColor} />
           </TouchableOpacity>
 
-          <View className="flex-[2] justify-center items-center  ">
+          <View className="flex-[2px] justify-center items-center  ">
             <Text className='font-inter-bold text-[17px] text-[#444343] dark:text-[#f2f2f2]'>
                 {t('images')}
             </Text>

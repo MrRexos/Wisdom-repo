@@ -58,12 +58,12 @@ export default function EnterNameScreen() {
         <View className="flex-1 w-full justify-between items-center">
         <View className="px-5 py-3 w-full">
             <TouchableOpacity onPress={() => navigation.goBack()}>
-                <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6"/>
+                <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6"/>
             </TouchableOpacity>
             <Text className="font-inter-bold text-xl pt-11 text-[#444343] dark:text-[#f2f2f2]">
                 {t('enter_complete_name')}
             </Text>
-            <View className="mt-7 h-[55] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+            <View className="mt-7 h-[55px] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
                 <TextInput
                 placeholder={t('name_and_surname')}
                 autoFocus={true} 
@@ -73,7 +73,7 @@ export default function EnterNameScreen() {
                 value={name}
                 onSubmitEditing={nextPressed}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                className="px-4 h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
+                className="px-4 h-[55px] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
             </View>
             {
             showError? (
@@ -88,7 +88,7 @@ export default function EnterNameScreen() {
                 disabled={name.length < 1}
                 onPress={nextPressed}
                 style={{opacity: name.length < 1 ? 0.5 : 1.0}}
-                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
+                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">{t('next')} </Text>
                 </TouchableOpacity>
             </View>

@@ -144,12 +144,12 @@ export default function CreateService7Screen() {
           <View className="flex-1 px-6 pt-5 pb-6">
             <TouchableOpacity onPress={() => navigation.pop(7)}>
               <View className="flex-row justify-start">
-                <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
+                <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
               </View>
             </TouchableOpacity>
 
             <View className="justify-center items-center">
-                <Text className="mt-[55] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('your_experience')}</Text>
+                <Text className="mt-[55px] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('your_experience')}</Text>
                 <Text className="mt-5 font-inter-bold text-[15px] text-center text-[#b6b5b5] dark:text-[#706f6e]">{t('show_your_entire_career_with_this_service')}</Text>
             </View>
 
@@ -159,7 +159,7 @@ export default function CreateService7Screen() {
                 {experiences.map((exp, index) => (
                   <View key={index} className="flex-row w-full justify-center items-center">
 
-                    <View className="w-[30] h-full items-center pr-5">
+                    <View className="w-[30px] h-full items-center pr-5">
                       <View className={`flex-1  bg-[#b6b5b5] dark:bg-[#706F6E] ${index>0 && 'w-[2]'}`}/>
                       <View className={`w-4 h-4 rounded-full border-2 border-[#444343] dark:border-[#f2f2f2] ${exp.endDate? null : colorScheme == 'dark' ? 'bg-[#f2f2f2]' : 'bg-[#444343]'}`}>
                       </View>
@@ -171,11 +171,11 @@ export default function CreateService7Screen() {
                       <View className="mt-1 flex-row justify-between">
                         <Text className="font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2]">{exp.position}</Text>
                         <TouchableOpacity onPress={() => deleteExperience(exp.id)} className="justify-center items-end">
-                          <XMarkIcon size={21} color={iconColor} strokeWidth="2" />
+                          <XMarkIcon size={21} color={iconColor} strokeWidth={2} />
                         </TouchableOpacity>
                       </View>
 
-                      <View className="mt-3 flex-row justify-between items-center mb-[6]">
+                      <View className="mt-3 flex-row justify-between items-center mb-[6px]">
                         <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{exp.place}</Text>
                         <Text>
                           <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(exp.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</Text>
@@ -204,7 +204,7 @@ export default function CreateService7Screen() {
                 <View className="w-full mt-7 mb-7 py-4 px-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
 
                   <TouchableOpacity onPress={() => handleCloseAddExperience()} className="justify-center items-end">
-                    <XMarkIcon size={23} color={iconColor} strokeWidth="2" />
+                    <XMarkIcon size={23} color={iconColor} strokeWidth={2} />
                   </TouchableOpacity>
 
                   <View className="mb-5 w-full justify-center items-start">
@@ -327,7 +327,7 @@ export default function CreateService7Screen() {
 
         {/* Botones fijos abajo */}
         <View className="flex-row justify-center items-center pt-4 pb-6 px-6">
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center">
+          <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center">
             <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
           </TouchableOpacity>
 
@@ -335,7 +335,7 @@ export default function CreateService7Screen() {
             disabled={false}
             onPress={() => navigation.navigate('CreateService8', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences})}
             style={{ opacity: 1 }}
-            className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center"
+            className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
           >
               <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
           </TouchableOpacity>

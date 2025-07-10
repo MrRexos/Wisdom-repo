@@ -23,7 +23,7 @@ export default function GetStartedScreen() {
           <View>
               <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
                   <View className="flex-row justify-end pt-5 pr-6 opacity-50">
-                      <XMarkIcon size={30} color="#f2f2f2" strokeWidth="1.7" />
+                      <XMarkIcon size={30} color="#f2f2f2" strokeWidth={1.7} />
                   </View> 
               </TouchableOpacity>
               <View className="items-center pt-3 ">
@@ -31,10 +31,10 @@ export default function GetStartedScreen() {
               </View> 
           </View>
           <View className="justify-center items-center">
-              <TouchableOpacity className="bg-[#f2f2f2] w-[320] h-[55] rounded-full items-center justify-center" onPress={() => navigation.navigate('LogOption')}>
+              <TouchableOpacity className="bg-[#f2f2f2] w-[320px] h-[55px] rounded-full items-center justify-center" onPress={() => navigation.navigate('LogOption')}>
                   <Text className="font-inter-semibold text-[15px] text-[#444343] ">{t('get_started')}</Text>
               </TouchableOpacity>
-              <View className="w-[250]">
+              <View className="w-[250px]">
 
                       <Text className="pt-3 text-[11px] font-inter-medium text-[#f2f2f2] opacity-60 text-center">{t('by_tapping_get_started')} </Text>
                       <View className="pb-5 flex-row justify-center items-center">

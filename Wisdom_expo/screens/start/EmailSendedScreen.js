@@ -38,7 +38,7 @@ export default function EmailSendedScreen({ route }) {
             <View className="flex-row justify-between">
               <View className="flex-1">
                 <TouchableOpacity onPress={() => navigation.goBack()}>
-                  <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6" />
+                  <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
                 </TouchableOpacity>
               </View>
               <View className="items-center pt-3">
@@ -67,7 +67,7 @@ export default function EmailSendedScreen({ route }) {
             <View className="justify-center items-center ">
                 <TouchableOpacity
                 onPress={() => { launchMailApp(); navigation.navigate('NewPassword', { emailOrUsername }); }}
-                className="bg-[#323131] dark:bg-[#fcfcfc] w-[320] h-[55] rounded-full items-center justify-center" >
+                className="bg-[#323131] dark:bg-[#fcfcfc] w-[320px] h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">{t('open_mail')}</Text>
                 </TouchableOpacity>
             </View>
