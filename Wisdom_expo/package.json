@@ -49,12 +49,12 @@
     "i18next": "^23.12.3",
     "lodash": "^4.17.21",
     "nativewind": "^4.1.23",
-    "postcss": "^8.5.6",
     "react": "19.0.0",
     "react-i18next": "^15.0.1",
     "react-native": "0.79.2",
     "react-native-bootstrap-icons": "^1.5.0",
     "react-native-calendars": "^1.1286.0",
+    "react-native-css-interop": "^0.1.22",
     "react-native-date-picker": "^5.0.7",
     "react-native-feather": "^1.1.2",
     "react-native-gesture-handler": "~2.24.0",
@@ -76,8 +76,10 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@react-native/typescript-config": "^0.75.2",
-    "expo": "^53.0.9",
-    "tailwindcss": "^4.1.11"
+    "@types/react-native": "^0.73.0",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17"
   },
   "private": true
 }
