@@ -35,12 +35,12 @@ export default function CreateService9Screen() {
         <View className="flex-1 px-6 pt-5 pb-6">
           <TouchableOpacity onPress={() => navigation.pop(10)}>
             <View className="flex-row justify-start">
-              <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
+              <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
             </View>
           </TouchableOpacity>
 
           <View className=" justify-center items-center ">
-              <Text className="mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('price')}</Text>
+              <Text className="mt-[55px] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('price')}</Text>
           </View>
 
           <View className="flex-1 px-9 justify-center items-center">
@@ -58,7 +58,7 @@ export default function CreateService9Screen() {
               />
               <Text className={`font-inter-bold text-right text-[50px] ${priceValue ? 'text-[#323131] dark:text-[#fcfcfc]' : 'text-[#979797]'}`}> €</Text>
               <TouchableOpacity onPress={() => inputRef.current?.focus()} className="ml-5">
-                <Edit3 size={30} color={'#706F6E'} strokeWidth="2" />
+                <Edit3 size={30} color={'#706F6E'} strokeWidth={2} />
               </TouchableOpacity>
             </View>
           </View>
@@ -68,9 +68,9 @@ export default function CreateService9Screen() {
               <TouchableOpacity onPress={() => setShowDetails(!showDetails)} className="flex-row justify-center items-center">
                   <Text className="mr-3 font-inter-semibold text-center text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{t('the_client_pays')} {finalPrice} €</Text>
                 {showDetails? (
-                  <ChevronUpIcon size={15} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} strokeWidth="2.5" />
+                  <ChevronUpIcon size={15} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} strokeWidth={2.5} />
                 ) : (
-                  <ChevronDownIcon size={15} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} strokeWidth="2.5" />
+                  <ChevronDownIcon size={15} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} strokeWidth={2.5} />
                 )}
               </TouchableOpacity>
               {showDetails && (
@@ -83,7 +83,7 @@ export default function CreateService9Screen() {
                   </View>
 
                   <View className="mt-6 flex-row">
-                      <Text className="font-inter-medium  text-[14px]text-[#b6b5b5] dark:text-[#706f6e]">{t('quality_commission')}</Text>
+                      <Text className="font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{t('quality_commission')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
                     <Text className="text-[14px] font-inter-semibold text-[#74a450]">+{finalPrice-priceValue} €</Text>
                   </View>
@@ -105,7 +105,7 @@ export default function CreateService9Screen() {
               disabled={false}
               onPress={() => navigation.goBack()}
               style={{ opacity: 1 }}
-              className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center"
+              className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center"
             >
                 <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
             </TouchableOpacity>
@@ -114,7 +114,7 @@ export default function CreateService9Screen() {
               disabled={!priceValue}
               onPress={() => navigation.navigate('CreateService10', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice})}
               style={{ opacity: priceValue ? 1.0 : 0.5 }}
-              className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center"
+              className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
             >
                 <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
             </TouchableOpacity>

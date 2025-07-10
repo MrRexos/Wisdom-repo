@@ -103,9 +103,9 @@ import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
           className="mb-7"
           onPress={() => navigation.navigate('List', {listId: item.id, listTitle: item.title, itemCount: item.item_count})}
         >
-          <View className="flex-row h-[105] w-[150]">
-            <Image source={item.services[0]? item.services[0].image_url? { uri: item.services[0].image_url } : null : null} className="flex-[2] bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-l-2xl"/>      
-            <View className="flex-[1] justify-between">
+          <View className="flex-row h-[105px] w-[150px]">
+            <Image source={item.services[0]? item.services[0].image_url? { uri: item.services[0].image_url } : null : null} className="flex-[2px] bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-l-2xl"/>      
+            <View className="flex-[1px] justify-between">
               <Image source={item.services[1]? item.services[1].image_url? { uri: item.services[1].image_url } : null : null} className="flex-1 bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-tr-2xl" />
               <Image source={item.services[2]? item.services[2].image_url? { uri: item.services[2].image_url } : null : null} className="flex-1 bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-br-2xl" />
             </View>
@@ -118,7 +118,7 @@ import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
         </TouchableOpacity>
         {editing && (
           <TouchableOpacity onPress={() => deleteList(item.id)} className="absolute top-2 left-2">
-            <View className="rounded-full bg-[#E0E0E0] dark:bg-[#3d3d3d] p-[2]">
+            <View className="rounded-full bg-[#E0E0E0] dark:bg-[#3d3d3d] p-[2px]">
               <X height={20} width={20} strokeWidth={1.7} color={iconColor}/>  
             </View>              
           </TouchableOpacity>
@@ -129,13 +129,13 @@ import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
     return (
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] '>
         <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'}/>
-        <View className="px-6 pt-[55] pb-3">
+        <View className="px-6 pt-[55px] pb-3">
           <View className="flex-row justify-between mb-12">
             <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
               {t('favorites')}
             </Text>
             <TouchableOpacity
-              className="h-[43] w-[43] items-center justify-center"
+              className="h-[43px] w-[43px] items-center justify-center"
               onPress={() => setEditing(!editing)}  // Cambia entre modo de edición y no edición
             >
               {editing ? (

@@ -67,7 +67,7 @@ export default function PreferencesScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
-      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[90] w-full z-10 justify-end">
+      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[90px] w-full z-10 justify-end">
         <View className="flex-row justify-between items-center pb-4 px-2">
             <View className="flex-1 ">
                 <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -82,7 +82,7 @@ export default function PreferencesScreen() {
         </View>
       </View>
       
-      <ScrollView className="flex-1 px-6 pt-[75] gap-y-9" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      <ScrollView className="flex-1 px-6 pt-[75px] space-y-9" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
         
         {Sections.map(({items}, sectionIndex) => (
@@ -91,7 +91,7 @@ export default function PreferencesScreen() {
               <View key={id} className="pl-5  bg-[#fcfcfc]  dark:bg-[#323131]" >
                 <TouchableOpacity onPress={() => {['select', 'link'].includes(type) && navigation.navigate(link)}} >
                   <View className=" flex-row items-center justify-start ">
-                    <View className="h-[45] flex-1 flex-row items-center justify-start pr-[14] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{borderTopWidth: 1}, index===0 && {borderTopWidth: 0 }]}>                   
+                    <View className="h-[45px] flex-1 flex-row items-center justify-start pr-[14px] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{borderTopWidth: 1}, index===0 && {borderTopWidth: 0 }]}>                   
                       <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{label}</Text>
                       <View className="flex-1"/>
                       

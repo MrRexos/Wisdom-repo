@@ -23,7 +23,7 @@ export default function PrivacyPolicy() {
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
       <View className="pl-5 py-3 ">
         <TouchableOpacity onPress={() => navigation.goBack()}>
-            <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6"/>
+            <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6"/>
         </TouchableOpacity>
       </View>
       

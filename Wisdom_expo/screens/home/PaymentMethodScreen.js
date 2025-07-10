@@ -86,7 +86,7 @@ export default function PaymentMethodScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
 
-      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[100] w-full z-10 justify-end">
+      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[100px] w-full z-10 justify-end">
         <View className="flex-row justify-between items-center mt-8 pb-4 px-2 ">
 
             <View className="flex-1 ">
@@ -104,7 +104,7 @@ export default function PaymentMethodScreen() {
         </View>
       </View>
 
-      <View className="h-[70] w-full justify-end"/>
+      <View className="h-[70px] w-full justify-end"/>
 
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View className="mt-8 flex-1 justify-between items-center">
@@ -112,7 +112,7 @@ export default function PaymentMethodScreen() {
           <View className="flex-1 w-full px-4 justify-start items-start ">
 
             <Text className="pb-2 font-inter-semibold text-[15px] text-[#515150] dark:text-[#d4d4d3]">{t('card_number')}</Text>
-            <View className="mb-7 py-2 px-6 w-full h-[55]  justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">      
+            <View className="mb-7 py-2 px-6 w-full h-[55px]  justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">      
               <TextInput
                 placeholder='0000 0000 0000 0000'
                 selectionColor={cursorColorChange}
@@ -130,7 +130,7 @@ export default function PaymentMethodScreen() {
 
               <View className="flex-1">
                 <Text className="pb-2 font-inter-semibold text-[15px] text-[#515150] dark:text-[#d4d4d3]">{t('expiration_date')}</Text>
-                <View className="w-full h-[55]  mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">      
+                <View className="w-full h-[55px]  mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">      
                   <TextInput
                     placeholder='MM/YY'
                     selectionColor={cursorColorChange}
@@ -147,7 +147,7 @@ export default function PaymentMethodScreen() {
 
               <View className="flex-1">
                 <Text className="pb-2 font-inter-semibold text-[15px] text-[#515150] dark:text-[#d4d4d3]">{t('cvv')}</Text>
-                <View className="w-full h-[55] mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">      
+                <View className="w-full h-[55px] mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">      
                   <TextInput
                     placeholder='123'
                     selectionColor={cursorColorChange}
@@ -171,7 +171,7 @@ export default function PaymentMethodScreen() {
             <TouchableOpacity
               onPress={() => handleDone() }
               style={{ opacity: 1 }}
-              className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center"
+              className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
             >
               <Text>
                 <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">

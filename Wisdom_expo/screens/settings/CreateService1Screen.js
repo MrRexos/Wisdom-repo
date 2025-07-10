@@ -42,7 +42,7 @@ export default function CreateService1Screen() {
         <View className="flex-1 px-6 pt-5 pb-6">
             <TouchableOpacity onPress={() => navigation.pop(1)}>
                 <View className="flex-row justify-start">
-                    <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
+                    <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
                 </View> 
             </TouchableOpacity>
             <View className="flex-1 justify-center items-start  ">
@@ -54,7 +54,7 @@ export default function CreateService1Screen() {
                 disabled={false}
                 onPress={() => navigation.navigate('CreateService2')}
                 style={{opacity: 1}}
-                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
+                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('start')}</Text>
                 </TouchableOpacity>
             </View>

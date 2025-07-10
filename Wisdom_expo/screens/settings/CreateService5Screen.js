@@ -130,22 +130,22 @@ export default function CreateService5Screen() {
 
             <TouchableOpacity onPress={() => navigation.pop(5)}>
                 <View className="flex-row justify-start">
-                    <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
+                    <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
                 </View> 
             </TouchableOpacity>
 
             <View className=" justify-center items-start ">
-              <Text className="pl-2 mt-[55] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('give_some_information')}</Text>
+              <Text className="pl-2 mt-[55px] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('give_some_information')}</Text>
             </View>
 
             {/* Languages */}
 
-            <View className="mt-[60] flex-1 pl-[30] pr-5 justify-start items-start">
+            <View className="mt-[60px] flex-1 pl-[30px] pr-5 justify-start items-start">
               
               <TouchableOpacity onPress={() => handleLanguagesPress()} className="flex-row w-full justify-between items-center">
                 <Text className="font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">{t('languages')}</Text>
                 {showLanguages? (                  
-                  <ChevronUpIcon size={20} color={colorScheme=='dark'? '#b6b5b5': '#706f6e'} strokeWidth="2" />
+                  <ChevronUpIcon size={20} color={colorScheme=='dark'? '#b6b5b5': '#706f6e'} strokeWidth={2} />
                 ): null }
               </TouchableOpacity>
 
@@ -186,7 +186,7 @@ export default function CreateService5Screen() {
                 <TouchableOpacity onPress={() => handleAboutYouPress()} className="flex-row w-full justify-between items-center ">
                   <Text className="font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">About you</Text>                 
                   {showAboutYou? (
-                    <ChevronUpIcon size={20} color={colorScheme=='dark'? '#b6b5b5': '#706f6e'} strokeWidth="2" />
+                    <ChevronUpIcon size={20} color={colorScheme=='dark'? '#b6b5b5': '#706f6e'} strokeWidth={2} />
                   ): null }
                 </TouchableOpacity>
 
@@ -211,7 +211,7 @@ export default function CreateService5Screen() {
                       </View>
                     </TouchableOpacity>                                    
                     <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
-                    <View className="min-h-[100] bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl py-3 px-4 mt-8 w-full" >
+                    <View className="min-h-[100px] bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl py-3 px-4 mt-8 w-full" >
                       
                       {hobbies.length > 0 ? (
                       <View className="flex-row justify-end">
@@ -249,20 +249,20 @@ export default function CreateService5Screen() {
                 <TouchableOpacity onPress={() => handleTagsPress()} className="flex-row w-full justify-between items-center">
                   <Text className="font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">{t('tags')}</Text>
                   {showTags? (
-                    <ChevronUpIcon size={20} color={colorScheme=='dark'? '#b6b5b5': '#706f6e'} strokeWidth="2" />
+                    <ChevronUpIcon size={20} color={colorScheme=='dark'? '#b6b5b5': '#706f6e'} strokeWidth={2} />
                   ): null }
                 </TouchableOpacity> 
 
                 {showTags ? (
                   <View className="w-full justify-center items-center">  
                     <TouchableWithoutFeedback onPress={() => input2Ref.current?.focus()}>                                
-                    <View className="min-h-[150] bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl py-3 px-4 mt-8 w-full" >
+                    <View className="min-h-[150px] bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl py-3 px-4 mt-8 w-full" >
 
                       {/* Display existing tags */}
 
                       <View className="flex-row justify-start items-center flex-wrap"> 
                         {tags.map((tag, index) => (
-                          <View key={index} className="flex-row p-[8] pl-3 bg-[#f2f2f2] dark:bg-[#272626] rounded-full mr-1 mb-1">
+                          <View key={index} className="flex-row p-[8px] pl-3 bg-[#f2f2f2] dark:bg-[#272626] rounded-full mr-1 mb-1">
                             <Text className="font-inter-semibold text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">{tag}</Text>
                             <TouchableOpacity onPress={() => handleDeleteTag(index)} className="ml-1">
                               <XMarkIcon size={15} color={iconColor} strokeWidth={2} />
@@ -295,7 +295,7 @@ export default function CreateService5Screen() {
 
             </View>
             {isKeyboardVisible && (
-              <View className="h-[250]"></View>
+              <View className="h-[250px]"></View>
             )}
             
             
@@ -308,7 +308,7 @@ export default function CreateService5Screen() {
           disabled={false}
           onPress={() => navigation.goBack()}
           style={{opacity: 1}}
-          className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center" >
+          className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
                 <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
           </TouchableOpacity>
 
@@ -316,7 +316,7 @@ export default function CreateService5Screen() {
           disabled={selectedLanguages.length<1 || tags.length<1}
           onPress={() => navigation.navigate('CreateService6', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags})}
           style={{opacity: (selectedLanguages.length>0 && tags.length>0)? 1 : 0.5}}
-          className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center" >
+          className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                 <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
           </TouchableOpacity>
 

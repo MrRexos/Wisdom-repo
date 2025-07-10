@@ -6,11 +6,13 @@ import './languages/i18n';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useColorScheme } from 'nativewind';
 import "./global.css"
 
 
 export default function App() {
   const { t, i18n } = useTranslation();
+  const { colorScheme } = useColorScheme();
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   // Prevenir que la pantalla de splash se oculte automáticamente
@@ -43,7 +45,10 @@ export default function App() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView
+      style={{ flex: 1 }}
+      className={`${colorScheme} color-scheme-${colorScheme}`}
+    >
       <Navigation />
     </GestureHandlerRootView>
   );

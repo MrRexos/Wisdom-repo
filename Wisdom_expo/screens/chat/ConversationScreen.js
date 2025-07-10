@@ -671,7 +671,7 @@ export default function ConversationScreen() {
               <TouchableOpacity
                 onPress={() => setAttachment(null)}
                 hitSlop={8}
-                className="absolute -top-1 -right-1 bg-[#d4d4d3] dark:bg-[#474646] rounded-full p-[1]"
+                className="absolute -top-1 -right-1 bg-[#d4d4d3] dark:bg-[#474646] rounded-full p-[1px]"
               >
                 <XMarkIcon height={14} width={14} color={iconColor} strokeWidth={2} />
               </TouchableOpacity>

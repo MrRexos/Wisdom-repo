@@ -76,7 +76,7 @@ export default function AddReviewScreen() {
 
           <View className="mt-12">
             <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
-              <View className="w-full min-h-[150] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-2xl py-4 px-5">
+              <View className="w-full min-h-[150px] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-2xl py-4 px-5">
                 {comment.length > 0 ? (
                   <View className="flex-row justify-end">
                     <TouchableOpacity onPress={handleClearText}>
@@ -105,7 +105,7 @@ export default function AddReviewScreen() {
           </View>
 
         </View>
-        <TouchableOpacity onPress={sendReview} className='mt-6 bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center'>
+        <TouchableOpacity onPress={sendReview} className='mt-6 bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center'>
           <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>{t('submit_review')}</Text>
         </TouchableOpacity>
       </View>

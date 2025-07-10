@@ -626,7 +626,7 @@ export default function BookingDetailsScreen() {
                 style={{
                   opacity: !(selectedDay && selectedTime && selectedDuration) && !selectedTimeUndefined ? 0.5 : 1,
                 }}
-                className='bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17] rounded-full items-center justify-center'
+                className='bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17px] rounded-full items-center justify-center'
               >
                 <Text className='text-center font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
                   {t('accept')}
@@ -634,7 +634,7 @@ export default function BookingDetailsScreen() {
               </TouchableOpacity>
             </View>
 
-            <View className='h-[20]' />
+            <View className='h-[20px]' />
           </ScrollView>
         </View>
       </RBSheet>
@@ -646,19 +646,19 @@ export default function BookingDetailsScreen() {
 
       <View className='flex-row items-center justify-between'>
 
-        <View className="flex-[1] justify-center ">
+        <View className="flex-[1px] justify-center ">
           <TouchableOpacity onPress={() => navigation.goBack()} className='flex-1 p-2'>
             <XMarkIcon size={24} color={iconColor} strokeWidth={2} />
           </TouchableOpacity>
         </View>
 
-        <View className="flex-[2] justify-center items-center  ">
+        <View className="flex-[2px] justify-center items-center  ">
           <Text className='font-inter-bold text-[17px] text-[#444343] dark:text-[#f2f2f2]'>
             {t('booking_details')}
           </Text>
         </View>
 
-        <View className="flex-[1] justify-center items-end">
+        <View className="flex-[1px] justify-center items-end">
           {booking && booking.booking_status !== 'completed' && (
             <TouchableOpacity onPress={() => setEditMode(!editMode)} className='mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
               <Text className='font-inter-medium text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>
@@ -697,7 +697,7 @@ export default function BookingDetailsScreen() {
               {service && service.tags && (
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} className='flex-1'>
                   {service.tags.map((tag, index) => (
-                    <View key={index} className='pr-[6]'>
+                    <View key={index} className='pr-[6px]'>
                       <View className='px-3 py-1 rounded-full bg-[#f2f2f2] dark:bg-[#272626]'>
                         <Text className='font-inter-medium text-[12px] text-[#979797]'>{tag}</Text>
                       </View>
@@ -711,7 +711,7 @@ export default function BookingDetailsScreen() {
               <View className='flex-row items-center'>
                 <Image
                   source={service && service.profile_picture ? { uri: service.profile_picture } : require('../../assets/defaultProfilePic.jpg')}
-                  className='h-[45] w-[45] rounded-lg bg-[#706B5B]'
+                  className='h-[45px] w-[45px] rounded-lg bg-[#706B5B]'
                 />
                 <View className='ml-3'>
                   <Text className='mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
@@ -726,7 +726,7 @@ export default function BookingDetailsScreen() {
               {service && service.review_count > 0 && (
                 <View className='flex-row items-center'>
                   <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.85 }] }} />
-                  <Text className='ml-[3]'>
+                  <Text className='ml-[3px]'>
                     <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
                       {parseFloat(service.average_rating).toFixed(1)}
                     </Text>
@@ -743,11 +743,11 @@ export default function BookingDetailsScreen() {
           <View className='px-2 pb-2 mt-4'>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} className='flex-1'>
               {service.images.map((image, index) => (
-                <View key={index} className='pr-[6]'>
+                <View key={index} className='pr-[6px]'>
                   <View className='ml-1'>
                     <Image
                       source={image.image_url ? { uri: image.image_url } : null}
-                      className='h-[65] w-[55] rounded-lg bg-[#706B5B]'
+                      className='h-[65px] w-[55px] rounded-lg bg-[#706B5B]'
                     />
                   </View>
                 </View>
@@ -812,7 +812,7 @@ export default function BookingDetailsScreen() {
                 <MapPin height={25} width={25} strokeWidth={1.6} color={iconColor} />
               </View>
               <View className='pl-3 pr-3 flex-1 justify-center items-start'>
-                <Text numberOfLines={1} className='mb-[6] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+                <Text numberOfLines={1} className='mb-[6px] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
                   {[booking.address_1, booking.street_number].filter(Boolean).join(', ')}
                 </Text>
                 <Text numberOfLines={1} className='font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]'>
@@ -979,7 +979,7 @@ export default function BookingDetailsScreen() {
           <View className='mt-4 flex-1'>
             {paymentMethod ? (
               <View className='flex-1 my-3 justify-center items-center '>
-                <View className='px-7 pb-5 pt-[50] bg-[#EEEEEE] dark:bg-[#111111] rounded-xl'>
+                <View className='px-7 pb-5 pt-[50px] bg-[#EEEEEE] dark:bg-[#111111] rounded-xl'>
                   <Text>
                     <Text className='font-inter-medium text-[16px] text-[#444343] dark:text-[#f2f2f2]'>••••   ••••   ••••   </Text>
                     <Text className='font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.cardNumber.slice(-4)}</Text>
@@ -1003,7 +1003,7 @@ export default function BookingDetailsScreen() {
               <View className='mt-1 flex-1 justify-center items-center'>
                 <CreditCard height={55} width={55} strokeWidth={1.3} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
                 <View className='flex-row justify-center items-center px-6'>
-                  <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod') } style={{ opacity: 1 }} className='bg-[#706f6e] my-2 mt-3 dark:bg-[#b6b5b5] w-full py-[14] rounded-full items-center justify-center'>
+                  <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod') } style={{ opacity: 1 }} className='bg-[#706f6e] my-2 mt-3 dark:bg-[#b6b5b5] w-full py-[14px] rounded-full items-center justify-center'>
                     <Text>
                       <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
                         {t('add_credit_card')}
@@ -1028,7 +1028,7 @@ export default function BookingDetailsScreen() {
                 value={edited.description || ''}
                 onChangeText={(text) => setEdited({ ...edited, description: text })}
                 multiline
-                className='w-full min-h-[150] bg-[#f2f2f2] dark:bg-[#272626] rounded-2xl py-4 px-5 text-[15px] text-[#515150] dark:text-[#d4d4d3]'
+                className='w-full min-h-[150px] bg-[#f2f2f2] dark:bg-[#272626] rounded-2xl py-4 px-5 text-[15px] text-[#515150] dark:text-[#d4d4d3]'
                 style={{ textAlignVertical: 'top' }}
               />
             ) : (
@@ -1122,12 +1122,12 @@ export default function BookingDetailsScreen() {
 
               {role === 'pro' && booking.booking_status === 'requested' && (
                 <View className='flex-row justify-between mt-3'>
-                  <TouchableOpacity onPress={() => updateStatus('rejected')} className='flex-[1] mr-1 bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-full items-center py-[18px]'>
+                  <TouchableOpacity onPress={() => updateStatus('rejected')} className='flex-[1px] mr-1 bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-full items-center py-[18px]'>
                     <Text className='font-inter-semibold text-[15px] text-[#fcfcfc]'>
                       {t('reject')}
                     </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => updateStatus('accepted')} className='flex-[2] ml-1 bg-[#74A34F] rounded-full items-center py-[18px]'>
+                  <TouchableOpacity onPress={() => updateStatus('accepted')} className='flex-[2px] ml-1 bg-[#74A34F] rounded-full items-center py-[18px]'>
                     <Text className='font-inter-semibold text-[15px] text-[#fcfcfc]'>
                       {t('accept')}
                     </Text>

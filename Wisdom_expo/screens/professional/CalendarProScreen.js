@@ -161,13 +161,13 @@ export default function CalendarProScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
       
-      <View className="flex-1 justify-start items-center pt-[55] ">
+      <View className="flex-1 justify-start items-center pt-[55px] ">
 
         <View className="px-6 mb-2 w-full flex-row justify-between items-center ">
             <Text className=" font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2]">
               {t('calendar')}
             </Text>
-            {/* <TouchableOpacity onPress={() => navigation.navigate('CreateService1')} className="p-[8] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+            {/* <TouchableOpacity onPress={() => navigation.navigate('CreateService1')} className="p-[8px] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
               <Plus height={23} width={23} color={iconColor} strokeWidth={1.7}/>
             </TouchableOpacity> */}
         </View>

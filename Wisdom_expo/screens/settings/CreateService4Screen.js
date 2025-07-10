@@ -60,17 +60,17 @@ export default function CreateService4Screen() {
           <View className="flex-1 px-6 pt-5 pb-6">
             <TouchableOpacity onPress={() => navigation.pop(4)}>
               <View className="flex-row justify-start">
-                <XMarkIcon size={30} color={iconColor} strokeWidth="1.7" />
+                <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
               </View>
             </TouchableOpacity>
 
             <View className="justify-center items-center">
-              <Text className="mt-[55] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('add_a_description')}</Text>
+              <Text className="mt-[55px] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('add_a_description')}</Text>
             </View>
 
-            <View className="flex-1 w-full mt-[50]">
+            <View className="flex-1 w-full mt-[50px]">
               <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
-              <View className="w-full min-h-[300] bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl py-4 px-5 ">
+              <View className="w-full min-h-[300px] bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl py-4 px-5 ">
 
                 {description.length > 0 ? (
                 <View className="flex-row justify-end">
@@ -101,7 +101,7 @@ export default function CreateService4Screen() {
                 <Text className="pt-2 pr-2 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">{description.length}/{maxLength}</Text>
               </View>
               {isKeyboardVisible && (
-              <View className="h-[200]"></View>
+              <View className="h-[200px]"></View>
               )}
 
             </View>
@@ -110,7 +110,7 @@ export default function CreateService4Screen() {
 
         {/* Botones fijos abajo */}
         <View className="flex-row justify-center items-center pt-4 pb-6 px-6">
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55] rounded-full items-center justify-center">
+          <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center">
             <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
           </TouchableOpacity>
 
@@ -118,7 +118,7 @@ export default function CreateService4Screen() {
             disabled={!description}
             onPress={() => navigation.navigate('CreateService5', { title, family, category, description })}
             style={{ opacity: description ? 1.0 : 0.5 }}
-            className="ml-[10] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55] rounded-full items-center justify-center"
+            className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
           >
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
           </TouchableOpacity>

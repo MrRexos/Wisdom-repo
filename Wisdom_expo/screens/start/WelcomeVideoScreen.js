@@ -245,7 +245,7 @@ const WelcomeVideoScreen = () => {
       ))}
       {showSkip? 
       <TouchableOpacity onPress={() => navigation.navigate('Loading')}>
-        <Text className='text-[#f2f2f2] font-inter-semibold m-[75]'>{t('skip_intro')}</Text>
+        <Text className='text-[#f2f2f2] font-inter-semibold m-[75px]'>{t('skip_intro')}</Text>
       </TouchableOpacity>
       : null}
       

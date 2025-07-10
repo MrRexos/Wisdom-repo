@@ -167,7 +167,7 @@ export default function CalendarScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
       
-      <View className="flex-1 justify-start items-center pt-[55] ">
+      <View className="flex-1 justify-start items-center pt-[55px] ">
 
         <View className="px-6 mb-2 w-full flex-row justify-between items-center ">
           <View className="flex-row justify-center items-center">
@@ -178,7 +178,7 @@ export default function CalendarScreen() {
               {t('calendar')}
             </Text>
           </View>
-          {/* <TouchableOpacity onPress={() => navigation.navigate('CreateService1')} className="p-[8] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+          {/* <TouchableOpacity onPress={() => navigation.navigate('CreateService1')} className="p-[8px] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
             <Plus height={23} width={23} color={iconColor} strokeWidth={1.7}/>
           </TouchableOpacity> */}
         </View>

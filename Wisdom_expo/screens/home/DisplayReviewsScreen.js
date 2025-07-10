@@ -16,7 +16,7 @@ export default function DisplayReviewsScreen() {
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
 
   const renderItem = ({ item }) => (
-    <View className="mb-4 py-5 px-4 w-[320] bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
+    <View className="mb-4 py-5 px-4 w-[320px] bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
       <View className="flex-row justify-between items-center">
         <View className="flex-row justify-start items-center">
           <Image source={{ uri: item.user.profile_picture }} className="mr-3 h-10 w-10 rounded-full bg-[#706F6E] dark:bg-[#b6b5b5]" />

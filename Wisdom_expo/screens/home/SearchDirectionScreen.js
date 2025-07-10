@@ -354,13 +354,13 @@ export default function SearchDirectionScreen() {
         <View className="flex-row justify-start items-center">
           <View className="w-11 h-11 items-center justify-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
             {item.place_id==='your_location'? 
-            <MapPinIcon height={21} color={iconColor} strokeWidth="1.7"/> : 
-            searchText.length>0? <Search height={17} color={iconColor} strokeWidth="2"/> : 
-            <Clock height={19} color={iconColor} strokeWidth="2"/>}
+            <MapPinIcon height={21} color={iconColor} strokeWidth={1.7}/> : 
+            searchText.length>0? <Search height={17} color={iconColor} strokeWidth={2}/> : 
+            <Clock height={19} color={iconColor} strokeWidth={2}/>}
           </View>
           <Text className="ml-4 text-[15px] text-[#444343] dark:text-[#f2f2f2]">{item.description}</Text>
         </View>  
-        <ChevronRightIcon size={18} color={colorScheme === 'dark' ? '#706F6E' : '#b6b5b5'} strokeWidth="2.5" className="p-6"/>
+        <ChevronRightIcon size={18} color={colorScheme === 'dark' ? '#706F6E' : '#b6b5b5'} strokeWidth={2.5} className="p-6"/>
     </TouchableOpacity>
   );
 
@@ -429,7 +429,7 @@ export default function SearchDirectionScreen() {
 
               {(!directions || directions.length<1)? (
 
-                <View className="mt-[80] justify-center items-center">
+                <View className="mt-[80px] justify-center items-center">
                   <MapPin height={30} width={30} strokeWidth={1.7} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
                   <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
                     {t('no_directions_found')}
@@ -469,7 +469,7 @@ export default function SearchDirectionScreen() {
                           }}
                           className="pl-4 pr-3 flex-1 justify-center items-start">
 
-                          <Text numberOfLines={1} className="mb-[6] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]">
+                          <Text numberOfLines={1} className="mb-[6px] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]">
                             {[direction.address_1, direction.street_number].filter(Boolean).join(', ')}
                           </Text>
                           <Text numberOfLines={1} className="font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">
@@ -509,7 +509,7 @@ export default function SearchDirectionScreen() {
                 <Text className="text-center font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('confirm_your_direction')}</Text>
             </View>
               
-            <View className="w-full h-[55] mx-2 mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+            <View className="w-full h-[55px] mx-2 mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               {country && country.length>0? (
                 <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('country_region')}</Text>
               ) : null}              
@@ -524,7 +524,7 @@ export default function SearchDirectionScreen() {
               />            
             </View>
 
-            <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+            <View className="w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               {state && state.length>0? (
                 <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('state')}</Text>
               ) : null}              
@@ -539,7 +539,7 @@ export default function SearchDirectionScreen() {
               />
             </View>
 
-            <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+            <View className="w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               {city && city.length>0? (
                 <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('city_town')}</Text>
               ) : null}              
@@ -554,7 +554,7 @@ export default function SearchDirectionScreen() {
               />
             </View>
 
-            <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+            <View className="w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               {street && street.length>0? (
                 <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('street')}</Text>
               ) : null}              
@@ -570,7 +570,7 @@ export default function SearchDirectionScreen() {
             </View>
             <View className="flex-row w-full justify-between items-center">
 
-              <View className="flex-1 h-[55] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              <View className="flex-1 h-[55px] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {postalCode && postalCode.length>0? (
                   <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('postal_code')}</Text>
                 ) : null}              
@@ -585,7 +585,7 @@ export default function SearchDirectionScreen() {
                 />
               </View>
 
-              <View className="flex-1 h-[55] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              <View className="flex-1 h-[55px] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {streetNumber && String(streetNumber).length>0? (
                   <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('street_number')}</Text>
                 ) : null}   
@@ -605,7 +605,7 @@ export default function SearchDirectionScreen() {
 
             
 
-            <View className="w-full h-[55] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+            <View className="w-full h-[55px] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               { address2 && address2.length>0? (
                 <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('floor_door_stair_optional')}</Text>
               ) : null}              
@@ -624,7 +624,7 @@ export default function SearchDirectionScreen() {
                 disabled={streetNumber.length<1}
                 onPress={() => handleConfirm()}
                 style={{opacity: streetNumber.length<1? 0.5: 1}}
-                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
+                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('confirm')}</Text>
             </TouchableOpacity>
 
@@ -639,12 +639,12 @@ export default function SearchDirectionScreen() {
         <View className="flex-row justify-start items-center mb-5">
 
             <TouchableOpacity onPress={() => navigation.navigate(prevScreen, {blurVisible})}>
-                <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6"/>
+                <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6"/>
             </TouchableOpacity>
 
-            <View className="h-[55] ml-4 pl-3 pr-1 flex-1 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+            <View className="h-[55px] ml-4 pl-3 pr-1 flex-1 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 
-                <Search height={20} color={iconColor} strokeWidth="2"/>
+                <Search height={20} color={iconColor} strokeWidth={2}/>
                 <TextInput 
                 placeholder={t('search_a_direction')}
                 autoFocus={true} 
@@ -658,13 +658,13 @@ export default function SearchDirectionScreen() {
 
               {searchText.length>0 ? (
                 <TouchableOpacity onPress={handleClearText}>
-                    <View className='mr-2 h-[25] w-[25] justify-center items-center rounded-full bg-[#fcfcfc] dark:bg-[#323131]'>
-                        <XMarkIcon height={17} color={iconColor} strokeWidth="2"/>
+                    <View className='mr-2 h-[25px] w-[25px] justify-center items-center rounded-full bg-[#fcfcfc] dark:bg-[#323131]'>
+                        <XMarkIcon height={17} color={iconColor} strokeWidth={2}/>
                     </View>
                 </TouchableOpacity>
                 ) : (
                   <TouchableOpacity onPress={() => {setShowDirections(true); openSheetWithInput(true)}} className="rounded-full px-3 py-4 bg-[#fcfcfc] dark:bg-[#323131]">
-                    <MapPin height={17} color={iconColor} strokeWidth="1.8"/>
+                    <MapPin height={17} color={iconColor} strokeWidth={1.8}/>
                   </TouchableOpacity>
                 )}
 

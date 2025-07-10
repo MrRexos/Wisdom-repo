@@ -117,7 +117,7 @@ export default function TodayProScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
-      <View className="flex-1 justify-start items-center pt-[55]">
+      <View className="flex-1 justify-start items-center pt-[55px]">
         
         <View className="px-6 w-full flex-row justify-between items-center">
           <Text className="font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2]">
@@ -133,7 +133,7 @@ export default function TodayProScreen() {
           <TouchableOpacity
             onPress={() => navigation.navigate('CreateService1') }
             style={{ opacity: 1 }}
-            className="bg-[#323131] mx-2 dark:bg-[#fcfcfc] w-full h-[50] rounded-full items-center justify-center"
+            className="bg-[#323131] mx-2 dark:bg-[#fcfcfc] w-full h-[50px] rounded-full items-center justify-center"
           >
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
               {t('publish_a_service')}
@@ -165,7 +165,7 @@ export default function TodayProScreen() {
             </ScrollView>
           </View>
 
-          <View className="px-8 h-[260] w-full justify-center items-center">
+          <View className="px-8 h-[260px] w-full justify-center items-center">
             <View className="p-2 flex-1 w-full rounded-2xl bg-[#fcfcfc] dark:bg-[#323131]">
               
             {( !filteredBookings || filteredBookings.length === 0 ) ? (

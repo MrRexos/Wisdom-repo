@@ -25,7 +25,7 @@ export default function CreateService12Screen() {
         <View className="flex-1 px-6 pt-5 pb-6">
             <TouchableOpacity onPress={() => navigation.goBack()}>
                 <View className="flex-row justify-start">
-                    <ChevronLeftIcon size={25} color={iconColor} strokeWidth="2" />
+                    <ChevronLeftIcon size={25} color={iconColor} strokeWidth={2} />
                 </View> 
             </TouchableOpacity>
             <View className="flex-1 justify-center items-start  ">
@@ -42,7 +42,7 @@ export default function CreateService12Screen() {
                 disabled={false}
                 onPress={() => navigation.navigate('CreateService13', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk})}
                 style={{opacity: 1}}
-                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
+                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('accept_wisdom_terms')}</Text>
                 </TouchableOpacity>
             </View>

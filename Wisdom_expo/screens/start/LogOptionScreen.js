@@ -78,7 +78,7 @@ export default function LogOptionScreen() {
           <View>
               <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
                   <View className="flex-row justify-end pt-5 pr-6 opacity-50">
-                      <XMarkIcon size={30} color="#f2f2f2" strokeWidth="1.7" />
+                      <XMarkIcon size={30} color="#f2f2f2" strokeWidth={1.7} />
                   </View> 
               </TouchableOpacity>
               <View className="items-center pt-3 ">
@@ -87,31 +87,31 @@ export default function LogOptionScreen() {
           </View>
           <View className="justify-center w-full items-center space-y-2.5 pb-2">
               <TouchableOpacity onPress={() => navigation.navigate('EnterEmail')} className="w-full px-8">
-                  <View className="bg-[#f2f2f2] w-full h-[55] rounded-full items-center justify-center">
-                    <Text className="font-inter-semibold text-[15px]text-[#444343] ">
+                  <View className="bg-[#f2f2f2] w-full h-[55px] rounded-full items-center justify-center">
+                    <Text className="font-inter-semibold text-[15px] text-[#444343] ">
                         {t('register')}
                     </Text>
                   </View> 
               </TouchableOpacity>
               <TouchableOpacity onPress={() => navigation.navigate('LogIn')} className="w-full px-8">
-                  <View className="bg-[#f2f2f2]/10 w-full h-[55] rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
+                  <View className="bg-[#f2f2f2]/10 w-full h-[55px] rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
                     <Text className="font-inter-semibold text-[15px] text-[#f2f2f2]">
                         {t('log_in')}
                     </Text>
                   </View>
                   
               </TouchableOpacity>
-              {/* <View className="flex-row justify-center items-center space-x-2.5  mx-[25]">
-                  <TouchableOpacity onPress={accessToken? getUserData: () => promptAsync({useProxy:false, showInRecents:true})} className="bg-[#f2f2f2]/10 h-[55] flex-1 rounded-full flex-row items-center justify-center border-[1px] border-[#f2f2f2]/50">
+              {/* <View className="flex-row justify-center items-center space-x-2.5  mx-[25px]">
+                  <TouchableOpacity onPress={accessToken? getUserData: () => promptAsync({useProxy:false, showInRecents:true})} className="bg-[#f2f2f2]/10 h-[55px] flex-1 rounded-full flex-row items-center justify-center border-[1px] border-[#f2f2f2]/50">
                       <GoogleLogo width={14} height={14} color="#f2f2f2"/>  
                       <Text className="font-inter-semibold text-[15px] text-[#f2f2f2] ml-3">
                         Continue with Google -{'>'}
                       </Text>
                   </TouchableOpacity>
-                 <TouchableOpacity onPress={() => navigation.navigate('NotificationAllow')} className="bg-[#f2f2f2]/20 h-[55] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
+                 <TouchableOpacity onPress={() => navigation.navigate('NotificationAllow')} className="bg-[#f2f2f2]/20 h-[55px] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
                       <AppleLogo width={21} height={26} color="#f2f2f2"  />
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => navigation.navigate('NotificationAllow')} className="bg-[#f2f2f2]/20 h-[55] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
+                  <TouchableOpacity onPress={() => navigation.navigate('NotificationAllow')} className="bg-[#f2f2f2]/20 h-[55px] flex-1 rounded-full items-center justify-center border-[1px] border-[#f2f2f2]/50">
                     <FacebookLogo width={15} height={26} color="#f2f2f2"  />
                   </TouchableOpacity> 
               </View> */}

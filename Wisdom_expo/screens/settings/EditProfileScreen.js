@@ -271,7 +271,7 @@ export default function EditProfileScreen() {
         <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
             <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
-            <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[95] w-full z-10 justify-end">
+            <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[95px] w-full z-10 justify-end">
                 <View className="flex-row justify-between items-center pb-4 px-2">
                     <View className="flex-1 ">
                         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -296,7 +296,7 @@ export default function EditProfileScreen() {
                 </View>
             </View>
 
-            <ScrollView className="flex-1 px-6 pt-[75]" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+            <ScrollView className="flex-1 px-6 pt-[75px]" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
                 <View className="w-full justify-center items-center">
                     <TouchableOpacity onPress={handleImagePicker}>
@@ -310,8 +310,8 @@ export default function EditProfileScreen() {
 
                 <View className="mb-7">
                     <Text className="mb-2 font-inter-medium text-[15px] text-[#b6b5b5] dark:text-[#706f6e]">{t('username')}</Text>
-                    <View className="w-full h-[55] py-2 pl-6 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
-                        <Text className="font-inter-medium mr-[2] text-[15px] text-[#444343] dark:text-[#f2f2f2]">@</Text>
+                    <View className="w-full h-[55px] py-2 pl-6 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                        <Text className="font-inter-medium mr-[2px] text-[15px] text-[#444343] dark:text-[#f2f2f2]">@</Text>
 
                         <TextInput
                             placeholder=''
@@ -320,7 +320,7 @@ export default function EditProfileScreen() {
                             onChangeText={inputUsernameChanged}
                             value={username}
                             keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                            className="font-inter-medium pr-4 h-[55] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2] "
+                            className="font-inter-medium pr-4 h-[55px] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2] "
                         />
                         {isLoading ? (
                             <ActivityIndicator size="15" color={iconColor} height={30} width={30} style={{ marginRight: 25, transform: [{ scale: 1 }] }} />
@@ -338,7 +338,7 @@ export default function EditProfileScreen() {
 
                 <View>
                     <Text className="mb-2 font-inter-medium text-[15px] text-[#b6b5b5] dark:text-[#706f6e]">{t('full_name')}</Text>
-                    <View className="w-full h-[55] py-2 px-6 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                    <View className="w-full h-[55px] py-2 px-6 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                         <TextInput
                             placeholder=''
                             selectionColor={cursorColorChange}

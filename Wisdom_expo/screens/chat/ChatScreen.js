@@ -159,7 +159,7 @@ export default function ChatScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
-      <View className="px-6 pt-[55] pb-4 flex-row items-center">
+      <View className="px-6 pt-[55px] pb-4 flex-row items-center">
         <Text className="flex-1 mb-2 font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
           {t('chat')}
         </Text>
@@ -215,7 +215,7 @@ export default function ChatScreen() {
           <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
             {t('no_chats_found')}
           </Text>
-          <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[260]">
+          <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[260px]">
             {t('write_to_professionals_and_talk_about_your_bookings')}
           </Text>
         </View>

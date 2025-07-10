@@ -581,7 +581,7 @@ export default function BookingScreen() {
                     disabled={!(selectedDay && selectedTime && selectedDuration) && !selectedTimeUndefined}
                     onPress={() => {sheet.current.close()} }
                     style={{ opacity: !(selectedDay && selectedTime && selectedDuration) && !selectedTimeUndefined? 0.5 : 1 }}
-                    className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17] rounded-full items-center justify-center"
+                    className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17px] rounded-full items-center justify-center"
                   >
                     <Text>
                       <Text className="text-center font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
@@ -592,7 +592,7 @@ export default function BookingScreen() {
 
                 </View>
 
-                <View className="h-[20]"/>
+                <View className="h-[20px]"/>
 
               </ScrollView>
               
@@ -611,7 +611,7 @@ export default function BookingScreen() {
 
               {(!directions || directions.length<1)? (
 
-                <View className="mt-[80] justify-center items-center">
+                <View className="mt-[80px] justify-center items-center">
                   <MapPin height={30} width={30} strokeWidth={1.7} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
                   <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
                     {t('no_directions_found')}
@@ -630,7 +630,7 @@ export default function BookingScreen() {
                         </View>
 
                         <View className="pl-4 pr-3 flex-1 justify-center items-start">
-                          <Text numberOfLines={1} className="mb-[6] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]">
+                          <Text numberOfLines={1} className="mb-[6px] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]">
                             {[direction.address_1, direction.street_number].filter(Boolean).join(', ')}
                           </Text>
                           <Text numberOfLines={1} className="font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">
@@ -672,7 +672,7 @@ export default function BookingScreen() {
                   <Text className="text-center font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Confirm your direction</Text>
               </View>
                 
-              <View className="w-full h-[55] mx-2 mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              <View className="w-full h-[55px] mx-2 mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {country && country.length>0? (
                   <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Country/region</Text>
                 ) : null}              
@@ -687,7 +687,7 @@ export default function BookingScreen() {
                 />            
               </View>
 
-              <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              <View className="w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {state && state.length>0? (
                   <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">State</Text>
                 ) : null}              
@@ -702,7 +702,7 @@ export default function BookingScreen() {
                 />
               </View>
 
-              <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              <View className="w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {city && city.length>0? (
                   <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">City/town</Text>
                 ) : null}              
@@ -717,7 +717,7 @@ export default function BookingScreen() {
                 />
               </View>
 
-              <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              <View className="w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {street && street.length>0? (
                   <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Street</Text>
                 ) : null}              
@@ -733,7 +733,7 @@ export default function BookingScreen() {
               </View>
               <View className="flex-row w-full justify-between items-center">
 
-                <View className="flex-1 h-[55] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                <View className="flex-1 h-[55px] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                   {postalCode && postalCode.length>0? (
                     <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Postal code</Text>
                   ) : null}              
@@ -748,7 +748,7 @@ export default function BookingScreen() {
                   />
                 </View>
 
-                <View className="flex-1 h-[55] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+                <View className="flex-1 h-[55px] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                   {streetNumber && String(streetNumber).length>0? (
                     <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Street number</Text>
                   ) : null}   
@@ -768,7 +768,7 @@ export default function BookingScreen() {
 
 
 
-              <View className="w-full h-[55] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              <View className="w-full h-[55px] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 { address2 && address2.length>0? (
                   <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Floor, door, stair (optional)</Text>
                 ) : null}              
@@ -787,7 +787,7 @@ export default function BookingScreen() {
                   disabled={streetNumber.length<1}
                   onPress={() => handleConfirm()}
                   style={{opacity: streetNumber.length<1? 0.5: 1}}
-                  className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
+                  className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                       <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Confirm</Text>
               </TouchableOpacity>
 
@@ -802,7 +802,7 @@ export default function BookingScreen() {
 
       </RBSheet>
 
-      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[100] w-full z-10 justify-end">
+      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[100px] w-full z-10 justify-end">
         <View className="flex-row justify-between items-center mt-8 pb-4 px-2 ">
 
             <View className="flex-1 ">
@@ -820,7 +820,7 @@ export default function BookingScreen() {
         </View>
       </View>
 
-      <View className="h-[70] w-full justify-end"/>
+      <View className="h-[70px] w-full justify-end"/>
 
       <ScrollView showsVerticalScrollIndicator={false}  className="flex-1 px-3" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
@@ -828,7 +828,7 @@ export default function BookingScreen() {
         {/* Profile */}
         <View className=" p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
           <View className="flex-row">
-            <Image source={serviceData.profile_picture ? { uri: serviceData.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[85] w-[85] bg-[#706B5B] rounded-xl" />
+            <Image source={serviceData.profile_picture ? { uri: serviceData.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[85px] w-[85px] bg-[#706B5B] rounded-xl" />
             <View className="flex-1">
               <Text className="ml-4 mt-1 font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{serviceData.service_title}</Text>
               <Text className="ml-4 mt-1 font-inter-semibold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{serviceData.first_name} {serviceData.surname}</Text>
@@ -840,7 +840,7 @@ export default function BookingScreen() {
                   {serviceData.review_count > 0 && (
                     <View className="flex-row items-center">
                       <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.85 }] }} />
-                      <Text className="ml-[3]">
+                      <Text className="ml-[3px]">
                         <Text className="font-inter-bold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.average_rating).toFixed(1)}</Text>
                         <Text> </Text>
                         <Text className="font-inter-medium text-[10px] text-[#706F6E] dark:text-[#B6B5B5]">({serviceData.review_count === 1 ? `${serviceData.review_count} review` : `${serviceData.review_count} reviews`})</Text>
@@ -924,7 +924,7 @@ export default function BookingScreen() {
             </View>
 
             <View className="pl-3 pr-3 flex-1 justify-center items-start">
-              <Text numberOfLines={1} className="mb-[6] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]">
+              <Text numberOfLines={1} className="mb-[6px] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]">
                 {[direction.address_1, direction.street_number].filter(Boolean).join(', ')}
               </Text>
               <Text numberOfLines={1} className="font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">
@@ -1168,7 +1168,7 @@ export default function BookingScreen() {
               <View className="flex-1 my-3 justify-center items-center ">
 
 
-                <View className="px-7 pb-5 pt-[50] bg-[#EEEEEE] dark:bg-[#111111] rounded-xl">
+                <View className="px-7 pb-5 pt-[50px] bg-[#EEEEEE] dark:bg-[#111111] rounded-xl">
 
                   <Text>
                     <Text className="font-inter-medium text-[16px] text-[#444343] dark:text-[#f2f2f2]">••••   ••••   ••••   </Text>
@@ -1204,7 +1204,7 @@ export default function BookingScreen() {
                   <TouchableOpacity
                     onPress={() => navigation.navigate('PaymentMethod') }
                     style={{ opacity: 1 }}
-                    className="bg-[#706f6e] my-2 mt-3 dark:bg-[#b6b5b5] w-full py-[14] rounded-full items-center justify-center"
+                    className="bg-[#706f6e] my-2 mt-3 dark:bg-[#b6b5b5] w-full py-[14px] rounded-full items-center justify-center"
                   >
                     <Text>
                       <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
@@ -1235,7 +1235,7 @@ export default function BookingScreen() {
 
           <View className="flex-1 w-full mt-6">
             <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
-            <View className="w-full min-h-[150] bg-[#f2f2f2] dark:bg-[#272626] rounded-2xl py-4 px-5 ">
+            <View className="w-full min-h-[150px] bg-[#f2f2f2] dark:bg-[#272626] rounded-2xl py-4 px-5 ">
 
               {description.length > 0 ? (
               <View className="flex-row justify-end">
@@ -1266,7 +1266,7 @@ export default function BookingScreen() {
               <Text className="pt-2 pr-2 font-inter-medium text-[12px] text-[#979797] dark:text-[#979797]">{description.length}/{maxLength}</Text>
             </View>
             {isKeyboardVisible && (
-            <View className="h-[200]"></View>
+            <View className="h-[200px]"></View>
             )}
 
           </View>
@@ -1285,7 +1285,7 @@ export default function BookingScreen() {
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('operation_of_the_reserves')}</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
             </View>
           </TouchableOpacity>
 
@@ -1295,7 +1295,7 @@ export default function BookingScreen() {
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('cancellation_policy')}</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
             </View>
           </TouchableOpacity>
           
@@ -1305,7 +1305,7 @@ export default function BookingScreen() {
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('follow_the_rules')}</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
             </View>
           </TouchableOpacity>
 
@@ -1315,14 +1315,14 @@ export default function BookingScreen() {
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('contact_wisdom')}</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth="2" className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
             </View>
           </TouchableOpacity>
 
 
         </View>
 
-        <View className="h-[70]"/>
+        <View className="h-[70px]"/>
 
       </ScrollView>
 
@@ -1333,7 +1333,7 @@ export default function BookingScreen() {
         <TouchableOpacity
           onPress={() => {paymentMethod? handleBook() : navigation.navigate('PaymentMethod')} }
           style={{ opacity: 1 }}
-          className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center"
+          className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
         >
           <Text>
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">

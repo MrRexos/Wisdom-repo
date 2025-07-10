@@ -155,12 +155,12 @@ export default function SearchServiceScreen() {
       <View className="flex-row justify-start items-center">
         <View className="w-11 h-11 items-center justify-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
           {item.place_id === 'your_location' ?
-            <MapPinIcon height={21} color={iconColor} strokeWidth="1.7" /> :
-            <Search height={17} color={iconColor} strokeWidth="2" />}
+            <MapPinIcon height={21} color={iconColor} strokeWidth={1.7} /> :
+            <Search height={17} color={iconColor} strokeWidth={2} />}
         </View>
         <Text className="ml-4 text-[15px] text-[#444343] dark:text-[#f2f2f2]">{suggestionText}</Text>
       </View>
-      <ChevronRightIcon size={18} color={colorScheme === 'dark' ? '#706F6E' : '#b6b5b5'} strokeWidth="2.5" className="p-6" />
+      <ChevronRightIcon size={18} color={colorScheme === 'dark' ? '#706F6E' : '#b6b5b5'} strokeWidth={2.5} className="p-6" />
     </TouchableOpacity>
   )};
 
@@ -172,11 +172,11 @@ export default function SearchServiceScreen() {
 
         <View className="flex-row justify-start items-center mb-5">
           <TouchableOpacity onPress={() => navigation.navigate(prevScreen, { blurVisible })}>
-            <ChevronLeftIcon size={26} color={iconColor} strokeWidth="1.7" className="p-6" />
+            <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
           </TouchableOpacity>
 
-          <View className="h-[55] ml-4 pl-3 pr-1 flex-1 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
-            <Search height={20} color={iconColor} strokeWidth="2" />
+          <View className="h-[55px] ml-4 pl-3 pr-1 flex-1 flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+            <Search height={20} color={iconColor} strokeWidth={2} />
             <TextInput
               placeholder={t('search_a_service')}
               autoFocus={true}
@@ -189,8 +189,8 @@ export default function SearchServiceScreen() {
 
             {searchText.length > 0 ? (
               <TouchableOpacity onPress={handleClearText}>
-                <View className='mr-2 h-[25] w-[25] justify-center items-center rounded-full bg-[#fcfcfc] dark:bg-[#323131]'>
-                  <XMarkIcon height={17} color={iconColor} strokeWidth="2" />
+                <View className='mr-2 h-[25px] w-[25px] justify-center items-center rounded-full bg-[#fcfcfc] dark:bg-[#323131]'>
+                  <XMarkIcon height={17} color={iconColor} strokeWidth={2} />
                 </View>
               </TouchableOpacity>
             ) : null}

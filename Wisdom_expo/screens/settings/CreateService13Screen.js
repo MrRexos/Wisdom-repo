@@ -125,12 +125,12 @@ export default function CreateService13Screen() {
         <View className="flex-1 px-6 pt-5 pb-6">
             <TouchableOpacity onPress={() => navigation.goBack()}>
                 <View className="flex-row justify-start">
-                    <ChevronLeftIcon size={25} color={iconColor} strokeWidth="2" />
+                    <ChevronLeftIcon size={25} color={iconColor} strokeWidth={2} />
                 </View> 
             </TouchableOpacity>
 
             <View className=" justify-center items-start ml-2 ">
-                <Text className="mt-[55] font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2] ">{t('check_your_service')}</Text>
+                <Text className="mt-[55px] font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2] ">{t('check_your_service')}</Text>
             </View>
 
             <View className="flex-1">
@@ -149,7 +149,7 @@ export default function CreateService13Screen() {
                   shadowRadius: 10,
                   elevation: 10,
                 }}
-                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
+                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('publish_service')}</Text>
                 </TouchableOpacity>
             </View>

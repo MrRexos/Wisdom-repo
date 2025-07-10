@@ -95,7 +95,7 @@ export default function ServicesScreen() {
     return (
       <TouchableOpacity onPress={() => navigation.navigate('BookingDetails', { bookingId: item.booking_id, role: 'client' })} className="w-full mb-4 pb-4 flex-row justify-between items-end border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
         <View className="flex-row justify-center items-center">
-          <Image source={{ uri: item.profile_picture }} className="w-[80] h-[80] bg-[#706B5B] rounded-xl" />
+          <Image source={{ uri: item.profile_picture }} className="w-[80px] h-[80px] bg-[#706B5B] rounded-xl" />
           <View className="ml-4 justify-center items-start">
             <Text className="mb-1 font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
             <Text className="mb-4 font-inter-semibold text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">{item.first_name} {item.surname}</Text>
@@ -128,13 +128,13 @@ export default function ServicesScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
-      <View className="flex-1 pt-[55] pb-3">
+      <View className="flex-1 pt-[55px] pb-3">
 
         <View className="mb-4 px-6 w-full flex-row justify-between items-center">
           <Text className="mb-2 font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
             {t('services')}
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Calendar')} className="p-[10] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+          <TouchableOpacity onPress={() => navigation.navigate('Calendar')} className="p-[10px] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
             <CalendarDaysIcon height={21} width={21} color={iconColor} strokeWidth={1.7}/>
           </TouchableOpacity>
         </View>
@@ -162,7 +162,7 @@ export default function ServicesScreen() {
             <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
               {selectedStatus === 'accepted' ? t('upcoming_services') : t('no_services_found')}
             </Text>
-            <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[260]">
+            <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[260px]">
               {selectedStatus === 'accepted'
                 ? t('no_upcoming_reservations_yet')
                 : selectedStatus === 'requested'

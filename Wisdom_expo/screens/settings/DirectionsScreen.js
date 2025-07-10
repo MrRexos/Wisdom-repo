@@ -181,7 +181,7 @@ export default function DirectionsScreen() {
                 <Text className="text-center font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('confirm_your_direction')}</Text>
             </View>
               
-            <View className="w-full h-[55] mx-2 mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+            <View className="w-full h-[55px] mx-2 mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               {country && country.length>0? (
                 <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('country_region')}</Text>
               ) : null}              
@@ -196,7 +196,7 @@ export default function DirectionsScreen() {
               />            
             </View>
 
-            <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+            <View className="w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               {state && state.length>0? (
                 <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('state')}</Text>
               ) : null}              
@@ -211,7 +211,7 @@ export default function DirectionsScreen() {
               />
             </View>
 
-            <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+            <View className="w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               {city && city.length>0? (
                 <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('city_town')}</Text>
               ) : null}              
@@ -226,7 +226,7 @@ export default function DirectionsScreen() {
               />
             </View>
 
-            <View className="w-full h-[55] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+            <View className="w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               {street && street.length>0? (
                 <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('street')}</Text>
               ) : null}              
@@ -242,7 +242,7 @@ export default function DirectionsScreen() {
             </View>
             <View className="flex-row w-full justify-between items-center">
 
-              <View className="flex-1 h-[55] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              <View className="flex-1 h-[55px] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {postalCode && postalCode.length>0? (
                   <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('postal_code')}</Text>
                 ) : null}              
@@ -257,7 +257,7 @@ export default function DirectionsScreen() {
                 />
               </View>
 
-              <View className="flex-1 h-[55] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+              <View className="flex-1 h-[55px] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {streetNumber && String(streetNumber).length>0? (
                   <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('street_number')}</Text>
                 ) : null}   
@@ -277,7 +277,7 @@ export default function DirectionsScreen() {
 
 
 
-            <View className="w-full h-[55] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
+            <View className="w-full h-[55px] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               { address2 && address2.length>0? (
                 <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('floor_door_stair_optional')}</Text>
               ) : null}              
@@ -296,7 +296,7 @@ export default function DirectionsScreen() {
                 disabled={streetNumber.length<1}
                 onPress={() => handleConfirm()}
                 style={{opacity: streetNumber.length<1? 0.5: 1}}
-                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55] rounded-full items-center justify-center" >
+                className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('confirm')}</Text>
             </TouchableOpacity>
 
@@ -341,7 +341,7 @@ export default function DirectionsScreen() {
 
       </RBSheet>
 
-      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[90] w-full z-10 justify-end">
+      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[90px] w-full z-10 justify-end">
         <View className="flex-row justify-between items-center pb-4 px-2">
           <View className="flex-1 ">
             <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -366,12 +366,12 @@ export default function DirectionsScreen() {
           <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
             No directions found
           </Text>
-          <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[300]">Search for addresses to be automatically saved for you</Text>
+          <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[300px]">Search for addresses to be automatically saved for you</Text>
         </View>
     
       ) : (
 
-      <ScrollView className="flex-1 px-6 mt-[75] ">
+      <ScrollView className="flex-1 px-6 mt-[75px] ">
         {directions.map((direction) => (
           <View key={direction.direction_id} className="pb-5 mb-5 flex-row w-full justify-center items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
             <View className="w-11 h-11 items-center justify-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
@@ -379,7 +379,7 @@ export default function DirectionsScreen() {
             </View>
 
             <View className="pl-4 pr-3 flex-1 justify-center items-start">
-              <Text numberOfLines={1} className="mb-[6] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]">
+              <Text numberOfLines={1} className="mb-[6px] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]">
                 {[direction.address_1, direction.street_number].filter(Boolean).join(', ')}
               </Text>
               <Text numberOfLines={1} className="font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">

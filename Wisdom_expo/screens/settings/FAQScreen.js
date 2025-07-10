@@ -39,7 +39,7 @@ export default function FAQScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
-      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[90] w-full z-10 justify-end">
+      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[90px] w-full z-10 justify-end">
         <View className="flex-row justify-between items-center pb-4 px-2">
           <View className="flex-1">
             <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -53,13 +53,13 @@ export default function FAQScreen() {
         </View>
       </View>
 
-      <ScrollView className="flex-1 px-6 pt-[75] gap-y-9">
+      <ScrollView className="flex-1 px-6 pt-[75px] space-y-9">
         {Sections.map(({ items }, sectionIndex) => (
           <View key={sectionIndex} style={{ borderRadius: 12, overflow: 'hidden' }}>
             {items.map(({ label, id, answer }, index) => (
               <View key={id} className="pl-5 bg-[#fcfcfc] dark:bg-[#323131]">
                 <TouchableOpacity onPress={() => toggleQuestion(id)}>
-                  <View className="flex-row items-center justify-between pr-[14] py-[10] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{ borderTopWidth: 1 }, index === 0 && { borderTopWidth: 0 }]}>
+                  <View className="flex-row items-center justify-between pr-[14px] py-[10px] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{ borderTopWidth: 1 }, index === 0 && { borderTopWidth: 0 }]}>
                     <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{label}</Text>
                     {expandedQuestions[id] ? (
                       <ChevronUpIcon size={23} strokeWidth={1.8} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} />
