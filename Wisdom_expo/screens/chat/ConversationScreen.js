@@ -387,8 +387,8 @@ export default function ConversationScreen() {
       return (
         <Swipeable
           ref={ref => { swipeRefs.current[item.id] = ref; }}
-          renderLeftActions={LeftStub}
-          renderRightActions={RightStub}
+          renderLeftActions={!item.fromMe ? LeftStub : undefined}
+          renderRightActions={item.fromMe ? RightStub : undefined}
           friction={1.5}
           activeOffsetX={[-10, 10]}
           onSwipeableOpen={(dir) => {
