@@ -11,6 +11,10 @@ module.exports = {
     "./theme/**/*.{js,jsx,ts,tsx}"
   ],
   presets: [require("nativewind/preset")],
+  safelist: [
+    'color-scheme-dark',
+    'color-scheme-light'
+  ],
   theme: {
     extend: {
       fontFamily:{
@@ -23,8 +27,8 @@ module.exports = {
   plugins: [
     plugin(function({ addUtilities }) {
       addUtilities({
-        '.color-scheme-dark': { colorScheme: 'dark' },
-        '.color-scheme-light': { colorScheme: 'light' },
+        '.color-scheme-dark': { 'color-scheme': 'dark' },
+        '.color-scheme-light': { 'color-scheme': 'light' },
       });
     }),
   ],

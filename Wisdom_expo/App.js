@@ -6,8 +6,9 @@ import './languages/i18n';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useColorScheme } from 'nativewind';
+import { useColorScheme, NativeWindStyleSheet } from 'nativewind';
 import "./global.css"
+
 
 
 export default function App() {

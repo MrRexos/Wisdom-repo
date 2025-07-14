@@ -341,46 +341,34 @@ export default function ConversationScreen() {
   // ---------------------------------------------------------------------------
   // • RENDER HELPERS
   // ---------------------------------------------------------------------------
+  const bubbleBase = 'rounded-2xl px-3 py-2 max-w-[70%] my-[2] flex-row items-end '; 
+
   const renderMessage = ({ item, index }) => {
     if (item.type === 'label') {
       return (
         <View className="justify-center items-center ">
           <View className="rounded-full px-4 py-1 mt-4 mb-4">
-            <Text className="text-[12px] font-medium text-[#979797]">
-              {item.text}
-            </Text>
+            <Text className="text-[12px] font-medium text-[#979797]">{item.text}</Text>
           </View>
         </View>
-
       );
     }
 
     const lastOfStreak = isLastOfStreak(messages, index);
-    const LeftStub = () => <View style={{ width: 64 }} />
+    const LeftStub = () => <View style={{ width: 64 }} />;
     const RightStub = () => null;
 
-
-    const bubbleBase =
-      'rounded-2xl px-3 py-2 max-w-[70%] my-[2] flex-row items-end shadow-xs';
-
     const common =
-      item.fromMe
-        ? 'self-end bg-[#FCFCFC] dark:bg-[#706f6e]'
-        : 'self-start bg-[#D4D4D3] dark:bg-[#474646]';
-
-    const corner =
-      item.fromMe
-        ? lastOfStreak ? ' rounded-br' : ''
-        : lastOfStreak ? ' rounded-bl' : '';
-
+      item.fromMe ? 'self-end bg-[#FCFCFC] dark:bg-[#706f6e]' : 'self-start bg-[#D4D4D3] dark:bg-[#474646]';
+    const corner = item.fromMe ? (lastOfStreak ? ' rounded-br' : '') : lastOfStreak ? ' rounded-bl' : '';
     const fromMeStyles = common + corner;
-
     const textColor = 'text-[15px] font-medium text-[#515150] dark:text-[#d4d4d3]';
 
+    /* ----------------------------- IMAGE MSG ----------------------------- */
     if (item.type === 'image') {
       const imgIndex = imageMessages.findIndex(img => img.id === item.id);
       const content = (
-        <View className={`${item.replyTo ? fromMeStyles && bubbleBase : `py-1 flex-row items-end shadow-xs ${item.fromMe? 'self-end': 'self-start'}`}`}>
+        <View className={`${item.replyTo ? `${bubbleBase} ${fromMeStyles}` : `py-1 flex-row items-end ${item.fromMe ? 'self-end' : 'self-start'}`}`}> {/* shadow-xs -> shadow-sm */}
           {item.replyTo && (
             <View className="border-l-2 border-[#3695FF] pl-2 mb-1">
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]">
@@ -392,18 +380,16 @@ export default function ConversationScreen() {
             </View>
           )}
           <Image source={{ uri: item.uri }} className="w-40 h-[200px] rounded-xl" />
-          
         </View>
       );
       return (
         <Swipeable
           ref={ref => { swipeRefs.current[item.id] = ref; }}
-          renderLeftActions={LeftStub}        // ← se muestra al arrastrar a la derecha
+          renderLeftActions={LeftStub}
           renderRightActions={RightStub}
           friction={1.5}
-          activeOffsetX={[-10, 10]}           // margen para evitar falsos taps
+          activeOffsetX={[-10, 10]}
           onSwipeableOpen={(dir) => {
-            console.log(dir)         // callback nuevo
             if (dir === 'left') {
               swipeRefs.current[item.id]?.close();
               setReplyTo(item);
@@ -413,22 +399,10 @@ export default function ConversationScreen() {
           <Pressable onPress={() => navigation.navigate('ChatImageViewer', { images: imageMessages, index: imgIndex })} onLongPress={() => { setSelectedMsg(item); setTimeout(() => msgSheet.current.open(), 0); }}>
             {content}
             {lastOfStreak && (
-              <View
-                className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}
-              >
-                {item.fromMe && (
-                  item.read ? (
-                    <DoubleCheck height={14} width={14} color={statusReadColor} />
-                  ) : (
-                    <Check height={14} width={14} color={statusUnreadColor} strokeWidth={3} />
-                  )
-                )}
+              <View className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}>
+                {item.fromMe && (item.read ? <DoubleCheck height={16} width={16} color={statusReadColor} /> : <Check height={16} width={16} color={statusUnreadColor} strokeWidth={3} />)}
                 <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
-                  {item.createdAt &&
-                    new Date(item.createdAt.seconds * 1000).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
+                  {item.createdAt && new Date(item.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </Text>
               </View>
             )}
@@ -437,6 +411,7 @@ export default function ConversationScreen() {
       );
     }
 
+    /* ------------------------------ FILE MSG ------------------------------ */
     if (item.type === 'file') {
       const content = (
         <View className={`${bubbleBase} ${fromMeStyles}`}>
@@ -452,11 +427,11 @@ export default function ConversationScreen() {
           )}
           <TouchableOpacity onPress={() => Linking.openURL(item.uri)} className="flex-row space-x-2">
             <View className="h-10 w-10 my-1 rounded-lg bg-[#323131] dark:bg-[#fcfcfc] items-center justify-center">
-              <File height={22} width={22} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
+              <File height={24} width={24} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
             </View>
             <View className="flex-1 justify-center">
-              <Text numberOfLines={1} className={`${textColor} `}>{item.name} </Text>
-              <Text numberOfLines={1} className='text-[14px] font-medium text-[#979797] '>{item.name?.includes(".") ? item.name.split(".").pop().toUpperCase() : "Desconocido"}</Text>
+              <Text numberOfLines={1} className={`${textColor}`}>{item.name}</Text>
+              <Text numberOfLines={1} className='text-[14px] font-medium text-[#979797] '>{item.name?.includes('.') ? item.name.split('.').pop().toUpperCase() : 'Desconocido'}</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -464,13 +439,13 @@ export default function ConversationScreen() {
       return (
         <Swipeable
           ref={ref => { swipeRefs.current[item.id] = ref; }}
-          renderLeftActions={LeftStub}        // ← se muestra al arrastrar a la derecha
+          renderLeftActions={LeftStub}
           renderRightActions={RightStub}
           friction={1.5}
-          activeOffsetX={[-10, 10]}           // margen para evitar falsos taps
-          onSwipeableOpen={(dir) => {         // callback nuevo
+          activeOffsetX={[-10, 10]}
+          onSwipeableOpen={(dir) => {
             if (dir === 'left') {
-              swipeRefs.current[item.id]?.close();           // 'left' = swipe hacia la derecha
+              swipeRefs.current[item.id]?.close();
               setReplyTo(item);
             }
           }}
@@ -478,22 +453,10 @@ export default function ConversationScreen() {
           <Pressable onLongPress={() => { setSelectedMsg(item); setTimeout(() => msgSheet.current.open(), 0); }}>
             {content}
             {lastOfStreak && (
-              <View
-                className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}
-              >
-                {item.fromMe && (
-                  item.read ? (
-                    <DoubleCheck height={14} width={14} color={statusReadColor} />
-                  ) : (
-                    <Check height={14} width={14} color={statusUnreadColor} strokeWidth={3} />
-                  )
-                )}
+              <View className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}>
+                {item.fromMe && (item.read ? <DoubleCheck height={16} width={16} color={statusReadColor} /> : <Check height={16} width={16} color={statusUnreadColor} strokeWidth={3} />)}
                 <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
-                  {item.createdAt &&
-                    new Date(item.createdAt.seconds * 1000).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
+                  {item.createdAt && new Date(item.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </Text>
               </View>
             )}
@@ -502,7 +465,7 @@ export default function ConversationScreen() {
       );
     }
 
-    //Normal message
+    /* ------------------------------ TEXT MSG ------------------------------ */
     const content = (
       <View className={`${bubbleBase} ${fromMeStyles}`}>
         <View>
@@ -512,24 +475,24 @@ export default function ConversationScreen() {
                 {item.replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? t('image') : t('file')}
+                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? t('image') : item.replyTo.type === 'file' ? t('file') : ''}
               </Text>
             </View>
           )}
-          <Text className={`text-sm leading-5  flex-shrink ${textColor} `}>{item.text}</Text>
+          <Text className={`text-[15px] leading-[20px] flex-shrink ${textColor}`}>{item.text}</Text> {/* text-sm -> explicit */}
         </View>
       </View>
     );
+
     return (
       <Swipeable
         ref={ref => { swipeRefs.current[item.id] = ref; }}
-        renderLeftActions={LeftStub}        // ← se muestra al arrastrar a la derecha
+        renderLeftActions={LeftStub}
         renderRightActions={RightStub}
         friction={1.5}
-        activeOffsetX={[-10, 10]}           // margen para evitar falsos taps
-        onSwipeableOpen={(dir) => {         // callback nuevo
+        activeOffsetX={[-10, 10]}
+        onSwipeableOpen={(dir) => {
           if (dir === 'left') {
-            console.log("swipe left");              // 'left' = swipe hacia la derecha
             swipeRefs.current[item.id]?.close();
             setReplyTo(item);
           }
@@ -537,27 +500,11 @@ export default function ConversationScreen() {
       >
         <Pressable onLongPress={() => { setSelectedMsg(item); setTimeout(() => msgSheet.current.open(), 0); }}>
           {content}
-
           {lastOfStreak && (
-            <View
-              className={`
-                flex-row items-center mt-0.5 mb-2
-                ${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'}
-              `}
-            >
-              {item.fromMe && (
-                item.read ? (
-                  <DoubleCheck height={14} width={14} color={statusReadColor} />
-                ) : (
-                  <Check height={14} width={14} color={statusUnreadColor} strokeWidth={3} />
-                )
-              )}
+            <View className={`flex-row items-center mt-0.5 mb-2 ${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'}`}>
+              {item.fromMe && (item.read ? <DoubleCheck height={16} width={16} color={statusReadColor} /> : <Check height={16} width={16} color={statusUnreadColor} strokeWidth={3} />)}
               <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
-                {item.createdAt &&
-                  new Date(item.createdAt.seconds * 1000).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                {item.createdAt && new Date(item.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </Text>
             </View>
           )}
@@ -565,6 +512,8 @@ export default function ConversationScreen() {
       </Swipeable>
     );
   };
+
+    
 
   // ---------------------------------------------------------------------------
   // • MAIN UI
@@ -634,23 +583,22 @@ export default function ConversationScreen() {
               </Text>
             </View>
             <TouchableOpacity onPress={() => setReplyTo(null)} className="p-1 ml-2">
-              <XMarkIcon height={20} width={20} color={iconColor} strokeWidth={2.2} />
+              <XMarkIcon height={22} width={22} color={iconColor} strokeWidth={2.2} />
             </TouchableOpacity>
           </View>
         )}
         <View
-          className=" flex-row items-end px-3 py-2 bg-[#f4f4f4] dark:bg-[#272626]
-                    space-x-2"
+          className=" flex-row items-end px-3 py-2 bg-[#f4f4f4] dark:bg-[#272626] gap-x-2"
         >
           {/* Attachment – bolita aparte */}
           <TouchableOpacity
             onPress={() => attachSheet.current.open()}
             hitSlop={8}
-            className="h-11 w-11 rounded-full              
+            className="h-12 w-12 rounded-full              
                       items-center justify-center
                       bg-[#e5e5e5] dark:bg-[#3d3d3d]"
           >
-            <PaperClipIcon height={24} width={24} color={"#979797"} strokeWidth={1.5} />
+            <PaperClipIcon height={26} width={26} color={"#979797"} strokeWidth={1.5} />
           </TouchableOpacity>
 
           {/* Campo de texto + botón send dentro del mismo "pill" ---------------- */}
@@ -665,7 +613,7 @@ export default function ConversationScreen() {
                 <Image source={{ uri: attachment.uri }} className="h-10 w-10 rounded-lg" />
               ) : (
                 <View className="h-10 w-10 rounded-lg bg-[#323131] dark:bg-[#fcfcfc] items-center justify-center">
-                  <File height={22} width={22} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
+                  <File height={24} width={24} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
                 </View>
               )}
               <TouchableOpacity
@@ -673,7 +621,7 @@ export default function ConversationScreen() {
                 hitSlop={8}
                 className="absolute -top-1 -right-1 bg-[#d4d4d3] dark:bg-[#474646] rounded-full p-[1px]"
               >
-                <XMarkIcon height={14} width={14} color={iconColor} strokeWidth={2} />
+                <XMarkIcon height={16} width={16} color={iconColor} strokeWidth={2} />
               </TouchableOpacity>
             </View>
             )}
@@ -700,8 +648,8 @@ export default function ConversationScreen() {
                     : 'bg-[#d4d4d3] dark:bg-[#474646]'}`}
               >
                 <ArrowUpIcon
-                  height={14}
-                  width={14}
+                  height={16}
+                  width={16}
                   strokeWidth={3}
                   color={
                     text.trim() || attachment
@@ -735,11 +683,11 @@ export default function ConversationScreen() {
         <View className="py-4 px-7 space-y-4">
           <TouchableOpacity onPress={handleImagePick} className="py-2 flex-row justify-start items-center ">
             <ImageIcon height={24} width={24} color={iconColor} strokeWidth={2} />
-            <Text className=" ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_image')}</Text>
+            <Text className=" ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_image')}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleFilePick} className="py-1 flex-row justify-start items-center">
             <Folder height={24} width={24} color={iconColor} strokeWidth={2} />
-            <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_file')}</Text>
+            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_file')}</Text>
           </TouchableOpacity>
         </View>
       </RBSheet>
@@ -762,22 +710,22 @@ export default function ConversationScreen() {
           {selectedMsg?.fromMe && (
             <>
               <TouchableOpacity onPress={handleDeleteMessage} className="pb-6 flex-row justify-start items-center ">
-                <Trash2 height={22} width={22} color={'#FF633E'} strokeWidth={2} />
-                <Text className="ml-3 text-base font-inter-medium text-[#FF633E]">{t('delete_message')}</Text>
+                <Trash2 height={24} width={24} color={'#FF633E'} strokeWidth={2} />
+                <Text className="ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_message')}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleEditMessage} className="pt-1 pb-6 flex-row justify-start items-center ">
                 <Edit2 height={23} width={23} color={iconColor} strokeWidth={2} />
-                <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit')}</Text>
+                <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit')}</Text>
               </TouchableOpacity>
             </>
           )}
           <TouchableOpacity onPress={handleReplyMessage} className="pt-1 pb-6 flex-row justify-start items-center ">
             <CornerUpLeft height={23} width={23} color={iconColor} strokeWidth={2} />
-            <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('reply')}</Text>
+            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('reply')}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleCopyMessage} className="py-1 flex-row justify-start items-center ">
             <DocumentDuplicateIcon height={23} width={23} color={iconColor} strokeWidth={2} />
-            <Text className="ml-3 text-base font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('copy')}</Text>
+            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('copy')}</Text>
           </TouchableOpacity>
         </View>
       </RBSheet>
@@ -798,8 +746,8 @@ export default function ConversationScreen() {
       >
         <View className="py-4 px-7 space-y-4">
           <TouchableOpacity onPress={async () => { await updateDoc(doc(db, 'conversations', conversationId), { deletedFor: arrayUnion(userId) }); convSheet.current.close(); navigation.goBack(); }} className="py-2 flex-row justify-start items-center ">
-            <Trash2 height={22} width={22} color={'#FF633E'} strokeWidth={2} />
-            <Text className="ml-3 text-base font-inter-medium text-[#FF633E]">{t('delete_chat')}</Text>
+            <Trash2 height={24} width={24} color={'#FF633E'} strokeWidth={2} />
+            <Text className="ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_chat')}</Text>
           </TouchableOpacity>
         </View>
       </RBSheet>
