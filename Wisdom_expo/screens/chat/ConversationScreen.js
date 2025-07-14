@@ -57,9 +57,9 @@ import DoubleCheck from '../../assets/DoubleCheck'
 
 
 export default function ConversationScreen() {
-  // ---------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
   // • HOOKS & HELPERS
-  // ---------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
   const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
