@@ -358,7 +358,7 @@ export default function ConversationScreen() {
 
     const lastOfStreak = isLastOfStreak(messages, index);
     const LeftStub = () => <View style={{ width: 64 }} />;
-    const RightStub = () => null;
+    const RightStub = () => <View style={{ width: 64 }} />;
 
     const common =
       item.fromMe ? 'self-end bg-[#FCFCFC] dark:bg-[#706f6e]' : 'self-start bg-[#D4D4D3] dark:bg-[#474646]';
@@ -387,13 +387,13 @@ export default function ConversationScreen() {
       return (
         <Swipeable
           ref={ref => { swipeRefs.current[item.id] = ref; }}
-          renderLeftActions={!item.fromMe ? LeftStub : undefined}
-          renderRightActions={item.fromMe ? RightStub : undefined}
+          renderLeftActions={LeftStub}
+          renderRightActions={RightStub}
           friction={1.5}
           activeOffsetX={[-10, 10]}
           onSwipeableOpen={(dir) => {
-            swipeRefs.current[item.id]?.close();
-            if ((item.fromMe && dir === 'left') || (!item.fromMe && dir === 'right')) {
+            if ((dir === 'left') || (dir === 'right')){
+              swipeRefs.current[item.id]?.close();
               setReplyTo(item);
             }
           }}
@@ -446,7 +446,7 @@ export default function ConversationScreen() {
           friction={1.5}
           activeOffsetX={[-10, 10]}
           onSwipeableOpen={(dir) => {
-            if (dir === 'left') {
+            if ((dir === 'left') || (dir === 'right')){
               swipeRefs.current[item.id]?.close();
               setReplyTo(item);
             }
@@ -472,7 +472,7 @@ export default function ConversationScreen() {
       <View className={`${bubbleBase} ${fromMeStyles}`}>
         <View>
           {item.replyTo && (
-            <View className="border-l-2 border-[#3695FF] py-1 pl-2 pr-2 rounded-lg mb-2 bg-[#f2f2f2]/80 dark:bg-[#272626]/20">
+            <View className="border-l-2 border-[#3695FF] py-2 pl-2 pr-2 rounded-lg mb-2 bg-[#f2f2f2]/80 dark:bg-[#272626]/20">
               <Text className="font-inter-semibold text-xs text-[#515150] dark:text-[#d4d4d3]">
                 {item.replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
               </Text>
@@ -481,7 +481,7 @@ export default function ConversationScreen() {
               </Text>
             </View>
           )}
-          <Text className={`text-[15px] leading-[20px] flex-shrink ${textColor}`}>{item.text}</Text> {/* text-sm -> explicit */}
+          <Text className={`text-[16px] leading-[20px] flex-shrink ${textColor}`}>{item.text}</Text> {/* text-sm -> explicit */}
         </View>
       </View>
     );
@@ -494,7 +494,7 @@ export default function ConversationScreen() {
         friction={1.5}
         activeOffsetX={[-10, 10]}
         onSwipeableOpen={(dir) => {
-          if (dir === 'left') {
+          if ((dir === 'left') || (dir === 'right')){
             swipeRefs.current[item.id]?.close();
             setReplyTo(item);
           }
