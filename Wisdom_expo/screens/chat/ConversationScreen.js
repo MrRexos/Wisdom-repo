@@ -340,9 +340,9 @@ export default function ConversationScreen() {
     msgSheet.current.close();
   };
 
-  // ------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   // • RENDER HELPERS
-  // ------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
   const bubbleBase = 'rounded-2xl px-3 py-2 max-w-[70%] my-[2] flex-row items-end '; 
 
   const renderMessage = ({ item, index }) => {
@@ -392,8 +392,8 @@ export default function ConversationScreen() {
           friction={1.5}
           activeOffsetX={[-10, 10]}
           onSwipeableOpen={(dir) => {
-            if (dir === 'left') {
-              swipeRefs.current[item.id]?.close();
+            swipeRefs.current[item.id]?.close();
+            if ((item.fromMe && dir === 'left') || (!item.fromMe && dir === 'right')) {
               setReplyTo(item);
             }
           }}
