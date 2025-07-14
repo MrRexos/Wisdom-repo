@@ -473,10 +473,10 @@ export default function ConversationScreen() {
         <View>
           {item.replyTo && (
             <View className="border-l-2 border-[#3695FF] py-2 pl-2 pr-2 rounded-lg mb-2 bg-[#f2f2f2]/80 dark:bg-[#272626]/20">
-              <Text className="font-inter-semibold text-xs text-[#515150] dark:text-[#d4d4d3]">
+              <Text className="font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]">
                 {item.replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
               </Text>
-              <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
+              <Text className="text-[13px] text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
                 {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? t('image') : item.replyTo.type === 'file' ? t('file') : ''}
               </Text>
             </View>
