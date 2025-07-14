@@ -60,7 +60,9 @@ export default function ConversationScreen() {
   // ---------------------------------------------------------------------------
   // • HOOKS & HELPERS
   // ---------------------------------------------------------------------------
+
   const { t } = useTranslation();
+  
   const { colorScheme } = useColorScheme();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const statusReadColor = colorScheme === 'dark' ? '#d4d4d3' : '#515150';
@@ -338,9 +340,9 @@ export default function ConversationScreen() {
     msgSheet.current.close();
   };
 
-  // ---------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
   // • RENDER HELPERS
-  // ---------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
   const bubbleBase = 'rounded-2xl px-3 py-2 max-w-[70%] my-[2] flex-row items-end '; 
 
   const renderMessage = ({ item, index }) => {
