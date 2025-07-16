@@ -6,7 +6,7 @@ import './languages/i18n';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useColorScheme, NativeWindStyleSheet } from 'nativewind';
+import { useColorScheme, TailwindProvider } from 'nativewind';
 import "./global.css"
 
 
@@ -55,11 +55,3 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

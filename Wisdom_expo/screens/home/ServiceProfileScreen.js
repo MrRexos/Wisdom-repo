@@ -736,7 +736,7 @@ export default function ServiceProfileScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false} className="px-5 pt-6 flex-1" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
-        {/* Top FALTA */}
+        {/* Top FALTA */} 
 
         <View className="flex-row justify-between items-center">
           

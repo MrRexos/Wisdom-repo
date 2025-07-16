@@ -15,6 +15,8 @@ export default function ChatImageViewerScreen() {
   const { images, index } = route.params;
   const { width } = Dimensions.get('screen');
 
+  console.log(colorScheme)
+
   const flatListRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(index);
 
