@@ -162,7 +162,6 @@ export default function ConversationScreen() {
   }, [messages]);
 
   const uploadFile = async (uri, path, mime, onProgress) => {
-    // 1) URI → Blob fiable
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.onload = () => resolve(xhr.response);
@@ -172,8 +171,8 @@ export default function ConversationScreen() {
       xhr.send(null);
     });
   
-    // 2) Subida reanudable
-    const fileRef = ref(storage, path);            // ya tienes `storage` importado arriba
+
+    const fileRef = ref(storage, path);
     const task = uploadBytesResumable(fileRef, blob, { contentType: mime });
   
     return new Promise((resolve, reject) => {
@@ -182,7 +181,7 @@ export default function ConversationScreen() {
         snap => onProgress && onProgress((snap.bytesTransferred / snap.totalBytes) * 100),
         reject,
         async () => {
-          blob.close?.();                          // libera memoria en iOS
+          blob.close?.();
           const url = await getDownloadURL(task.snapshot.ref);
           resolve(url);
         }
@@ -226,7 +225,7 @@ export default function ConversationScreen() {
         const url = await uploadFile(
           attachment.uri,
           filePath,
-          attachment.type     // "image/jpeg", "application/pdf", etc.
+          attachment.type
         );
     
         await addDoc(
@@ -249,7 +248,7 @@ export default function ConversationScreen() {
           lastMessage: attachment.type.startsWith('image') ? t('image') : t('file'),
             updatedAt: serverTimestamp(),
             lastMessageSenderId: userId,
-            readBy: arrayUnion(userId),   // arrayUnion en vez de arrayRemove
+            readBy: arrayUnion(userId),
           }
         );
     
@@ -364,11 +363,11 @@ export default function ConversationScreen() {
     const fromMeStyles = common + corner;
     const textColor = 'text-[15px] font-medium text-[#515150] dark:text-[#d4d4d3]';
 
-    /* ----------------------------- IMAGE MSG ----------------------------- */
+    
     if (item.type === 'image') {
       const imgIndex = imageMessages.findIndex(img => img.id === item.id);
       const content = (
-        <View className={`${item.replyTo ? `${bubbleBase} ${fromMeStyles}` : `py-1 flex-row items-end ${item.fromMe ? 'self-end' : 'self-start'}`}`}> {/* shadow-xs -> shadow-sm */}
+        <View className={`${item.replyTo ? `${bubbleBase} ${fromMeStyles}` : `py-1 flex-row items-end ${item.fromMe ? 'self-end' : 'self-start'}`}`}>
           {item.replyTo && (
             <View className="border-l-2 border-[#3695FF] pl-2 mb-1">
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]">
@@ -411,7 +410,6 @@ export default function ConversationScreen() {
       );
     }
 
-    /* ------------------------------ FILE MSG ------------------------------ */
     if (item.type === 'file') {
       const content = (
         <View className={`${bubbleBase} ${fromMeStyles}`}>
@@ -425,7 +423,7 @@ export default function ConversationScreen() {
               </Text>
             </View>
           )}
-          <TouchableOpacity onPress={() => Linking.openURL(item.uri)} className="flex-row space-x-2">
+          <TouchableOpacity onPress={() => Linking.openURL(item.uri)} className="flex-row gap-x-2">
             <View className="h-10 w-10 my-1 rounded-lg bg-[#323131] dark:bg-[#fcfcfc] items-center justify-center">
               <File height={24} width={24} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
             </View>
@@ -465,7 +463,6 @@ export default function ConversationScreen() {
       );
     }
 
-    /* ------------------------------ TEXT MSG ------------------------------ */
     const content = (
       <View className={`${bubbleBase} ${fromMeStyles}`}>
         <View>
@@ -479,7 +476,7 @@ export default function ConversationScreen() {
               </Text>
             </View>
           )}
-          <Text className={`text-[15px] leading-[20px] flex-shrink ${textColor}`}>{item.text}</Text> {/* text-sm -> explicit */}
+          <Text className={`text-[15px] leading-[20px] flex-shrink ${textColor}`}>{item.text}</Text>
         </View>
       </View>
     );
@@ -680,7 +677,7 @@ export default function ConversationScreen() {
           draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
         }}
       >
-        <View className="py-4 px-7 space-y-4">
+        <View className="py-4 px-7 gap-y-4">
           <TouchableOpacity onPress={handleImagePick} className="py-2 flex-row justify-start items-center ">
             <ImageIcon height={24} width={24} color={iconColor} strokeWidth={2} />
             <Text className=" ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_image')}</Text>
@@ -744,7 +741,7 @@ export default function ConversationScreen() {
           draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
         }}
       >
-        <View className="py-4 px-7 space-y-4">
+        <View className="py-4 px-7 gap-y-4">
           <TouchableOpacity onPress={async () => { await updateDoc(doc(db, 'conversations', conversationId), { deletedFor: arrayUnion(userId) }); convSheet.current.close(); navigation.goBack(); }} className="py-2 flex-row justify-start items-center ">
             <Trash2 height={24} width={24} color={'#FF633E'} strokeWidth={2} />
             <Text className="ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_chat')}</Text>

@@ -487,12 +487,7 @@ export default function BookingDetailsScreen() {
       (startDate && !endDate) ||
       (startDate && !endDate && now >= startDate) ||
       (startDate && endDate && now >= startDate && now < endDate)
-    );
-
-    console.log(showInProgress)
-    console.log(endDate)
-
-    
+    ); 
     
 
   const showServiceFinished =
@@ -646,19 +641,19 @@ export default function BookingDetailsScreen() {
 
       <View className='flex-row items-center justify-between'>
 
-        <View className="flex-[1px] justify-center ">
-          <TouchableOpacity onPress={() => navigation.goBack()} className='flex-1 p-2'>
-            <XMarkIcon size={24} color={iconColor} strokeWidth={2} />
+        <View className="flex-[1] justify-center items-start">
+          <TouchableOpacity onPress={() => navigation.goBack()} className='px-2'>
+            <XMarkIcon size={24} color={iconColor} strokeWidth={2}/>
           </TouchableOpacity>
         </View>
 
-        <View className="flex-[2px] justify-center items-center  ">
+        <View className="flex-[2] justify-center items-center">
           <Text className='font-inter-bold text-[17px] text-[#444343] dark:text-[#f2f2f2]'>
             {t('booking_details')}
           </Text>
         </View>
 
-        <View className="flex-[1px] justify-center items-end">
+        <View className="flex-[1] justify-center items-end">
           {booking && booking.booking_status !== 'completed' && (
             <TouchableOpacity onPress={() => setEditMode(!editMode)} className='mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
               <Text className='font-inter-medium text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>
@@ -1032,7 +1027,7 @@ export default function BookingDetailsScreen() {
                 style={{ textAlignVertical: 'top' }}
               />
             ) : (
-              <Text className='font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>{booking.description || '-'}</Text>
+              <Text className='font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]'>{booking.description || '-'}</Text>
             )}
           </View>
         </View>

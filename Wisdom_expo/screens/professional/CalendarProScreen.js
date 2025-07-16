@@ -103,9 +103,9 @@ export default function CalendarProScreen() {
     return formattedDate.replace(',', ' of');
   };
 
-  const renderBooking = ({ item }) => {
+  const renderBooking = ({ item, isLast }) => {
     return (
-      <View className="w-full mb-4 pb-4 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+      <View className={`w-full mb-4 pb-4 flex-row justify-between items-center ${!isLast ? 'border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]' : ''}`}>
         <View className="flex-row justify-center items-center">
           <View className="ml-3 justify-center items-start">
             <Text className="mb-1 font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{item.booking_user_first_name} {item.booking_user_surname}</Text>
@@ -208,7 +208,7 @@ export default function CalendarProScreen() {
             {!bookingsEvents || bookingsEvents.length === 0 ? (
               <View className="mt-1 flex-1 justify-center items-center">
                 <CalendarDaysIcon height={40} width={40} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
-                <Text className="mt-4 mb-5 font-inter-semibold text-[16px] text-[#979797]">
+                <Text className="mt-4 mb-7 font-inter-semibold text-[16px] text-[#979797]">
                   {t('no_events_this_day')}
                 </Text>
               </View>
@@ -216,7 +216,7 @@ export default function CalendarProScreen() {
               <View>
                 {bookingsEvents.map((booking, index) => (
                   <View key={index} >
-                    {renderBooking({ item: booking })}
+                    {renderBooking({ item: booking, isLast: index === bookingsEvents.length - 1 })}
                   </View>
                 ))}
               </View>

@@ -85,8 +85,9 @@ export default function WalletScreen() {
         </View>
       </View>
       
-      <ScrollView className="flex-1 px-6 pt-[75px] space-y-9" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      <ScrollView className="flex-1 px-6 pt-[75px]" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
+      <View className='gap-y-9'>
         <View className="p-7 justify-center items-center rounded-3xl bg-[#fcfcfc]  dark:bg-[#323131]">
           <Text className="mb-4 font-inter-semibold text-[16px] text-[#B6B5B5] dark:text-[#706f6e]">{t('money_in_wallet')}</Text>
           <Text className="font-inter-bold text-[40px] text-[#444343] dark:text-[#f2f2f2]">{moneyWallet? moneyWallet : '0.00'} €</Text>
@@ -112,8 +113,10 @@ export default function WalletScreen() {
             ))}
           </View>
         ))}
+        </View>
         <View className="h-10"></View>
       </ScrollView>
+      
     </SafeAreaView>
   );
 }

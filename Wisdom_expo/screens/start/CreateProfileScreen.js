@@ -143,23 +143,23 @@ export default function CreateProfileScreen() {
             <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
             <View className="flex-1 w-full justify-between items-center ">
-                <View className="w-full px-6 py-4 ">
+                <View className="w-full px-5 py-3 ">
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
                     </TouchableOpacity>
                     <View>
-                        <View className="items-center pt-7">
+                        <View className="items-center pt-6">
                             <TouchableOpacity onPress={handleImagePicker}>
                                 <Image source={image ? { uri: image.uri } : require('../../assets/defaultProfilePic.jpg')} className="w-[120px] h-[120px] rounded-full bg-slate-500" />
                             </TouchableOpacity>
                         </View>
                     </View>
                     <View className="justify-center items-center px-7">
-                        <Text className="font-inter-bold text-center text-[20px] pt-8 text-[#444343] dark:text-[#f2f2f2]">
+                        <Text className="font-inter-bold text-center text-xl pt-7 text-[#444343] dark:text-[#f2f2f2]">
                             {t('add_profile_picture_and_username')}
                         </Text>
                     </View>
-                    <View className="mt-11 mb-1 h-[55px] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+                    <View className="mt-8 mb-1 h-[55px] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
                         <Text className="pl-4 pr-2 text-[15px] text-[#444343] dark:text-[#f2f2f2]">
                             @
                         </Text>

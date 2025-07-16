@@ -1244,7 +1244,7 @@ export default function ServiceProfileScreen() {
 
           <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
-              <XCircleIcon  width={24} height={24} color={iconColor} strokeWidth={1.4}/>
+              <XCircleIcon  width={24} height={24} color={iconColor} strokeWidth={1.6}/>
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Cancellation Policy</Text>
@@ -1254,7 +1254,7 @@ export default function ServiceProfileScreen() {
 
           <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
-              <Info  width={23} height={23} color={iconColor} strokeWidth={1.4}/>
+              <Info  width={23} height={23} color={iconColor} strokeWidth={1.6}/>
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Help</Text>
@@ -1264,7 +1264,7 @@ export default function ServiceProfileScreen() {
 
           <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
-              <Phone  width={22} height={22} color={iconColor} strokeWidth={1.4} />
+              <Phone  width={22} height={22} color={iconColor} strokeWidth={1.6} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Contact Wisdom</Text>
@@ -1274,7 +1274,7 @@ export default function ServiceProfileScreen() {
 
           <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
-              <FileText  width={23} height={23} color={iconColor} strokeWidth={1.4}/>
+              <FileText  width={23} height={23} color={iconColor} strokeWidth={1.6}/>
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Reservation policy</Text>
@@ -1284,7 +1284,7 @@ export default function ServiceProfileScreen() {
 
           <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
-              <Flag  width={23} height={23} color={iconColor} strokeWidth={1.4}/>
+              <Flag  width={23} height={23} color={iconColor} strokeWidth={1.6}/>
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Report this service</Text>

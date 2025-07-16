@@ -155,7 +155,9 @@ export default function SettingsScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
       
-      <ScrollView className="flex-1 px-6 pt-[55px] space-y-9" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      <ScrollView className="flex-1 px-6 pt-[55px]" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        
+        <View className='gap-y-9'>
         <View className="flex-row justify-between">
           <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
               {t('profile')}
@@ -200,8 +202,8 @@ export default function SettingsScreen() {
                   }}
                 >
                   <View className=" flex-row items-center justify-start ">
-                    <Icon  color={iconColor} strokeWidth={1.4} className="mr-4" style={{ transform: [{ scale: 1 }]}} ></Icon>
-                    <View className="py-[10px] flex-1 flex-row items-center justify-start pr-[14px] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{borderTopWidth: 1}, index===0 && {borderTopWidth: 0 }]}>                   
+                    <Icon  color={iconColor} strokeWidth={1.6} style={{ transform: [{ scale: 1 }]}} ></Icon>
+                    <View className="ml-4 py-[10px] flex-1 flex-row items-center justify-start pr-[14px] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{borderTopWidth: 1}, index===0 && {borderTopWidth: 0 }]}>                   
                       <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{label}</Text>
                       <View className="flex-1"/>
                       
@@ -234,6 +236,7 @@ export default function SettingsScreen() {
           </TouchableOpacity>
           <Text className="pt-4 pb-[85px] text-[#e0e0e0] dark:text-[#3d3d3d]">{t('version_1_0_3')}</Text>
         </View>
+      </View>
       </ScrollView>
     </SafeAreaView>
   );

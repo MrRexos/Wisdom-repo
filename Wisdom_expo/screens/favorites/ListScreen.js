@@ -348,7 +348,7 @@ export default function ListScreen() {
         <ChevronLeftIcon size={24} strokeWidth={1.7} color={iconColor} />
       </TouchableOpacity>
 
-      <View className="px-6 pt-5 mb-9">
+      <View className="px-6 pt-5 ">
         <View  className="flex-row justify-between items-center">
           <Text className="font-inter-semibold text-[24px] text-[#444343] dark:text-[#f2f2f2]">
             {currentTitle}
@@ -363,6 +363,7 @@ export default function ListScreen() {
         <View className="pb-7"></View>
         <View className="absolute bottom-0 left-0 w-[700px] h-1 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]"/>
         </View>
+        
       {items.length<1 || items.empty ? (
       // Si la lista está vacía, muestra este mensaje
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -382,6 +383,7 @@ export default function ListScreen() {
           renderItem={renderItem}
           refreshing={refreshing}
           onRefresh={onRefresh}
+          className='pt-9'
           contentContainerStyle={{
             justifyContent: 'space-between',
           }}

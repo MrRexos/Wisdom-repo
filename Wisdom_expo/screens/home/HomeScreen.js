@@ -658,7 +658,7 @@ export default function HomeScreen() {
 
                     <View className="mt-7 mb-3 w-full justify-start items-center">
 
-                      <View className="flex-row space-x-2">
+                      <View className="flex-row gap-x-2">
 
                         <TouchableOpacity onPress={() => setSearchDateOptionSelected('frequency')} className={`px-4 py-[11] rounded-full ${searchDateOptionSelected === 'frequency' ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#f2f2f2] dark:bg-[#3d3d3d]'}`}>
                           <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'frequency' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>Frequency</Text>

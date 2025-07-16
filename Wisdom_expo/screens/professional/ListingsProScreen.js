@@ -152,7 +152,7 @@ export default function ListingsProScreen() {
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
       <View className="flex-1 justify-start items-center pt-[55px]">
         
-        <View className="px-6 w-full flex-row justify-between items-center">
+        <View className="px-6 pb-2 w-full flex-row justify-between items-center">
           <Text className=" mb-2 font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2]">
               {t('your_listings')}
           </Text>
@@ -182,6 +182,7 @@ export default function ListingsProScreen() {
               renderItem={renderItem}
               refreshing={refreshing}
               onRefresh={onRefresh}
+              showsVerticalScrollIndicator={false}
               contentContainerStyle={{
                 justifyContent: 'space-between',
                 paddingBottom:200,

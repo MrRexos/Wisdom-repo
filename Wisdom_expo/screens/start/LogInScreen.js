@@ -106,7 +106,7 @@ export default function LogInScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1  bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <KeyboardAwareScrollView style={{ flex: 1, width: '100%' }} enableOnAndroid={true} scrollEnabled={keyboardOpen} > 
-      <View className="px-6 py-4 w-full">
+      <View className="px-5 py-3 w-full">
         <View className="flex-row justify-between">
           <View className="flex-1">
             <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -119,10 +119,10 @@ export default function LogInScreen() {
           <View className="flex-1"></View>
         </View>
 
-        <Text className="font-inter-bold text-[20px] pt-5 text-center text-[#444343] dark:text-[#f2f2f2]">
+        <Text className="font-inter-bold text-xl pt-4 text-center text-[#444343] dark:text-[#f2f2f2]">
             {t('welcome_back')}
         </Text>
-        <Text className="font-inter-semibold text-[15px] pt-12 text-[#444343] dark:text-[#f2f2f2]">
+        <Text className="font-inter-semibold text-[15px] pt-10 text-[#444343] dark:text-[#f2f2f2]">
           {t('email_or_username')}
         </Text>
         
@@ -139,7 +139,7 @@ export default function LogInScreen() {
             keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
             className="px-4 h-11 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
         </View>
-        <Text className="font-inter-semibold text-[15px] pt-8 text-[#444343] dark:text-[#f2f2f2]">
+        <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">
           {t('password')}
         </Text>
         <View className="mt-3 px-5 h-[55px] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
@@ -186,4 +186,3 @@ export default function LogInScreen() {
     </SafeAreaView>
   );
 }
-

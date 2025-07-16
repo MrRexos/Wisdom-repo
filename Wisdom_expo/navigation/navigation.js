@@ -76,12 +76,10 @@ import DisplayReviewsScreen from '../screens/home/DisplayReviewsScreen';
 import AddReviewScreen from '../screens/home/AddReviewScreen';
 import EnlargedImageScreen from '../screens/home/EnlargedImageScreen';
 import BookingDetailsScreen from '../screens/booking/BookingDetailsScreen';
-
 import CalendarProScreen from '../screens/professional/CalendarProScreen';
 import ListingsProScreen from '../screens/professional/ListingsProScreen';
 import SettingsProScreen from '../screens/professional/SettingsProScreen';
 import TodayProScreen from '../screens/professional/TodayProScreen';
-
 import CalendarScreen from '../screens/services/CalendarScreen';
 import DirectionsScreen from '../screens/settings/DirectionsScreen';
 import EditAccountScreen from '../screens/settings/EditAccountScreen';

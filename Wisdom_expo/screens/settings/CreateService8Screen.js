@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { XMarkIcon} from 'react-native-heroicons/outline'; // Asegúrate de importar PlusIcon o el ícono que prefieras
+import { XMarkIcon } from 'react-native-heroicons/outline'; // Asegúrate de importar PlusIcon o el ícono que prefieras
 import AddMainImage from '../../assets/AddMainImage';
 import AddServiceImages from '../../assets/AddServiceImages';
 import * as ImagePicker from 'expo-image-picker';
@@ -14,7 +14,7 @@ const patternImages = (images, colorScheme, onRemoveImage) => {
   const totalImages = images.length;
   const verticalSpacing = 190; // Espacio vertical entre filas de imágenes
   const horizontalSpacing = 165; // Espacio horizontal entre columnas de imágenes
-  
+
   const pattern = images.map((image, i) => {
     const imgIndex = i % patternSize; // Usa módulo para repetir el patrón
 
@@ -31,7 +31,7 @@ const patternImages = (images, colorScheme, onRemoveImage) => {
         break;
       case 1:
         transformStyle = { transform: [{ rotate: '4.4deg' }] };
-        topPosition = Math.floor(i / patternSize) * 3 * verticalSpacing ;
+        topPosition = Math.floor(i / patternSize) * 3 * verticalSpacing;
         leftPosition = horizontalSpacing;
         break;
       case 2:
@@ -41,7 +41,7 @@ const patternImages = (images, colorScheme, onRemoveImage) => {
         break;
       case 3:
         transformStyle = { transform: [{ rotate: '-2.5deg' }] };
-        topPosition = Math.floor(i / patternSize ) * 3 * verticalSpacing + verticalSpacing;
+        topPosition = Math.floor(i / patternSize) * 3 * verticalSpacing + verticalSpacing;
         leftPosition = horizontalSpacing;
         break;
       case 4:
@@ -74,7 +74,7 @@ const patternImages = (images, colorScheme, onRemoveImage) => {
         />
         <TouchableOpacity
           style={styles.removeButton}
-          onPress={() => onRemoveImage(i+1)}
+          onPress={() => onRemoveImage(i + 1)}
         >
           <XMarkIcon size={20} color="white" />
         </TouchableOpacity>
@@ -91,63 +91,63 @@ export default function CreateService8Screen() {
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const navigation = useNavigation();
   const route = useRoute();
-  const {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences} = route.params;
+  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences } = route.params;
   const [serviceImages, setServiceImages] = useState([]);
   const patternHeight = Math.ceil(serviceImages.length / 6) * 3 * 160;
+  const patternWidth = 315;
 
   const handlePickMainImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (status !== 'granted') {
-        Alert.alert(
-            t('allow_wisdom_to_access_gallery'),
-            t('need_gallery_access_service'),
-            [
-                { text: t('cancel'), style: 'cancel' },
-                { text: t('settings'), onPress: () => Linking.openSettings() }
-            ],
-            { cancelable: true }
-        );
-        return;
+      Alert.alert(
+        t('allow_wisdom_to_access_gallery'),
+        t('need_gallery_access_service'),
+        [
+          { text: t('cancel'), style: 'cancel' },
+          { text: t('settings'), onPress: () => Linking.openSettings() }
+        ],
+        { cancelable: true }
+      );
+      return;
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        aspect: [1, 1],
-        quality: 1,
+      mediaTypes: 'images',
+      aspect: [1, 1],
+      quality: 1,
     });
 
     if (!result.canceled) {
-        setServiceImages(prevImages => [result.assets[0], ...prevImages]);   
+      setServiceImages(prevImages => [result.assets[0], ...prevImages]);
     }
   };
-
 
   const handlePickImages = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (status !== 'granted') {
-        Alert.alert(
-            t('permission_denied'),
-            t('need_gallery_access_service'),
-            [
-                { text: t('cancel'), style: 'cancel' },
-                { text: t('settings'), onPress: () => Linking.openSettings() }
-            ],
-            { cancelable: true }
-        );
-        return;
+      Alert.alert(
+        t('permission_denied'),
+        t('need_gallery_access_service'),
+        [
+          { text: t('cancel'), style: 'cancel' },
+          { text: t('settings'), onPress: () => Linking.openSettings() }
+        ],
+        { cancelable: true }
+      );
+      return;
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        aspect: [1, 1],
-        quality: 1,
-        allowsMultipleSelection: true,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      aspect: [1, 1],
+      quality: 1,
+      allowsMultipleSelection: true,
     });
 
     if (!result.canceled) {
-      setServiceImages(prevImages => [...prevImages, ...result.assets]);      
+      setServiceImages(prevImages => [...prevImages, ...result.assets]);
     }
   };
 
@@ -158,8 +158,8 @@ export default function CreateService8Screen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
 
         <View className="flex-1 px-6 pt-5 pb-6">
 
@@ -176,11 +176,11 @@ export default function CreateService8Screen() {
 
           {serviceImages.length < 2 ? null : (
             <TouchableOpacity onPress={handlePickImages}>
-              <Text className="mt-10 font-inter-medium text-[16px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('add_more')}</Text>
+              <Text className="mt-10 font-inter-semibold text-[16px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('add_more')}</Text>
             </TouchableOpacity>
           )}
 
-          {serviceImages.length < 2 ? ( <View className="h-[30px]"/>) : null}
+          {serviceImages.length < 2 ? (<View className="h-[30px]" />) : null}
 
           <View className="flex-1 w-full mt-[20px] justify-start items-center">
 
@@ -188,7 +188,7 @@ export default function CreateService8Screen() {
 
               <TouchableOpacity onPress={handlePickMainImage} className="justify-center items-center relative ">
                 <AddMainImage fill={iconColor} width={257} height={118} />
-                <Text className="absolute bottom-4 left-1/2 inset-x-0 font-inter-semibold text-[14px] text-center text-[#e0e0e0] dark:text-[#3d3d3d]">{t('main_photo')}</Text>
+                <Text className="absolute bottom-4 inset-x-0 font-inter-semibold text-[14px] text-center text-[#e0e0e0] dark:text-[#3d3d3d]">{t('main_photo')}</Text>
               </TouchableOpacity>
 
             ) : (
@@ -208,13 +208,13 @@ export default function CreateService8Screen() {
 
             {serviceImages.length < 2 ? (
 
-              <TouchableOpacity onPress={handlePickImages}>
-                <AddServiceImages stroke={iconColor} className="mt-12" />
+              <TouchableOpacity onPress={handlePickImages} className="mt-12">
+                <AddServiceImages stroke={iconColor} />
               </TouchableOpacity>
 
             ) : (
 
-              <View style={[styles.patternContainer, { height: patternHeight }]}>
+              <View style={[styles.patternContainer, { height: patternHeight, width:patternWidth }]} className='items-center justify-center'>
                 {patternImages(serviceImages.slice(1), colorScheme, handleRemoveImage)}
               </View>
 
@@ -236,7 +236,7 @@ export default function CreateService8Screen() {
 
         <TouchableOpacity
           disabled={false}
-          onPress={() => navigation.navigate('CreateService9_0', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages})}
+          onPress={() => navigation.navigate('CreateService9_0', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages })}
           style={{ opacity: 1 }}
           className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
         >
@@ -253,6 +253,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: '100%',
     marginTop: 40,
+    alignSelf: 'center',
   },
   imageContainer: {
     position: 'absolute',

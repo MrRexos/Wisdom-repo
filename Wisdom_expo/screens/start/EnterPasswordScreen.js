@@ -44,11 +44,11 @@ export default function EnterPasswordScreen() {
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
         <View className="flex-1 w-full justify-between items-center">
-      <View className="px-6 py-4 w-full">
+      <View className="px-5 py-3 w-full">
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
         </TouchableOpacity>
-        <Text className="font-inter-bold text-[20px] pt-12 text-[#444343] dark:text-[#f2f2f2]">
+        <Text className="font-inter-bold text-xl pt-11 text-[#444343] dark:text-[#f2f2f2]">
           {t('set_a_password')}
         </Text>
         <View className="mt-7 px-5 h-[55px] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">

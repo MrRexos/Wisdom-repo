@@ -126,7 +126,7 @@ export default function PaymentMethodScreen() {
               />            
             </View>
 
-            <View className="flex-row justify-between space-x-2 ">
+            <View className="flex-row justify-between gap-x-2 ">
 
               <View className="flex-1">
                 <Text className="pb-2 font-inter-semibold text-[15px] text-[#515150] dark:text-[#d4d4d3]">{t('expiration_date')}</Text>
