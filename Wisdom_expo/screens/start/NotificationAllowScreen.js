@@ -177,7 +177,7 @@ export default function NotificationAllowScreen() {
     return (
       <SafeAreaView style={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
-        <View className="px-5 py-3 w-full flex-1 justify-between">
+        <View className="px-6 py-4 w-full flex-1 justify-between">
           <View className="flex-row justify-between">
             <View className="flex-1">
             </View>
@@ -193,7 +193,7 @@ export default function NotificationAllowScreen() {
           
           <View className="justify-center items-center ">            
           
-            <View className="mt-6 mb-8 items-center">
+            <View className="mt-16 mb-8 items-center">
               
               {colorScheme==='dark'? (
                   <NotificationAskWhite height={320} width={340}/>

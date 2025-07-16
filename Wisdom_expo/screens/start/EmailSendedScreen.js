@@ -34,7 +34,7 @@ export default function EmailSendedScreen({ route }) {
     return (
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
-          <View className="px-5 py-3  w-full">
+          <View className="px-6 py-4  w-full">
             <View className="flex-row justify-between">
               <View className="flex-1">
                 <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -48,11 +48,11 @@ export default function EmailSendedScreen({ route }) {
               </View>
             </View>
 
-            <Text className="font-inter-bold text-xl pt-4 text-center text-[#444343] dark:text-[#f2f2f2]">
+            <Text className="font-inter-bold text-[20px] pt-4 text-center text-[#444343] dark:text-[#f2f2f2]">
                 {t('check_your_inbox')}
             </Text>
             <View className="justify-center items-center px-8">
-              <Text className="font-inter-medium text-[13px] text-center pt-3 text-[#B6B5B5] dark:text-[#706F6E]">
+              <Text className="pt-1 font-inter-medium text-[13px] text-center pt-3 text-[#B6B5B5] dark:text-[#706F6E]">
                 {t('email_sent_reset')}
               </Text>
             </View>

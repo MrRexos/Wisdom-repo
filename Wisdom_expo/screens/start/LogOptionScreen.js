@@ -85,7 +85,7 @@ export default function LogOptionScreen() {
                   <WisdomLogo width={70} height={40} className='fill-black'/>
               </View> 
           </View>
-          <View className="justify-center w-full items-center space-y-2.5 pb-2">
+          <View className="justify-center w-full items-center gap-y-2.5 pb-2">
               <TouchableOpacity onPress={() => navigation.navigate('EnterEmail')} className="w-full px-8">
                   <View className="bg-[#f2f2f2] w-full h-[55px] rounded-full items-center justify-center">
                     <Text className="font-inter-semibold text-[15px] text-[#444343] ">
