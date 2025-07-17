@@ -381,11 +381,16 @@ export default function BookingDetailsScreen() {
 
   const handleFinalPayment = async () => {
     try {
-      await updateIsPaid(true);
+      const res = await api.post(`/api/bookings/${bookingId}/final-payment`);
+      const clientSecret = res.data.clientSecret;
+      navigation.navigate('PaymentMethod', {
+        clientSecret,
+        onSuccess: 'ConfirmPayment',
+        bookingId: bookingId,
+        isFinal: true,
+      });
     } catch (e) {
       console.error('handleFinalPayment error:', e);
-    } finally {
-      navigation.navigate('ConfirmPayment', { serviceId: booking.service_id });
     }
   };
 

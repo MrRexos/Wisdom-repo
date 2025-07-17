@@ -301,6 +301,7 @@
     "booking_rejected": "Booking rejected",
     "booking_expired": "Booking date has passed",
     "finished_paid": "Finished and paid",
+    "download_invoice": "Download invoice",
     "cannot_book_own_service": "You cannot book your own service.",
     "cannot_write_to_yourself": "You cannot write to yourself.",
     "skip": "Skip",

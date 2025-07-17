@@ -301,6 +301,7 @@
     "booking_rejected": "Reserva rebutjada",
     "booking_expired": "La data d'inici ha passat",
     "finished_paid": "Finalitzat i pagat",
+    "download_invoice": "Descarregar factura",
     "cannot_book_own_service": "No pots reservar el teu propi servei.",
     "cannot_write_to_yourself": "No pots escriure't a tu mateix.",
     "skip": "Saltar",
