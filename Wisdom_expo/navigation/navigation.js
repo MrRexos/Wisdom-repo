@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import i18n from '../languages/i18n';
 import { getDataLocally } from '../utils/asyncStorage';
+import eventEmitter from '../utils/eventEmitter';
 import { useEffect, useState, useCallback, useRef } from 'react';
 
 import { Search, Heart, MessageSquare, Calendar } from "react-native-feather";
@@ -217,6 +218,23 @@ function TabNavigator({ route }) {
     };
 
     getProfileImage();
+
+    const handleProfileUpdated = async () => {
+      try {
+        const userData = await getDataLocally('user');
+        const user = JSON.parse(userData);
+        if (user.profile_picture) {
+          setProfileImage(user.profile_picture);
+        } else {
+          setProfileImage(null);
+        }
+      } catch (error) {
+        console.log('Error al actualizar la imagen de perfil:', error);
+      }
+    };
+
+    eventEmitter.on('profileUpdated', handleProfileUpdated);
+    return () => eventEmitter.off('profileUpdated', handleProfileUpdated);
   }, []);
 
   useFocusEffect(
@@ -234,7 +252,7 @@ function TabNavigator({ route }) {
       };
 
       getProfileImage();
-    }, [route])
+    }, [])
   );
 
 
@@ -360,6 +378,23 @@ function ProTabNavigator({ route }) {
     };
 
     getProfileImage();
+
+    const handleProfileUpdated = async () => {
+      try {
+        const userData = await getDataLocally('user');
+        const user = JSON.parse(userData);
+        if (user.profile_picture) {
+          setProfileImage(user.profile_picture);
+        } else {
+          setProfileImage(null);
+        }
+      } catch (error) {
+        console.log('Error al actualizar la imagen de perfil:', error);
+      }
+    };
+
+    eventEmitter.on('profileUpdated', handleProfileUpdated);
+    return () => eventEmitter.off('profileUpdated', handleProfileUpdated);
   }, []);
 
   useFocusEffect(
@@ -377,7 +412,7 @@ function ProTabNavigator({ route }) {
       };
 
       getProfileImage();
-    }, [route])
+    }, [])
   );
 
 
