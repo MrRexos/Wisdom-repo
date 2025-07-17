@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { ChevronRightIcon, ChevronLeftIcon } from 'react-native-heroicons/outline';
+import { ChevronRightIcon, ChevronLeftIcon, EllipsisHorizontalIcon } from 'react-native-heroicons/outline';
+import { BookmarkIcon } from 'react-native-heroicons/solid';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
-import {EllipsisHorizontalIcon} from 'react-native-heroicons/outline';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import BookMarksFillIcon from 'react-native-bootstrap-icons/icons/bookmarks-fill';
 
@@ -345,7 +345,7 @@ export default function ListScreen() {
       </RBSheet>
 
       <TouchableOpacity onPress={() => navigation.goBack()} className="pl-4 pt-4">
-        <ChevronLeftIcon size={24} strokeWidth={1.7} color={iconColor} />
+        <ChevronLeftIcon size={25} strokeWidth={2} color={iconColor} />
       </TouchableOpacity>
 
       <View className="px-6 pt-5 ">
@@ -365,16 +365,21 @@ export default function ListScreen() {
         </View>
         
       {items.length<1 || items.empty ? (
-      // Si la lista está vacía, muestra este mensaje
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <BookMarksFillIcon height={60} width={60} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
-        <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
-          {t('empty_list')}
-        </Text>
-        <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[250px]">
-          {t('save_services_to_this_list')}
-        </Text>
-      </View>
+        // Si la lista está vacía, muestra este mensaje
+        <View className='flex-1 justify-center items-center'>
+          
+          <BookmarkIcon
+            color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'}
+            size={65}
+          />
+          
+          <Text className="mt-5 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
+            {t('empty_list')}
+          </Text>
+          <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[250px]">
+            {t('save_services_to_this_list')}
+          </Text>
+        </View>
       ) : (
         // Si la lista tiene items, renderiza el FlatList
         <FlatList

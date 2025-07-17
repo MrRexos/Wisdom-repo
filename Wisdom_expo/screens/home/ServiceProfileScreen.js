@@ -232,9 +232,16 @@ export default function ServiceProfileScreen() {
   };
 
   const handleDone = async () => {
-    const listId = createList();
-    addItemList(listId)
-    sheet.current.close();
+    try {
+      const listId = await createList();
+      if (listId) {
+        await addItemList(listId);
+      }
+    } catch (error) {
+      console.error('Error adding item to new list:', error);
+    } finally {
+      sheet.current.close();
+    }
   }
 
   const openSheetWithInput = (height) => {
@@ -1028,7 +1035,7 @@ export default function ServiceProfileScreen() {
               </View>
 
             ) : (
-            <View>
+            <View className='w-full'>
 
             <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Location</Text> 
 

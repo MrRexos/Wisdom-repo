@@ -179,9 +179,16 @@ export default function ResultsScreen() {
   };
 
   const handleDone = async () => {
-    const listId = createList();
-    addItemList(listId)
-    sheet.current.close();
+    try {
+      const listId = await createList();
+      if (listId) {
+        await addItemList(listId);
+      }
+    } catch (error) {
+      console.error('Error adding item to new list:', error);
+    } finally {
+      sheet.current.close();
+    }
   }
 
   const openSheetWithInput = (height) => {
