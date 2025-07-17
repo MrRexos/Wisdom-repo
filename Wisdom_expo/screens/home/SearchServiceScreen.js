@@ -27,10 +27,10 @@ export default function SearchServiceScreen() {
   const [blurVisible, setBlurVisible] = useState(false);
 
   useEffect(() => {
-    if (route.params && route.params.blurVisible !== undefined) {
+    if (route.params?.blurVisible !== undefined) {
       setBlurVisible(true);
     }
-  }, [route.params]);
+  }, [route.params?.blurVisible]);
 
   const handleClearText = () => {
     setSearchText('');

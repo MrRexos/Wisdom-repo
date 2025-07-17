@@ -81,16 +81,14 @@ export default function HomeScreen() {
 
   useFocusEffect(
     useCallback(() => {
-
-      if (route.params && route.params.blurVisible !== undefined) {
+      if (route.params?.blurVisible !== undefined) {
         setSearchOptionsVisible(route.params.blurVisible);
         loadSearchedDirection();
         loadSearchedService();
-
       } else {
         setSearchOptionsVisible(false);
       }
-    }, [route.params])
+    }, [route.params?.blurVisible])
   );
 
 

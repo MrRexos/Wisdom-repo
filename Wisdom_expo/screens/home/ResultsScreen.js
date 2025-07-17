@@ -46,20 +46,20 @@ export default function ResultsScreen() {
   const [searchedDirection, setSearchedDirection] = useState(null);
 
   useEffect(() => {
-    if (route.params && route.params.category !== undefined) {
+    if (route.params?.category !== undefined) {
       setCategoryId(route.params.category);
       setCategoryName(route.params.category_name);
       fetchResultsByCategory(route.params.category);
-    } else if (route.params && route.params.searchedService !== undefined) {
-      const {duration, selectedTime, selectedDay, searchedDirection} = route.params;
-      setSearchedService(route.params.searchedService)
+    } else if (route.params?.searchedService !== undefined) {
+      const { duration, selectedTime, selectedDay, searchedDirection } = route.params;
+      setSearchedService(route.params.searchedService);
       setDuration(duration);
       setSelectedTime(selectedTime);
       setSelectedDay(selectedDay);
       setSearchedDirection(searchedDirection);
-      fetchResultsBySearch(route.params.searchedService)
+      fetchResultsBySearch(route.params.searchedService);
     }
-  }, [route.params]);
+  }, [route.params?.category, route.params?.searchedService]);
 
   const orderByOptions = [
     { label: 'Recommend', type: 'recommend' },
@@ -124,9 +124,9 @@ export default function ResultsScreen() {
   };
 
   const loadResults = async () => {
-    if (route.params && route.params.category !== undefined) {
+    if (route.params?.category !== undefined) {
       await fetchResultsByCategory(route.params.category);
-    } else if (route.params && route.params.searchedService !== undefined) {
+    } else if (route.params?.searchedService !== undefined) {
       await fetchResultsBySearch(route.params.searchedService);
     }
   };
