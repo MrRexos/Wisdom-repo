@@ -453,11 +453,20 @@ export default function BookingScreen() {
   };
 
   const handleBook = async () => {
-
-    await createBooking();
-    navigation.navigate('ConfirmPayment');
-
-  }
+    try {
+      const booking = await createBooking();
+      if (!booking || !booking.id) return;
+      const res = await api.post(`/api/bookings/${booking.id}/deposit`);
+      const clientSecret = res.data.clientSecret;
+      navigation.navigate('PaymentMethod', {
+        clientSecret,
+        onSuccess: 'ConfirmPayment',
+        bookingId: booking.id,
+      });
+    } catch (e) {
+      console.error('Booking payment error:', e);
+    }
+  };
 
 
   
@@ -1331,15 +1340,12 @@ export default function BookingScreen() {
       <View className="flex-row justify-center items-center pb-3 px-6">
 
         <TouchableOpacity
-          onPress={() => {paymentMethod? handleBook() : navigation.navigate('PaymentMethod')} }
+          onPress={handleBook}
           style={{ opacity: 1 }}
           className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
         >
-          <Text>
-            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
-              {paymentMethod? t('continue_to_payment') : t('add_payment_method')}
-              
-            </Text>
+          <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
+            {t('continue_to_payment')}
           </Text>
         </TouchableOpacity>
       </View>

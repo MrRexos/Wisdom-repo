@@ -301,6 +301,7 @@
     "booking_rejected": "预订已拒绝",
     "booking_expired": "开始日期已过",
     "finished_paid": "已完成并付款",
+    "download_invoice": "下载发票",
     "cannot_book_own_service": "您无法预订自己的服务。",
     "cannot_write_to_yourself": "您无法给自己留言。",
     "skip": "跳过",

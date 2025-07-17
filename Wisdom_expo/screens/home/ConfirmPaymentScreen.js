@@ -1,18 +1,14 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import React from 'react';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
-import { useNavigation, useRoute, useFocusEffect, useIsFocused } from '@react-navigation/native';
-import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, CheckCircleIcon } from 'react-native-heroicons/outline';
-import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import { Play } from "react-native-feather";
-import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { XMarkIcon, CheckCircleIcon } from 'react-native-heroicons/outline';
 import api from '../../utils/api.js';
-import RBSheet from 'react-native-raw-bottom-sheet';
-import axios from 'axios';
-import { format } from 'date-fns';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import { Buffer } from 'buffer';
 
 
 export default function ConfirmPaymentScreen() {
@@ -21,6 +17,19 @@ export default function ConfirmPaymentScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
+
+  const downloadInvoice = async () => {
+    if (!route.params?.bookingId) return;
+    try {
+      const res = await api.get(`/api/bookings/${route.params.bookingId}/invoice`, { responseType: 'arraybuffer' });
+      const path = FileSystem.documentDirectory + `invoice_${route.params.bookingId}.pdf`;
+      const base64 = Buffer.from(res.data, 'binary').toString('base64');
+      await FileSystem.writeAsStringAsync(path, base64, { encoding: FileSystem.EncodingType.Base64 });
+      await Sharing.shareAsync(path);
+    } catch (e) {
+      console.log('download invoice error', e);
+    }
+  };
 
 
   return (
@@ -49,6 +58,13 @@ export default function ConfirmPaymentScreen() {
             <Text className="font-inter-bold text-center text-[25px] text-[#444343] dark:text-[#f2f2f2]">{t('booking_successfully_completed')}</Text>
           </View>
 
+          {route.params?.bookingId && (
+            <TouchableOpacity onPress={downloadInvoice} className='mt-8 bg-[#323131] dark:bg-[#fcfcfc] rounded-full px-6 py-3'>
+              <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                {t('download_invoice')}
+              </Text>
+            </TouchableOpacity>
+          )}
 
         </View>
 

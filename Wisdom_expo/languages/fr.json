@@ -301,6 +301,7 @@
     "booking_rejected": "Réservation rejetée",
     "booking_expired": "La date de début est passée",
     "finished_paid": "Terminé et payé",
+    "download_invoice": "Télécharger la facture",
     "cannot_book_own_service": "Vous ne pouvez pas réserver votre propre service.",
     "cannot_write_to_yourself": "Vous ne pouvez pas vous écrire à vous-même.",
     "skip": "Ignorer",

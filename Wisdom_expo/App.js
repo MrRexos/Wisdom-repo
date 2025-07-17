@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import Navigation from './navigation/navigation';
+import { StripeProvider } from '@stripe/stripe-react-native';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './languages/i18n';
@@ -8,6 +9,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useColorScheme, TailwindProvider } from 'nativewind';
 import "./global.css"
+
+const STRIPE_PUBLISHABLE_KEY = 'pk_test_PLACEHOLDER';
 
 
 
@@ -50,7 +53,9 @@ export default function App() {
       style={{ flex: 1 }}
       className={`${colorScheme} color-scheme-${colorScheme}`}
     >
-      <Navigation />
+      <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
+        <Navigation />
+      </StripeProvider>
     </GestureHandlerRootView>
   );
 }
