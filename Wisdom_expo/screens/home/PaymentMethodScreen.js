@@ -22,6 +22,20 @@ export default function PaymentMethodScreen() {
   const onSuccess = route.params?.onSuccess;
   const bookingId = route.params?.bookingId;
   const isFinal = route.params?.isFinal;
+  const origin = route.params?.origin;
+  const prevParams = route.params?.prevParams;
+  const role = route.params?.role;
+  console.log(prevParams)
+
+  const handleBack = () => {
+    if (origin === 'Booking') {
+      navigation.navigate('Booking', { ...prevParams, bookingId });
+    } else if (origin === 'BookingDetails') {
+      navigation.navigate('BookingDetails', { bookingId, role });
+    } else {
+      navigation.goBack();
+    }
+  };
 
   const handleDone = async () => {
     if (!cardDetails.complete) return;
@@ -50,7 +64,7 @@ export default function PaymentMethodScreen() {
       if (onSuccess) {
         navigation.navigate(onSuccess, bookingId ? { bookingId } : {});
       } else {
-        navigation.goBack();
+        handleBack();
       }
     } catch (e) {
       console.log('handleDone error', e);
@@ -64,7 +78,7 @@ export default function PaymentMethodScreen() {
       <View className='absolute bg-[#f2f2f2] dark:bg-[#272626] h-[100px] w-full z-10 justify-end'>
         <View className='flex-row justify-between items-center mt-8 pb-4 px-2'>
           <View className='flex-1'>
-            <TouchableOpacity onPress={() => navigation.goBack()} className='ml-3'>
+            <TouchableOpacity onPress={handleBack} className='ml-3'>
               <ChevronLeftIcon size={24} strokeWidth={1.8} color={iconColor} />
             </TouchableOpacity>
           </View>

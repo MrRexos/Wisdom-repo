@@ -454,14 +454,19 @@ export default function BookingScreen() {
 
   const handleBook = async () => {
     try {
-      const booking = await createBooking();
+      const result = await createBooking();
+      console.log(result);
+      const booking = result.booking;
       if (!booking || !booking.id) return;
       const res = await api.post(`/api/bookings/${booking.id}/deposit`);
       const clientSecret = res.data.clientSecret;
+      console.log(res.data)
       navigation.navigate('PaymentMethod', {
         clientSecret,
         onSuccess: 'ConfirmPayment',
         bookingId: booking.id,
+        origin: 'Booking',
+        prevParams: route.params,
       });
     } catch (e) {
       console.error('Booking payment error:', e);
@@ -1164,7 +1169,7 @@ export default function BookingScreen() {
           <View className="w-full flex-row justify-between items-center ">
             <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Payment method</Text>
             {paymentMethod && (
-              <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod')}>
+              <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'Booking', prevParams: route.params })}>
                 <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
               </TouchableOpacity>
             )}
@@ -1181,17 +1186,14 @@ export default function BookingScreen() {
 
                   <Text>
                     <Text className="font-inter-medium text-[16px] text-[#444343] dark:text-[#f2f2f2]">••••   ••••   ••••   </Text>
-                    <Text className="font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]">{paymentMethod.cardNumber.slice(-4)}</Text>
+                    <Text className='font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.last4}</Text>
                   </Text>
 
                   <View className="mt-6 flex-row justify-between items-center">
 
                     <View className="flex-row items-center">                  
                       <View className="justify-center items-center">
-                      <Text className="font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]">{paymentMethod.expiration}</Text>
-                      </View>
-                      <View className="ml-3 justify-center items-center">
-                        <Text className=" font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]">{paymentMethod.cvv}</Text>
+                        <Text className='font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.expiryMonth}/{paymentMethod.expiryYear}</Text>
                       </View>
                     </View>
 
@@ -1211,7 +1213,7 @@ export default function BookingScreen() {
                 <View className="flex-row justify-center items-center px-6">
 
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('PaymentMethod') }
+                    onPress={() => navigation.navigate('PaymentMethod', { origin: 'Booking', prevParams: route.params }) }
                     style={{ opacity: 1 }}
                     className="bg-[#706f6e] my-2 mt-3 dark:bg-[#b6b5b5] w-full py-[14px] rounded-full items-center justify-center"
                   >

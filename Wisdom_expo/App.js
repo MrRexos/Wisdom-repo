@@ -10,7 +10,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useColorScheme, TailwindProvider } from 'nativewind';
 import "./global.css"
 
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_PLACEHOLDER';
+const STRIPE_PUBLISHABLE_KEY = 'pk_test_51Rg2dQP10ZOJm6Hd0zRenwmVfliHq3DqcvM8axw3tK1N2M5zIKuoOcwDLgsely52VYPsl51QHaxsS0n2Y66GCknJ00Y0xoUNXS';
 
 
 

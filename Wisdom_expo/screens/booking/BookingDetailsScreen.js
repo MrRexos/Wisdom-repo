@@ -388,6 +388,8 @@ export default function BookingDetailsScreen() {
         onSuccess: 'ConfirmPayment',
         bookingId: bookingId,
         isFinal: true,
+        origin: 'BookingDetails',
+        role,
       });
     } catch (e) {
       console.error('handleFinalPayment error:', e);
@@ -970,7 +972,7 @@ export default function BookingDetailsScreen() {
           <View className='w-full flex-row justify-between items-center '>
             <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Payment method</Text>
             {editMode && paymentMethod && (
-              <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod')}>
+              <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'BookingDetails', bookingId, role })}>
                 <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
               </TouchableOpacity>
             )}
@@ -982,16 +984,13 @@ export default function BookingDetailsScreen() {
                 <View className='px-7 pb-5 pt-[50px] bg-[#EEEEEE] dark:bg-[#111111] rounded-xl'>
                   <Text>
                     <Text className='font-inter-medium text-[16px] text-[#444343] dark:text-[#f2f2f2]'>••••   ••••   ••••   </Text>
-                    <Text className='font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.cardNumber.slice(-4)}</Text>
+                    <Text className='font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.last4}</Text>
                   </Text>
 
                   <View className='mt-6 flex-row justify-between items-center'>
                     <View className='flex-row items-center'>
                       <View className='justify-center items-center'>
-                        <Text className='font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.expiration}</Text>
-                      </View>
-                      <View className='ml-3 justify-center items-center'>
-                        <Text className=' font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.cvv}</Text>
+                        <Text className='font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.expiryMonth}/{paymentMethod.expiryYear}</Text>
                       </View>
                     </View>
 
@@ -1003,7 +1002,7 @@ export default function BookingDetailsScreen() {
               <View className='mt-1 flex-1 justify-center items-center'>
                 <CreditCard height={55} width={55} strokeWidth={1.3} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
                 <View className='flex-row justify-center items-center px-6'>
-                  <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod') } style={{ opacity: 1 }} className='bg-[#706f6e] my-2 mt-3 dark:bg-[#b6b5b5] w-full py-[14px] rounded-full items-center justify-center'>
+                <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'BookingDetails', bookingId, role }) } style={{ opacity: 1 }} className='bg-[#706f6e] my-2 mt-3 dark:bg-[#b6b5b5] w-full py-[14px] rounded-full items-center justify-center'>
                     <Text>
                       <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
                         {t('add_credit_card')}
