@@ -42,7 +42,7 @@ export default function SettingsScreen() {
         {id: 'preferences', icon: Settings, label: t('preferences'), type: 'select', link: 'Preferences'},
         {id: 'notifications', icon: Bell, label: t('notifications'), type: 'toggle'},
         {id: 'directions', icon: MapPin, label: t('directions'), type: 'select', link: 'Directions'},
-        {id: 'payments', icon: CashStackIcon, label: t('payments_and_refunds'), type: 'select', link: 'Wallet'},
+        {id: 'payments', icon: CashStackIcon, label: t('payments_and_refunds'), type: 'select', link: 'WalletPro'},
       ]
     },
     {
