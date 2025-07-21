@@ -88,9 +88,14 @@ import ChangePasswordScreen from '../screens/settings/ChangePasswordScreen';
 import HelpScreen from '../screens/settings/HelpScreen';
 import TurnExpertScreen from '../screens/settings/TurnExpertScreen';
 import WalletScreen from '../screens/settings/WalletScreen';
+import WalletProScreen from '../screens/settings/WalletProScreen';
 import ExpertPlansScreen from '../screens/settings/ExpertPlansScreen';
 import FAQScreen from '../screens/settings/FAQScreen';
 import EditProfileScreen from '../screens/settings/EditProfileScreen';
+import CollectionMethod1Screen from '../screens/settings/CollectionMethod1Screen';
+import CollectionMethod2Screen from '../screens/settings/CollectionMethod2Screen';
+import CollectionMethod3Screen from '../screens/settings/CollectionMethod3Screen';
+import CollectionMethod4Screen from '../screens/settings/CollectionMethod4Screen';
 
 
 
@@ -187,6 +192,7 @@ export default function Navigation() {
         <Stack.Screen name="Help" component={HelpScreen} />
         <Stack.Screen name="TurnExpert" component={TurnExpertScreen} />
         <Stack.Screen name="Wallet" component={WalletScreen} />
+        <Stack.Screen name="WalletPro" component={WalletProScreen} />
         <Stack.Screen name="ExpertPlans" component={ExpertPlansScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="FAQ" component={FAQScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
@@ -560,10 +566,15 @@ function SettingsStackNavigator() {
       <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
       <Stack.Screen name="Help" component={HelpScreen} />
       <Stack.Screen name="Wallet" component={WalletScreen} />
+      <Stack.Screen name="WalletPro" component={WalletProScreen} />
       <Stack.Screen name="FAQ" component={FAQScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="Directions" component={DirectionsScreen} />
       <Stack.Screen name="AddDirection" component={SearchDirectionScreen} />
+      <Stack.Screen name="CollectionMethod1" component={CollectionMethod1Screen} />
+      <Stack.Screen name="CollectionMethod2" component={CollectionMethod2Screen} />
+      <Stack.Screen name="CollectionMethod3" component={CollectionMethod3Screen} />
+      <Stack.Screen name="CollectionMethod4" component={CollectionMethod4Screen} />
     </Stack.Navigator>
   );
 }
