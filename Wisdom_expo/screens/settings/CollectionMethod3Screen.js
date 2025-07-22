@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, ScrollView } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, ScrollView, FlatList } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { ChevronLeftIcon } from 'react-native-heroicons/outline';
+import { ChevronLeftIcon, ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
+import Triangle from '../../assets/triangle';
 
 export default function CollectionMethod3Screen() {
   const { colorScheme } = useColorScheme();
@@ -17,12 +18,36 @@ export default function CollectionMethod3Screen() {
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
 
   const [country, setCountry] = useState('');
+  const countryBtnRef = useRef(null);
+  const [countryAnchor, setCountryAnchor] = useState(null);
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [streetNumber, setStreetNumber] = useState('');
   const [address2, setAddress2] = useState('');
+
+  const countries = [
+    'US','CA','GB','ES','FR','DE','IT','NL','BE','PT','CH','AT','IE','DK','SE','NO','FI','PL','CZ','SK','HU','RO','BG','HR','SI','GR','CY','MT','LU','LT','LV','EE','AU','NZ','SG','HK','JP','KR','IN','MY','TH','VN','ID','PH','AE','SA','IL','BR','MX','AR'
+  ];
+
+  const openCountryDropdown = () => {
+    countryBtnRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      setCountryAnchor({ x: pageX, y: pageY, width, height });
+    });
+    setShowCountryDropdown(!showCountryDropdown);
+  };
+
+  const renderCountryItem = ({ item }) => (
+    <TouchableOpacity className="py-3" onPress={() => { setCountry(item); setShowCountryDropdown(false); }}>
+      <Text className="ml-6 text-[15px] text-[#444343] dark:text-[#f2f2f2]">
+        {t(`countries.${item}`)}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  const dropdownTop = (anchor) => (anchor ? anchor.y + anchor.height : 0);
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
@@ -38,18 +63,42 @@ export default function CollectionMethod3Screen() {
               <Text className="mt-[55px] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('confirm_your_direction')}</Text>
             </View>
             <View className="px-2 mt-10">
-              <View className="w-full h-[55px] mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
-                {country.length>0 && <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('country_region')}</Text>}
-                <TextInput
-                  placeholder={t('country_region') + '...'}
-                  selectionColor={cursorColorChange}
-                  placeholderTextColor={placeHolderTextColorChange}
-                  onChangeText={setCountry}
-                  value={country}
-                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                  className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"
-                />
-              </View>
+              <TouchableOpacity
+                ref={countryBtnRef}
+                onPress={openCountryDropdown}
+                className="w-full h-[55px] mb-4 py-2 px-6 flex-row justify-between items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]"
+              >
+                <View>
+                  {country.length>0 && <Text className="pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('country_region')}</Text>}
+                  <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">
+                    {country ? t(`countries.${country}`) : t('country_region') + '...'}
+                  </Text>
+                </View>
+                {showCountryDropdown ? (
+                  <ChevronUpIcon size={20} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} strokeWidth={2} />
+                ) : (
+                  <ChevronDownIcon size={20} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} strokeWidth={2} />
+                )}
+              </TouchableOpacity>
+
+              {showCountryDropdown && countryAnchor && (
+                <View
+                  style={{ position: 'absolute', top: dropdownTop(countryAnchor), left: countryAnchor.x, width: countryAnchor.width, zIndex: 1000 }}
+                  className="justify-center items-center mt-2"
+                >
+                  <View className="flex-row w-full justify-end pr-5">
+                    <Triangle fill={colorScheme === 'dark' ? '#3D3D3D' : '#E0E0E0'} width={30} height={14} />
+                  </View>
+                  <View className="w-full h-[190px] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-xl px-2 pt-3">
+                    <FlatList
+                      data={countries}
+                      renderItem={renderCountryItem}
+                      keyExtractor={(item) => item}
+                      showsVerticalScrollIndicator
+                    />
+                  </View>
+                </View>
+              )}
 
               <View className="w-full h-[55px] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {state.length>0 && <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('state')}</Text>}

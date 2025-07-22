@@ -60,7 +60,7 @@ export default function CollectionMethod4Screen() {
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">DNI: {dni}</Text>
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('date_of_birth')}: {dateOfBirth}</Text>
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">IBAN: {iban}</Text>
-              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2] mt-4">{street} {streetNumber}, {postalCode} {city}, {state}, {country}</Text>
+              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2] mt-4">{street} {streetNumber}, {postalCode} {city}, {state}, {t(`countries.${country}`)}</Text>
               {address2? <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{address2}</Text> : null}
             </View>
             <View className="flex-row justify-center items-center pb-10">
