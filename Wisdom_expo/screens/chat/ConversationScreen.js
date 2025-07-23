@@ -432,8 +432,8 @@ export default function ConversationScreen() {
               <File height={24} width={24} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
             </View>
             <View className="flex-1 justify-center">
-              <Text numberOfLines={1} className={`${textColor}`}>{item.name}</Text>
-              <Text numberOfLines={1} className='text-[14px] font-medium text-[#979797] '>{item.name?.includes('.') ? item.name.split('.').pop().toUpperCase() : 'Desconocido'}</Text>
+              <Text numberOfLines={1} className={`${textColor}`} style={{ marginLeft: 8 }}>{item.name}</Text>
+              <Text numberOfLines={1} className='text-[14px] font-medium text-[#979797] 'style={{ marginLeft: 8 }}>{item.name?.includes('.') ? item.name.split('.').pop().toUpperCase() : 'Desconocido'}</Text>
             </View>
           </TouchableOpacity>
         </View>
