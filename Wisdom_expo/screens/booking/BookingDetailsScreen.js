@@ -217,6 +217,11 @@ export default function BookingDetailsScreen() {
     return `${formatted.replace('.', ',')} ${symbol}`;
   };
 
+  const calculateCommission = (basePrice) => {
+    const commission = parseFloat((basePrice * 0.1).toFixed(1));
+    return commission < 1 ? 1 : commission;
+  };
+
   const getFormattedPrice = () => {
     const priceSource = service || booking;
     if (!priceSource) return null;
@@ -854,7 +859,7 @@ export default function BookingDetailsScreen() {
                           {'.'.repeat(80)}
                         </Text>
                         <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {formatCurrency(((parseFloat(priceSource.price) * (selectedDuration / 60)) * 1.1) - (parseFloat(priceSource.price) * (selectedDuration / 60)), priceSource.currency)}
+                          {formatCurrency(calculateCommission(parseFloat(priceSource.price) * (selectedDuration / 60)), priceSource.currency)}
                         </Text>
                       </View>
 
@@ -866,7 +871,7 @@ export default function BookingDetailsScreen() {
                           {'.'.repeat(80)}
                         </Text>
                         <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {formatCurrency(((parseFloat(priceSource.price) * (selectedDuration / 60)) * 1.1), priceSource.currency)}
+                          {formatCurrency(parseFloat(priceSource.price) * (selectedDuration / 60) + calculateCommission(parseFloat(priceSource.price) * (selectedDuration / 60)), priceSource.currency)}
                         </Text>
                       </View>
 
@@ -900,7 +905,7 @@ export default function BookingDetailsScreen() {
                           {'.'.repeat(80)}
                         </Text>
                         <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {(parseFloat(priceSource.price) * 0.1).toFixed(1)} {currencySymbols[priceSource.currency]}
+                          {formatCurrency(calculateCommission(parseFloat(priceSource.price)), priceSource.currency)}
                         </Text>
                       </View>
 
@@ -912,7 +917,7 @@ export default function BookingDetailsScreen() {
                           {'.'.repeat(80)}
                         </Text>
                         <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {formatCurrency(parseFloat(priceSource.price)+(parseFloat(priceSource.price) * 0.1), priceSource.currency)}
+                          {formatCurrency(parseFloat(priceSource.price) + calculateCommission(parseFloat(priceSource.price)), priceSource.currency)}
                         </Text>
                       </View>
 
