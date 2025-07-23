@@ -222,6 +222,25 @@ export default function BookingDetailsScreen() {
     return commission < 1 ? 1 : commission;
   };
 
+  const calculateFinalValues = (durationMinutes) => {
+    const priceSource = service || booking;
+    if (!priceSource) return { finalPrice: null, commission: null };
+    const durationInHours = durationMinutes / 60;
+    let basePrice = 0;
+
+    if (priceSource.price_type === 'hour') {
+      basePrice = parseFloat(priceSource.price) * durationInHours;
+    } else if (priceSource.price_type === 'fix') {
+      basePrice = parseFloat(priceSource.price);
+    } else {
+      return { finalPrice: null, commission: null };
+    }
+
+    const commission = calculateCommission(basePrice);
+    const finalPrice = (basePrice + commission).toFixed(1);
+    return { finalPrice, commission };
+  };
+
   const getFormattedPrice = () => {
     const priceSource = service || booking;
     if (!priceSource) return null;
@@ -341,6 +360,10 @@ export default function BookingDetailsScreen() {
         booking_start_datetime: selectedTimeUndefined ? null : combineDateTime(),
         booking_end_datetime: selectedTimeUndefined ? null : calculateEndDateTime(),
         service_duration: selectedTimeUndefined ? null : selectedDuration,
+        ...(selectedDuration ? (() => {
+          const { finalPrice, commission } = calculateFinalValues(selectedDuration);
+          return { final_price: finalPrice, commission };
+        })() : {}),
       };
       await api.put(`/api/bookings/${id}`, payload);
       setBooking((prev) => ({ ...prev, ...payload }));
@@ -363,6 +386,7 @@ export default function BookingDetailsScreen() {
           booking_end_datetime: booking ? booking.booking_end_datetime : null,
           service_duration: booking ? booking.service_duration : null,
           final_price: booking ? booking.final_price : null,
+          commission: booking ? booking.commission : null,
           description: booking ? booking.description : null,
         };
         await api.put(`/api/bookings/${bookingId}`, updatePayload);
