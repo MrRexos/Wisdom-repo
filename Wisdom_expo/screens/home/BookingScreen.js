@@ -427,6 +427,21 @@ export default function BookingScreen() {
     return final_price;
   }
 
+  const calculateCommissionAmount = () => {
+    let commission = null;
+    const durationInHours = duration / 60;
+
+    if (serviceData.price_type === 'hour') {
+      const basePrice = parseFloat(serviceData.price) * durationInHours;
+      commission = calculateCommission(basePrice);
+    } else if (serviceData.price_type === 'fix') {
+      const basePrice = parseFloat(serviceData.price);
+      commission = calculateCommission(basePrice);
+    }
+
+    return commission;
+  };
+
   const createBooking = async () => {
 
     try {
@@ -447,6 +462,7 @@ export default function BookingScreen() {
         promotion_id:null,
         service_duration:duration? parseInt(duration) : null,
         final_price: calculateFinalPrice(),
+        commission: calculateCommissionAmount(),
         description: description? description:null
       });
 
