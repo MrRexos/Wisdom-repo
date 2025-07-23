@@ -6,7 +6,7 @@ import '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import api from '../../utils/api.js';
-import { getDataLocally } from '../../utils/asyncStorage';
+import { getDataLocally, storeDataLocally } from '../../utils/asyncStorage';
 
 export default function CollectionMethod4Screen() {
   const { colorScheme } = useColorScheme();
@@ -23,18 +23,25 @@ export default function CollectionMethod4Screen() {
     const userData = await getDataLocally('user');
     const user = JSON.parse(userData);
     try {
-      await api.post(`/api/user/${user.id}/collection-method`, {
+      const response = await api.post(`/api/user/${user.id}/collection-method`, {
+        full_name: fullName,
         date_of_birth: dateOfBirth,
         nif: dni,
         iban: iban,
-        address_line1: street,
-        address_line2: address2,
+        address_type: "residential",
+        street_number: streetNumber,
+        address_1: street,
+        address_2: address2,
         postal_code: postalCode,
         city: city,
         state: state,
         country: country
       });
-      navigation.navigate('Wallet');
+      if (response.data && response.data.stripe_account_id) {
+        user.stripe_account_id = response.data.stripe_account_id;
+        await storeDataLocally('user', JSON.stringify(user));
+      }
+      navigation.navigate('WalletPro');
     } catch (error) {
       console.error('Error creating collection method:', error);
     } finally {
@@ -45,9 +52,9 @@ export default function CollectionMethod4Screen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
-        <ScrollView contentContainerStyle={{flexGrow:1}}>
+        
         <View className="flex-1 px-6 pt-5 pb-6">
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => navigation.navigate('WalletPro')}>
                 <View className="flex-row justify-start">
                     <ChevronLeftIcon size={25} color={iconColor} strokeWidth={2} />
                 </View>
@@ -63,7 +70,8 @@ export default function CollectionMethod4Screen() {
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2] mt-4">{street} {streetNumber}, {postalCode} {city}, {state}, {t(`countries.${country}`)}</Text>
               {address2? <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{address2}</Text> : null}
             </View>
-            <View className="flex-row justify-center items-center pb-10">
+
+            <View className="flex-row justify-center items-center">
               <TouchableOpacity
               disabled={false}
               onPress={() => navigation.goBack()}
@@ -80,7 +88,7 @@ export default function CollectionMethod4Screen() {
               </TouchableOpacity>
             </View>
         </View>
-        </ScrollView>
+        
     </SafeAreaView>
   );
 }

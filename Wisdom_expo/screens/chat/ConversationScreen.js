@@ -429,7 +429,7 @@ export default function ConversationScreen() {
             </View>
             <View className="flex-1 justify-center">
               <Text numberOfLines={1} className={`${textColor}`}>{item.name}</Text>
-              <Text numberOfLines={1} className='text-[14px] font-medium text-[#979797] '>{item.name?.includes('.') ? item.name.split('.').pop().toUpperCase() : 'Desconocido'}</Text>
+              <Text numberOfLines={1} className='text-[14px] font-medium text-[#979797]'>{item.name?.includes('.') ? item.name.split('.').pop().toUpperCase() : 'Desconocido'}</Text>
             </View>
           </TouchableOpacity>
         </View>
