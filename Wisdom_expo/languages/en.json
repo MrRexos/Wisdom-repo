@@ -305,6 +305,7 @@
     "service_completed": "Service completed",
     "final_payment": "Final payment",
     "waiting_final_payment": "Waiting for final payment",
+    "processing_payment": "Processing payment...",
     "booking_canceled": "Booking canceled",
     "booking_rejected": "Booking rejected",
     "booking_expired": "Booking date has passed",
