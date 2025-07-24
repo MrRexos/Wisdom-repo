@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, Keyboard, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
 import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { CreditCard } from 'react-native-feather';
-import { storeDataLocally } from '../../utils/asyncStorage';
 import { CardField, useStripe } from '@stripe/stripe-react-native';
 import api from '../../utils/api';
 
@@ -15,8 +14,9 @@ export default function PaymentMethodScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
-  const { confirmPayment } = useStripe();
+  const { confirmPayment, createPaymentMethod } = useStripe();
   const [cardDetails, setCardDetails] = useState({});
+  const [processing, setProcessing] = useState(false);
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const clientSecret = route.params?.clientSecret;
   const onSuccess = route.params?.onSuccess;
@@ -39,28 +39,30 @@ export default function PaymentMethodScreen() {
 
   const handleDone = async () => {
     if (!cardDetails.complete) return;
+    setProcessing(true);
     try {
       if (clientSecret) {
         const { error } = await confirmPayment(clientSecret, { paymentMethodType: 'Card' });
         if (error) {
           console.log('Payment error', error);
+          setProcessing(false);
           return;
         }
-      }
-      const info = {
-        brand: cardDetails.brand,
-        last4: cardDetails.last4,
-        expiryMonth: cardDetails.expiryMonth,
-        expiryYear: cardDetails.expiryYear,
-      };
-      await storeDataLocally('paymentMethod', JSON.stringify(info));
-      if (isFinal && bookingId) {
-        try {
-          await api.patch(`/api/bookings/${bookingId}/is_paid`, { is_paid: true });
-        } catch (e) {
-          console.log('update payment status error', e);
+      } else if (isFinal && bookingId) {
+        const { paymentMethod, error } = await createPaymentMethod({
+          paymentMethodType: 'Card',
+          card: cardDetails,
+        });
+        if (error) {
+          console.log('Payment method error', error);
+          setProcessing(false);
+          return;
         }
+        await api.post(`/api/bookings/${bookingId}/final-payment-transfer`, {
+          payment_method_id: paymentMethod.id,
+        });
       }
+
       if (onSuccess) {
         navigation.navigate(onSuccess, bookingId ? { bookingId } : {});
       } else {
@@ -68,8 +70,22 @@ export default function PaymentMethodScreen() {
       }
     } catch (e) {
       console.log('handleDone error', e);
+      setProcessing(false);
     }
   };
+
+  if (processing) {
+    return (
+      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-center items-center'>
+        <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
+        <CreditCard height={60} width={60} strokeWidth={1.5} color={iconColor} />
+        <ActivityIndicator className='mt-4' size='large' color={colorScheme === 'dark' ? '#fcfcfc' : '#323131'} />
+        <Text className='mt-2 font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+          {t('processing_payment')}
+        </Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
