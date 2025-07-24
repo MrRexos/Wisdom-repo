@@ -406,19 +406,41 @@ export default function BookingScreen() {
     return `${endDate} ${endTime}`;
   }
 
+  const calculateCommission = (basePrice) => {
+    const commission = parseFloat((basePrice * 0.1).toFixed(1));
+    return commission < 1 ? 1 : commission;
+  };
+
   const calculateFinalPrice = () => {
-    let final_price = null; 
+    let final_price = null;
 
     const durationInHours = duration / 60;
 
     if (serviceData.price_type === 'hour') {
-        final_price = ((parseFloat(serviceData.price) * durationInHours) * 1.1).toFixed(1);
+      const basePrice = parseFloat(serviceData.price) * durationInHours;
+      final_price = (basePrice + calculateCommission(basePrice)).toFixed(1);
     } else if (serviceData.price_type === 'fix') {
-        final_price = (parseFloat(serviceData.price) + (parseFloat(serviceData.price) * 0.1)).toFixed(1);
+      const basePrice = parseFloat(serviceData.price);
+      final_price = (basePrice + calculateCommission(basePrice)).toFixed(1);
     }
 
-    return final_price; 
-}
+    return final_price;
+  }
+
+  const calculateCommissionAmount = () => {
+    let commission = null;
+    const durationInHours = duration / 60;
+
+    if (serviceData.price_type === 'hour') {
+      const basePrice = parseFloat(serviceData.price) * durationInHours;
+      commission = calculateCommission(basePrice);
+    } else if (serviceData.price_type === 'fix') {
+      const basePrice = parseFloat(serviceData.price);
+      commission = calculateCommission(basePrice);
+    }
+
+    return commission;
+  };
 
   const createBooking = async () => {
 
@@ -440,6 +462,7 @@ export default function BookingScreen() {
         promotion_id:null,
         service_duration:duration? parseInt(duration) : null,
         final_price: calculateFinalPrice(),
+        commission: calculateCommissionAmount(),
         description: description? description:null
       });
 
@@ -1002,7 +1025,7 @@ export default function BookingScreen() {
                         {'.'.repeat(80)}
                       </Text>
                       <Text className="font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]">
-                        {formatCurrency(((parseFloat(serviceData.price) * (duration / 60)) * 1.1) - (parseFloat(serviceData.price) * (duration / 60)), serviceData.currency)}
+                        {formatCurrency(calculateCommission(parseFloat(serviceData.price) * (duration / 60)), serviceData.currency)}
                       </Text>
                     </View>
 
@@ -1019,7 +1042,7 @@ export default function BookingScreen() {
                         {'.'.repeat(80)}
                       </Text>
                       <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
-                        {formatCurrency(((parseFloat(serviceData.price) * (duration / 60)) * 1.1), serviceData.currency)}
+                        {formatCurrency(parseFloat(serviceData.price) * (duration / 60) + calculateCommission(parseFloat(serviceData.price) * (duration / 60)), serviceData.currency)}
                       </Text>
                     </View>
 
@@ -1068,7 +1091,7 @@ export default function BookingScreen() {
                         {'.'.repeat(80)}
                       </Text>
                       <Text className="font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]">
-                        {formatCurrency(parseFloat(serviceData.price) * 0.1, serviceData.currency)}
+                        {formatCurrency(calculateCommission(parseFloat(serviceData.price)), serviceData.currency)}
                       </Text>
                     </View>
 
@@ -1085,7 +1108,7 @@ export default function BookingScreen() {
                         {'.'.repeat(80)}
                       </Text>
                       <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
-                        {formatCurrency(parseFloat(serviceData.price)+(parseFloat(serviceData.price) * 0.1), serviceData.currency)}
+                        {formatCurrency(parseFloat(serviceData.price) + calculateCommission(parseFloat(serviceData.price)), serviceData.currency)}
                       </Text>
                     </View>
 

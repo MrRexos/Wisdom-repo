@@ -196,6 +196,10 @@ export default function Navigation() {
         <Stack.Screen name="ExpertPlans" component={ExpertPlansScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="FAQ" component={FAQScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+        <Stack.Screen name="CollectionMethod1" component={CollectionMethod1Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CollectionMethod2" component={CollectionMethod2Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CollectionMethod3" component={CollectionMethod3Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CollectionMethod4" component={CollectionMethod4Screen} options={{ animation: 'none', gestureEnabled: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -571,10 +575,10 @@ function SettingsStackNavigator() {
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="Directions" component={DirectionsScreen} />
       <Stack.Screen name="AddDirection" component={SearchDirectionScreen} />
-      <Stack.Screen name="CollectionMethod1" component={CollectionMethod1Screen} />
-      <Stack.Screen name="CollectionMethod2" component={CollectionMethod2Screen} />
-      <Stack.Screen name="CollectionMethod3" component={CollectionMethod3Screen} />
-      <Stack.Screen name="CollectionMethod4" component={CollectionMethod4Screen} />
+      <Stack.Screen name="CollectionMethod1" component={CollectionMethod1Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+      <Stack.Screen name="CollectionMethod2" component={CollectionMethod2Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+      <Stack.Screen name="CollectionMethod3" component={CollectionMethod3Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+      <Stack.Screen name="CollectionMethod4" component={CollectionMethod4Screen} options={{ animation: 'none', gestureEnabled: false }}/>
     </Stack.Navigator>
   );
 }

@@ -19,7 +19,7 @@ import { getDataLocally } from '../../utils/asyncStorage';
 import { setDoc, doc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import api from '../../utils/api.js';
-import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus'; 
 
 export default function BookingDetailsScreen() {
   const { colorScheme } = useColorScheme();
@@ -217,6 +217,30 @@ export default function BookingDetailsScreen() {
     return `${formatted.replace('.', ',')} ${symbol}`;
   };
 
+  const calculateCommission = (basePrice) => {
+    const commission = parseFloat((basePrice * 0.1).toFixed(1));
+    return commission < 1 ? 1 : commission;
+  };
+
+  const calculateFinalValues = (durationMinutes) => {
+    const priceSource = service || booking;
+    if (!priceSource) return { finalPrice: null, commission: null };
+    const durationInHours = durationMinutes / 60;
+    let basePrice = 0;
+
+    if (priceSource.price_type === 'hour') {
+      basePrice = parseFloat(priceSource.price) * durationInHours;
+    } else if (priceSource.price_type === 'fix') {
+      basePrice = parseFloat(priceSource.price);
+    } else {
+      return { finalPrice: null, commission: null };
+    }
+
+    const commission = calculateCommission(basePrice);
+    const finalPrice = (basePrice + commission).toFixed(1);
+    return { finalPrice, commission };
+  };
+
   const getFormattedPrice = () => {
     const priceSource = service || booking;
     if (!priceSource) return null;
@@ -336,6 +360,10 @@ export default function BookingDetailsScreen() {
         booking_start_datetime: selectedTimeUndefined ? null : combineDateTime(),
         booking_end_datetime: selectedTimeUndefined ? null : calculateEndDateTime(),
         service_duration: selectedTimeUndefined ? null : selectedDuration,
+        ...(selectedDuration ? (() => {
+          const { finalPrice, commission } = calculateFinalValues(selectedDuration);
+          return { final_price: finalPrice, commission };
+        })() : {}),
       };
       await api.put(`/api/bookings/${id}`, payload);
       setBooking((prev) => ({ ...prev, ...payload }));
@@ -358,6 +386,7 @@ export default function BookingDetailsScreen() {
           booking_end_datetime: booking ? booking.booking_end_datetime : null,
           service_duration: booking ? booking.service_duration : null,
           final_price: booking ? booking.final_price : null,
+          commission: booking ? booking.commission : null,
           description: booking ? booking.description : null,
         };
         await api.put(`/api/bookings/${bookingId}`, updatePayload);
@@ -851,7 +880,7 @@ export default function BookingDetailsScreen() {
                           {'.'.repeat(80)}
                         </Text>
                         <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {formatCurrency(((parseFloat(priceSource.price) * (selectedDuration / 60)) * 1.1) - (parseFloat(priceSource.price) * (selectedDuration / 60)), priceSource.currency)}
+                          {formatCurrency(calculateCommission(parseFloat(priceSource.price) * (selectedDuration / 60)), priceSource.currency)}
                         </Text>
                       </View>
 
@@ -863,7 +892,7 @@ export default function BookingDetailsScreen() {
                           {'.'.repeat(80)}
                         </Text>
                         <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {formatCurrency(((parseFloat(priceSource.price) * (selectedDuration / 60)) * 1.1), priceSource.currency)}
+                        {formatCurrency(parseFloat(priceSource.price) * (selectedDuration / 60) + calculateCommission(parseFloat(priceSource.price) * (selectedDuration / 60)), priceSource.currency)}
                         </Text>
                       </View>
 
@@ -897,7 +926,7 @@ export default function BookingDetailsScreen() {
                           {'.'.repeat(80)}
                         </Text>
                         <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {(parseFloat(priceSource.price) * 0.1).toFixed(1)} {currencySymbols[priceSource.currency]}
+                          {formatCurrency(calculateCommission(parseFloat(priceSource.price)), priceSource.currency)}
                         </Text>
                       </View>
 
@@ -909,7 +938,7 @@ export default function BookingDetailsScreen() {
                           {'.'.repeat(80)}
                         </Text>
                         <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {formatCurrency(parseFloat(priceSource.price)+(parseFloat(priceSource.price) * 0.1), priceSource.currency)}
+                          {formatCurrency(parseFloat(priceSource.price) + calculateCommission(parseFloat(priceSource.price)), priceSource.currency)}
                         </Text>
                       </View>
 

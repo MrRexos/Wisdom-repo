@@ -20,7 +20,6 @@ import {
 import Triangle from '../../assets/triangle';
 import api from '../../utils/api.js';
 
-/** @typedef {{x:number,y:number,width:number,height:number}} Anchor */
 
 export default function CreateService3Screen() {
   const { colorScheme } = useColorScheme();

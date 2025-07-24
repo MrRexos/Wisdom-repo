@@ -27,25 +27,28 @@ export default function CollectionMethod3Screen() {
   const [postalCode, setPostalCode] = useState('');
   const [streetNumber, setStreetNumber] = useState('');
   const [address2, setAddress2] = useState('');
+  const formContainerRef = useRef(null);
 
-  const countries = [
-    'US','CA','GB','ES','FR','DE','IT','NL','BE','PT','CH','AT','IE','DK','SE','NO','FI','PL','CZ','SK','HU','RO','BG','HR','SI','GR','CY','MT','LU','LT','LV','EE','AU','NZ','SG','HK','JP','KR','IN','MY','TH','VN','ID','PH','AE','SA','IL','BR','MX','AR'
-  ];
+  const countries = ['AR','AU','AT','BE','BR','BG','CA','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HK','HU','IN','ID','IE','IL','IT','JP','LV','LT','LU','MY','MT','MX','NL','NZ','NO','PH','PL','PT','RO','SA','SG','SK','SI','KR','ES','SE','CH','TH','AE','GB','US','VN'];
+
 
   const openCountryDropdown = () => {
-    countryBtnRef.current?.measure((x, y, width, height, pageX, pageY) => {
-      setCountryAnchor({ x: pageX, y: pageY, width, height });
-    });
-    setShowCountryDropdown(!showCountryDropdown);
+    if (showCountryDropdown) {          
+      setShowCountryDropdown(false);    
+      return;                           
+    }
+  
+    if (!countryBtnRef.current || !formContainerRef.current) return;
+  
+    countryBtnRef.current.measureLayout(
+      formContainerRef.current,           // ← referencia del contenedor
+      (x, y, width, height) => {
+        setCountryAnchor({ x, y, width, height });
+        setShowCountryDropdown(true);
+      },
+      (err) => console.log('measureLayout error', err),
+    );
   };
-
-  const renderCountryItem = ({ item }) => (
-    <TouchableOpacity className="py-3" onPress={() => { setCountry(item); setShowCountryDropdown(false); }}>
-      <Text className="ml-6 text-[15px] text-[#444343] dark:text-[#f2f2f2]">
-        {t(`countries.${item}`)}
-      </Text>
-    </TouchableOpacity>
-  );
 
   const dropdownTop = (anchor) => (anchor ? anchor.y + anchor.height : 0);
 
@@ -53,16 +56,25 @@ export default function CollectionMethod3Screen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
-        <View className="flex-1 px-6 pt-5 pb-6">
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+
+        <View className="flex-1 px-6 pt-5 ">
+
+            <TouchableOpacity onPress={() => navigation.navigate('WalletPro')}>
                 <View className="flex-row justify-start">
                     <ChevronLeftIcon size={25} color={iconColor} strokeWidth={2} />
                 </View>
             </TouchableOpacity>
+
             <View className="justify-center items-center">
               <Text className="mt-[55px] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('confirm_your_direction')}</Text>
             </View>
-            <View className="px-2 mt-10">
+
+            <View
+              ref={formContainerRef}
+              className="px-2 mt-10 relative"        // ← relative para que los absolutos se anclen aquí
+              collapsable={false}                   // Android necesita esto para medir bien
+            >
+
               <TouchableOpacity
                 ref={countryBtnRef}
                 onPress={openCountryDropdown}
@@ -83,19 +95,27 @@ export default function CollectionMethod3Screen() {
 
               {showCountryDropdown && countryAnchor && (
                 <View
-                  style={{ position: 'absolute', top: dropdownTop(countryAnchor), left: countryAnchor.x, width: countryAnchor.width, zIndex: 1000 }}
-                  className="justify-center items-center mt-2"
+                  style={{ position: 'absolute', top: countryAnchor.y + countryAnchor.height - 4, left: countryAnchor.x, width: countryAnchor.width, zIndex: 1000 }}
+                  className="justify-center items-center mt-2 "
                 >
                   <View className="flex-row w-full justify-end pr-5">
                     <Triangle fill={colorScheme === 'dark' ? '#3D3D3D' : '#E0E0E0'} width={30} height={14} />
                   </View>
-                  <View className="w-full h-[190px] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-xl px-2 pt-3">
-                    <FlatList
-                      data={countries}
-                      renderItem={renderCountryItem}
-                      keyExtractor={(item) => item}
-                      showsVerticalScrollIndicator
-                    />
+                  <View className="w-full h-[190px] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-xl px-2 pt-3 " style={{ shadowColor: '#000', shadowOffset: { width: 2, height: 9 }, shadowOpacity: 0.18, shadowRadius: 7, elevation: 6 }} >
+                    <ScrollView
+                      showsVerticalScrollIndicator 
+                      nestedScrollEnabled                // por si lo abres desde Android 
+                    > 
+                      {countries.map((item) => ( 
+                        <TouchableOpacity 
+                          key={item.code} 
+                          className="py-3" 
+                          onPress={() => { setCountry(item); setShowCountryDropdown(false); }} 
+                        > 
+                          <Text className="ml-6 text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t(`countries.${item}`)}</Text> 
+                        </TouchableOpacity> 
+                      ))} 
+                    </ScrollView>
                   </View>
                 </View>
               )}
@@ -138,6 +158,7 @@ export default function CollectionMethod3Screen() {
                   className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"
                 />
               </View>
+
               <View className="flex-row w-full justify-between items-center">
                 <View className="flex-1 h-[55px] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                   {postalCode.length>0 && <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('postal_code')}</Text>}
@@ -151,6 +172,7 @@ export default function CollectionMethod3Screen() {
                     className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"
                   />
                 </View>
+
                 <View className="flex-1 h-[55px] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                   {streetNumber.length>0 && <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('street_number')}</Text>}
                   <TextInput
@@ -164,7 +186,9 @@ export default function CollectionMethod3Screen() {
                     className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"
                   />
                 </View>
+
               </View>
+
               <View className="w-full h-[55px] mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {address2.length>0 && <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('floor_door_stair_optional')}</Text>}
                 <TextInput
@@ -177,25 +201,31 @@ export default function CollectionMethod3Screen() {
                   className="font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"
                 />
               </View>
+
             </View>
-            <View className="flex-row justify-center items-center pb-10">
-              <TouchableOpacity
-              disabled={false}
-              onPress={() => navigation.goBack()}
-              style={{opacity: 1}}
-              className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
-                  <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-              disabled={streetNumber.length < 1}
-              onPress={() => navigation.navigate('CollectionMethod4', { fullName, dni, dateOfBirth, iban, country, state, city, street, postalCode, streetNumber, address2 })}
-              style={{opacity: streetNumber.length < 1 ? 0.5 : 1.0}}
-              className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
-                  <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
-              </TouchableOpacity>
-            </View>
+
+            
+            
         </View>
         </ScrollView>
+
+        <View className="flex-row justify-center items-center pb-6 px-6">
+          <TouchableOpacity
+          disabled={false}
+          onPress={() => navigation.goBack()}
+          style={{opacity: 1}}
+          className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
+              <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+          disabled={streetNumber.length < 1}
+          onPress={() => navigation.navigate('CollectionMethod4', { fullName, dni, dateOfBirth, iban, country, state, city, street, postalCode, streetNumber, address2 })}
+          style={{opacity: streetNumber.length < 1 ? 0.5 : 1.0}}
+          className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
+              <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
+          </TouchableOpacity>
+        </View>
+        
     </SafeAreaView>
   );
 }
