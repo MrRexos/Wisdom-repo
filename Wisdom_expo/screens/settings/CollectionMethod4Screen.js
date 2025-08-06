@@ -13,16 +13,31 @@ export default function CollectionMethod4Screen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
-  const { fullName, dni, dateOfBirth, iban, country, state, city, street, postalCode, streetNumber, address2 } = route.params;
+  const { fullName, dni, dateOfBirth, phone, frontImage, backImage, iban, country, state, city, street, postalCode, streetNumber, address2 } = route.params;
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
 
   const [loading, setLoading] = useState(false);
+
+  const uploadDni = async (image) => {
+    const formData = new FormData();
+    formData.append('file', {
+      uri: image.uri,
+      type: 'image/jpeg',
+      name: 'dni.jpg',
+    });
+    const res = await api.post('/api/upload-dni', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data.fileToken;
+  };
 
   const handleFinish = async () => {
     setLoading(true);
     const userData = await getDataLocally('user');
     const user = JSON.parse(userData);
     try {
+      const fileTokenAnverso = await uploadDni(frontImage);
+      const fileTokenReverso = await uploadDni(backImage);
       const response = await api.post(`/api/user/${user.id}/collection-method`, {
         full_name: fullName,
         date_of_birth: dateOfBirth,
@@ -35,7 +50,10 @@ export default function CollectionMethod4Screen() {
         postal_code: postalCode,
         city: city,
         state: state,
-        country: country
+        country: country,
+        phone: phone,
+        fileTokenAnverso,
+        fileTokenReverso
       });
       if (response.data && response.data.stripe_account_id) {
         user.stripe_account_id = response.data.stripe_account_id;
@@ -66,6 +84,7 @@ export default function CollectionMethod4Screen() {
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('full_name')}: {fullName}</Text>
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">DNI: {dni}</Text>
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('date_of_birth')}: {dateOfBirth}</Text>
+              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('phone_number')}: {phone}</Text>
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">IBAN: {iban}</Text>
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2] mt-4">{street} {streetNumber}, {postalCode} {city}, {state}, {t(`countries.${country}`)}</Text>
               {address2? <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{address2}</Text> : null}
