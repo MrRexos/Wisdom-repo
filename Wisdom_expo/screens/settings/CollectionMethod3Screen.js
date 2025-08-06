@@ -12,7 +12,7 @@ export default function CollectionMethod3Screen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
-  const { fullName, dni, dateOfBirth, iban } = route.params;
+  const { fullName, dni, dateOfBirth, phone, frontImage, backImage, iban } = route.params;
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
@@ -219,7 +219,7 @@ export default function CollectionMethod3Screen() {
           </TouchableOpacity>
           <TouchableOpacity
           disabled={streetNumber.length < 1}
-          onPress={() => navigation.navigate('CollectionMethod4', { fullName, dni, dateOfBirth, iban, country, state, city, street, postalCode, streetNumber, address2 })}
+          onPress={() => navigation.navigate('CollectionMethod4', { fullName, dni, dateOfBirth, phone, frontImage, backImage, iban, country, state, city, street, postalCode, streetNumber, address2 })}
           style={{opacity: streetNumber.length < 1 ? 0.5 : 1.0}}
           className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
               <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
