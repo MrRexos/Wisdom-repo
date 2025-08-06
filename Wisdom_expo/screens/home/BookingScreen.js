@@ -1057,7 +1057,7 @@ export default function BookingScreen() {
                         {'.'.repeat(80)}
                       </Text>
                       <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
-                        {formatCurrency(1, serviceData.currency)}
+                        {formatCurrency(calculateCommission(parseFloat(serviceData.price) * (duration / 60)), serviceData.currency)}
                       </Text>
                     </View>
                   </>
