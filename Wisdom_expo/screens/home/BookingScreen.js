@@ -253,20 +253,15 @@ export default function BookingScreen() {
   };
 
   const loadPaymentMethod = async () => {
-    
     const PaymentMethodRaw = await getDataLocally('paymentMethod');
     if (PaymentMethodRaw) {
       const paymentMethodData = JSON.parse(PaymentMethodRaw);
       setPaymentMethod(paymentMethodData);
-      
-    }
-  };
-
-  const removePaymentMethod = async () => {
-    try {
-      await AsyncStorage.removeItem('paymentMethod');
-    } catch (error) {
-      console.error('Error al eliminar paymentMethod:', error);
+      try {
+        await AsyncStorage.removeItem('paymentMethod');
+      } catch (error) {
+        console.error('Error al eliminar paymentMethod:', error);
+      }
     }
   };
 
@@ -279,7 +274,6 @@ export default function BookingScreen() {
       loadDirections();
       loadSearchedDirection();
       loadPaymentMethod();
-      removePaymentMethod();
       
     }, [])
   );
