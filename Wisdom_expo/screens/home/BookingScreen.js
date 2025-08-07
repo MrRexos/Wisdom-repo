@@ -476,6 +476,10 @@ export default function BookingScreen() {
   };
 
   const handleBook = async () => {
+    if (!paymentMethod) {
+      navigation.navigate('PaymentMethod', { origin: 'Booking', prevParams: route.params });
+      return;
+    }
     try {
       const result = await createBooking();
       console.log(result);
@@ -483,12 +487,12 @@ export default function BookingScreen() {
       if (!booking || !booking.id) return;
       const res = await api.post(`/api/bookings/${booking.id}/deposit`);
       const clientSecret = res.data.clientSecret;
-      console.log(res.data)
       navigation.navigate('PaymentMethod', {
         clientSecret,
         onSuccess: 'ConfirmPayment',
         bookingId: booking.id,
         origin: 'Booking',
+        paymentMethodId: paymentMethod.id,
         prevParams: route.params,
       });
     } catch (e) {
@@ -1370,7 +1374,7 @@ export default function BookingScreen() {
           className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
         >
           <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
-            {t('continue_to_payment')}
+            {paymentMethod ? t('pay') : t('continue_to_payment')}
           </Text>
         </TouchableOpacity>
       </View>

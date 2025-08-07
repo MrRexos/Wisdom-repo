@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, Keyboard, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
-import { useNavigation, useRoute, useIsFocused } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { CreditCard } from 'react-native-feather';
 import { CardField, useStripe } from '@stripe/stripe-react-native';
 import api from '../../utils/api';
+import { storeDataLocally } from '../../utils/asyncStorage';
 
 export default function PaymentMethodScreen() {
   const { colorScheme } = useColorScheme();
@@ -16,7 +17,7 @@ export default function PaymentMethodScreen() {
   const route = useRoute();
   const { confirmPayment, createPaymentMethod } = useStripe();
   const [cardDetails, setCardDetails] = useState({});
-  const [processing, setProcessing] = useState(false);
+  const [processing, setProcessing] = useState(!!(route.params?.clientSecret && route.params?.paymentMethodId));
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const clientSecret = route.params?.clientSecret;
   const onSuccess = route.params?.onSuccess;
@@ -25,17 +26,41 @@ export default function PaymentMethodScreen() {
   const origin = route.params?.origin;
   const prevParams = route.params?.prevParams;
   const role = route.params?.role;
-  console.log(prevParams)
+  const paymentMethodId = route.params?.paymentMethodId;
 
   const handleBack = () => {
     if (origin === 'Booking') {
-      navigation.navigate('Booking', { ...prevParams, bookingId });
+      if (bookingId) {
+        navigation.navigate('Booking', { ...prevParams, bookingId });
+      } else {
+        navigation.navigate('Booking', { ...prevParams });
+      }
     } else if (origin === 'BookingDetails') {
       navigation.navigate('BookingDetails', { bookingId, role });
     } else {
       navigation.goBack();
     }
   };
+
+  useEffect(() => {
+    const autoPay = async () => {
+      if (clientSecret && paymentMethodId) {
+        setProcessing(true);
+        const { error } = await confirmPayment(clientSecret, { paymentMethodId });
+        if (error) {
+          console.log('Payment error', error);
+          setProcessing(false);
+          return;
+        }
+        if (onSuccess) {
+          navigation.navigate(onSuccess, bookingId ? { bookingId } : {});
+        } else {
+          handleBack();
+        }
+      }
+    };
+    autoPay();
+  }, [clientSecret, paymentMethodId]);
 
   const handleDone = async () => {
     if (!cardDetails.complete) return;
@@ -61,6 +86,23 @@ export default function PaymentMethodScreen() {
         await api.post(`/api/bookings/${bookingId}/final-payment-transfer`, {
           payment_method_id: paymentMethod.id,
         });
+      } else {
+        const { paymentMethod, error } = await createPaymentMethod({
+          paymentMethodType: 'Card',
+          card: cardDetails,
+        });
+        if (error) {
+          console.log('Payment method error', error);
+          setProcessing(false);
+          return;
+        }
+        const cardData = {
+          id: paymentMethod.id,
+          last4: paymentMethod.card?.last4,
+          expiryMonth: paymentMethod.card?.expMonth,
+          expiryYear: paymentMethod.card?.expYear,
+        };
+        await storeDataLocally('paymentMethod', JSON.stringify(cardData));
       }
 
       if (onSuccess) {
@@ -132,7 +174,7 @@ export default function PaymentMethodScreen() {
               className='bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center'
             >
               <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                {t('save')}
+                {origin === 'BookingDetails' ? t('pay') : t('save')}
               </Text>
             </TouchableOpacity>
           </View>

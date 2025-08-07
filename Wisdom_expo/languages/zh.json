@@ -143,6 +143,7 @@
     "expiration_date": "到期日期",
     "cvv": "CVV",
     "save": "保存",
+    "pay": "支付",
     "add_credit_card": "添加信用卡",
     "select_a_date": "选择日期",
     "start_time": "开始时间",
