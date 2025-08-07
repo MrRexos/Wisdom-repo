@@ -64,9 +64,9 @@ export default function PaymentMethodScreen() {
 
   const handleDone = async () => {
     if (!cardDetails.complete) return;
-    setProcessing(true);
     try {
       if (clientSecret) {
+        setProcessing(true);
         const { error } = await confirmPayment(clientSecret, { paymentMethodType: 'Card' });
         if (error) {
           console.log('Payment error', error);
@@ -74,6 +74,7 @@ export default function PaymentMethodScreen() {
           return;
         }
       } else if (isFinal && bookingId) {
+        setProcessing(true);
         const { paymentMethod, error } = await createPaymentMethod({
           paymentMethodType: 'Card',
           card: cardDetails,
@@ -93,7 +94,6 @@ export default function PaymentMethodScreen() {
         });
         if (error) {
           console.log('Payment method error', error);
-          setProcessing(false);
           return;
         }
         const cardData = {
@@ -103,6 +103,8 @@ export default function PaymentMethodScreen() {
           expiryYear: paymentMethod.card?.expYear,
         };
         await storeDataLocally('paymentMethod', JSON.stringify(cardData));
+        handleBack();
+        return;
       }
 
       if (onSuccess) {

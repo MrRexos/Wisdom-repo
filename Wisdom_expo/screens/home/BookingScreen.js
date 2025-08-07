@@ -256,7 +256,7 @@ export default function BookingScreen() {
     
     const PaymentMethodRaw = await getDataLocally('paymentMethod');
     if (PaymentMethodRaw) {
-      paymentMethodData = JSON.parse(PaymentMethodRaw);
+      const paymentMethodData = JSON.parse(PaymentMethodRaw);
       setPaymentMethod(paymentMethodData);
       
     }
