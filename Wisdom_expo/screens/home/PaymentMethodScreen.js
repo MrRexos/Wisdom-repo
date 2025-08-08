@@ -17,7 +17,8 @@ export default function PaymentMethodScreen() {
   const route = useRoute();
   const { confirmPayment, createPaymentMethod } = useStripe();
   const [cardDetails, setCardDetails] = useState({});
-  const [processing, setProcessing] = useState(!!(route.params?.clientSecret && route.params?.paymentMethodId));
+  const isAutoPay = !!(route.params?.clientSecret && route.params?.paymentMethodId);
+  const [processing, setProcessing] = useState(isAutoPay);
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const clientSecret = route.params?.clientSecret;
   const onSuccess = route.params?.onSuccess;
@@ -43,38 +44,31 @@ export default function PaymentMethodScreen() {
   };
 
   useEffect(() => {
-    console.log('clientSecret', clientSecret, paymentMethodId);
-    const autoPay = async () => {
-      if (clientSecret && paymentMethodId) {
-        setProcessing(true);
-        const { error } = await confirmPayment(clientSecret, { paymentMethodType: 'Card', paymentMethodId });
-        if (error) {
-          console.log('Payment error', error);
-          setProcessing(false);
-          return;
-        }
-        if (onSuccess) {
-          navigation.navigate(onSuccess, bookingId ? { bookingId } : {});
-        } else {
-          handleBack();
-        }
+    if (!clientSecret || !paymentMethodId) return;
+    let mounted = true;
+    (async () => {
+      setProcessing(true);
+      const { error } = await confirmPayment(clientSecret, {
+        paymentMethodType: 'Card',
+        paymentMethodId,
+      });
+      if (!mounted) return;
+      if (error) {
+        console.log('Payment error', error);
+        setProcessing(false);
+        return;
       }
-    };
-    autoPay();
+      setProcessing(false);
+      if (onSuccess) navigation.navigate(onSuccess, bookingId ? { bookingId } : {});
+      else handleBack();
+    })();
+    return () => { mounted = false; };
   }, [clientSecret, paymentMethodId]);
 
   const handleDone = async () => {
     if (!cardDetails.complete) return;
     try {
-      if (clientSecret) {
-        setProcessing(true);
-        const { error } = await confirmPayment(clientSecret, { paymentMethodType: 'Card' });
-        if (error) {
-          console.log('Payment error', error);
-          setProcessing(false);
-          return;
-        }
-      } else if (isFinal && bookingId) {
+      if (isFinal && bookingId) {
         setProcessing(true);
         const { paymentMethod, error } = await createPaymentMethod({
           paymentMethodType: 'Card',
@@ -100,26 +94,22 @@ export default function PaymentMethodScreen() {
         const cardData = {
           id: paymentMethod.id,
           last4: paymentMethod.card?.last4,
-          expiryMonth: paymentMethod.card?.expMonth,
-          expiryYear: paymentMethod.card?.expYear,
+          expiryMonth: paymentMethod.card?.expMonth ?? paymentMethod.card?.exp_month,
+          expiryYear: paymentMethod.card?.expYear ?? paymentMethod.card?.exp_year,
         };
         await storeDataLocally('paymentMethod', JSON.stringify(cardData));
         handleBack();
         return;
       }
 
-      if (onSuccess) {
-        navigation.navigate(onSuccess, bookingId ? { bookingId } : {});
-      } else {
-        handleBack();
-      }
+      handleBack();
     } catch (e) {
       console.log('handleDone error', e);
       setProcessing(false);
     }
   };
 
-  if (processing || (clientSecret && paymentMethodId)) {
+  if (processing) {
     return (
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-center items-center'>
         <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
