@@ -43,10 +43,11 @@ export default function PaymentMethodScreen() {
   };
 
   useEffect(() => {
+    console.log('clientSecret', clientSecret, paymentMethodId);
     const autoPay = async () => {
       if (clientSecret && paymentMethodId) {
         setProcessing(true);
-        const { error } = await confirmPayment(clientSecret, { paymentMethodId });
+        const { error } = await confirmPayment(clientSecret, { paymentMethodType: 'Card', paymentMethodId });
         if (error) {
           console.log('Payment error', error);
           setProcessing(false);
@@ -118,7 +119,7 @@ export default function PaymentMethodScreen() {
     }
   };
 
-  if (processing) {
+  if (processing || (clientSecret && paymentMethodId)) {
     return (
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-center items-center'>
         <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />

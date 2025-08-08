@@ -257,6 +257,7 @@ export default function BookingScreen() {
     if (PaymentMethodRaw) {
       const paymentMethodData = JSON.parse(PaymentMethodRaw);
       setPaymentMethod(paymentMethodData);
+      console.log(paymentMethodData);
       try {
         await AsyncStorage.removeItem('paymentMethod');
       } catch (error) {
@@ -471,6 +472,7 @@ export default function BookingScreen() {
 
   const handleBook = async () => {
     if (!paymentMethod) {
+      console.log('no payment method');
       navigation.navigate('PaymentMethod', { origin: 'Booking', prevParams: route.params });
       return;
     }
@@ -481,8 +483,9 @@ export default function BookingScreen() {
       if (!booking || !booking.id) return;
       const res = await api.post(`/api/bookings/${booking.id}/deposit`);
       const clientSecret = res.data.clientSecret;
+      console.log(clientSecret, paymentMethod.id);
       navigation.navigate('PaymentMethod', {
-        clientSecret,
+        clientSecret: clientSecret,
         onSuccess: 'ConfirmPayment',
         bookingId: booking.id,
         origin: 'Booking',
