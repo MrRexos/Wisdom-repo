@@ -202,6 +202,8 @@
     "payment_methods": "Métodos de pago",
     "collection_method": "Método de cobro",
     "enter_your_name_and_dni": "Ingresa tu nombre y DNI",
+    "enter_your_name": "Ingresa tu nombre",
+    "enter_your_dni": "Ingresa tu DNI",
     "dni": "DNI",
     "date_of_birth": "Fecha de nacimiento",
     "front_of_dni": "Anverso del DNI",

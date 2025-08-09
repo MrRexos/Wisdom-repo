@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, ScrollView, FlatList } from 'react-native';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, ScrollView, FlatList, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -53,6 +53,7 @@ export default function CollectionMethod3Screen() {
   const dropdownTop = (anchor) => (anchor ? anchor.y + anchor.height : 0);
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
@@ -227,5 +228,6 @@ export default function CollectionMethod3Screen() {
         </View>
         
     </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }

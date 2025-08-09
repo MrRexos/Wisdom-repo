@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput } from 'react-native';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -19,6 +19,7 @@ export default function CollectionMethod2Screen() {
   const [iban, setIban] = useState('');
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
         <View className="flex-1 px-6 pt-5 pb-6">
@@ -61,5 +62,6 @@ export default function CollectionMethod2Screen() {
             </View>
         </View>
     </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }

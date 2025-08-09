@@ -202,6 +202,8 @@
     "payment_methods": "Moyens de paiement",
     "collection_method": "Méthode de collecte",
     "enter_your_name_and_dni": "Entrez votre nom et DNI",
+    "enter_your_name": "Entrez votre nom",
+    "enter_your_dni": "Entrez votre DNI",
     "dni": "DNI",
     "date_of_birth": "Date de naissance",
     "front_of_dni": "Recto de la pièce d'identité",
