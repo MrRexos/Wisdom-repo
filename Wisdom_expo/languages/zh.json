@@ -202,6 +202,8 @@
     "payment_methods": "付款方式",
     "collection_method": "收款方式",
     "enter_your_name_and_dni": "输入你的姓名和身份证",
+    "enter_your_name": "输入你的姓名",
+    "enter_your_dni": "输入你的身份证",
     "dni": "身份证",
     "date_of_birth": "出生日期",
     "front_of_dni": "身份证正面",

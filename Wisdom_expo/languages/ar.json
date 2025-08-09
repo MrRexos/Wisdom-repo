@@ -202,6 +202,8 @@
     "payment_methods": "طرق الدفع",
     "collection_method": "طريقة التحصيل",
     "enter_your_name_and_dni": "أدخل اسمك ورقم DNI",
+    "enter_your_name": "أدخل اسمك",
+    "enter_your_dni": "أدخل رقم DNI الخاص بك",
     "dni": "DNI",
     "date_of_birth": "تاريخ الميلاد",
     "front_of_dni": "الوجه الأمامي للهوية",

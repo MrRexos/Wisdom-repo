@@ -202,6 +202,8 @@
     "payment_methods": "Mètodes de pagament",
     "collection_method": "Mètode de cobrament",
     "enter_your_name_and_dni": "Introdueix el teu nom i DNI",
+    "enter_your_name": "Introdueix el teu nom",
+    "enter_your_dni": "Introdueix el teu DNI",
     "dni": "DNI",
     "date_of_birth": "Data de naixement",
     "front_of_dni": "Anvers del DNI",

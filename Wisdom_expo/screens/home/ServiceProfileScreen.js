@@ -515,7 +515,7 @@ export default function ServiceProfileScreen() {
                 <Text className="text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Select a date</Text>
               </View>
 
-              <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+              <ScrollView showsVerticalScrollIndicator={false} horizontal={false} directionalLockEnabled className="flex-1">
 
                 <View className="w-full px-6">
                   <Calendar

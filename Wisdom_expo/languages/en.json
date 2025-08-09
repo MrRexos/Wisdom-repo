@@ -202,6 +202,8 @@
     "payment_methods": "Payment methods",
     "collection_method": "Collection method",
     "enter_your_name_and_dni": "Enter your name and DNI",
+    "enter_your_name": "Enter your name",
+    "enter_your_dni": "Enter your DNI",
     "dni": "DNI",
     "date_of_birth": "Date of birth",
     "front_of_dni": "Front of DNI",
