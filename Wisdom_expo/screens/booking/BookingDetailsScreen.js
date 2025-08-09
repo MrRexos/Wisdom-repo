@@ -994,52 +994,54 @@ export default function BookingDetailsScreen() {
         </View>
 
         {/* Payment Method */}
-        <View className='mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
-          <View className='w-full flex-row justify-between items-center '>
-            <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Payment method</Text>
-            {editMode && paymentMethod && (
-              <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'BookingDetails', bookingId, role })}>
-                <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
-              </TouchableOpacity>
-            )}
-          </View>
+        {role === 'client' && showServiceFinished && (
+          <View className='mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
+            <View className='w-full flex-row justify-between items-center '>
+              <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Payment method</Text>
+              {editMode && paymentMethod && (
+                <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'BookingDetails', bookingId, role })}>
+                  <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
+                </TouchableOpacity>
+              )}
+            </View>
 
-          <View className='mt-4 flex-1'>
-            {paymentMethod ? (
-              <View className='flex-1 my-3 justify-center items-center '>
-                <View className='px-7 pb-5 pt-[50px] bg-[#EEEEEE] dark:bg-[#111111] rounded-xl'>
-                  <Text>
-                    <Text className='font-inter-medium text-[16px] text-[#444343] dark:text-[#f2f2f2]'>••••   ••••   ••••   </Text>
-                    <Text className='font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.last4}</Text>
-                  </Text>
+            <View className='mt-4 flex-1'>
+              {paymentMethod ? (
+                <View className='flex-1 my-3 justify-center items-center '>
+                  <View className='px-7 pb-5 pt-[50px] bg-[#EEEEEE] dark:bg-[#111111] rounded-xl'>
+                    <Text>
+                      <Text className='font-inter-medium text-[16px] text-[#444343] dark:text-[#f2f2f2]'>••••   ••••   ••••   </Text>
+                      <Text className='font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.last4}</Text>
+                    </Text>
 
-                  <View className='mt-6 flex-row justify-between items-center'>
-                    <View className='flex-row items-center'>
-                      <View className='justify-center items-center'>
-                        <Text className='font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.expiryMonth}/{paymentMethod.expiryYear}</Text>
+                    <View className='mt-6 flex-row justify-between items-center'>
+                      <View className='flex-row items-center'>
+                        <View className='justify-center items-center'>
+                          <Text className='font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.expiryMonth}/{paymentMethod.expiryYear}</Text>
+                        </View>
                       </View>
-                    </View>
 
-                    <View className='h-5 w-8 bg-[#fcfcfc] dark:bg-[#323131] rounded-md'/>
+                      <View className='h-5 w-8 bg-[#fcfcfc] dark:bg-[#323131] rounded-md'/>
+                    </View>
                   </View>
                 </View>
-              </View>
-            ) : (
-              <View className='mt-1 flex-1 justify-center items-center'>
-                <CreditCard height={55} width={55} strokeWidth={1.3} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
-                <View className='flex-row justify-center items-center px-6'>
-                <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'BookingDetails', bookingId, role }) } style={{ opacity: 1 }} className='bg-[#706f6e] my-2 mt-3 dark:bg-[#b6b5b5] w-full py-[14px] rounded-full items-center justify-center'>
-                    <Text>
-                      <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                        {t('add_credit_card')}
+              ) : (
+                <View className='mt-1 flex-1 justify-center items-center'>
+                  <CreditCard height={55} width={55} strokeWidth={1.3} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+                  <View className='flex-row justify-center items-center px-6'>
+                  <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'BookingDetails', bookingId, role }) } style={{ opacity: 1 }} className='bg-[#706f6e] my-2 mt-3 dark:bg-[#b6b5b5] w-full py-[14px] rounded-full items-center justify-center'>
+                      <Text>
+                        <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                          {t('add_credit_card')}
+                        </Text>
                       </Text>
-                    </Text>
-                  </TouchableOpacity>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            )}
+              )}
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Description */}
         <View className='mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>

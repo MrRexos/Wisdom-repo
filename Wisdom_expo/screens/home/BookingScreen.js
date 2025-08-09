@@ -1367,8 +1367,6 @@ export default function BookingScreen() {
 
         <TouchableOpacity
           onPress={handleBook}
-          disabled={!paymentMethod}
-          style={{ opacity: paymentMethod ? 1 : 0.5 }}
           className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
         >
           <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
