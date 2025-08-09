@@ -173,33 +173,23 @@ export default function EditProfileScreen() {
     };
 
     const handleImagePicker = async () => {
-        
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
         if (status !== 'granted') {
-            Alert.alert(
-                'Allow "Wisdom" to Access to Your Gallery',
-                "We need access to your photo library so you can choose and set a profile picture.",
-                [
-                    { text: "Cancel", style: "cancel" },
-                    { text: "Settings", onPress: () => Linking.openSettings() }
-                ],
-                { cancelable: true }
-            );
+            Alert.alert(t('permission_denied'));
             return;
         }
 
         setEditingLocal(true);
 
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: 'Images',
+        const result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
             quality: 1,
         });
 
         if (!result.canceled) {
-            setImage(result.assets[0].uri); // Guarda la imagen seleccionada en el estado          
+            setImage(result.assets[0].uri);
             setImageFull(result.assets[0]);
         } else {
             setEditingLocal(false);

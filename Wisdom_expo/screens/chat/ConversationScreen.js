@@ -288,8 +288,13 @@ export default function ConversationScreen() {
   };
 
   const handleImagePick = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: 'Images',
+    const perm = await ImagePicker.requestCameraPermissionsAsync();
+    if (perm.status !== 'granted') {
+      Alert.alert(t('permission_denied'));
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.7,
     });
     if (!result.canceled) {
@@ -297,7 +302,6 @@ export default function ConversationScreen() {
       setAttachment({ type: 'image', uri: asset.uri, name: asset.fileName || 'image.jpg' });
       attachSheet.current.close();
     }
-    
   };
 
   const handleFilePick = async () => {
@@ -680,7 +684,7 @@ export default function ConversationScreen() {
         <View className="py-4 px-7 gap-y-4">
           <TouchableOpacity onPress={handleImagePick} className="py-2 flex-row justify-start items-center ">
             <ImageIcon height={24} width={24} color={iconColor} strokeWidth={2} />
-            <Text className=" ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_image')}</Text>
+            <Text className=" ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('take_photo')}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleFilePick} className="py-1 flex-row justify-start items-center">
             <Folder height={24} width={24} color={iconColor} strokeWidth={2} />

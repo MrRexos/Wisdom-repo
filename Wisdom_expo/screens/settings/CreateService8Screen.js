@@ -97,23 +97,14 @@ export default function CreateService8Screen() {
   const patternWidth = 315;
 
   const handlePickMainImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert(
-        t('allow_wisdom_to_access_gallery'),
-        t('need_gallery_access_service'),
-        [
-          { text: t('cancel'), style: 'cancel' },
-          { text: t('settings'), onPress: () => Linking.openSettings() }
-        ],
-        { cancelable: true }
-      );
+      Alert.alert(t('permission_denied'));
       return;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: 'images',
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [1, 1],
       quality: 1,
     });
@@ -124,26 +115,17 @@ export default function CreateService8Screen() {
   };
 
   const handlePickImages = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert(
-        t('permission_denied'),
-        t('need_gallery_access_service'),
-        [
-          { text: t('cancel'), style: 'cancel' },
-          { text: t('settings'), onPress: () => Linking.openSettings() }
-        ],
-        { cancelable: true }
-      );
+      Alert.alert(t('permission_denied'));
       return;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [1, 1],
       quality: 1,
-      allowsMultipleSelection: true,
+      allowsMultipleSelection: false,
     });
 
     if (!result.canceled) {

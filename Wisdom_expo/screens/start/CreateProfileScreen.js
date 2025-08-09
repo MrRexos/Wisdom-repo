@@ -32,30 +32,22 @@ export default function CreateProfileScreen() {
     const { email, password, firstName, surname } = route.params;
 
     const handleImagePicker = async () => {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
 
         if (status !== 'granted') {
-            Alert.alert(
-                t('allow_wisdom_to_access_gallery'),
-                t('need_gallery_access'),
-                [
-                    { text: t('cancel'), style: "cancel" },
-                    { text: t('settings'), onPress: () => Linking.openSettings() }
-                ],
-                { cancelable: true }
-            );
+            Alert.alert(t('permission_denied'));
             return;
         }
 
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'],
+        const result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
             quality: 1,
         });
 
         if (!result.canceled) {
-            setImage(result.assets[0]); // Guarda la imagen seleccionada en el estado          
+            setImage(result.assets[0]);
         }
     };
 

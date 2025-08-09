@@ -40,31 +40,9 @@ export default function CollectionMethodDniScreen() {
     }
   };
 
-  const pickFromGallery = async (side) => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permission.status !== 'granted') {
-      Alert.alert(t('allow_wisdom_to_access_gallery'), t('need_gallery_access'));
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
-      base64: true,
-    });
-    if (!result.canceled) {
-      const image = result.assets[0];
-      const data = { uri: image.uri, base64: image.base64 };
-      if (side === 'front') setFrontImage(data);
-      else setBackImage(data);
-    }
-  };
-
   const handleImage = (side) => {
-    Alert.alert('', '', [
-      { text: 'Camera', onPress: () => takePhoto(side) },
-      { text: t('gallery'), onPress: () => pickFromGallery(side) },
-      { text: t('cancel'), style: 'cancel' },
-    ]);
+    // Solo cámara
+    takePhoto(side);
   };
 
   return (
@@ -72,7 +50,7 @@ export default function CollectionMethodDniScreen() {
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
         <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
           <View className="flex-1 px-6 pt-5 pb-6">
-              <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => navigation.navigate('WalletPro')}>
                   <View className="flex-row justify-start">
                       <ChevronLeftIcon size={25} color={iconColor} strokeWidth={2} />
                   </View>
