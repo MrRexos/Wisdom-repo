@@ -83,6 +83,13 @@ export default function PaymentMethodScreen() {
         await api.post(`/api/bookings/${bookingId}/final-payment-transfer`, {
           payment_method_id: paymentMethod.id,
         });
+        setProcessing(false);
+        if (onSuccess) {
+          navigation.navigate(onSuccess, { bookingId });
+        } else {
+          handleBack();
+        }
+        return;
       } else {
         const { paymentMethod, error } = await createPaymentMethod({
           paymentMethodType: 'Card',
@@ -103,8 +110,6 @@ export default function PaymentMethodScreen() {
         handleBack();
         return;
       }
-
-      handleBack();
     } catch (e) {
       console.log('handleDone error', e);
       setProcessing(false);
