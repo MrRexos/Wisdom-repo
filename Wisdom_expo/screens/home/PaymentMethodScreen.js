@@ -50,7 +50,8 @@ export default function PaymentMethodScreen() {
       setProcessing(true);
       const { error } = await confirmPayment(clientSecret, {
         paymentMethodType: 'Card',
-        paymentMethodId,
+        paymentMethodData: {
+          paymentMethodId: paymentMethodId},
       });
       if (!mounted) return;
       if (error) {
@@ -93,10 +94,11 @@ export default function PaymentMethodScreen() {
         }
         const cardData = {
           id: paymentMethod.id,
-          last4: paymentMethod.card?.last4,
-          expiryMonth: paymentMethod.card?.expMonth ?? paymentMethod.card?.exp_month,
-          expiryYear: paymentMethod.card?.expYear ?? paymentMethod.card?.exp_year,
+          last4: cardDetails.last4,
+          expiryMonth: cardDetails.expiryMonth,
+          expiryYear: cardDetails.expiryYear,
         };
+        console.log('cardData', cardDetails);
         await storeDataLocally('paymentMethod', JSON.stringify(cardData));
         handleBack();
         return;
