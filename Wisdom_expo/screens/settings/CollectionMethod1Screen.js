@@ -52,7 +52,7 @@ export default function CollectionMethod1Screen() {
               </TouchableOpacity>
               <TouchableOpacity
               disabled={fullName.length < 1}
-              onPress={() => navigation.navigate('CollectionMethodDni', { fullName })}
+              onPress={() => navigation.navigate('CollectionMethodBirth', { fullName })}
               style={{opacity: fullName.length < 1 ? 0.5 : 1.0}}
               className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                   <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
