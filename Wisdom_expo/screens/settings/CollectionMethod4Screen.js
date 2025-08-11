@@ -82,10 +82,10 @@ export default function CollectionMethod4Screen() {
             </View>
             <View className="flex-1 mb-10 px-4">
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('full_name')}: {fullName}</Text>
-              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">DNI: {dni}</Text>
+              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('dni')}: {dni}</Text>
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('date_of_birth')}: {dateOfBirth}</Text>
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('phone_number')}: {phone}</Text>
-              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">IBAN: {iban}</Text>
+              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('iban')}: {iban}</Text>
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2] mt-4">{street} {streetNumber}, {postalCode} {city}, {state}, {t(`countries.${country}`)}</Text>
               {address2? <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{address2}</Text> : null}
             </View>
