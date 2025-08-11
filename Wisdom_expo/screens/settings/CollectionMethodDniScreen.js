@@ -82,7 +82,7 @@ export default function CollectionMethodDniScreen() {
                 <View></View>
 
                 <View className="justify-center items-center">
-                  <Text className="mt-[60px] font-inter-bold text-[18px] text-center text-[#979797] dark:text-[#979797]">Scan your DNI:</Text>
+                  <Text className="mt-[60px] font-inter-bold text-[18px] text-center text-[#979797] dark:text-[#979797]">{t('scan_your_dni')}</Text>
                 </View>
 
                 <View className="w-full flex-row justify-between mt-8">

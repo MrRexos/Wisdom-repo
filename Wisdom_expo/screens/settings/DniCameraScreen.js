@@ -101,10 +101,10 @@ export default function DniCameraScreen() {
         </Svg>
         <View style={{ position: 'absolute', top: 110, left: 16, right: 16, alignItems: 'center' }}>
           <Text className="font-inter-bold text-[24px]" style={{ color: '#ffffff', textAlign: 'center' }}>
-            {side === 'front' ? 'Añadir anverso del DNI' : 'Añadir reverso del DNI'}
+            {side === 'front' ? t('add_front_of_dni') : t('add_back_of_dni')}
           </Text>
           <Text className="px-4 font-inter-medium text-[15px] mt-2" style={{ color: '#979797', textAlign: 'center' }}>
-            Situa la cámara hasta que el DNI quede alineado con el recuadro.
+            {t('align_dni_with_frame')}
           </Text>
         </View>
       </View>
