@@ -96,6 +96,7 @@ import CollectionMethod1Screen from '../screens/settings/CollectionMethod1Screen
 import CollectionMethodBirthScreen from '../screens/settings/CollectionMethodBirthScreen';
 import CollectionMethodDniScreen from '../screens/settings/CollectionMethodDniScreen';
 import CollectionMethodPhoneScreen from '../screens/settings/CollectionMethodPhoneScreen';
+import DniCameraScreen from '../screens/settings/DniCameraScreen';
 import CollectionMethod2Screen from '../screens/settings/CollectionMethod2Screen';
 import CollectionMethod3Screen from '../screens/settings/CollectionMethod3Screen';
 import CollectionMethod4Screen from '../screens/settings/CollectionMethod4Screen';
@@ -203,6 +204,7 @@ export default function Navigation() {
         <Stack.Screen name="CollectionMethodBirth" component={CollectionMethodBirthScreen} options={{ animation: 'none', gestureEnabled: false }}/>
         <Stack.Screen name="CollectionMethodDni" component={CollectionMethodDniScreen} options={{ animation: 'none', gestureEnabled: false }}/>
         <Stack.Screen name="CollectionMethodPhone" component={CollectionMethodPhoneScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="DniCamera" component={DniCameraScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="CollectionMethod2" component={CollectionMethod2Screen} options={{ animation: 'none', gestureEnabled: false }}/>
         <Stack.Screen name="CollectionMethod3" component={CollectionMethod3Screen} options={{ animation: 'none', gestureEnabled: false }}/>
         <Stack.Screen name="CollectionMethod4" component={CollectionMethod4Screen} options={{ animation: 'none', gestureEnabled: false }}/>
@@ -588,6 +590,7 @@ function SettingsStackNavigator() {
       <Stack.Screen name="CollectionMethod2" component={CollectionMethod2Screen} options={{ animation: 'none', gestureEnabled: false }}/>
       <Stack.Screen name="CollectionMethod3" component={CollectionMethod3Screen} options={{ animation: 'none', gestureEnabled: false }}/>
       <Stack.Screen name="CollectionMethod4" component={CollectionMethod4Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+      <Stack.Screen name="DniCamera" component={DniCameraScreen} options={{ animation: 'none', gestureEnabled: false }} />
     </Stack.Navigator>
   );
 }

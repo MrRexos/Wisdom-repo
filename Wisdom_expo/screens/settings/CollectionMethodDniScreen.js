@@ -6,6 +6,7 @@ import '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import * as ImagePicker from 'expo-image-picker';
+import PersonFill from "react-native-bootstrap-icons/icons/person-fill";
 
 export default function CollectionMethodDniScreen() {
   const { colorScheme } = useColorScheme();
@@ -16,6 +17,7 @@ export default function CollectionMethodDniScreen() {
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
+  const cardColor = colorScheme === 'dark' ? '#3d3d3d' : '#e0e0e0';
 
   const [dni, setDni] = useState('');
   const [frontImage, setFrontImage] = useState(null);
@@ -41,9 +43,15 @@ export default function CollectionMethodDniScreen() {
   };
 
   const handleImage = (side) => {
-    // Solo cámara
-    takePhoto(side);
+    navigation.navigate('DniCamera', {
+      side,
+      onCapture: (data) => {
+        if (side === 'front') setFrontImage(data);
+        else setBackImage(data);
+      },
+    });
   };
+
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -58,7 +66,7 @@ export default function CollectionMethodDniScreen() {
               <View className="justify-center items-center">
                 <Text className="mt-[55px] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('enter_your_dni')}</Text>
               </View>
-              <View className="flex-1 px-4 pb-[60px] justify-center items-center">
+              <View className="flex-1 px-4 justify-center items-center pt-[35px]">
                 <View className="w-full h-10 mb-6 p-2 border-b-[1px] border-[#444343] dark:border-[#f2f2f2]">
                   <TextInput
                   placeholder={t('dni')}
@@ -70,23 +78,50 @@ export default function CollectionMethodDniScreen() {
                   className="h-[50px] w-full flex-1 font-inter-medium text-[18px] text-[#515150] dark:text-[#d4d4d3]"
                   />
                 </View>
-                <View className="w-full flex-row justify-between mt-6">
+
+                <View></View>
+
+                <View className="justify-center items-center">
+                  <Text className="mt-[60px] font-inter-bold text-[18px] text-center text-[#979797] dark:text-[#979797]">Scan your DNI:</Text>
+                </View>
+
+                <View className="w-full flex-row justify-between mt-8">
                   <TouchableOpacity
                     onPress={() => handleImage('front')}
-                    className="w-[48%] h-32 bg-[#e0e0e0] dark:bg-[#3d3d3d] rounded-lg justify-center items-center">
+                    style={{ aspectRatio: 1.586, borderColor: cardColor, borderWidth: 4 }}
+                    className="w-[48%] rounded-lg justify-center items-center" >
                     {frontImage ? (
                       <Image source={{ uri: frontImage.uri }} className="w-full h-full rounded-lg" />
                     ) : (
-                      <Text className="font-inter-medium text-center text-[15px] text-[#515150] dark:text-[#d4d4d3]">{t('front_of_dni')}</Text>
+                          <View className="flex-1 flex-row items-center px-3">
+                            <View className="mr-3">
+                              <PersonFill viewBox="0 0 16 16" width={44} height={44} fill={cardColor} />
+                            </View>
+                          <View className="flex-1">
+                            <View style={{ backgroundColor: cardColor, height: 6, borderRadius: 4, width: '78%', marginBottom: 10 }} />
+                            <View style={{ backgroundColor: cardColor, height: 6, borderRadius: 4, width: '62%', marginBottom: 10 }} />
+                            <View style={{ backgroundColor: cardColor, height: 6, borderRadius: 4, width: '46%' }} />
+                          </View>
+                        </View>
                     )}
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => handleImage('back')}
-                    className="w-[48%] h-32 bg-[#e0e0e0] dark:bg-[#3d3d3d] rounded-lg justify-center items-center">
+                    style={{ aspectRatio: 1.586, borderColor: cardColor, borderWidth: 4 }}
+                    className="w-[48%] rounded-lg">
                     {backImage ? (
                       <Image source={{ uri: backImage.uri }} className="w-full h-full rounded-lg" />
                     ) : (
-                      <Text className="font-inter-medium text-center text-[15px] text-[#515150] dark:text-[#d4d4d3]">{t('back_of_dni')}</Text>
+                      <View className="w-full h-full p-5 justify-between">
+                        <View className="flex-row items-center">
+                          <View style={{ width: 20, height: 17, borderRadius: 5, backgroundColor: '#3d3d3d', marginRight: 16 }} />
+                          <View className="flex-1">
+                            <View style={{ backgroundColor: '#3d3d3d', height: 6, borderRadius: 4, width: '78%', marginBottom: 10 }} />
+                            <View style={{ backgroundColor: '#3d3d3d', height: 6, borderRadius: 4, width: '62%' }} />
+                          </View>
+                        </View>
+                        <View style={{ backgroundColor: '#3d3d3d', height: 6, borderRadius: 4, width: '100%', alignSelf: 'center' }} />
+                      </View>
                     )}
                   </TouchableOpacity>
                 </View>
