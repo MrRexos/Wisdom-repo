@@ -6,6 +6,7 @@ import '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon, ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
 import Triangle from '../../assets/triangle';
+import { formatE164IfMissing } from '../../utils/phone';
 
 export default function CollectionMethod3Screen() {
   const { colorScheme } = useColorScheme();
@@ -109,7 +110,7 @@ export default function CollectionMethod3Screen() {
                     > 
                       {countries.map((item) => ( 
                         <TouchableOpacity 
-                          key={item.code} 
+                          key={item} 
                           className="py-3" 
                           onPress={() => { setCountry(item); setShowCountryDropdown(false); }} 
                         > 
@@ -220,7 +221,10 @@ export default function CollectionMethod3Screen() {
           </TouchableOpacity>
           <TouchableOpacity
           disabled={streetNumber.length < 1}
-          onPress={() => navigation.navigate('CollectionMethod4', { fullName, dni, dateOfBirth, phone, frontImage, backImage, iban, country, state, city, street, postalCode, streetNumber, address2 })}
+          onPress={() => {
+            const formattedPhone = formatE164IfMissing(phone, country);
+            navigation.navigate('CollectionMethod4', { fullName, dni, dateOfBirth, phone: formattedPhone, frontImage, backImage, iban, country, state, city, street, postalCode, streetNumber, address2 });
+          }}
           style={{opacity: streetNumber.length < 1 ? 0.5 : 1.0}}
           className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
               <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
