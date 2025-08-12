@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, ScrollView } from 'react-native';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -77,33 +77,67 @@ export default function CollectionMethod4Screen() {
                     <ChevronLeftIcon size={25} color={iconColor} strokeWidth={2} />
                 </View>
             </TouchableOpacity>
-            <View className="justify-center items-center mb-10">
+            <View className="justify-center items-center mb-2">
               <Text className="mt-[55px] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('review_information')}</Text>
             </View>
-            <View className="flex-1 mb-10 px-4">
-              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('full_name')}: {fullName}</Text>
-              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('dni')}: {dni}</Text>
-              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('date_of_birth')}: {dateOfBirth}</Text>
-              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('phone_number')}: {phone}</Text>
-              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('iban')}: {iban}</Text>
-              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2] mt-4">{street} {streetNumber}, {postalCode} {city}, {state}, {t(`countries.${country}`)}</Text>
-              {address2? <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{address2}</Text> : null}
-            </View>
 
-            <View className="flex-row justify-center items-center">
+            {/* Card de confirmación */}
+            <ScrollView
+              contentContainerStyle={{ paddingBottom: 20, paddingTop: 50 }}
+              className="flex-1"
+              showsVerticalScrollIndicator={false}
+            >
+              <View
+                className="w-full rounded-2xl px-5 py-6 bg-[#E0E0E0] dark:bg-[#3D3D3D]"
+              >
+                <View className="mb-4">
+                  <Text className="font-inter-medium text-[12px] mb-1 text-[#b6b5b5] dark:text-[#706f6e]">{t('full_name')}</Text>
+                  <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{fullName}</Text>
+                </View>
+                <View className="mb-4">
+                  <Text className="font-inter-medium text-[12px] mb-1 text-[#b6b5b5] dark:text-[#706f6e]">{t('dni')}</Text>
+                  <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{dni}</Text>
+                </View>
+                <View className="mb-4">
+                  <Text className="font-inter-medium text-[12px] mb-1 text-[#b6b5b5] dark:text-[#706f6e]">{t('date_of_birth')}</Text>
+                  <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{dateOfBirth}</Text>
+                </View>
+                <View className="mb-4">
+                  <Text className="font-inter-medium text-[12px] mb-1 text-[#b6b5b5] dark:text-[#706f6e]">{t('phone_number')}</Text>
+                  <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{phone}</Text>
+                </View>
+                <View className="mb-4">
+                  <Text className="font-inter-medium text-[12px] mb-1 text-[#b6b5b5] dark:text-[#706f6e]">{t('iban')}</Text>
+                  <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{iban}</Text>
+                </View>
+
+                <View className="mb-2">
+                  <Text className="font-inter-medium text-[12px] mb-1 text-[#b6b5b5] dark:text-[#706f6e]">{t('direction')}</Text>
+                  <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{street} {streetNumber}, {postalCode}, {city}, {state}, {t(`countries.${country}`)}</Text>
+                </View>
+                
+                
+              </View>
+            </ScrollView>
+
+            <View className="flex-row justify-center items-center mt-4">
               <TouchableOpacity
               disabled={false}
               onPress={() => navigation.goBack()}
               style={{opacity: 1}}
               className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
-                  <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
+                  <Text className="font-inter-semibold text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
               disabled={loading}
               onPress={handleFinish}
               style={{opacity: loading ? 0.5 : 1.0}}
               className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
-                  <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('finish')}</Text>
+                  {loading ? (
+                    <ActivityIndicator size="small" color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
+                  ) : (
+                    <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('finish')}</Text>
+                  )}
               </TouchableOpacity>
             </View>
         </View>
