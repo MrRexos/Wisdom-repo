@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, Image, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, Image, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
-import * as ImagePicker from 'expo-image-picker';
 import PersonFill from "react-native-bootstrap-icons/icons/person-fill";
+import eventEmitter from '../../utils/eventEmitter';
 
 export default function CollectionMethodDniScreen() {
   const { colorScheme } = useColorScheme();
@@ -23,33 +23,17 @@ export default function CollectionMethodDniScreen() {
   const [frontImage, setFrontImage] = useState(null);
   const [backImage, setBackImage] = useState(null);
 
-  const takePhoto = async (side) => {
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (permission.status !== 'granted') {
-      Alert.alert(t('permission_denied'));
-      return;
-    }
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
-      base64: true,
-    });
-    if (!result.canceled) {
-      const image = result.assets[0];
-      const data = { uri: image.uri, base64: image.base64 };
+  useEffect(() => {
+    const handleCapture = ({ side, data }) => {
       if (side === 'front') setFrontImage(data);
       else setBackImage(data);
-    }
-  };
+    };
+    eventEmitter.on('dniCapture', handleCapture);
+    return () => eventEmitter.off('dniCapture', handleCapture);
+  }, []);
 
   const handleImage = (side) => {
-    navigation.navigate('DniCamera', {
-      side,
-      onCapture: (data) => {
-        if (side === 'front') setFrontImage(data);
-        else setBackImage(data);
-      },
-    });
+    navigation.navigate('DniCamera', { side });
   };
 
 

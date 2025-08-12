@@ -7,6 +7,7 @@ import '../../languages/i18n';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import Svg, { Rect, Defs, Mask } from 'react-native-svg';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
+import eventEmitter from '../../utils/eventEmitter';
 
 export default function DniCameraScreen() {
   const navigation = useNavigation();
@@ -17,7 +18,7 @@ export default function DniCameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef(null);
 
-  const { side = 'front', onCapture } = route.params || {};
+  const { side = 'front' } = route.params || {};
 
   const { width: screenW, height: screenH } = Dimensions.get('window');
   const guide = useMemo(() => {
@@ -35,9 +36,7 @@ export default function DniCameraScreen() {
     try {
       const photo = await cameraRef.current.takePictureAsync({ quality: 0.8, base64: true });
       const data = { uri: photo.uri, base64: photo.base64 };
-      if (typeof onCapture === 'function') {
-        onCapture(data);
-      }
+      eventEmitter.emit('dniCapture', { side, data });
       navigation.goBack();
     } catch (e) {}
   };
