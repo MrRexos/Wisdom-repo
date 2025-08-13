@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react'
 import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, ScrollView, Image} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {XMarkIcon, ChevronLeftIcon, GlobeAltIcon, GlobeEuropeAfricaIcon} from 'react-native-heroicons/outline';
 import MapView, { Circle } from 'react-native-maps';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
 import {Heart} from 'react-native-feather';
-import api from '../../utils/api.js';
-import { getDataLocally } from '../../utils/asyncStorage';
+import api from '../../../utils/api.js';
+import { getDataLocally } from '../../../utils/asyncStorage';
 import axios from 'axios';
 
 

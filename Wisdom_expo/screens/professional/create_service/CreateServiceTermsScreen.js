@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {XMarkIcon, ChevronLeftIcon} from 'react-native-heroicons/outline';
 
@@ -40,7 +40,7 @@ export default function CreateService12Screen() {
                 </Text>
                 <TouchableOpacity 
                 disabled={false}
-                onPress={() => navigation.navigate('CreateService13', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk})}
+onPress={() => navigation.navigate('CreateServiceReview', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk})}
                 style={{opacity: 1}}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('accept_wisdom_terms')}</Text>

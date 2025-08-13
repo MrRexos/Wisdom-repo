@@ -8,7 +8,7 @@ import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/nativ
 import { Check } from "react-native-feather";
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon } from 'react-native-heroicons/outline';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
-import WisdomLogo from '../../assets/wisdomLogo.tsx'
+import WisdomLogo from '../../assets/wisdomLogo'
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
@@ -29,7 +29,7 @@ export default function WalletProScreen() {
     {
       items: [
         {id: 'bookings', label: t('bookings'), type: 'select', link: 'Services'},
-        {id: 'collectionMethod', label: t('collection_method'), type: 'select', link: 'CollectionMethod1'},
+        {id: 'collectionMethod', label: t('collection_method'), type: 'select', link: 'CollectionMethodName'},
       ]
     },
   ];

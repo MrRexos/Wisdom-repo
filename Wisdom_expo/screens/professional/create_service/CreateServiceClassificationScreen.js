@@ -10,15 +10,15 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {
   XMarkIcon,
   ChevronDownIcon,
   ChevronUpIcon,
 } from 'react-native-heroicons/outline';
-import Triangle from '../../assets/triangle';
-import api from '../../utils/api.js';
+import Triangle from '../../../assets/triangle';
+import api from '../../../utils/api.js';
 
 
 export default function CreateService3Screen() {
@@ -250,7 +250,7 @@ export default function CreateService3Screen() {
 
           <TouchableOpacity
             disabled={!family || !category}
-            onPress={() => navigation.navigate('CreateService4', { title, family, category })}
+onPress={() => navigation.navigate('CreateServiceDescription', { title, family, category })}
             style={{ opacity: family && category ? 1 : 0.5 }}
             className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
           >

@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
-import api from '../../utils/api.js';
-import { getDataLocally, storeDataLocally } from '../../utils/asyncStorage';
+import api from '../../../utils/api.js';
+import { getDataLocally, storeDataLocally } from '../../../utils/asyncStorage';
 
 export default function CollectionMethod4Screen() {
   const { colorScheme } = useColorScheme();

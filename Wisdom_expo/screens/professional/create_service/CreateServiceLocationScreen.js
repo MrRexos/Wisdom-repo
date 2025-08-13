@@ -2,12 +2,12 @@ import React, { useEffect, useState, useCallback } from 'react'
 import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, Image} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect, useIsFocused } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/outline';
 import { Search, Check } from "react-native-feather";
 import MapView, { Marker, Circle } from 'react-native-maps';
-import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
+import { storeDataLocally, getDataLocally } from '../../../utils/asyncStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Slider from '@react-native-community/slider';
 import SliderThumbDark from '../../assets/SliderThumbDark.png';
@@ -119,7 +119,7 @@ export default function CreateService6Screen() {
 
             <View className="flex-1 pb-[80px] justify-start items-center ">
 
-              <TouchableOpacity onPress={() => navigation.navigate('SearchDirectionCreateService', {prevScreen:'CreateService6'})} className="mt-5 px-3 justify-center items-center w-full">
+              <TouchableOpacity onPress={() => navigation.navigate('SearchDirectionCreateService', {prevScreen:'CreateServiceLocation'})} className="mt-5 px-3 justify-center items-center w-full">
                 <View className="mt-7 h-[50px] px-4 w-full flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                     <Search height={20} color={colorScheme=='dark'? '#f2f2f2': '#444343'} strokeWidth={2}/>
                     <Text 
@@ -228,7 +228,7 @@ export default function CreateService6Screen() {
 
               <TouchableOpacity 
               disabled={!isUnlocated && !direction}
-              onPress={() => navigation.navigate('CreateService7', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate})}
+              onPress={() => navigation.navigate('CreateServiceExperiences', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate})}
               style={{opacity: isUnlocated || direction? 1.0: 0.5}}
               className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                   <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>

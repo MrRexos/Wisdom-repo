@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, ScrollView, Image, StyleSheet, Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { XMarkIcon } from 'react-native-heroicons/outline'; // Asegúrate de importar PlusIcon o el ícono que prefieras
-import AddMainImage from '../../assets/AddMainImage';
-import AddServiceImages from '../../assets/AddServiceImages';
+import AddMainImage from '../../../assets/AddMainImage';
+import AddServiceImages from '../../../assets/AddServiceImages';
 import * as ImagePicker from 'expo-image-picker';
 
 const patternImages = (images, colorScheme, onRemoveImage) => {
@@ -218,7 +218,7 @@ export default function CreateService8Screen() {
 
         <TouchableOpacity
           disabled={false}
-          onPress={() => navigation.navigate('CreateService9_0', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages })}
+onPress={() => navigation.navigate('CreateServicePriceType', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages })}
           style={{ opacity: 1 }}
           className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
         >

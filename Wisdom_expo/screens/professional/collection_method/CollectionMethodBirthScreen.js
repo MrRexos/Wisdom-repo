@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';

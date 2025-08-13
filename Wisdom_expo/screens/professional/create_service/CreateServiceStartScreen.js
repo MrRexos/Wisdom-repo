@@ -2,9 +2,9 @@ import React, { useEffect, useCallback } from 'react'
 import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
+import { storeDataLocally, getDataLocally } from '../../../utils/asyncStorage';
 
 import {XMarkIcon} from 'react-native-heroicons/outline';
 
@@ -52,7 +52,7 @@ export default function CreateService1Screen() {
             <View className="justify-center items-center">
                 <TouchableOpacity 
                 disabled={false}
-                onPress={() => navigation.navigate('CreateService2')}
+                onPress={() => navigation.navigate('CreateServiceTitle')}
                 style={{opacity: 1}}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('start')}</Text>

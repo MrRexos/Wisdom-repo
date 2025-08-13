@@ -49,25 +49,25 @@ import ConversationScreen from '../screens/chat/ConversationScreen';
 import ChatImageViewerScreen from '../screens/chat/ChatImageViewerScreen';
 import PreferencesScreen from '../screens/settings/PreferencesScreen';
 import LanguageScreen from '../screens/settings/LanguageScreen';
-import CreateService1Screen from '../screens/settings/CreateService1Screen';
-import CreateService2Screen from '../screens/settings/CreateService2Screen';
-import CreateService3Screen from '../screens/settings/CreateService3Screen';
-import CreateService4Screen from '../screens/settings/CreateService4Screen';
-import CreateService5Screen from '../screens/settings/CreateService5Screen';
-import CreateService6Screen from '../screens/settings/CreateService6Screen';
-import CreateService7Screen from '../screens/settings/CreateService7Screen';
-import CreateService8Screen from '../screens/settings/CreateService8Screen';
-import CreateService9_0Screen from '../screens/settings/CreateService9_0Screen';
-import CreateService9Screen from '../screens/settings/CreateService9Screen';
-import CreateService11_0Screen from '../screens/settings/CreateService11_0Screen';
-import CreateService10Screen from '../screens/settings/CreateService10Screen';
-import CreateService11Screen from '../screens/settings/CreateService11Screen';
-import CreateService12Screen from '../screens/settings/CreateService12Screen';
-import CreateService13Screen from '../screens/settings/CreateService13Screen';
+import CreateService1Screen from '../screens/professional/create_service/CreateServiceStartScreen';
+import CreateService2Screen from '../screens/professional/create_service/CreateServiceTitleScreen';
+import CreateService3Screen from '../screens/professional/create_service/CreateServiceClassificationScreen';
+import CreateService4Screen from '../screens/professional/create_service/CreateServiceDescriptionScreen';
+import CreateService5Screen from '../screens/professional/create_service/CreateServiceDetailsScreen';
+import CreateService6Screen from '../screens/professional/create_service/CreateServiceLocationScreen';
+import CreateService7Screen from '../screens/professional/create_service/CreateServiceExperiencesScreen';
+import CreateService8Screen from '../screens/professional/create_service/CreateServiceImagesScreen';
+import CreateService9_0Screen from '../screens/professional/create_service/CreateServicePriceTypeScreen';
+import CreateService9Screen from '../screens/professional/create_service/CreateServicePriceScreen';
+import CreateService11_0Screen from '../screens/professional/create_service/CreateServiceAskScreen';
+import CreateService10Screen from '../screens/professional/create_service/CreateServiceDiscountsScreen';
+import CreateService11Screen from '../screens/professional/create_service/CreateServiceConsultScreen';
+import CreateService12Screen from '../screens/professional/create_service/CreateServiceTermsScreen';
+import CreateService13Screen from '../screens/professional/create_service/CreateServiceReviewScreen';
 import SearchDirectionScreen from '../screens/home/SearchDirectionScreen';
-import BookingScreen from '../screens/home/BookingScreen';
+import BookingScreen from '../screens/booking/BookingScreen';
 import ConfirmPaymentScreen from '../screens/home/ConfirmPaymentScreen';
-import PaymentMethodScreen from '../screens/home/PaymentMethodScreen';
+import PaymentMethodScreen from '../screens/booking/PaymentMethodScreen';
 import ResultsScreen from '../screens/home/ResultsScreen';
 import SearchScreen from '../screens/home/SearchScreen';
 import SearchServiceScreen from '../screens/home/SearchServiceScreen';
@@ -88,18 +88,18 @@ import ChangePasswordScreen from '../screens/settings/ChangePasswordScreen';
 import HelpScreen from '../screens/settings/HelpScreen';
 import TurnExpertScreen from '../screens/settings/TurnExpertScreen';
 import WalletScreen from '../screens/settings/WalletScreen';
-import WalletProScreen from '../screens/settings/WalletProScreen';
+import WalletProScreen from '../screens/professional/WalletProScreen';
 import ExpertPlansScreen from '../screens/settings/ExpertPlansScreen';
 import FAQScreen from '../screens/settings/FAQScreen';
 import EditProfileScreen from '../screens/settings/EditProfileScreen';
-import CollectionMethod1Screen from '../screens/settings/CollectionMethod1Screen';
-import CollectionMethodBirthScreen from '../screens/settings/CollectionMethodBirthScreen';
-import CollectionMethodDniScreen from '../screens/settings/CollectionMethodDniScreen';
-import CollectionMethodPhoneScreen from '../screens/settings/CollectionMethodPhoneScreen';
-import DniCameraScreen from '../screens/settings/DniCameraScreen';
-import CollectionMethod2Screen from '../screens/settings/CollectionMethod2Screen';
-import CollectionMethod3Screen from '../screens/settings/CollectionMethod3Screen';
-import CollectionMethod4Screen from '../screens/settings/CollectionMethod4Screen';
+import CollectionMethod1Screen from '../screens/professional/collection_method/CollectionMethodNameScreen';
+import CollectionMethodBirthScreen from '../screens/professional/collection_method/CollectionMethodBirthScreen';
+import CollectionMethodDniScreen from '../screens/professional/collection_method/CollectionMethodDniScreen';
+import CollectionMethodPhoneScreen from '../screens/professional/collection_method/CollectionMethodPhoneScreen';
+import DniCameraScreen from '../screens/professional/collection_method/DniCameraScreen';
+import CollectionMethod2Screen from '../screens/professional/collection_method/CollectionMethodIbanScreen';
+import CollectionMethod3Screen from '../screens/professional/collection_method/CollectionMethodDirectionScreen';
+import CollectionMethod4Screen from '../screens/professional/collection_method/CollectionMethodConfirmScreen';
 
 
 
@@ -155,21 +155,21 @@ export default function Navigation() {
         <Stack.Screen name="Language" component={LanguageScreen} />
         <Stack.Screen name="List" component={ListScreen} />
         <Stack.Screen name="CreateServiceStack" component={CreateServiceStackNavigator} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService1" component={CreateService1Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService2" component={CreateService2Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService3" component={CreateService3Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService4" component={CreateService4Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService5" component={CreateService5Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService6" component={CreateService6Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService7" component={CreateService7Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService8" component={CreateService8Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService9" component={CreateService9Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService9_0" component={CreateService9_0Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService10" component={CreateService10Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService11_0" component={CreateService11_0Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService11" component={CreateService11Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService12" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CreateService13" component={CreateService13Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServiceStart" component={CreateService1Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServiceTitle" component={CreateService2Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServiceClassification" component={CreateService3Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServiceDescription" component={CreateService4Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServiceDetails" component={CreateService5Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServiceLocation" component={CreateService6Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServiceExperiences" component={CreateService7Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServiceImages" component={CreateService8Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServicePrice" component={CreateService9Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServicePriceType" component={CreateService9_0Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServiceDiscounts" component={CreateService10Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServiceAsk" component={CreateService11_0Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServiceConsult" component={CreateService11Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServiceTerms" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CreateServiceReview" component={CreateService13Screen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="Booking" component={BookingScreen} />
         <Stack.Screen name="ConfirmPayment" component={ConfirmPaymentScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="PaymentMethod" component={PaymentMethodScreen} />
@@ -200,14 +200,14 @@ export default function Navigation() {
         <Stack.Screen name="ExpertPlans" component={ExpertPlansScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="FAQ" component={FAQScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
-        <Stack.Screen name="CollectionMethod1" component={CollectionMethod1Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CollectionMethodName" component={CollectionMethod1Screen} options={{ animation: 'none', gestureEnabled: false }}/>
         <Stack.Screen name="CollectionMethodBirth" component={CollectionMethodBirthScreen} options={{ animation: 'none', gestureEnabled: false }}/>
         <Stack.Screen name="CollectionMethodDni" component={CollectionMethodDniScreen} options={{ animation: 'none', gestureEnabled: false }}/>
         <Stack.Screen name="CollectionMethodPhone" component={CollectionMethodPhoneScreen} options={{ animation: 'none', gestureEnabled: false }}/>
         <Stack.Screen name="DniCamera" component={DniCameraScreen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CollectionMethod2" component={CollectionMethod2Screen} options={{ animation: 'none', gestureEnabled: false }}/>
-        <Stack.Screen name="CollectionMethod3" component={CollectionMethod3Screen} options={{ animation: 'none', gestureEnabled: false }}/>
-        <Stack.Screen name="CollectionMethod4" component={CollectionMethod4Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CollectionMethodIban" component={CollectionMethod2Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CollectionMethodDirection" component={CollectionMethod3Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CollectionMethodConfirm" component={CollectionMethod4Screen} options={{ animation: 'none', gestureEnabled: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -583,13 +583,13 @@ function SettingsStackNavigator() {
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="Directions" component={DirectionsScreen} />
       <Stack.Screen name="AddDirection" component={SearchDirectionScreen} />
-      <Stack.Screen name="CollectionMethod1" component={CollectionMethod1Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+      <Stack.Screen name="CollectionMethodName" component={CollectionMethod1Screen} options={{ animation: 'none', gestureEnabled: false }}/>
       <Stack.Screen name="CollectionMethodBirth" component={CollectionMethodBirthScreen} options={{ animation: 'none', gestureEnabled: false }}/>
       <Stack.Screen name="CollectionMethodDni" component={CollectionMethodDniScreen} options={{ animation: 'none', gestureEnabled: false }}/>
       <Stack.Screen name="CollectionMethodPhone" component={CollectionMethodPhoneScreen} options={{ animation: 'none', gestureEnabled: false }}/>
-      <Stack.Screen name="CollectionMethod2" component={CollectionMethod2Screen} options={{ animation: 'none', gestureEnabled: false }}/>
-      <Stack.Screen name="CollectionMethod3" component={CollectionMethod3Screen} options={{ animation: 'none', gestureEnabled: false }}/>
-      <Stack.Screen name="CollectionMethod4" component={CollectionMethod4Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+      <Stack.Screen name="CollectionMethodIban" component={CollectionMethod2Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+      <Stack.Screen name="CollectionMethodDirection" component={CollectionMethod3Screen} options={{ animation: 'none', gestureEnabled: false }}/>
+      <Stack.Screen name="CollectionMethodConfirm" component={CollectionMethod4Screen} options={{ animation: 'none', gestureEnabled: false }}/>
       <Stack.Screen name="DniCamera" component={DniCameraScreen} options={{ animation: 'none', gestureEnabled: false }} />
     </Stack.Navigator>
   );
@@ -598,21 +598,21 @@ function SettingsStackNavigator() {
 function CreateServiceStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="CreateService1" component={CreateService1Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService2" component={CreateService2Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService3" component={CreateService3Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService4" component={CreateService4Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService5" component={CreateService5Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService6" component={CreateService6Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService7" component={CreateService7Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService8" component={CreateService8Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService9" component={CreateService9Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService9_0" component={CreateService9_0Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService10" component={CreateService10Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService11_0" component={CreateService11_0Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService11" component={CreateService11Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService12" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Stack.Screen name="CreateService13" component={CreateService13Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServiceStart" component={CreateService1Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServiceTitle" component={CreateService2Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServiceClassification" component={CreateService3Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServiceDescription" component={CreateService4Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServiceDetails" component={CreateService5Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServiceLocation" component={CreateService6Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServiceExperiences" component={CreateService7Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServiceImages" component={CreateService8Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServicePrice" component={CreateService9Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServicePriceType" component={CreateService9_0Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServiceDiscounts" component={CreateService10Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServiceAsk" component={CreateService11_0Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServiceConsult" component={CreateService11Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServiceTerms" component={CreateService12Screen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CreateServiceReview" component={CreateService13Screen} options={{ animation: 'none', gestureEnabled: false }} />
       <Stack.Screen name="SearchDirectionCreateService" component={SearchDirectionScreen} />
     </Stack.Navigator>
   );

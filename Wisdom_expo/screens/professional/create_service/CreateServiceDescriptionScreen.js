@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef  } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, ScrollView, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { XMarkIcon } from 'react-native-heroicons/outline';
@@ -116,7 +116,7 @@ export default function CreateService4Screen() {
 
           <TouchableOpacity
             disabled={!description}
-            onPress={() => navigation.navigate('CreateService5', { title, family, category, description })}
+onPress={() => navigation.navigate('CreateServiceDetails', { title, family, category, description })}
             style={{ opacity: description ? 1.0 : 0.5 }}
             className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
           >

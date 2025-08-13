@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
 import { Edit3 } from 'react-native-feather';
@@ -112,7 +112,7 @@ export default function CreateService9Screen() {
 
             <TouchableOpacity
               disabled={!priceValue}
-              onPress={() => navigation.navigate('CreateService10', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice})}
+onPress={() => navigation.navigate('CreateServiceDiscounts', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice})}
               style={{ opacity: priceValue ? 1.0 : 0.5 }}
               className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
             >

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 
@@ -55,7 +55,7 @@ export default function CollectionMethodPhoneScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity
                 disabled={phone.length < 1}
-                onPress={() => navigation.navigate('CollectionMethod2', { fullName, dni, dateOfBirth, phone, frontImage, backImage })}
+onPress={() => navigation.navigate('CollectionMethodIban', { fullName, dni, dateOfBirth, phone, frontImage, backImage })}
                 style={{opacity: phone.length < 1 ? 0.5 : 1.0}}
                 className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>

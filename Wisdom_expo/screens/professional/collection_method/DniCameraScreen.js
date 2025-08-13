@@ -3,11 +3,11 @@ import { View, Text, TouchableOpacity, Dimensions, Platform, StatusBar, SafeArea
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
 import { useTranslation } from 'react-i18next';
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import Svg, { Rect, Defs, Mask } from 'react-native-svg';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
-import eventEmitter from '../../utils/eventEmitter';
+import eventEmitter from '../../../utils/eventEmitter';
 
 export default function DniCameraScreen() {
   const navigation = useNavigation();

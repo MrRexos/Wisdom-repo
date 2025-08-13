@@ -9,8 +9,8 @@ import {XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRight
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
 import {Plus, Info, Phone, FileText, Flag, X, Check, Calendar as CalendarIcon, Edit3, Clock, MapPin, Edit2, AlertCircle, AlertTriangle, CreditCard} from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
-import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
-import WisdomLogo from '../../assets/wisdomLogo.tsx'
+import SuitcaseFill from "../../assets/SuitcaseFill"
+import WisdomLogo from '../../assets/wisdomLogo'
 import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import MapView, { Marker, Circle } from 'react-native-maps';
@@ -530,7 +530,7 @@ export default function BookingScreen() {
                 <Text className="text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('select_a_date')}</Text>
               </View>
 
-              <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+              <ScrollView showsVerticalScrollIndicator={false} horizontal={false} className="flex-1">
 
                 <View className="w-full px-6">
                   <Calendar

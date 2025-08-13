@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, Image, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import PersonFill from "react-native-bootstrap-icons/icons/person-fill";
-import eventEmitter from '../../utils/eventEmitter';
+import eventEmitter from '../../../utils/eventEmitter';
 
 export default function CollectionMethodDniScreen() {
   const { colorScheme } = useColorScheme();

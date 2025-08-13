@@ -2,11 +2,11 @@ import React, { useState, useRef } from 'react';
 import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, ScrollView, FlatList, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon, ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
-import Triangle from '../../assets/triangle';
-import { formatE164IfMissing } from '../../utils/phone';
+import Triangle from '../../../assets/triangle';
+import { formatE164IfMissing } from '../../../utils/phone';
 
 export default function CollectionMethod3Screen() {
   const { colorScheme } = useColorScheme();
@@ -223,7 +223,7 @@ export default function CollectionMethod3Screen() {
           disabled={streetNumber.length < 1}
           onPress={() => {
             const formattedPhone = formatE164IfMissing(phone, country);
-            navigation.navigate('CollectionMethod4', { fullName, dni, dateOfBirth, phone: formattedPhone, frontImage, backImage, iban, country, state, city, street, postalCode, streetNumber, address2 });
+navigation.navigate('CollectionMethodConfirm', { fullName, dni, dateOfBirth, phone: formattedPhone, frontImage, backImage, iban, country, state, city, street, postalCode, streetNumber, address2 });
           }}
           style={{opacity: streetNumber.length < 1 ? 0.5 : 1.0}}
           className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >

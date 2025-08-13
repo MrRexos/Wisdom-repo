@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Keyboard, TouchableWithoutFeedback} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
-import '../../languages/i18n';
+import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/outline';
 import { Check } from "react-native-feather";
@@ -314,7 +314,7 @@ export default function CreateService5Screen() {
 
           <TouchableOpacity 
           disabled={selectedLanguages.length<1 || tags.length<1}
-          onPress={() => navigation.navigate('CreateService6', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags})}
+onPress={() => navigation.navigate('CreateServiceLocation', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags})}
           style={{opacity: (selectedLanguages.length>0 && tags.length>0)? 1 : 0.5}}
           className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                 <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
