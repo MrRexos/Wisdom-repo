@@ -8,7 +8,7 @@ import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import api from '../../../utils/api.js';
 import { getDataLocally, storeDataLocally } from '../../../utils/asyncStorage';
 
-export default function CollectionMethod4Screen() {
+export default function CollectionMethodConfirmScreen() {
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
   const navigation = useNavigation();

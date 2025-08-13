@@ -21,7 +21,7 @@ import Triangle from '../../../assets/triangle';
 import api from '../../../utils/api.js';
 
 
-export default function CreateService3Screen() {
+export default function CreateServiceClassificationScreen() {
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
   const navigation = useNavigation();

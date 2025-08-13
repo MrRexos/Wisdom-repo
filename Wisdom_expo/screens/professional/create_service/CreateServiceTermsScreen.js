@@ -8,7 +8,7 @@ import {XMarkIcon, ChevronLeftIcon} from 'react-native-heroicons/outline';
 
 
 
-export default function CreateService12Screen() {
+export default function CreateServiceTermsScreen() {
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();

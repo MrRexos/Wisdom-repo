@@ -8,7 +8,7 @@ import { ChevronLeftIcon, ChevronDownIcon, ChevronUpIcon } from 'react-native-he
 import Triangle from '../../../assets/triangle';
 import { formatE164IfMissing } from '../../../utils/phone';
 
-export default function CollectionMethod3Screen() {
+export default function CollectionMethodDirectionScreen() {
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
   const navigation = useNavigation();

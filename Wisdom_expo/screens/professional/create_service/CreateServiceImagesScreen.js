@@ -85,7 +85,7 @@ const patternImages = (images, colorScheme, onRemoveImage) => {
   return pattern;
 };
 
-export default function CreateService8Screen() {
+export default function CreateServiceImagesScreen() {
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';

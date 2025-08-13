@@ -15,7 +15,7 @@ import axios from 'axios';
 
 
 
-export default function CreateService13Screen() {
+export default function CreateServiceReviewScreen() {
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();

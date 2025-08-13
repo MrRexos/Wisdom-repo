@@ -8,7 +8,7 @@ import {XMarkIcon, ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/
 import { Edit3 } from 'react-native-feather';
 
 
-export default function CreateService11Screen() {
+export default function CreateServiceConsultScreen() {
 
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();

@@ -8,7 +8,7 @@ import { XMarkIcon } from 'react-native-heroicons/outline';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 
-export default function CreateService7Screen() {
+export default function CreateServiceExperiencesScreen() {
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';

@@ -6,7 +6,7 @@ import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { XMarkIcon } from 'react-native-heroicons/outline';
 
-export default function CreateService4Screen() {
+export default function CreateServiceDescriptionScreen() {
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
