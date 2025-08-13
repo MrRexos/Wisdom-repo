@@ -167,7 +167,7 @@ export default function CalendarProScreen() {
             <Text className=" font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2]">
               {t('calendar')}
             </Text>
-            {/* <TouchableOpacity onPress={() => navigation.navigate('CreateService1')} className="p-[8px] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+            {/* <TouchableOpacity onPress={() => navigation.navigate('CreateServiceStart')} className="p-[8px] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
               <Plus height={23} width={23} color={iconColor} strokeWidth={1.7}/>
             </TouchableOpacity> */}
         </View>

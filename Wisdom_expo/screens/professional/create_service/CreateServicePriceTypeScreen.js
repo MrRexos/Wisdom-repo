@@ -7,7 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import {XMarkIcon, ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/outline';
 
 
-export default function CreateService9_0Screen() {
+export default function CreateServicePriceTypeScreen() {
 
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();

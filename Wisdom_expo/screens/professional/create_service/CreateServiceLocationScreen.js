@@ -17,7 +17,7 @@ import SliderThumbLight from '../../assets/SliderThumbLight.png';
 
 
 
-export default function CreateService6Screen() {
+export default function CreateServiceLocationScreen() {
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';

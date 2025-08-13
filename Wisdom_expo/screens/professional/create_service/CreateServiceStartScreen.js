@@ -10,7 +10,7 @@ import {XMarkIcon} from 'react-native-heroicons/outline';
 
 
 
-export default function CreateService1Screen() {
+export default function CreateServiceStartScreen() {
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';

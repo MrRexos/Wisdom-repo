@@ -9,7 +9,7 @@ import { Check } from "react-native-feather";
 
 
 
-export default function CreateService5Screen() {
+export default function CreateServiceDetailsScreen() {
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#b6b5b5' : '#706F6E';

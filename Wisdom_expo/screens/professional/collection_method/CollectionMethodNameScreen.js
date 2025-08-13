@@ -6,7 +6,7 @@ import '../../../languages/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { XMarkIcon } from 'react-native-heroicons/outline';
 
-export default function CollectionMethod1Screen() {
+export default function CollectionMethodNameScreen() {
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
