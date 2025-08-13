@@ -197,7 +197,7 @@ export default function CreateServiceReviewScreen() {
 
       <View className="flex-row justify-between items-end mx-5 mt-4 mb-6">
         <View className="flex-row justify-start items-center">
-          <Image source={userInfo.profile_picture ? { uri: userInfo.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[45px] w-[45px] bg-[#706B5B] rounded-lg" />
+          <Image source={userInfo.profile_picture ? { uri: userInfo.profile_picture } : require('../../../assets/defaultProfilePic.jpg')} className="h-[45px] w-[45px] bg-[#706B5B] rounded-lg" />
           <View className="ml-3 justify-center items-start">
             <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{userInfo.first_name} {userInfo.surname}</Text>
             <Text className="font-inter-semibold text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">Place</Text>
@@ -222,7 +222,7 @@ export default function CreateServiceReviewScreen() {
   const ServiceProfilePreview = () => (
     <View className="px-5 pt-6">
       <View className="justify-start items-center mt-10">
-        <Image source={userInfo.profile_picture ? {uri: userInfo.profile_picture} : require('../../assets/defaultProfilePic.jpg')} className="h-[100px] w-[100px] bg-[#d4d4d3] dark:bg-[#474646] rounded-full"/>
+        <Image source={userInfo.profile_picture ? {uri: userInfo.profile_picture} : require('../../../assets/defaultProfilePic.jpg')} className="h-[100px] w-[100px] bg-[#d4d4d3] dark:bg-[#474646] rounded-full"/>
         <Text className="mt-3 font-inter-bold text-center text-[23px] text-[#444343] dark:text-[#f2f2f2]">{userInfo.first_name} {userInfo.surname}</Text>
         <Text className="mt-2 font-inter-medium text-center text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">@{userInfo.username} • {title}</Text>
         <View className="py-3 mt-7 mx-4 flex-row justify-center items-center bg-[#e0e0e0] dark:bg-[#323131] rounded-3xl">

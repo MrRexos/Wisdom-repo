@@ -10,8 +10,8 @@ import MapView, { Marker, Circle } from 'react-native-maps';
 import { storeDataLocally, getDataLocally } from '../../../utils/asyncStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Slider from '@react-native-community/slider';
-import SliderThumbDark from '../../assets/SliderThumbDark.png';
-import SliderThumbLight from '../../assets/SliderThumbLight.png';
+import SliderThumbDark from '../../../assets/SliderThumbDark.png';
+import SliderThumbLight from '../../../assets/SliderThumbLight.png';
 
 
 
@@ -148,7 +148,7 @@ export default function CreateServiceLocationScreen() {
                     <View>
                     <Marker 
                       coordinate={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}
-                      image={require('../../assets/MapMarker.png')}
+                      image={require('../../../assets/MapMarker.png')}
                       anchor={{ x: 0.5, y: 1 }}
                       centerOffset={{ x: 0.5, y: -20 }}
                     />
