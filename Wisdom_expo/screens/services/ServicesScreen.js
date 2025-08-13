@@ -96,20 +96,29 @@ export default function ServicesScreen() {
       <TouchableOpacity onPress={() => navigation.navigate('BookingDetails', { bookingId: item.booking_id, role: 'client' })} className="w-full mb-4 pb-4 flex-row justify-between items-end border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
         <View className="flex-row justify-center items-center">
           <Image source={{ uri: item.profile_picture }} className="w-[80px] h-[80px] bg-[#706B5B] rounded-xl" />
-          <View className="ml-4 justify-center items-start">
-            <Text className="mb-1 font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
-            <Text className="mb-4 font-inter-semibold text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">{item.first_name} {item.surname}</Text>
-            {item.booking_start_datetime && (
-            <View className="flex-row justify-start items-center">
+          <View className="ml-4 flex-1 justify-center">
+          <Text className="mb-1 font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">
+            {item.service_title}
+          </Text>
+          <Text className="mb-4 font-inter-semibold text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">
+            {item.first_name} {item.surname}
+          </Text>
+          <View className="flex-row items-center justify-between">
+            <View className="flex-row items-center">
               <Calendar height={15} width={15} color={iconColor} strokeWidth={2.2} />
-              <Text className="ml-1 font-inter-bold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{formatDate(item.booking_start_datetime)}</Text>
+              <Text className="ml-1 font-inter-bold text-[12px] text-[#444343] dark:text-[#f2f2f2]">
+                {item.booking_start_datetime ? formatDate(item.booking_start_datetime) : t('undefined_time')}
+              </Text>
             </View>
-            )}
+
+            <Text
+              className={`font-inter-bold ${item.final_price ? 'text-[16px]' : 'text-[12px]'} text-[#444343] dark:text-[#f2f2f2]`}
+            >
+              {item.final_price ? `${parseFloat(item.final_price).toFixed(0)} €` : t('on_budget')}
+            </Text>
           </View>
         </View>
-        {item.final_price && (
-          <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(item.final_price).toFixed(0)} €</Text>
-        )}
+        </View>
       </TouchableOpacity>
     );
   };
@@ -177,7 +186,7 @@ export default function ServicesScreen() {
             </Text>
           </View>
         ) : (
-          <View className="flex-1 justify-center items-center">
+          <View className="flex-1 justify-center items-center ">
             <FlatList
               data={filteredBookings}
               renderItem={renderBooking}
@@ -185,7 +194,7 @@ export default function ServicesScreen() {
               showsVerticalScrollIndicator={false}
               refreshing={refreshing}
               onRefresh={onRefresh}
-              className="p-5"
+              className="p-5 w-full"
             />
           </View>
         )}

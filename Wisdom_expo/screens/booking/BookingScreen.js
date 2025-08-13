@@ -432,6 +432,9 @@ export default function BookingScreen() {
     } else if (serviceData.price_type === 'fix') {
       const basePrice = parseFloat(serviceData.price);
       commission = calculateCommission(basePrice);
+    } else if (serviceData.price_type === 'budget') {
+      // Para servicios con precio "budget", el depósito debe ser 1€
+      commission = 1;
     }
 
     return commission;

@@ -23,7 +23,8 @@ export default function PaymentMethodScreen() {
   const clientSecret = route.params?.clientSecret;
   const onSuccess = route.params?.onSuccess;
   const bookingId = route.params?.bookingId;
-  const isFinal = route.params?.isFinal;
+  // Removed isFinal-driven payment from this screen. This screen only saves cards
+  // and optionally auto-confirms payments when invoked with clientSecret/paymentMethodId.
   const origin = route.params?.origin;
   const prevParams = route.params?.prevParams;
   const role = route.params?.role;
@@ -69,47 +70,24 @@ export default function PaymentMethodScreen() {
   const handleDone = async () => {
     if (!cardDetails.complete) return;
     try {
-      if (isFinal && bookingId) {
-        setProcessing(true);
-        const { paymentMethod, error } = await createPaymentMethod({
-          paymentMethodType: 'Card',
-          card: cardDetails,
-        });
-        if (error) {
-          console.log('Payment method error', error);
-          setProcessing(false);
-          return;
-        }
-        await api.post(`/api/bookings/${bookingId}/final-payment-transfer`, {
-          payment_method_id: paymentMethod.id,
-        });
-        setProcessing(false);
-        if (onSuccess) {
-          navigation.navigate(onSuccess, { bookingId });
-        } else {
-          handleBack();
-        }
-        return;
-      } else {
-        const { paymentMethod, error } = await createPaymentMethod({
-          paymentMethodType: 'Card',
-          card: cardDetails,
-        });
-        if (error) {
-          console.log('Payment method error', error);
-          return;
-        }
-        const cardData = {
-          id: paymentMethod.id,
-          last4: cardDetails.last4,
-          expiryMonth: cardDetails.expiryMonth,
-          expiryYear: cardDetails.expiryYear,
-        };
-        console.log('cardData', cardDetails);
-        await storeDataLocally('paymentMethod', JSON.stringify(cardData));
-        handleBack();
+      const { paymentMethod, error } = await createPaymentMethod({
+        paymentMethodType: 'Card',
+        card: cardDetails,
+      });
+      if (error) {
+        console.log('Payment method error', error);
         return;
       }
+      const cardData = {
+        id: paymentMethod.id,
+        last4: cardDetails.last4,
+        expiryMonth: cardDetails.expiryMonth,
+        expiryYear: cardDetails.expiryYear,
+      };
+      console.log('cardData', cardDetails);
+      await storeDataLocally('paymentMethod', JSON.stringify(cardData));
+      handleBack();
+      return;
     } catch (e) {
       console.log('handleDone error', e);
       setProcessing(false);
@@ -174,7 +152,7 @@ export default function PaymentMethodScreen() {
               className='bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center'
             >
               <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                {origin === 'BookingDetails' ? t('pay') : t('save')}
+                {t('save')}
               </Text>
             </TouchableOpacity>
           </View>

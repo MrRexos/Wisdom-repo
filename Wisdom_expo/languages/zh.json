@@ -149,6 +149,7 @@
     "start_time": "开始时间",
     "duration": "时长",
     "undefined_time": "时间未定",
+    "on_budget": "预算内",
     "accept": "接受",
     "your_directions": "你的地址",
     "no_directions_found": "未找到地址",

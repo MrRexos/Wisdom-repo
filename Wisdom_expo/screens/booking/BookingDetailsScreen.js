@@ -20,6 +20,7 @@ import { setDoc, doc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function BookingDetailsScreen() {
   const { colorScheme } = useColorScheme();
@@ -147,9 +148,16 @@ export default function BookingDetailsScreen() {
   };
 
   const loadPaymentMethod = async () => {
-    const raw = await getDataLocally('paymentMethod');
-    if (raw) {
-      setPaymentMethod(JSON.parse(raw));
+    const PaymentMethodRaw = await getDataLocally('paymentMethod');
+    if (PaymentMethodRaw) {
+      const paymentMethodData = JSON.parse(PaymentMethodRaw);
+      setPaymentMethod(paymentMethodData);
+      console.log(paymentMethodData);
+      try {
+        await AsyncStorage.removeItem('paymentMethod');
+      } catch (error) {
+        console.error('Error al eliminar paymentMethod:', error);
+      }
     }
   };
 
@@ -410,13 +418,37 @@ export default function BookingDetailsScreen() {
 
   const handleFinalPayment = async () => {
     try {
-      navigation.navigate('PaymentMethod', {
-        onSuccess: 'ConfirmPayment',
-        bookingId: bookingId,
-        isFinal: true,
-        origin: 'BookingDetails',
-        role,
-      });
+      const raw = await getDataLocally('paymentMethod');
+      if (raw) {
+        const pm = JSON.parse(raw);
+        // Crear PaymentIntent del pago final y confirmar automáticamente
+        const res = await api.post(`/api/bookings/${bookingId}/final-payment`);
+        const clientSecret = res.data?.clientSecret;
+        if (!clientSecret || !pm?.id) {
+          // Si algo falla, redirigir a guardar tarjeta
+          navigation.navigate('PaymentMethod', {
+            origin: 'BookingDetails',
+            bookingId,
+            role,
+          });
+          return;
+        }
+        navigation.navigate('PaymentMethod', {
+          clientSecret,
+          paymentMethodId: pm.id,
+          onSuccess: 'ConfirmPayment',
+          bookingId,
+          origin: 'BookingDetails',
+          role,
+        });
+      } else {
+        // No hay tarjeta: ir a guardar método de pago, sin pagar aquí
+        navigation.navigate('PaymentMethod', {
+          origin: 'BookingDetails',
+          bookingId,
+          role,
+        });
+      }
     } catch (e) {
       console.error('handleFinalPayment error:', e);
     }
@@ -689,7 +721,7 @@ export default function BookingDetailsScreen() {
         <View className="flex-[1] justify-center items-end">
           {booking && booking.booking_status !== 'completed' && (
             <TouchableOpacity onPress={() => setEditMode(!editMode)} className='mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
-              <Text className='font-inter-medium text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>
+              <Text className='font-inter-medium text-[12px] text-[#706f6e] dark:text-[#b6b5b5]'>
                 {editMode ? t('cancel') : t('edit')}
               </Text>
             </TouchableOpacity>
@@ -836,18 +868,29 @@ export default function BookingDetailsScreen() {
           </View>
 
           <View className='mt-4 flex-row justify-center items-center'>
-              <View className='w-11 h-11 items-center justify-center'>
-                <MapPin height={25} width={25} strokeWidth={1.6} color={iconColor} />
-              </View>
-              <View className='pl-3 pr-3 flex-1 justify-center items-start'>
-                <Text numberOfLines={1} className='mb-[6px] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
-                  {[booking.address_1, booking.street_number].filter(Boolean).join(', ')}
+            {[booking.address_1, booking.street_number, booking.postal_code, booking.city, booking.state, booking.country].some(Boolean) ? (
+              <>
+                <View className='w-11 h-11 items-center justify-center'>
+                  <MapPin height={25} width={25} strokeWidth={1.6} color={iconColor} />
+                </View>
+                <View className='pl-3 pr-3 flex-1 justify-center items-start'>
+                  <Text numberOfLines={1} className='mb-[6px] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+                    {[booking.address_1, booking.street_number].filter(Boolean).join(', ')}
+                  </Text>
+                  <Text numberOfLines={1} className='font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]'>
+                    {[booking.postal_code, booking.city, booking.state, booking.country].filter(Boolean).join(', ')}
+                  </Text>
+                </View>
+              </>
+            ) : (
+              <View className="mt-1 flex-1 justify-center items-center">
+                <MapPin height={40} width={40} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+                <Text className="mt-4 font-inter-semibold text-[16px] text-[#979797]">
+                  Location not selected
                 </Text>
-                <Text numberOfLines={1} className='font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]'>
-                  {[booking.postal_code, booking.city, booking.state, booking.country].filter(Boolean).join(', ')}
-                </Text>
               </View>
-            </View>
+            )}
+          </View>
           
         </View>
 
