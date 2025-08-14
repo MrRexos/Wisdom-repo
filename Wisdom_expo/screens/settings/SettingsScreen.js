@@ -9,6 +9,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import eventEmitter from '../../utils/eventEmitter';
+import Message from '../../components/Message';
 
 
 import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram, Link } from "react-native-feather";
@@ -36,6 +37,8 @@ export default function SettingsScreen() {
     notifications: false,
   });
   const [refreshing, setRefreshing] = useState(false);
+  const [showSlideMessage, setShowSlideMessage] = useState(false);
+  const [showModalMessage, setShowModalMessage] = useState(false);
 
   
 
@@ -167,6 +170,32 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
+
+      <Message
+          type="modal"
+          visible={showModalMessage}
+          title="Missatge X"
+          description="Description"
+          onConfirm={() => {
+            console.log('Missatge confirmat');
+            setShowModalMessage(false);
+          }}
+          onCancel={() => setShowModalMessage(false)}
+          onDismiss={() => setShowModalMessage(false)}
+          showCancelColor={false}
+          confirmText="D'acord"
+          cancelText="Cancel·lar"
+        />
+        <Message
+          type="slide"
+          visible={showSlideMessage}
+          title="Missatge"
+          description="Aquest missatge es deslitzarà des de dalt"
+          onDismiss={() => setShowSlideMessage(false)}
+          autoHide={true}
+          autoHideDelay={2200}
+          showCancel={false}
+        />
       
       <ScrollView
         className="flex-1 px-6 pt-[55px]"
@@ -177,7 +206,7 @@ export default function SettingsScreen() {
           <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
               {t('profile')}
           </Text>
-          <TouchableOpacity className="h-[43px] w-[43px] rounded-full items-center justify-center bg-[#fcfcfc] dark:bg-[#323131]">
+          <TouchableOpacity onPress={() => setShowModalMessage(!showModalMessage)} className="h-[43px] w-[43px] rounded-full items-center justify-center bg-[#fcfcfc] dark:bg-[#323131]">
             <Share height={22} strokeWidth={1.7} color={iconColor}/>
           </TouchableOpacity>
         </View>
