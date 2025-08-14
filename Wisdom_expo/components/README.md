@@ -41,7 +41,7 @@ Mensaje modal que aparece en el centro de la pantalla.
 
 ### Características:
 - Aparece en el centro con animación de opacidad (0.1s)
-- No se oculta hasta que se presione algún botón
+- Puede ocultarse al tocar fuera o permanecer hasta presionar un botón
 - Overlay semi-transparente
 - Animación de escala suave
 
@@ -73,6 +73,7 @@ import ModalMessage from './components/ModalMessage';
 - `cancelText`: String - Texto del botón cancelar (default: "Cancel·lar")
 - `showCancel`: Boolean - Si mostrar el botón cancelar (default: true)
 - `overlayColor`: String - Color del overlay
+- `dismissOnBackdropPress`: Boolean - Si permite ocultar al tocar fuera (default: true)
 
 ## 3. Message (Componente unificado)
 Componente que permite elegir entre SlideMessage y ModalMessage.

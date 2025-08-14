@@ -19,6 +19,7 @@ const Message = ({
   cancelText = "Cancel·lar",
   showCancel = true,
   showCancelColor = false,
+  dismissOnBackdropPress = false,
   // Props de estilo generales
   style = {},
   titleStyle = {},
@@ -78,6 +79,7 @@ const Message = ({
         cancelText={cancelText}
         showCancel={showCancel}
         showCancelColor={showCancelColor}
+        dismissOnBackdropPress={dismissOnBackdropPress}
         style={style}
         titleStyle={titleStyle}
         descriptionStyle={descriptionStyle}

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, Animated, Dimensions } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import { Modal, StyleSheet } from 'react-native';
@@ -83,6 +83,7 @@ const ModalMessage = ({
   cancelButtonTextColor: cancelFgProp,
 
   overlayColor: overlayColorProp, //missing
+  dismissOnBackdropPress = true,
   palette = DEFAULT_PALETTE,
 }) => {
   const { colorScheme } = useColorScheme();
@@ -90,10 +91,15 @@ const ModalMessage = ({
 
   const opacityAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
+  const [isMounted, setIsMounted] = useState(visible);
 
   useEffect(() => {
-    if (visible) showModal();
-    else hideModal();
+    if (visible) {
+      setIsMounted(true);
+      showModal();
+    } else {
+      hideModal();
+    }
   }, [visible]);
 
   const showModal = () => {
@@ -125,6 +131,7 @@ const ModalMessage = ({
         useNativeDriver: true,
       }),
     ]).start(() => {
+      setIsMounted(false);
       if (onDismiss) onDismiss();
     });
   };
@@ -139,7 +146,7 @@ const ModalMessage = ({
     hideModal();
   };
 
-  if (!visible) return null;
+  if (!isMounted) return null;
 
   // Resueltos finales con posibilidad de override por props
   const resolved = {
@@ -156,7 +163,7 @@ const ModalMessage = ({
 
   return (
     <Modal 
-      visible={visible} 
+      visible={isMounted} 
       transparent 
       animationType="fade" 
       statusBarTranslucent 
@@ -174,7 +181,7 @@ const ModalMessage = ({
       <TouchableOpacity
         style={StyleSheet.absoluteFill}
         activeOpacity={1}
-        onPress={hideModal}
+        onPress={dismissOnBackdropPress ? hideModal : undefined}
       />
 
       <Animated.View

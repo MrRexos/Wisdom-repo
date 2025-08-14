@@ -200,6 +200,7 @@ export default function SettingsScreen() {
       <ScrollView
         className="flex-1 px-6 pt-[55px]"
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={[colorScheme === 'dark' ? '#f2f2f2' : '#434343']} colors={[colorScheme === 'dark' ? '#f2f2f2' : '#434343']}/>}
+        showsVerticalScrollIndicator={false}
       >
         <View className='gap-y-9'>
         <View className="flex-row justify-between">
