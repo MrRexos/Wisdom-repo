@@ -182,6 +182,7 @@ export default function SettingsScreen() {
           }}
           onCancel={() => setShowModalMessage(false)}
           onDismiss={() => setShowModalMessage(false)}
+          dismissOnBackdropPress={true}
           showCancelColor={false}
           confirmText="D'acord"
           cancelText="Cancel·lar"

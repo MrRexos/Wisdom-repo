@@ -238,6 +238,7 @@ const ModalMessage = ({
 
         <TouchableOpacity
           onPress={handleConfirm}
+          activeOpacity={1}
           style={[
             {
               backgroundColor: resolved.confirmBg,
@@ -263,6 +264,7 @@ const ModalMessage = ({
         {showCancel && (
           <TouchableOpacity
             onPress={handleCancel}
+            activeOpacity={1}
             style={[
               {
                 backgroundColor: showCancelColor? resolved.cancelBg : null,
