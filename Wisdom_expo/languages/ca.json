@@ -319,6 +319,8 @@
     "final_payment": "Pagament final",
     "waiting_final_payment": "Esperant pagament final",
     "processing_payment": "Processant pagament...",
+    "payment_error": "Error de pagament",
+    "payment_error_description": "Hi ha hagut un error en processar el pagament. Torna-ho a provar.",
     "booking_canceled": "Reserva cancel·lada",
     "booking_rejected": "Reserva rebutjada",
     "booking_expired": "La data d'inici ha passat",

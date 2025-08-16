@@ -319,6 +319,8 @@
     "final_payment": "Final payment",
     "waiting_final_payment": "Waiting for final payment",
     "processing_payment": "Processing payment...",
+    "payment_error": "Payment error",
+    "payment_error_description": "There was an error processing the payment. Please try again.",
     "booking_canceled": "Booking canceled",
     "booking_rejected": "Booking rejected",
     "booking_expired": "Booking date has passed",

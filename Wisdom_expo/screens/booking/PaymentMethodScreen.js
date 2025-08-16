@@ -9,6 +9,7 @@ import { CreditCard } from 'react-native-feather';
 import { CardField, useStripe } from '@stripe/stripe-react-native';
 import api from '../../utils/api';
 import { storeDataLocally } from '../../utils/asyncStorage';
+import ModalMessage from '../../components/ModalMessage';
 
 export default function PaymentMethodScreen() {
   const { colorScheme } = useColorScheme();
@@ -29,6 +30,8 @@ export default function PaymentMethodScreen() {
   const prevParams = route.params?.prevParams;
   const role = route.params?.role;
   const paymentMethodId = route.params?.paymentMethodId;
+
+  const [paymentErrorVisible, setPaymentErrorVisible] = useState(false);
 
   const handleBack = () => {
     if (origin === 'Booking') {
@@ -58,6 +61,7 @@ export default function PaymentMethodScreen() {
       if (error) {
         console.log('Payment error', error);
         setProcessing(false);
+        setPaymentErrorVisible(true);
         return;
       }
       setProcessing(false);
@@ -76,6 +80,7 @@ export default function PaymentMethodScreen() {
       });
       if (error) {
         console.log('Payment method error', error);
+        setPaymentErrorVisible(true);
         return;
       }
       const cardData = {
@@ -91,6 +96,7 @@ export default function PaymentMethodScreen() {
     } catch (e) {
       console.log('handleDone error', e);
       setProcessing(false);
+      setPaymentErrorVisible(true);
     }
   };
 
@@ -158,6 +164,14 @@ export default function PaymentMethodScreen() {
           </View>
         </View>
       </TouchableWithoutFeedback>
+      <ModalMessage
+        visible={paymentErrorVisible}
+        title={t('payment_error')}
+        description={t('payment_error_description')}
+        showCancel={false}
+        confirmText={t('ok')}
+        onConfirm={() => setPaymentErrorVisible(false)}
+      />
     </SafeAreaView>
   );
 }

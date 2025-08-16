@@ -319,6 +319,8 @@
     "final_payment": "最终付款",
     "waiting_final_payment": "等待最终付款",
     "processing_payment": "正在处理付款...",
+    "payment_error": "支付错误",
+    "payment_error_description": "处理支付时出错。请重试。",
     "booking_canceled": "预订已取消",
     "booking_rejected": "预订已拒绝",
     "booking_expired": "开始日期已过",

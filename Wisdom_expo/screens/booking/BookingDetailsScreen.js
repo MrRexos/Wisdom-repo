@@ -19,8 +19,9 @@ import { getDataLocally } from '../../utils/asyncStorage';
 import { setDoc, doc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import api from '../../utils/api.js';
-import useRefreshOnFocus from '../../utils/useRefreshOnFocus'; 
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ModalMessage from '../../components/ModalMessage';
 
 export default function BookingDetailsScreen() {
   const { colorScheme } = useColorScheme();
@@ -48,6 +49,7 @@ export default function BookingDetailsScreen() {
   const [sheetHeight, setSheetHeight] = useState(450);
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
   const [refreshing, setRefreshing] = useState(false);
+  const [paymentErrorVisible, setPaymentErrorVisible] = useState(false);
 
   useEffect(() => {
     fetchBooking();
@@ -421,26 +423,27 @@ export default function BookingDetailsScreen() {
       const raw = await getDataLocally('paymentMethod');
       if (raw) {
         const pm = JSON.parse(raw);
-        // Crear PaymentIntent del pago final y confirmar automáticamente
-        const res = await api.post(`/api/bookings/${bookingId}/final-payment`);
-        const clientSecret = res.data?.clientSecret;
-        if (!clientSecret || !pm?.id) {
-          // Si algo falla, redirigir a guardar tarjeta
+        const res = await api.post(
+          `/api/bookings/${bookingId}/final-payment-transfer`,
+          { payment_method_id: pm.id }
+        );
+        if (res.data?.requiresAction && res.data?.clientSecret) {
           navigation.navigate('PaymentMethod', {
-            origin: 'BookingDetails',
+            clientSecret: res.data.clientSecret,
+            paymentMethodId: pm.id,
+            onSuccess: 'ConfirmPayment',
             bookingId,
+            origin: 'BookingDetails',
             role,
           });
           return;
         }
-        navigation.navigate('PaymentMethod', {
-          clientSecret,
-          paymentMethodId: pm.id,
-          onSuccess: 'ConfirmPayment',
-          bookingId,
-          origin: 'BookingDetails',
-          role,
-        });
+        if (res.data?.processing || res.data?.message) {
+          navigation.navigate('ConfirmPayment', { bookingId });
+          fetchBooking();
+          return;
+        }
+        setPaymentErrorVisible(true);
       } else {
         // No hay tarjeta: ir a guardar método de pago, sin pagar aquí
         navigation.navigate('PaymentMethod', {
@@ -451,6 +454,7 @@ export default function BookingDetailsScreen() {
       }
     } catch (e) {
       console.error('handleFinalPayment error:', e);
+      setPaymentErrorVisible(true);
     }
   };
 
@@ -1209,8 +1213,15 @@ export default function BookingDetailsScreen() {
         </View>
 
       )}
-      
     </SafeAreaView>
+    <ModalMessage
+      visible={paymentErrorVisible}
+      title={t('payment_error')}
+      description={t('payment_error_description')}
+      showCancel={false}
+      confirmText={t('ok')}
+      onConfirm={() => setPaymentErrorVisible(false)}
+    />
     </>
   );
 }
