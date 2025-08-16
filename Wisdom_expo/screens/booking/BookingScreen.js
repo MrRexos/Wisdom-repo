@@ -22,7 +22,8 @@ import SliderThumbDark from '../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../assets/SliderThumbLight.png';
 import { format } from 'date-fns';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import useRefreshOnFocus from '../../utils/useRefreshOnFocus'; 
+import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
+import ModalMessage from '../../components/ModalMessage';
 
 
 
@@ -50,6 +51,8 @@ export default function BookingScreen() {
   const sliderTimeoutId = useRef(null);
   const [selectedTimeUndefined, setSelectedTimeUndefined] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  const [paymentErrorVisible, setPaymentErrorVisible] = useState(false);
   
   const [startDate, setStartDate] = useState();
   const [duration, setDuration] = useState();
@@ -497,6 +500,7 @@ export default function BookingScreen() {
       });
     } catch (e) {
       console.error('Booking payment error:', e);
+      setPaymentErrorVisible(true);
     }
   };
 
@@ -1378,8 +1382,17 @@ export default function BookingScreen() {
         </TouchableOpacity>
       </View>
 
+      <ModalMessage
+        visible={paymentErrorVisible}
+        title={t('payment_error')}
+        description={t('payment_error_description')}
+        showCancel={false}
+        confirmText={t('ok')}
+        onConfirm={() => setPaymentErrorVisible(false)}
+      />
+
     </SafeAreaView>
-  ); 
+  );
 }
 
 const styles = StyleSheet.create({

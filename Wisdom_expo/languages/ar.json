@@ -319,6 +319,8 @@
     "final_payment": "الدفع النهائي",
     "waiting_final_payment": "في انتظار الدفعة النهائية",
     "processing_payment": "جاري معالجة الدفع...",
+    "payment_error": "خطأ في الدفع",
+    "payment_error_description": "حدث خطأ أثناء معالجة الدفع. يرجى المحاولة مرة أخرى.",
     "booking_canceled": "تم إلغاء الحجز",
     "booking_rejected": "تم رفض الحجز",
     "booking_expired": "انتهى تاريخ البدء",
