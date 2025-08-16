@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, Keyboard, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, Keyboard, TouchableWithoutFeedback, ActivityIndicator, Alert } from 'react-native';import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -8,7 +7,6 @@ import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { CreditCard } from 'react-native-feather';
 import { CardField, useStripe } from '@stripe/stripe-react-native';
 import api from '../../utils/api';
-import { storeDataLocally } from '../../utils/asyncStorage';
 import ModalMessage from '../../components/ModalMessage';
 
 export default function PaymentMethodScreen() {
@@ -18,14 +16,12 @@ export default function PaymentMethodScreen() {
   const route = useRoute();
   const { confirmPayment, createPaymentMethod } = useStripe();
   const [cardDetails, setCardDetails] = useState({});
-  const isAutoPay = !!(route.params?.clientSecret && route.params?.paymentMethodId);
+  const isAutoPay = !!(route.params?.autoConfirm && route.params?.clientSecret && route.params?.paymentMethodId);
   const [processing, setProcessing] = useState(isAutoPay);
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const clientSecret = route.params?.clientSecret;
   const onSuccess = route.params?.onSuccess;
   const bookingId = route.params?.bookingId;
-  // Removed isFinal-driven payment from this screen. This screen only saves cards
-  // and optionally auto-confirms payments when invoked with clientSecret/paymentMethodId.
   const origin = route.params?.origin;
   const prevParams = route.params?.prevParams;
   const role = route.params?.role;
@@ -48,28 +44,27 @@ export default function PaymentMethodScreen() {
   };
 
   useEffect(() => {
-    if (!clientSecret || !paymentMethodId) return;
+    // Autoconfirmación cuando venimos de SCA con clientSecret + paymentMethodId
+    if (!isAutoPay) return;
     let mounted = true;
     (async () => {
       setProcessing(true);
       const { error } = await confirmPayment(clientSecret, {
         paymentMethodType: 'Card',
-        paymentMethodData: {
-          paymentMethodId: paymentMethodId},
+        paymentMethodData: { paymentMethodId },
       });
       if (!mounted) return;
+      setProcessing(false);
       if (error) {
         console.log('Payment error', error);
-        setProcessing(false);
-        setPaymentErrorVisible(true);
+        Alert.alert(t('payment_error'), t('payment_error_message'), [{ text: t('ok') }]);
         return;
       }
-      setProcessing(false);
       if (onSuccess) navigation.navigate(onSuccess, bookingId ? { bookingId } : {});
       else handleBack();
     })();
     return () => { mounted = false; };
-  }, [clientSecret, paymentMethodId]);
+  }, [isAutoPay]);
 
   const handleDone = async () => {
     if (!cardDetails.complete) return;
@@ -80,23 +75,53 @@ export default function PaymentMethodScreen() {
       });
       if (error) {
         console.log('Payment method error', error);
-        setPaymentErrorVisible(true);
+        Alert.alert(t('payment_error'), t('payment_error_message'), [{ text: t('ok') }]);
         return;
       }
+  
+      // Guarda localmente la tarjeta (opcional, como ya hacías)
       const cardData = {
         id: paymentMethod.id,
         last4: cardDetails.last4,
         expiryMonth: cardDetails.expiryMonth,
         expiryYear: cardDetails.expiryYear,
       };
-      console.log('cardData', cardDetails);
-      await storeDataLocally('paymentMethod', JSON.stringify(cardData));
-      handleBack();
-      return;
+  
+      // Si venimos con un Intent pendiente (depósito o SCA), confírmalo ahora
+      if (clientSecret) {
+        setProcessing(true);
+        const { error: confirmErr } = await confirmPayment(clientSecret, {
+          paymentMethodType: 'Card',
+          paymentMethodData: { paymentMethodId: paymentMethod.id },
+        });
+        if (confirmErr) {
+          console.log('Confirm error', confirmErr);
+          setProcessing(false);
+          Alert.alert(t('payment_error'), t('payment_error_message'), [{ text: t('ok') }]);
+          return;
+        }
+        setProcessing(false);
+        if (onSuccess) {
+          navigation.navigate(onSuccess, bookingId ? { bookingId } : {});
+        } else {
+          handleBack();
+        }
+        return;
+      }
+  
+      // Solo guardar para el flujo actual → devolvemos a origen con el PM en params
+     setProcessing(false);
+     if (origin === 'Booking') {
+       navigation.navigate('Booking', { ...prevParams, savedPaymentMethod: cardData });
+     } else if (origin === 'BookingDetails') {
+       navigation.navigate('BookingDetails', { bookingId, role, savedPaymentMethod: cardData });
+     } else {
+       handleBack();
+     }
     } catch (e) {
       console.log('handleDone error', e);
       setProcessing(false);
-      setPaymentErrorVisible(true);
+      Alert.alert(t('payment_error'), t('payment_error_message'), [{ text: t('ok') }]);
     }
   };
 

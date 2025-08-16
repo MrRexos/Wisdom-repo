@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, TouchableWithoutFeedback, RefreshControl } from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, TouchableWithoutFeedback, RefreshControl, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -21,7 +21,6 @@ import Slider from '@react-native-community/slider';
 import SliderThumbDark from '../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../assets/SliderThumbLight.png';
 import { format } from 'date-fns';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import ModalMessage from '../../components/ModalMessage';
 
@@ -255,19 +254,14 @@ export default function BookingScreen() {
     }
   };
 
-  const loadPaymentMethod = async () => {
-    const PaymentMethodRaw = await getDataLocally('paymentMethod');
-    if (PaymentMethodRaw) {
-      const paymentMethodData = JSON.parse(PaymentMethodRaw);
-      setPaymentMethod(paymentMethodData);
-      console.log(paymentMethodData);
-      try {
-        await AsyncStorage.removeItem('paymentMethod');
-      } catch (error) {
-        console.error('Error al eliminar paymentMethod:', error);
-      }
+   useEffect(() => {
+    const saved = route.params?.savedPaymentMethod;
+    if (saved) {
+      setPaymentMethod(saved);
+      // consume-once: limpia el param para no reusar ni persistir
+      navigation.setParams({ savedPaymentMethod: undefined });
     }
-  };
+  }, [route.params?.savedPaymentMethod]);
 
   useFocusEffect(
     useCallback(() => {
@@ -276,9 +270,7 @@ export default function BookingScreen() {
         setDirections(directionList);
       };
       loadDirections();
-      loadSearchedDirection();
-      loadPaymentMethod();
-      
+      loadSearchedDirection();      
     }, [])
   );
 
@@ -478,29 +470,44 @@ export default function BookingScreen() {
 
   const handleBook = async () => {
     if (!paymentMethod) {
-      console.log('no payment method');
       navigation.navigate('PaymentMethod', { origin: 'Booking', prevParams: route.params });
       return;
     }
     try {
       const result = await createBooking();
-      console.log(result);
-      const booking = result.booking;
-      if (!booking || !booking.id) return;
+      const booking = result?.booking;
+      if (!booking?.id) return;
+  
       const res = await api.post(`/api/bookings/${booking.id}/deposit`);
-      const clientSecret = res.data.clientSecret;
-      console.log(clientSecret, paymentMethod.id);
-      navigation.navigate('PaymentMethod', {
-        clientSecret: clientSecret,
-        onSuccess: 'ConfirmPayment',
-        bookingId: booking.id,
-        origin: 'Booking',
-        paymentMethodId: paymentMethod.id,
-        prevParams: route.params,
-      });
+      const { clientSecret, requiresAction, status, processing, message } = res.data || {};
+  
+      // Éxito inmediato: no abrir pantalla de tarjeta
+      if (processing === true || status === 'processing' || status === 'succeeded' || message) {
+        navigation.navigate('ConfirmPayment', { bookingId: booking.id, origin: 'Booking' });
+        return;
+      }
+  
+      // Requiere tarjeta/autenticación
+      if (
+        clientSecret &&
+        (requiresAction || status === 'requires_action' || status === 'requires_payment_method')
+      ) {
+        navigation.navigate('PaymentMethod', {
+          clientSecret,
+          onSuccess: 'ConfirmPayment',
+          bookingId: booking.id,
+          origin: 'Booking',
+          paymentMethodId: paymentMethod.id,
+          autoConfirm: true,
+          prevParams: route.params,
+        });
+        return;
+      }
+  
+      Alert.alert(t('payment_error'), t('payment_error_message'), [{ text: t('ok') }]);
     } catch (e) {
-      console.error('Booking payment error:', e);
-      setPaymentErrorVisible(true);
+      console.error('Booking payment error :', e);
+      Alert.alert(t('payment_error'), t('payment_error_message'), [{ text: t('ok') }]);
     }
   };
 

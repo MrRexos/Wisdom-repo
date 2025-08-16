@@ -20,7 +20,6 @@ import { setDoc, doc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import ModalMessage from '../../components/ModalMessage';
 
 export default function BookingDetailsScreen() {
@@ -53,12 +52,10 @@ export default function BookingDetailsScreen() {
 
   useEffect(() => {
     fetchBooking();
-    loadPaymentMethod();
   }, []);
 
   useFocusEffect(
     React.useCallback(() => {
-      loadPaymentMethod();
       loadSearchedDirection();
     }, [])
   );
@@ -149,19 +146,13 @@ export default function BookingDetailsScreen() {
     }, 100);
   };
 
-  const loadPaymentMethod = async () => {
-    const PaymentMethodRaw = await getDataLocally('paymentMethod');
-    if (PaymentMethodRaw) {
-      const paymentMethodData = JSON.parse(PaymentMethodRaw);
-      setPaymentMethod(paymentMethodData);
-      console.log(paymentMethodData);
-      try {
-        await AsyncStorage.removeItem('paymentMethod');
-      } catch (error) {
-        console.error('Error al eliminar paymentMethod:', error);
-      }
+  useEffect(() => {
+    const saved = route.params?.savedPaymentMethod;
+    if (saved) {
+      setPaymentMethod(saved);
+      navigation.setParams({ savedPaymentMethod: undefined });
     }
-  };
+  }, [route.params?.savedPaymentMethod]);
 
   const loadSearchedDirection = async () => {
     const raw = await getDataLocally('searchedDirection');
@@ -420,9 +411,8 @@ export default function BookingDetailsScreen() {
 
   const handleFinalPayment = async () => {
     try {
-      const raw = await getDataLocally('paymentMethod');
-      if (raw) {
-        const pm = JSON.parse(raw);
+      let pm = paymentMethod;
+      if (pm) {
         const res = await api.post(
           `/api/bookings/${bookingId}/final-payment-transfer`,
           { payment_method_id: pm.id }
@@ -435,6 +425,7 @@ export default function BookingDetailsScreen() {
             bookingId,
             origin: 'BookingDetails',
             role,
+            autoConfirm: true,
           });
           return;
         }
