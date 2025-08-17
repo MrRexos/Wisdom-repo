@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, Keyboard, TouchableWithoutFeedback, ActivityIndicator, Alert } from 'react-native';import { useTranslation } from 'react-i18next';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, Keyboard, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { CreditCard } from 'react-native-feather';
 import { CardField, useStripe } from '@stripe/stripe-react-native';
-import api from '../../utils/api';
 import ModalMessage from '../../components/ModalMessage';
 
 export default function PaymentMethodScreen() {
@@ -28,6 +28,16 @@ export default function PaymentMethodScreen() {
   const paymentMethodId = route.params?.paymentMethodId;
 
   const [paymentErrorVisible, setPaymentErrorVisible] = useState(false);
+
+  const handlePaymentError = () => {
+    if (origin === 'Booking') {
+      navigation.navigate('Booking', { ...prevParams, bookingId, paymentError: true });
+    } else if (origin === 'BookingDetails') {
+      navigation.navigate('BookingDetails', { bookingId, role, paymentError: true });
+    } else {
+      setPaymentErrorVisible(true);
+    }
+  };
 
   const handleBack = () => {
     if (origin === 'Booking') {
@@ -57,7 +67,7 @@ export default function PaymentMethodScreen() {
       setProcessing(false);
       if (error) {
         console.log('Payment error', error);
-        Alert.alert(t('payment_error'), t('payment_error_message'), [{ text: t('ok') }]);
+        handlePaymentError();
         return;
       }
       if (onSuccess) navigation.navigate(onSuccess, bookingId ? { bookingId } : {});
@@ -75,7 +85,7 @@ export default function PaymentMethodScreen() {
       });
       if (error) {
         console.log('Payment method error', error);
-        Alert.alert(t('payment_error'), t('payment_error_message'), [{ text: t('ok') }]);
+        handlePaymentError();
         return;
       }
   
@@ -97,7 +107,7 @@ export default function PaymentMethodScreen() {
         if (confirmErr) {
           console.log('Confirm error', confirmErr);
           setProcessing(false);
-          Alert.alert(t('payment_error'), t('payment_error_message'), [{ text: t('ok') }]);
+          handlePaymentError();
           return;
         }
         setProcessing(false);
@@ -121,7 +131,7 @@ export default function PaymentMethodScreen() {
     } catch (e) {
       console.log('handleDone error', e);
       setProcessing(false);
-      Alert.alert(t('payment_error'), t('payment_error_message'), [{ text: t('ok') }]);
+      handlePaymentError();
     }
   };
 

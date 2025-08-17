@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, TouchableWithoutFeedback, RefreshControl, Alert } from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, TouchableWithoutFeedback, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -51,7 +51,14 @@ export default function BookingScreen() {
   const [selectedTimeUndefined, setSelectedTimeUndefined] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const [paymentErrorVisible, setPaymentErrorVisible] = useState(false);
+const [paymentErrorVisible, setPaymentErrorVisible] = useState(false);
+
+useEffect(() => {
+  if (route.params?.paymentError) {
+    setPaymentErrorVisible(true);
+    navigation.setParams({ paymentError: undefined });
+  }
+}, [route.params?.paymentError]);
   
   const [startDate, setStartDate] = useState();
   const [duration, setDuration] = useState();
@@ -504,10 +511,10 @@ export default function BookingScreen() {
         return;
       }
   
-      Alert.alert(t('payment_error'), t('payment_error_message'), [{ text: t('ok') }]);
+      setPaymentErrorVisible(true);
     } catch (e) {
       console.error('Booking payment error :', e);
-      Alert.alert(t('payment_error'), t('payment_error_message'), [{ text: t('ok') }]);
+      setPaymentErrorVisible(true);
     }
   };
 
