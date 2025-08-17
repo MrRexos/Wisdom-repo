@@ -51,6 +51,13 @@ export default function BookingDetailsScreen() {
   const [paymentErrorVisible, setPaymentErrorVisible] = useState(false);
 
   useEffect(() => {
+    if (route.params?.paymentError) {
+      setPaymentErrorVisible(true);
+      navigation.setParams({ paymentError: undefined });
+    }
+  }, [route.params?.paymentError]);
+
+  useEffect(() => {
     fetchBooking();
   }, []);
 
