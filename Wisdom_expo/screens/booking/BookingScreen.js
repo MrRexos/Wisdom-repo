@@ -447,7 +447,7 @@ useEffect(() => {
     try {
       const response = await api.post('/api/bookings', {
         user_id: userId,
-        address_type: direction? direction.address_2? 'house' : 'flat': null,
+        address_type: direction ? (direction.address_2 ? 'flat' : 'house') : null,
         street_number: direction? direction.street_number : null,
         address_1: direction? direction.address_1 : null,
         address_2: direction? direction.address_2 : null,
@@ -510,9 +510,11 @@ useEffect(() => {
         });
         return;
       }
-  
+      
+      if (booking?.id) { await api.post(`/api/bookings/${booking.id}/cancel-if-unpaid`).catch(() => {}); }
       setPaymentErrorVisible(true);
     } catch (e) {
+      if (booking?.id) { await api.post(`/api/bookings/${booking.id}/cancel-if-unpaid`).catch(() => {}); }
       console.error('Booking payment error :', e);
       setPaymentErrorVisible(true);
     }
