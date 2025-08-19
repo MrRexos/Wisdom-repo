@@ -1,13 +1,13 @@
 
-import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Alert, RefreshControl } from 'react-native';
+import React, { useEffect, useState, useCallback, useRef } from 'react'
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Alert, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
-import {XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon, GlobeAltIcon, GlobeEuropeAfricaIcon, XCircleIcon} from 'react-native-heroicons/outline';
+import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon, GlobeAltIcon, GlobeEuropeAfricaIcon, XCircleIcon } from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import {Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X, Check} from "react-native-feather";
+import { Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X, Check } from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import HeartFill from "../../assets/HeartFill.tsx"
@@ -18,7 +18,7 @@ import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import MapView, { Marker, Circle } from 'react-native-maps';
 import { doc, setDoc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
-import axios from 'axios'; 
+import axios from 'axios';
 import { Calendar } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
@@ -30,14 +30,14 @@ import { format } from 'date-fns';
 
 
 export default function ServiceProfileScreen() {
-  const {colorScheme, toggleColorScheme} = useColorScheme();
+  const { colorScheme, toggleColorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const {serviceId, location} = route.params;
+  const { serviceId, location } = route.params;
   const [serviceData, setServiceData] = useState([]);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [showMoreButton, setShowMoreButton] = useState(false);
@@ -65,10 +65,10 @@ export default function ServiceProfileScreen() {
   const [duration, setDuration] = useState(60);
   const [sliderValue, setSliderValue] = useState(12);
   const sliderTimeoutId = useRef(null);
-  const [timeUndefined, setTimeUndefined] = useState(false); 
+  const [timeUndefined, setTimeUndefined] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  
+
   const languagesMap = {
     es: 'Spanish',
     en: 'English',
@@ -90,7 +90,7 @@ export default function ServiceProfileScreen() {
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
 
 
-  const verifyRegistered  = async () => {
+  const verifyRegistered = async () => {
     const userData = await getDataLocally('user');
     console.log(userData);
 
@@ -117,7 +117,7 @@ export default function ServiceProfileScreen() {
       const response = await api.get(`/api/service/${serviceId}`, {});
       let service = response.data;
       setServiceData(service);
-     
+
     } catch (error) {
       console.error('Error:', error);
     }
@@ -137,45 +137,45 @@ export default function ServiceProfileScreen() {
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
     try {
-        const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
-            params: {
-                latlng: `${latitude},${longitude}`,
-                key: 'AIzaSyA9IKAf2YvpjiyNfDpPUUsv_Xz-flkJFCY',
-            },
-        });
+      const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
+        params: {
+          latlng: `${latitude},${longitude}`,
+          key: 'AIzaSyA9IKAf2YvpjiyNfDpPUUsv_Xz-flkJFCY',
+        },
+      });
 
-        if (response.data.status === "OK") {
-            const addressComponents = response.data.results[0].address_components;
-            const postcode = addressComponents.find(component => component.types.includes("postal_code"))?.long_name;
-            const city = addressComponents.find(component => component.types.includes("locality"))?.long_name;
-            const country = addressComponents.find(component => component.types.includes("country"))?.long_name;
-            return `${postcode} ${city}, ${country}`;
-        } else {
-            console.error("Error en la geocodificación:", response.data.status);
-            return null;
-        }
-    } catch (error) {
-        console.error("Error al obtener la dirección:", error);
+      if (response.data.status === "OK") {
+        const addressComponents = response.data.results[0].address_components;
+        const postcode = addressComponents.find(component => component.types.includes("postal_code"))?.long_name;
+        const city = addressComponents.find(component => component.types.includes("locality"))?.long_name;
+        const country = addressComponents.find(component => component.types.includes("country"))?.long_name;
+        return `${postcode} ${city}, ${country}`;
+      } else {
+        console.error("Error en la geocodificación:", response.data.status);
         return null;
+      }
+    } catch (error) {
+      console.error("Error al obtener la dirección:", error);
+      return null;
     }
-  }; 
-  
+  };
+
   const getTimeZoneFromCoordinates = async (latitude, longitude) => {
     const timestamp = Math.floor(Date.now() / 1000); // Tiempo actual en segundos
     const url = `https://maps.googleapis.com/maps/api/timezone/json?location=${latitude},${longitude}&timestamp=${timestamp}&key=AIzaSyA9IKAf2YvpjiyNfDpPUUsv_Xz-flkJFCY`;
     try {
-        const response = await axios.get(url);
-        if (response.data.status === "OK") {
-            const { dstOffset, rawOffset } = response.data;
-            const localTime = new Date((timestamp + dstOffset + rawOffset) * 1000);
-            return localTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC', hour12: false }); // Devuelve la hora local como una cadena legible
-        } else {
-            console.error("Error en la respuesta de la API:", response.data);
-            return null;
-        }
-    } catch (error) {
-        console.error("Error al obtener la zona horaria:", error);
+      const response = await axios.get(url);
+      if (response.data.status === "OK") {
+        const { dstOffset, rawOffset } = response.data;
+        const localTime = new Date((timestamp + dstOffset + rawOffset) * 1000);
+        return localTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC', hour12: false }); // Devuelve la hora local como una cadena legible
+      } else {
+        console.error("Error en la respuesta de la API:", response.data);
         return null;
+      }
+    } catch (error) {
+      console.error("Error al obtener la zona horaria:", error);
+      return null;
     }
   };
 
@@ -185,10 +185,10 @@ export default function ServiceProfileScreen() {
     setUserId(user.id);
     try {
       const response = await api.get(`/api/user/${user.id}/lists`);
-      return response.data;        
+      return response.data;
     } catch (error) {
       console.error('Error fetching lists:', error);
-    } 
+    }
   };
 
   const heartClicked = async (serviceId) => {
@@ -197,15 +197,15 @@ export default function ServiceProfileScreen() {
     if (fetchedLists) {
       setLists(fetchedLists); // Aquí se asignan las listas obtenidas
     }
-    openSheetWithInput(450); 
-    setIsAddingDate(false); 
-    setShowAddList(false);   
+    openSheetWithInput(450);
+    setIsAddingDate(false);
+    setShowAddList(false);
   };
 
-  const addItemList = async (listId) => { 
+  const addItemList = async (listId) => {
     try {
       const response = await api.post(`/api/lists/${listId}/items`, {
-        service_id: serviceId,   
+        service_id: serviceId,
       });
       console.log('Item added:', response.data);
       setIsServiceLiked(true);
@@ -213,22 +213,22 @@ export default function ServiceProfileScreen() {
 
     } catch (error) {
       console.error('Error fetching lists:', error);
-    } 
+    }
   };
 
-  const createList = async () => { 
+  const createList = async () => {
     try {
       const response = await api.post('/api/lists', {
         user_id: userId,
         list_name: listName,
-      
+
       });
       console.log('List created:', response.data);
       return response.data.listId
 
     } catch (error) {
       console.error('Error fetching lists:', error);
-    } 
+    }
   };
 
   const handleDone = async () => {
@@ -245,17 +245,17 @@ export default function ServiceProfileScreen() {
   }
 
   const openSheetWithInput = (height) => {
-    
+
     setSheetHeight(height);
 
     setTimeout(() => {
       sheet.current.open();
     }, 0);
-    
+
   };
 
   useEffect(() => {
-    getServiceInfo(); 
+    getServiceInfo();
   }, []);
 
   useEffect(() => {
@@ -266,14 +266,14 @@ export default function ServiceProfileScreen() {
         setAddress(addr);
 
         const hour = await getTimeZoneFromCoordinates(serviceData.latitude, serviceData.longitude);
-        setLocalHour(hour); 
+        setLocalHour(hour);
       }
     };
 
     const getCommentedReviews = () => {
       if (serviceData.reviews) {
-      const filteredCommentReviews = serviceData.reviews.filter(review => review.comment);
-      setFilteredReviews(filteredCommentReviews)
+        const filteredCommentReviews = serviceData.reviews.filter(review => review.comment);
+        setFilteredReviews(filteredCommentReviews)
       }
       if (serviceData.reviews) {
         setWidth5(Math.min((serviceData.rating_5_count / serviceData.reviews.length) * 100, 100));
@@ -291,7 +291,7 @@ export default function ServiceProfileScreen() {
     }
 
     getCommentedReviews();
-    fetchAddress(); 
+    fetchAddress();
 
   }, [serviceData]);
 
@@ -305,21 +305,21 @@ export default function ServiceProfileScreen() {
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
-    
+
     // Opciones para el formato de la fecha
     const options = {
-        year: 'numeric',
-        month: 'long', // Puedes usar 'numeric' para obtener el mes como número
-        day: 'numeric',
+      year: 'numeric',
+      month: 'long', // Puedes usar 'numeric' para obtener el mes como número
+      day: 'numeric',
     };
-    
+
     // Formatea la fecha a una cadena legible
     return date.toLocaleString('en-US', options);
   };
 
   const onTextLayout = useCallback(
     (e) => {
-      if (e.nativeEvent.lines.length > 3 ) {
+      if (e.nativeEvent.lines.length > 3) {
         setShowMoreButton(true);
       } else {
         setShowMoreButton(false);
@@ -328,7 +328,7 @@ export default function ServiceProfileScreen() {
     []
   );
 
-  const inputListNameChanged  = (text) => {
+  const inputListNameChanged = (text) => {
     setListName(text);
   };
 
@@ -350,14 +350,14 @@ export default function ServiceProfileScreen() {
   const handleHourSelected = (event, selectedDate) => {
     const currentDate = selectedDate || tempDate;
     setTempDate(currentDate);
-    
+
     // Formatear la hora seleccionada en formato HH:MM
     const hours = currentDate.getHours();
     const minutes = currentDate.getMinutes();
     const formattedTime = `${hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
-    
+
     setSelectedTime(formattedTime); // Guarda la hora seleccionada en el estado
-    if (Platform.OS==='android'){
+    if (Platform.OS === 'android') {
       setShowPicker(false)
     }
   };
@@ -367,7 +367,7 @@ export default function ServiceProfileScreen() {
     if (sliderTimeoutId.current) {
       clearTimeout(sliderTimeoutId.current);
     }
-  
+
     // Establecemos un nuevo timeout para aplicar el valor
     sliderTimeoutId.current = setTimeout(() => {
       const adjustedValue = sliderValueToMinutes(value); // Convertimos el valor del slider a minutos reales
@@ -375,7 +375,7 @@ export default function ServiceProfileScreen() {
       setDuration(adjustedValue); // Actualizamos la duración basada en minutos reales
     }, 100); // Esperamos 100ms antes de actualizar el estado
   };
-  
+
   const sliderValueToMinutes = (value) => {
     // Mapeamos el valor del slider a minutos según el segmento
     if (value <= 12) {
@@ -388,11 +388,11 @@ export default function ServiceProfileScreen() {
       return 240 + (value - 26) * 30; // Cuarto tramo: 240-480 minutos (paso de 30 en 30)
     }
   };
-  
+
   const formatDuration = () => {
     const hours = Math.floor(duration / 60);
     const minutes = duration % 60;
-  
+
     if (hours > 0 && minutes > 0) {
       return `${hours} h ${minutes} min`;
     } else if (hours > 0) {
@@ -405,7 +405,7 @@ export default function ServiceProfileScreen() {
   const formatBookingMessage = () => {
     // Validaciones para mostrar mensajes cuando no hay valores seleccionados
 
-    if (timeUndefined===true) {
+    if (timeUndefined === true) {
       return t('book_without_date');
     }
     if (!selectedDay && !selectedTime && !duration) {
@@ -420,32 +420,32 @@ export default function ServiceProfileScreen() {
     if (!duration) {
       return t('select_a_duration');
     }
-  
+
     // 1. Crear un objeto Date combinando selectedDay y selectedTime
     const [year, month, day] = selectedDay.split('-'); // Dividimos la fecha "YYYY-MM-DD"
     const [hours, minutes] = selectedTime.split(':'); // Dividimos la hora "HH:mm"
-    
+
     const startTime = new Date(year, month - 1, day, hours, minutes); // Crear el objeto Date
     const formattedDay = startTime.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }); // Ej: "Friday 25 Oct"
     const formattedTime = startTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }); // Ej: "12:58"
-  
+
     // 2. Calcular la hora de finalización añadiendo la duración
     const endTime = new Date(startTime);
     endTime.setMinutes(endTime.getMinutes() + duration); // Añadir la duración en minutos
     const formattedEndTime = endTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }); // Ej: "14:28"
-  
+
     // 3. Calcular el precio basado en el tipo de precio
     let totalPrice = parseFloat(serviceData.price);
     if (serviceData.price_type === 'hour') {
       const hours = duration / 60; // Duración en horas
       totalPrice = serviceData.price * hours;
     }
-  
+
     // 4. Construir el mensaje de reserva final
     const priceLabel = `${totalPrice.toFixed(0)}€`; // Asegurarnos de que el precio tenga dos decimales si es necesario
-    return `Book for ${formattedDay} \n ${formattedTime} - ${formattedEndTime} for ${priceLabel}`;
+    return `Book for ${formattedDay} \n ${formattedTime} - ${formattedEndTime} for ${serviceData.price_type === "budget" ? "budget" : priceLabel}`;
   };
-  
+
   const startChat = async () => {
     try {
       const userData = await getDataLocally('user');
@@ -482,18 +482,18 @@ export default function ServiceProfileScreen() {
       console.error('startChat error:', err);
     }
   };
-  
+
 
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
-      <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
+    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
+      <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
       <RBSheet
         height={sheetHeight}
         openDuration={300}
         closeDuration={300}
-        onClose={() => {setShowAddList(false); setIsAddingDate(false); setSelectedDay(); setSelectedTime(); setDuration(60); setSliderValue(12); setTimeUndefined(false); setSelectedDate() }}
+        onClose={() => { setShowAddList(false); setIsAddingDate(false); setSelectedDay(); setSelectedTime(); setDuration(60); setSliderValue(12); setTimeUndefined(false); setSelectedDate() }}
         draggable={true}
         ref={sheet}
         customStyles={{
@@ -502,51 +502,59 @@ export default function ServiceProfileScreen() {
             borderTopLeftRadius: 25,
             backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
           },
-          draggableIcon: {backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'}
+          draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' }
         }}>
 
 
-          {isAddingDate===true? (
+        {isAddingDate === true ? (
 
-            <View className="flex-1 justify-start items-center">
+          <View className="flex-1 justify-start items-center">
 
 
-              <View className="mt-4 mb-2 flex-row justify-center items-center">
-                <Text className="text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Select a date</Text>
+            <View className="mt-4 mb-2 flex-row justify-center items-center">
+              <Text className="text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Select a date</Text>
+            </View>
+
+            <ScrollView
+              horizontal={false}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              directionalLockEnabled
+              bounces={false}
+              className="flex-1"
+              contentContainerStyle={{ paddingBottom: 20 }}
+            >
+
+              <View className="w-full px-6">
+                <Calendar
+                  onDayPress={onDayPress}
+                  markedDates={selectedDate}
+                  firstDay={1}
+                  theme={{
+                    todayTextColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
+                    monthTextColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
+                    textMonthFontSize: 15,
+                    textMonthFontWeight: 'bold',
+                    dayTextColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                    textDayFontWeight: 'bold',
+                    textInactiveColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                    textSectionTitleColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                    textDisabledColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                    selectedDayBackgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3',
+                    selectedDayTextColor: '#ffffff', // Color del texto del día seleccionado
+                    arrowColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
+                    calendarBackground: 'transparent',
+                  }}
+                  style={{ backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', padding: 20, borderRadius: 20 }}
+                />
               </View>
 
-              <ScrollView showsVerticalScrollIndicator={false} horizontal={false} directionalLockEnabled className="flex-1">
+              <View className="mt-2 w-full px-6 ">
 
-                <View className="w-full px-6">
-                  <Calendar
-                    onDayPress={onDayPress}
-                    markedDates={selectedDate}
-                    firstDay={1}
-                    theme={{
-                      todayTextColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
-                      monthTextColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
-                      textMonthFontSize: 15,
-                      textMonthFontWeight: 'bold',
-                      dayTextColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
-                      textDayFontWeight: 'bold',
-                      textInactiveColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                      textSectionTitleColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                      textDisabledColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                      selectedDayBackgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3',
-                      selectedDayTextColor: '#ffffff', // Color del texto del día seleccionado
-                      arrowColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
-                      calendarBackground: 'transparent',
-                    }}
-                    style={{ backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', padding:20, borderRadius:20 }}
-                  />
-                </View>
-
-                <View className="mt-2 w-full px-6 ">
-
-                  <TouchableOpacity onPress={() => setShowPicker(true)}>
+                <TouchableOpacity onPress={() => setShowPicker(true)}>
                   <Text className="ml-3 mb-2 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Start time</Text>
-                  </TouchableOpacity>
-                  {showPicker && (
+                </TouchableOpacity>
+                {showPicker && (
                   <DateTimePicker
                     value={tempDate}
                     mode="time" // Cambia a modo hora
@@ -554,38 +562,38 @@ export default function ServiceProfileScreen() {
                     onChange={handleHourSelected}
                     style={{ width: 320, height: 150 }} // Puedes ajustar el estilo como prefieras
                   />
-                  )}
-                </View>
-                
-                <View className="mt-6 mb-10 w-full px-6 ">
+                )}
+              </View>
 
-                  <Text className="ml-3 mb-8 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Duration: {formatDuration(duration)}</Text>
+              <View className="mt-6 mb-10 w-full px-6 ">
 
-                  <View className="flex-1 px-4 justify-center items-center">      
-                    <Slider
-                      style={{ width: '100%', height: 10 }} 
-                      minimumValue={1} // Ahora el valor mínimo del slider es 0
-                      maximumValue={34} // Máximo valor (ajustado para abarcar el rango completo)
-                      step={1} // Paso de 1 porque nosotros controlamos el salto
-                      thumbImage={thumbImage}
-                      minimumTrackTintColor="#b6b5b5"
-                      maximumTrackTintColor="#474646"
-                      value={sliderValue} // Convertimos los minutos reales al valor del slider
-                      onValueChange={handleSliderChange}
-                    />
-                  </View>
+                <Text className="ml-3 mb-8 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Duration: {formatDuration(duration)}</Text>
+
+                <View className="flex-1 px-4 justify-center items-center">
+                  <Slider
+                    style={{ width: '100%', height: 10 }}
+                    minimumValue={1} // Ahora el valor mínimo del slider es 0
+                    maximumValue={34} // Máximo valor (ajustado para abarcar el rango completo)
+                    step={1} // Paso de 1 porque nosotros controlamos el salto
+                    thumbImage={thumbImage}
+                    minimumTrackTintColor="#b6b5b5"
+                    maximumTrackTintColor="#474646"
+                    value={sliderValue} // Convertimos los minutos reales al valor del slider
+                    onValueChange={handleSliderChange}
+                  />
                 </View>
+              </View>
 
               <View className="pl-10 flex-row w-full justify-start  items-center ">
-                
+
                 <TouchableOpacity
-                  onPress={() => setTimeUndefined(!timeUndefined)} 
+                  onPress={() => setTimeUndefined(!timeUndefined)}
                   style={[
-                    styles.checkbox, 
-                    { borderColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E' }, 
-                    timeUndefined && { 
-                      backgroundColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131', 
-                      borderWidth: 0 
+                    styles.checkbox,
+                    { borderColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E' },
+                    timeUndefined && {
+                      backgroundColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131',
+                      borderWidth: 0
                     }
                   ]}
                 >
@@ -596,14 +604,14 @@ export default function ServiceProfileScreen() {
 
                 <Text className="ml-3 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Undefined time</Text>
 
-              </View> 
+              </View>
 
               <View className="mt-6 pb-3 px-6 flex-row justify-center items-center ">
 
                 <TouchableOpacity
                   disabled={!(selectedDay && selectedTime && duration) && !timeUndefined}
-                  onPress={() => {sheet.current.close(); navigation.navigate('Booking', { serviceData, location, bookingStartDate:selectedDay, bookingStartTime:selectedTime, bookingDuration:duration, bookingDateUndefined:timeUndefined})} }
-                  style={{ opacity: !(selectedDay && selectedTime && duration) && !timeUndefined? 0.5 : 1 }}
+                  onPress={() => { sheet.current.close(); navigation.navigate('Booking', { serviceData, location, bookingStartDate: selectedDay, bookingStartTime: selectedTime, bookingDuration: timeUndefined ? null : duration, bookingDateUndefined: timeUndefined }) }}
+                  style={{ opacity: !(selectedDay && selectedTime && duration) && !timeUndefined ? 0.5 : 1 }}
                   className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17px] rounded-full items-center justify-center"
                 >
                   <Text className="text-center">
@@ -615,24 +623,24 @@ export default function ServiceProfileScreen() {
 
               </View>
 
-              <View className="h-[20px]"/>
+              <View className="h-[20px]" />
 
-              </ScrollView>
+            </ScrollView>
 
-            </View>
+          </View>
 
-          ) : (
+        ) : (
 
           <View className="flex-1">
-            {showAddList? (
+            {showAddList ? (
 
               <View className="flex-1 justify-start items-center">
 
                 <View className="mt-3 mb-12 flex-row justify-center items-center">
 
                   <View className="flex-1 items-start">
-                    <TouchableOpacity onPress={() => {setShowAddList(false); setListName(''); openSheetWithInput(450)}} className="ml-5">
-                        <ChevronLeftIcon height={21} width={21} strokeWidth={2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+                    <TouchableOpacity onPress={() => { setShowAddList(false); setListName(''); openSheetWithInput(450) }} className="ml-5">
+                      <ChevronLeftIcon height={21} width={21} strokeWidth={2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
                     </TouchableOpacity>
                   </View>
 
@@ -640,60 +648,60 @@ export default function ServiceProfileScreen() {
                     <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">New list</Text>
                   </View>
 
-                  <View className="flex-1 items-end"> 
-                    {listName.length>0 ? (
+                  <View className="flex-1 items-end">
+                    {listName.length > 0 ? (
                       <TouchableOpacity onPress={handleDone}>
-                          <Text className="mr-7 text-center font-inter-medium text-[14px] text-[#979797]">Done</Text>
+                        <Text className="mr-7 text-center font-inter-medium text-[14px] text-[#979797]">Done</Text>
                       </TouchableOpacity>
-                    ) : null }
+                    ) : null}
                   </View>
                 </View>
 
                 <View className="w-full px-5">
 
                   <View className="w-full h-[55px] px-4  bg-[#f2f2f2] dark:bg-[#272626] rounded-full flex-row justify-start items-center">
-          
-                  <TextInput
-                    placeholder='Name*'
-                    autoFocus={true} 
-                    selectionColor={cursorColorChange}
-                    placeholderTextColor={placeHolderTextColorChange}
-                    onChangeText={inputListNameChanged} 
-                    value={listName}
-                    keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                    className="font-inter-medium flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
-                  />
 
-                  {listName.length>0 ? (
-                    <TouchableOpacity onPress={handleClearText}>
+                    <TextInput
+                      placeholder='Name*'
+                      autoFocus={true}
+                      selectionColor={cursorColorChange}
+                      placeholderTextColor={placeHolderTextColorChange}
+                      onChangeText={inputListNameChanged}
+                      value={listName}
+                      keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                      className="font-inter-medium flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"
+                    />
+
+                    {listName.length > 0 ? (
+                      <TouchableOpacity onPress={handleClearText}>
                         <View className='h-[23px] w-[23px] justify-center items-center rounded-full bg-[#fcfcfc] dark:bg-[#323131]'>
-                            <XMarkIcon height={13} color={iconColor} strokeWidth={2.6}/>
+                          <XMarkIcon height={13} color={iconColor} strokeWidth={2.6} />
                         </View>
-                    </TouchableOpacity>
-                  ) : null }
+                      </TouchableOpacity>
+                    ) : null}
 
                   </View>
 
                 </View>
 
-              
+
 
               </View>
 
-              ) : (
+            ) : (
 
               <View className="flex-1 justify-center items-center">
 
                 <View className="mt-3 mb-12 flex-row justify-center items-center">
-                  <View className="flex-1"/>
+                  <View className="flex-1" />
 
                   <View className="flex-row justify-center items-center">
                     <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">Add to a list</Text>
                   </View>
 
                   <View className="flex-1 items-end">
-                    <TouchableOpacity onPress={() => {setShowAddList(true), openSheetWithInput(250)}} className="mr-5">
-                        <Plus height={27} width={27} strokeWidth={1.7} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+                    <TouchableOpacity onPress={() => { setShowAddList(true), openSheetWithInput(250) }} className="mr-5">
+                      <Plus height={27} width={27} strokeWidth={1.7} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -705,7 +713,7 @@ export default function ServiceProfileScreen() {
                       <TouchableOpacity onPress={() => addItemList(list.id)} className="mb-4 flex-row justify-between items-center w-full">
 
                         <View className="flex-row justify-start items-center">
-                          <Image source={list.services[0]? list.services[0].image_url? { uri: list.services[0].image_url } : null : null} className="h-[50px] w-[50px] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-lg mr-4"/>
+                          <Image source={list.services[0] ? list.services[0].image_url ? { uri: list.services[0].image_url } : null : null} className="h-[50px] w-[50px] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-lg mr-4" />
                           <View className="justify-center items-start">
                             <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{list.title}</Text>
                             <Text className="text-center font-inter-medium text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{list.item_count === 0 ? '0 services' : list.item_count === 1 ? `${list.item_count} service` : `${list.item_count} services`}</Text>
@@ -720,7 +728,7 @@ export default function ServiceProfileScreen() {
                     </View>
                   ))}
 
-                  <TouchableOpacity onPress={() => {setShowAddList(true), openSheetWithInput(250)}} className="flex-row justify-start items-center w-full ">
+                  <TouchableOpacity onPress={() => { setShowAddList(true), openSheetWithInput(250) }} className="flex-row justify-start items-center w-full ">
                     <View className="h-[50px] w-[50px] bg-[#444343] dark:bg-[#f2f2f2] rounded-lg mr-4 justify-center items-center">
                       <Plus height={23} width={23} strokeWidth={2.5} color={colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'} />
                     </View>
@@ -735,7 +743,7 @@ export default function ServiceProfileScreen() {
             )}
           </View>
 
-          )}
+        )}
 
 
 
@@ -743,27 +751,27 @@ export default function ServiceProfileScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false} className="px-5 pt-6 flex-1" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
-        {/* Top FALTA */} 
+        {/* Top FALTA */}
 
         <View className="flex-row justify-between items-center">
-          
+
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6"/>
+            <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
           </TouchableOpacity>
-          
+
           <View className="flex-row justify-end items-center">
 
             <TouchableOpacity onPress={() => null} className="items-center justify-center mr-6">
-              <Share height={24} strokeWidth={1.7} color={iconColor}/>
+              <Share height={24} strokeWidth={1.7} color={iconColor} />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => heartClicked(serviceId)} className="mr-2">
-              {isServiceLiked? (
+              {isServiceLiked ? (
                 <HeartFill height={24} width={24} strokeWidth={1.7} color={'#ff633e'} />
               ) : (
                 <Heart height={24} width={24} strokeWidth={1.7} color={iconColor} />
-              )}        
-           </TouchableOpacity>
+              )}
+            </TouchableOpacity>
 
           </View>
 
@@ -771,9 +779,9 @@ export default function ServiceProfileScreen() {
 
         {/* Service and User info */}
 
-        <View className="justify-start items-center mt-10"> 
+        <View className="justify-start items-center mt-10">
 
-          <Image source={serviceData.profile_picture ? {uri: serviceData.profile_picture} : require('../../assets/defaultProfilePic.jpg')} className="h-[100px] w-[100px] bg-[#d4d4d3] dark:bg-[#474646] rounded-full"/>
+          <Image source={serviceData.profile_picture ? { uri: serviceData.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[100px] w-[100px] bg-[#d4d4d3] dark:bg-[#474646] rounded-full" />
 
           <Text className="mt-3 font-inter-bold text-center text-[23px] text-[#444343] dark:text-[#f2f2f2]">{serviceData.first_name} {serviceData.surname}</Text>
 
@@ -792,13 +800,13 @@ export default function ServiceProfileScreen() {
               <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Services</Text>
             </View>
             {serviceData.average_rating && (
-            <View className="flex-1 justify-center items-center ">
-              <View className="flex-row justify-center items-center">
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 1.3 }] }} />
-                <Text className="ml-[6px] font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.average_rating).toFixed(1)}</Text>
+              <View className="flex-1 justify-center items-center ">
+                <View className="flex-row justify-center items-center">
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 1.3 }] }} />
+                  <Text className="ml-[6px] font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.average_rating).toFixed(1)}</Text>
+                </View>
+                <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Rating</Text>
               </View>
-              <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Rating</Text>
-            </View>
             )}
 
             <View className="flex-1 justify-center items-center border-l-[1px] border-[#d4d4d3] dark:border-[#474646]">
@@ -817,13 +825,13 @@ export default function ServiceProfileScreen() {
           <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">About the service</Text>
 
           <Text onTextLayout={onTextLayout} numberOfLines={isDescriptionExpanded ? null : 4} className="break-all text-[14px] text-[#515150] dark:text-[#d4d4d3]">{serviceData.description}</Text>
-          
+
           {showMoreButton && (
-          
+
             <View>
               {!isDescriptionExpanded && (
                 <TouchableOpacity onPress={() => setIsDescriptionExpanded(true)}>
-                  <Text  className="mt-2 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2] ">Read more...</Text>
+                  <Text className="mt-2 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2] ">Read more...</Text>
                 </TouchableOpacity>
               )}
               {isDescriptionExpanded && (
@@ -833,39 +841,39 @@ export default function ServiceProfileScreen() {
               )}
             </View>
 
-          )}      
-          
+          )}
+
 
         </View>
 
         {/* Galery */}
 
         {serviceData.images && (
-        <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+          <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
-          <View className="mb-5 w-full flex-row justify-between items-center">
-            <Text className=" flex-1 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Galery</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('DisplayImages', {images:serviceData.images})} >
-              <ChevronRightIcon size={20} color={colorScheme === 'dark' ? '#b6b5b5' : '#706F6E'} strokeWidth={2.1}/>
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="w-full">
-
-            {serviceData.images.slice(0, 10).map((image, index) => (
-
-              <TouchableOpacity
-              key={image.id ? image.id : index}
-              onPress={() => navigation.navigate('EnlargedImage', {images:serviceData.images, index:index})}
-              >
-                <Image source={{uri: image.image_url}} className="mr-3 h-[110px] w-[100px] bg-[#d4d4d3] dark:bg-[#474646] rounded-2xl"/>
+            <View className="mb-5 w-full flex-row justify-between items-center">
+              <Text className=" flex-1 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Galery</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('DisplayImages', { images: serviceData.images })} >
+                <ChevronRightIcon size={20} color={colorScheme === 'dark' ? '#b6b5b5' : '#706F6E'} strokeWidth={2.1} />
               </TouchableOpacity>
+            </View>
 
-            ))}
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="w-full">
 
-          </ScrollView>
-          
-        </View>
+              {serviceData.images.slice(0, 10).map((image, index) => (
+
+                <TouchableOpacity
+                  key={image.id ? image.id : index}
+                  onPress={() => navigation.navigate('EnlargedImage', { images: serviceData.images, index: index })}
+                >
+                  <Image source={{ uri: image.image_url }} className="mr-3 h-[110px] w-[100px] bg-[#d4d4d3] dark:bg-[#474646] rounded-2xl" />
+                </TouchableOpacity>
+
+              ))}
+
+            </ScrollView>
+
+          </View>
         )}
 
         {/* Service data FALTA */}
@@ -916,19 +924,19 @@ export default function ServiceProfileScreen() {
 
         {serviceData.tags && (
 
-        <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+          <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
-          <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Tags and habilities</Text>
+            <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Tags and habilities</Text>
 
-          <View className="flex-row justify-start items-center flex-wrap">
-            {serviceData.tags.map((tag, index) => (
-              <View key={index} className="flex-row py-2 px-3 bg-[#f2f2f2] dark:bg-[#272626] rounded-full mr-1 mb-1">
-                <Text className="font-inter-semibold text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">{tag}</Text>
-              </View>
-            ))}
+            <View className="flex-row justify-start items-center flex-wrap">
+              {serviceData.tags.map((tag, index) => (
+                <View key={index} className="flex-row py-2 px-3 bg-[#f2f2f2] dark:bg-[#272626] rounded-full mr-1 mb-1">
+                  <Text className="font-inter-semibold text-[12px] text-[#706f6e] dark:text-[#b6b5b5]">{tag}</Text>
+                </View>
+              ))}
+            </View>
+
           </View>
-
-        </View>
 
         )}
 
@@ -947,10 +955,10 @@ export default function ServiceProfileScreen() {
           )}
 
           {serviceData.hobbies && (
-          <Text className="mt-4">
-            <Text className="mt-2 font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Hobbies: </Text>
-            <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{serviceData.hobbies}</Text>
-          </Text>
+            <Text className="mt-4">
+              <Text className="mt-2 font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Hobbies: </Text>
+              <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{serviceData.hobbies}</Text>
+            </Text>
           )}
 
           <Text className="mt-4">
@@ -966,7 +974,7 @@ export default function ServiceProfileScreen() {
           {/* Experiences */}
 
           {serviceData.experiences && (
-        
+
             <View >
 
               <View className="mt-8 mb-8 flex-row w-full justify-between items-center">
@@ -978,47 +986,47 @@ export default function ServiceProfileScreen() {
 
               {serviceData.experiences.map((experience, index) => (
 
-              <View key={index} className="flex-row w-full justify-center items-center">
+                <View key={index} className="flex-row w-full justify-center items-center">
 
-                <View className="w-[30px] h-full items-center pr-5">
-                  <View className={`flex-1  bg-[#b6b5b5] dark:bg-[#706F6E] ${index>0 && 'w-[2]'}`}/>
-                  <View className={`w-4 h-4 rounded-full border-2 border-[#444343] dark:border-[#f2f2f2] ${experience.experience_end_date? null : colorScheme == 'dark' ? 'bg-[#f2f2f2]' : 'bg-[#444343]'}`}>
+                  <View className="w-[30px] h-full items-center pr-5">
+                    <View className={`flex-1  bg-[#b6b5b5] dark:bg-[#706F6E] ${index > 0 && 'w-[2]'}`} />
+                    <View className={`w-4 h-4 rounded-full border-2 border-[#444343] dark:border-[#f2f2f2] ${experience.experience_end_date ? null : colorScheme == 'dark' ? 'bg-[#f2f2f2]' : 'bg-[#444343]'}`}>
+                    </View>
+                    <View className={`flex-1 w-[2] bg-[#b6b5b5] dark:bg-[#706F6E] ${index === serviceData.experiences.length - 1 ? 'w-[0]' : 'w-[2]'}`} />
                   </View>
-                  <View className={`flex-1 w-[2] bg-[#b6b5b5] dark:bg-[#706F6E] ${index===serviceData.experiences.length-1 ? 'w-[0]' : 'w-[2]'}`}/>
+
+                  <View className="flex-1 py-3 px-5 mb-3 bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
+
+                    <View className="mt-1 flex-row justify-between">
+                      <Text className="font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2]">{experience.experience_title}</Text>
+                    </View>
+
+                    <View className="mt-3 flex-row justify-between items-center mb-[6px]">
+                      <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{experience.place_name}</Text>
+                      <Text>
+                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(experience.experience_started_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</Text>
+                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]"> - </Text>
+                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{experience.experience_end_date ? new Date(experience.experience_end_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Still there'}</Text>
+                      </Text>
+                    </View>
+
+                  </View>
                 </View>
-
-                <View className="flex-1 py-3 px-5 mb-3 bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
-
-                  <View className="mt-1 flex-row justify-between">
-                    <Text className="font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2]">{experience.experience_title}</Text>
-                  </View>
-
-                  <View className="mt-3 flex-row justify-between items-center mb-[6px]">
-                    <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{experience.place_name}</Text>
-                    <Text>
-                      <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(experience.experience_started_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</Text>
-                      <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]"> - </Text>
-                      <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{experience.experience_end_date ? new Date(experience.experience_end_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Still there'}</Text>
-                    </Text>
-                  </View>
-                  
-                </View>
-              </View>
               ))}
             </View>
 
-            
 
 
-          )}  
+
+          )}
 
         </View>
 
         {/* Location */}
 
-        <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">      
+        <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
-          {!serviceData.latitude? (
+          {!serviceData.latitude ? (
 
             <View className="justify-center items-center w-full">
               <GlobeAltIcon height={80} width={80} strokeWidth={1.2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
@@ -1027,45 +1035,45 @@ export default function ServiceProfileScreen() {
 
           ) : (
 
-            serviceData.action_rate===100 ? (
+            serviceData.action_rate === 100 ? (
 
               <View className="justify-center items-center w-full">
                 <GlobeEuropeAfricaIcon height={80} width={80} strokeWidth={1.2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
-                <Text className="mt-3 font-inter-semibold text-[18px] text-[#706F6E] dark:text-[#b6b5b5]">Unlimited radius of action</Text>  
+                <Text className="mt-3 font-inter-semibold text-[18px] text-[#706F6E] dark:text-[#b6b5b5]">Unlimited radius of action</Text>
               </View>
 
             ) : (
-            <View className='w-full'>
+              <View className='w-full'>
 
-            <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Location</Text> 
+                <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Location</Text>
 
-              <View className="justify-center items-center w-full">
-                <MapView
-                  style={{ height: 160, width: 280, borderRadius: 12 }}
-                  region={{
-                    latitude:  serviceData.latitude, // Latitud inicial
-                    longitude: serviceData.longitude, // Longitud inicial
-                    latitudeDelta: 0.05, // Zoom en la latitud
-                    longitudeDelta: 0.03, // Zoom en la longitud
-                  }}
-                >
-                  <Circle
+                <View className="justify-center items-center w-full">
+                  <MapView
+                    style={{ height: 160, width: 280, borderRadius: 12 }}
+                    region={{
+                      latitude: serviceData.latitude, // Latitud inicial
+                      longitude: serviceData.longitude, // Longitud inicial
+                      latitudeDelta: 0.05, // Zoom en la latitud
+                      longitudeDelta: 0.03, // Zoom en la longitud
+                    }}
+                  >
+                    <Circle
                       center={{ latitude: serviceData.latitude, longitude: serviceData.longitude }}
-                      radius={serviceData.action_rate*1000}
+                      radius={serviceData.action_rate * 1000}
                       strokeColor="rgba(182,181,181,0.8)"
                       fillColor="rgba(182,181,181,0.5)"
                       strokeWidth={2}
                     />
-                  
-                </MapView>
 
-                <View className="mt-3 px-3 w-full flex-row justify-between items-center">
-                  <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{address ? address : 'Loading...'}</Text>
-                  <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">{localHour ? `${localHour} local hour` : ''}</Text>
+                  </MapView>
+
+                  <View className="mt-3 px-3 w-full flex-row justify-between items-center">
+                    <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{address ? address : 'Loading...'}</Text>
+                    <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">{localHour ? `${localHour} local hour` : ''}</Text>
+                  </View>
+
                 </View>
-
               </View>
-            </View>
 
             )
 
@@ -1074,126 +1082,126 @@ export default function ServiceProfileScreen() {
         </View>
 
         {/* Rating and reviews */}
-     
+
         {serviceData.reviews && (
 
-        <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+          <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
-          <Text className="mb-8 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Rating and reviews</Text>
+            <Text className="mb-8 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Rating and reviews</Text>
 
-          <View className="flex-row w-full justify-between items-center">
-            <Text className="font-inter-bold text-[55px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.average_rating).toFixed(1)}</Text>
+            <View className="flex-row w-full justify-between items-center">
+              <Text className="font-inter-bold text-[55px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.average_rating).toFixed(1)}</Text>
 
-            <View className="justify-start items-end">
+              <View className="justify-start items-end">
 
-              <View className="mb-[-5] flex-row justify-end items-center">
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
-                <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
-                  <View style={{ width: `${width5}%` }} className={`h-full bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
-                </View>
-              </View>
-              <View className="mb-[-5] flex-row justify-end items-center">
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
-                <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
-                  <View style={{ width: `${width4}%` }} className={`h-full   bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
-                </View>
-              </View>
-              <View className="mb-[-5] flex-row justify-end items-center">
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
-                <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
-                  <View style={{ width: `${width3}%` }} className={`h-full bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
-                </View>
-              </View>
-              <View className="mb-[-5] flex-row justify-end items-center">
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:-7 }} />
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
-                <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
-                  <View style={{ width: `${width2}%` }} className={`h-full bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
-                </View>
-              </View>
-              <View className="flex-row justify-end items-center">
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight:8 }} />
-                <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
-                  <View style={{ width: `${width1}%` }} className={`h-full bg-[#444343] dark:bg-[#f2f2f2] rounded-full`}/>
-                </View>
-              </View>
-
-            </View >
-          </View>
-
-          <TouchableOpacity onPress={() => navigation.navigate('DisplayReviews', {reviews:filteredReviews})} className="w-full justify-center items-end">
-            <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">{serviceData.reviews.length} ratings</Text>
-          </TouchableOpacity>
-
-          {/* Reviews */}
-
-          
-          {filteredReviews? ( 
-          <View className="w-full ">
-
-            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}  className="mt-5 w-full">
-
-              {filteredReviews.slice(0, 10).map((review, index) => (
-                <TouchableOpacity onPress={() => navigation.navigate('DisplayReviews', {reviews:filteredReviews}) } key={index} className="mr-2 py-5 px-4 w-[300px] bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
-
-                  <View className="flex-row justify-between items-center">
-
-                    <View className="flex-row justify-start items-center">
-                      <Image source={{uri: review.user.profile_picture}} className="mr-3 h-10 w-10 rounded-full bg-[#706F6E] dark:bg-[#b6b5b5]"/>
-
-                      <View className="justify-center items-start">
-                        <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{review.user.first_name} {review.user.surname}</Text>
-                        <Text className="mt-1 font-inter-medium text-[9px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(review.review_datetime).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</Text>                
-                      </View>
-                    </View>
-
-                    <View className="flex-row justify-end items-center">
-                      <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 1 }]}}/>
-                      <Text className="ml-1 mr-2 font-inter-bold text-[15px] text-[#444343] dark:text-[#f2f2f2]">{review.rating}</Text>                
-                    </View>
-
+                <View className="mb-[-5] flex-row justify-end items-center">
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: -7 }} />
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: -7 }} />
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: -7 }} />
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: -7 }} />
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: 8 }} />
+                  <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
+                    <View style={{ width: `${width5}%` }} className={`h-full bg-[#444343] dark:bg-[#f2f2f2] rounded-full`} />
                   </View>
+                </View>
+                <View className="mb-[-5] flex-row justify-end items-center">
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: -7 }} />
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: -7 }} />
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: -7 }} />
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: 8 }} />
+                  <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
+                    <View style={{ width: `${width4}%` }} className={`h-full   bg-[#444343] dark:bg-[#f2f2f2] rounded-full`} />
+                  </View>
+                </View>
+                <View className="mb-[-5] flex-row justify-end items-center">
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: -7 }} />
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: -7 }} />
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: 8 }} />
+                  <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
+                    <View style={{ width: `${width3}%` }} className={`h-full bg-[#444343] dark:bg-[#f2f2f2] rounded-full`} />
+                  </View>
+                </View>
+                <View className="mb-[-5] flex-row justify-end items-center">
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: -7 }} />
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: 8 }} />
+                  <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
+                    <View style={{ width: `${width2}%` }} className={`h-full bg-[#444343] dark:bg-[#f2f2f2] rounded-full`} />
+                  </View>
+                </View>
+                <View className="flex-row justify-end items-center">
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.45 }], marginRight: 8 }} />
+                  <View className="w-[170px] h-[4px] bg-[#D4D4D3] dark:bg-[#474646] rounded-full justify-center items-start">
+                    <View style={{ width: `${width1}%` }} className={`h-full bg-[#444343] dark:bg-[#f2f2f2] rounded-full`} />
+                  </View>
+                </View>
 
-                  <Text numberOfLines={3} className=" mt-5 mb-2 font-inter-medium text-[13px] text-[#706F6E] dark:text-[#b6b5b5]">{review.comment}</Text>
+              </View >
+            </View>
 
-                  {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="mt-5 w-full">
+            <TouchableOpacity onPress={() => navigation.navigate('DisplayReviews', { reviews: filteredReviews })} className="w-full justify-center items-end">
+              <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">{serviceData.reviews.length} ratings</Text>
+            </TouchableOpacity>
+
+            {/* Reviews */}
+
+
+            {filteredReviews ? (
+              <View className="w-full ">
+
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="mt-5 w-full">
+
+                  {filteredReviews.slice(0, 10).map((review, index) => (
+                    <TouchableOpacity onPress={() => navigation.navigate('DisplayReviews', { reviews: filteredReviews })} key={index} className="mr-2 py-5 px-4 w-[300px] bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
+
+                      <View className="flex-row justify-between items-center">
+
+                        <View className="flex-row justify-start items-center">
+                          <Image source={{ uri: review.user.profile_picture }} className="mr-3 h-10 w-10 rounded-full bg-[#706F6E] dark:bg-[#b6b5b5]" />
+
+                          <View className="justify-center items-start">
+                            <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{review.user.first_name} {review.user.surname}</Text>
+                            <Text className="mt-1 font-inter-medium text-[9px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(review.review_datetime).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</Text>
+                          </View>
+                        </View>
+
+                        <View className="flex-row justify-end items-center">
+                          <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 1 }] }} />
+                          <Text className="ml-1 mr-2 font-inter-bold text-[15px] text-[#444343] dark:text-[#f2f2f2]">{review.rating}</Text>
+                        </View>
+
+                      </View>
+
+                      <Text numberOfLines={3} className=" mt-5 mb-2 font-inter-medium text-[13px] text-[#706F6E] dark:text-[#b6b5b5]">{review.comment}</Text>
+
+                      {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="mt-5 w-full">
                     <View className="mr-1 w-12 h-12 bg-[#D4D4D3] dark:bg-[#474646] rounded-md" />
                   </ScrollView> */}
 
-                </TouchableOpacity>      
-              ))}      
-            </ScrollView>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
 
-            <TouchableOpacity
-              onPress={() => navigation.navigate('DisplayReviews', {reviews:filteredReviews}) }
-              style={{ opacity: 1 }}
-              className="mt-6 bg-[#F2F2F2] dark:bg-[#272626] w-full h-[45px] rounded-full items-center justify-center"
-            >
-              <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">See all reviews</Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('DisplayReviews', { reviews: filteredReviews })}
+                  style={{ opacity: 1 }}
+                  className="mt-6 bg-[#F2F2F2] dark:bg-[#272626] w-full h-[45px] rounded-full items-center justify-center"
+                >
+                  <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">See all reviews</Text>
+                </TouchableOpacity>
+
+              </View>
+            ) : null}
+
+
 
           </View>
-          ) : null}
-          
-          
-
-        </View>
 
         )}
 
         {/* Consult */}
 
         {(serviceData.user_can_ask || serviceData.user_can_consult) && (
-          
+
           <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
             <View className="mr-2 py-5 px-4 w-full bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
@@ -1207,27 +1215,27 @@ export default function ServiceProfileScreen() {
                 {serviceData.user_can_ask === 1 && (
 
                   <TouchableOpacity
-                  onPress={startChat}
-                  style={{ opacity: 1 }}
-                  className={`mr-2 bg-[#E0E0E0] dark:bg-[#3d3d3d] ${serviceData.user_can_consult === 0 ? 'w-full' : 'w-1/3'} h-[40] rounded-full items-center justify-center`}
+                    onPress={startChat}
+                    style={{ opacity: 1 }}
+                    className={`mr-2 bg-[#E0E0E0] dark:bg-[#3d3d3d] ${serviceData.user_can_consult === 0 ? 'w-full' : 'w-1/3'} h-[40] rounded-full items-center justify-center`}
                   >
                     <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('write')}</Text>
                   </TouchableOpacity>
 
                 )}
-                
+
                 {serviceData.user_can_consult === 1 && (
 
                   <TouchableOpacity
-                  onPress={() => null }
-                  style={{ opacity: 1 }}
-                  className={`bg-[#444343] dark:bg-[#f2f2f2] ${serviceData.user_can_ask === 0 ? 'w-full' : 'w-2/3'} h-[40] rounded-full items-center justify-center`}
+                    onPress={() => null}
+                    style={{ opacity: 1 }}
+                    className={`bg-[#444343] dark:bg-[#f2f2f2] ${serviceData.user_can_ask === 0 ? 'w-full' : 'w-2/3'} h-[40] rounded-full items-center justify-center`}
                   >
                     <Text className="font-inter-semibold text-[13px] text-[#f2f2f2] dark:text-[#272626]">{t('book_a_consult')}</Text>
                   </TouchableOpacity>
-                )}  
+                )}
 
-              </View>  
+              </View>
             </View>
 
           </View>
@@ -1241,67 +1249,67 @@ export default function ServiceProfileScreen() {
 
           <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
-              <WisdomLogo  width={23} height={23} color={iconColor}/>
+              <WisdomLogo width={23} height={23} color={iconColor} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Wisdom Warranty</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
-              <XCircleIcon  width={24} height={24} color={iconColor} strokeWidth={1.6}/>
+              <XCircleIcon width={24} height={24} color={iconColor} strokeWidth={1.6} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Cancellation Policy</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
-              <Info  width={23} height={23} color={iconColor} strokeWidth={1.6}/>
+              <Info width={23} height={23} color={iconColor} strokeWidth={1.6} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Help</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
-              <Phone  width={22} height={22} color={iconColor} strokeWidth={1.6} />
+              <Phone width={22} height={22} color={iconColor} strokeWidth={1.6} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Contact Wisdom</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
-              <FileText  width={23} height={23} color={iconColor} strokeWidth={1.6}/>
+              <FileText width={23} height={23} color={iconColor} strokeWidth={1.6} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Reservation policy</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
-              <Flag  width={23} height={23} color={iconColor} strokeWidth={1.6}/>
+              <Flag width={23} height={23} color={iconColor} strokeWidth={1.6} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Report this service</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6"/>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
             </View>
           </TouchableOpacity>
 
         </View>
 
-        <View className="h-[50px]"/>
+        <View className="h-[50px]" />
       </ScrollView >
 
       {/* Button book */}
@@ -1309,7 +1317,7 @@ export default function ServiceProfileScreen() {
       <View className="flex-row justify-center items-center pb-3 px-6">
 
         <TouchableOpacity
-          onPress={() => {verifyRegistered(); }  }
+          onPress={() => { verifyRegistered(); }}
           style={{ opacity: 1 }}
           className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
         >
@@ -1327,7 +1335,7 @@ export default function ServiceProfileScreen() {
             </Text>
           </Text>
         </TouchableOpacity>
-      </View> 
+      </View>
 
     </SafeAreaView>
   );

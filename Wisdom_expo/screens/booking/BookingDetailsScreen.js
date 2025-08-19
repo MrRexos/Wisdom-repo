@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import * as Localization from 'expo-localization';
 import { View, Text, SafeAreaView, Platform, StatusBar, TouchableOpacity, TextInput, ScrollView, Alert, Image, RefreshControl } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -49,6 +49,13 @@ export default function BookingDetailsScreen() {
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
   const [refreshing, setRefreshing] = useState(false);
   const [paymentErrorVisible, setPaymentErrorVisible] = useState(false);
+  const round1 = (x) => Number((Math.round(Number(x) * 10) / 10).toFixed(1));
+  const round2 = (n) => {
+    const x = Number(n);
+    if (!Number.isFinite(x)) return 0;
+    return Math.round((x + Number.EPSILON) * 100) / 100; // máx. 2 decimales
+  };
+  const priceSource = service || booking;
 
   useEffect(() => {
     if (route.params?.paymentError) {
@@ -66,6 +73,13 @@ export default function BookingDetailsScreen() {
       loadSearchedDirection();
     }, [])
   );
+
+  const formatHMh = (minutes) => {
+    const total = Math.max(0, Math.round(Number(minutes) || 0));
+    const h = Math.floor(total / 60);
+    const m = total % 60;
+    return m === 0 ? `${h}h` : `${h}:${String(m).padStart(2, '0')}h`;
+  };
 
   const fetchBooking = async () => {
     try {
@@ -218,36 +232,37 @@ export default function BookingDetailsScreen() {
 
   const formatCurrency = (value, currency = 'EUR') => {
     if (value === null || value === undefined) return '';
-    const symbol = currencySymbols[currency] || '€';
-    const numeric = parseFloat(value);
-    const formatted =
-      numeric % 1 === 0 ? numeric.toFixed(0) : numeric.toFixed(1);
-    return `${formatted.replace('.', ',')} ${symbol}`;
+    const symbol = (typeof currencySymbols === 'object' && currencySymbols[currency]) ? currencySymbols[currency] : '€';
+  
+    const n = Number(value);
+    if (!Number.isFinite(n)) return '';
+  
+    const s = n.toLocaleString('es-ES', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+  
+    return `${s} ${symbol}`;
   };
+  
+  const pricing = useMemo(() => {
+    const type = priceSource?.price_type;
+    const unit = Number.parseFloat(priceSource?.price) || 0;
+    const minutes = Math.max(0, Math.round(Number(selectedDuration) || 0));
+    const hours = minutes / 60;
 
-  const calculateCommission = (basePrice) => {
-    const commission = parseFloat((basePrice * 0.1).toFixed(1));
-    return commission < 1 ? 1 : commission;
-  };
+    let base = 0;
+    if (type === 'hour') base = unit * hours;
+    else if (type === 'fix') base = unit;
+    base = round2(base);
 
-  const calculateFinalValues = (durationMinutes) => {
-    const priceSource = service || booking;
-    if (!priceSource) return { finalPrice: null, commission: null };
-    const durationInHours = durationMinutes / 60;
-    let basePrice = 0;
+    // En budget el depósito es 1€ y el final mostrado también 1
+    const commission = type === 'budget' ? 1 : Math.max(1, round1(base * 0.1));
+    const final = type === 'budget' ? commission : round2(base + commission);
 
-    if (priceSource.price_type === 'hour') {
-      basePrice = parseFloat(priceSource.price) * durationInHours;
-    } else if (priceSource.price_type === 'fix') {
-      basePrice = parseFloat(priceSource.price);
-    } else {
-      return { finalPrice: null, commission: null };
-    }
+    return { base, commission, final, minutes, type, currency: priceSource?.currency };
+  }, [priceSource?.price_type, priceSource?.price, selectedDuration]);
 
-    const commission = calculateCommission(basePrice);
-    const finalPrice = (basePrice + commission).toFixed(1);
-    return { finalPrice, commission };
-  };
 
   const getFormattedPrice = () => {
     const priceSource = service || booking;
@@ -258,8 +273,7 @@ export default function BookingDetailsScreen() {
       return (
         <>
           <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-            {formattedPrice}
-            {currencySymbols[priceSource.currency]}
+            {formatCurrency(formattedPrice, priceSource.currency)}
           </Text>
           <Text className='font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]'>
             {t('per_hour')}
@@ -273,8 +287,7 @@ export default function BookingDetailsScreen() {
             {t('fixed_price_prefix')}
           </Text>
           <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-            {formattedPrice}
-            {currencySymbols[priceSource.currency]}
+            {formatCurrency(formattedPrice, priceSource.currency)}
           </Text>
         </>
       );
@@ -306,23 +319,23 @@ export default function BookingDetailsScreen() {
 
   const getLocalDate = (date) => {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;      // p. ej. "Europe/Madrid"
-  
+
     // "2025-06-28 16:10:37"  →  "2025-06-28T16:10:37"
     const isoLocal = date
       .toLocaleString('sv-SE', { timeZone: tz, hourCycle: 'h23' })
       .replace(' ', 'T');
-    
+
     return `${isoLocal}.000Z`;   // ya NO será NaN
   };
 
   const getLocalDateSql = (date) => {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;      // p. ej. "Europe/Madrid"
-  
+
     // "2025-06-28 16:10:37"  →  "2025-06-28T16:10:37"
     const isoLocal = date
       .toLocaleString('sv-SE', { timeZone: tz, hourCycle: 'h23' })
       .replace(' ', 'T');
-    
+
     return isoLocal;   // ya NO será NaN
   };
 
@@ -362,16 +375,18 @@ export default function BookingDetailsScreen() {
         console.error('No booking ID available');
         return;
       }
+      const includePricing = !selectedTimeUndefined && Number(pricing.minutes) > 0;
       const payload = {
         ...edited,
         id,
         booking_start_datetime: selectedTimeUndefined ? null : combineDateTime(),
         booking_end_datetime: selectedTimeUndefined ? null : calculateEndDateTime(),
         service_duration: selectedTimeUndefined ? null : selectedDuration,
-        ...(selectedDuration ? (() => {
-          const { finalPrice, commission } = calculateFinalValues(selectedDuration);
-          return { final_price: finalPrice, commission };
-        })() : {}),
+        ...(includePricing
+          ? (pricing.type === 'budget'
+            ? { final_price: 1, commission: 1 }
+            : { final_price: pricing.final, commission: pricing.commission })
+          : {}),
       };
       await api.put(`/api/bookings/${id}`, payload);
       setBooking((prev) => ({ ...prev, ...payload }));
@@ -404,15 +419,6 @@ export default function BookingDetailsScreen() {
       fetchBooking();
     } catch (error) {
       console.error('Error updating status:', error);
-    }
-  };
-
-  const updateIsPaid = async (isPaid) => {
-    try {
-      await api.patch(`/api/bookings/${bookingId}/is_paid`, { is_paid: isPaid });
-      fetchBooking();
-    } catch (error) {
-      console.error('Error updating is_paid:', error);
     }
   };
 
@@ -468,7 +474,7 @@ export default function BookingDetailsScreen() {
       const userData = await getDataLocally('user');
       if (!userData) return;
       const me = JSON.parse(userData);
-      
+
       let otherId;
       if (role === 'pro') {
         // Profesional contactando al cliente
@@ -533,14 +539,14 @@ export default function BookingDetailsScreen() {
     return t('booking_expired');
   };
 
-  
+
   const now = new Date(getLocalDate(new Date()));
 
   const startDate =
     booking && booking.booking_start_datetime
       ? new Date(
-          booking.booking_start_datetime
-        )
+        booking.booking_start_datetime
+      )
       : null;
   const endDate =
     booking && booking.booking_end_datetime
@@ -554,8 +560,8 @@ export default function BookingDetailsScreen() {
       (startDate && !endDate) ||
       (startDate && !endDate && now >= startDate) ||
       (startDate && endDate && now >= startDate && now < endDate)
-    ); 
-    
+    );
+
 
   const showServiceFinished =
     booking &&
@@ -565,8 +571,8 @@ export default function BookingDetailsScreen() {
   const statusMessage = showServiceFinished
     ? t('service_completed')
     : showInProgress
-    ? t('in_progress')
-    : null;
+      ? t('in_progress')
+      : null;
 
   if (!booking) {
     return null;
@@ -596,7 +602,15 @@ export default function BookingDetailsScreen() {
             </Text>
           </View>
 
-          <ScrollView showsVerticalScrollIndicator={false} className='flex-1'>
+          <ScrollView
+            horizontal={false}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            directionalLockEnabled
+            bounces={false}
+            className="flex-1"
+            contentContainerStyle={{ paddingBottom: 20 }}
+          >
             <View className='w-full px-6'>
               <Calendar
                 onDayPress={onDayPress}
@@ -701,138 +715,138 @@ export default function BookingDetailsScreen() {
         </View>
       </RBSheet>
 
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
-      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
-      <View className='items-center justify-center px-2 pt-3  pb-3'>
+        <View className='items-center justify-center px-2 pt-3  pb-3'>
 
-      <View className='flex-row items-center justify-between'>
+          <View className='flex-row items-center justify-between'>
 
-        <View className="flex-[1] justify-center items-start">
-          <TouchableOpacity onPress={() => navigation.goBack()} className='px-2'>
-            <XMarkIcon size={24} color={iconColor} strokeWidth={2}/>
-          </TouchableOpacity>
-        </View>
+            <View className="flex-[1] justify-center items-start">
+              <TouchableOpacity onPress={() => navigation.goBack()} className='px-2'>
+                <XMarkIcon size={24} color={iconColor} strokeWidth={2} />
+              </TouchableOpacity>
+            </View>
 
-        <View className="flex-[2] justify-center items-center">
-          <Text className='font-inter-bold text-[17px] text-[#444343] dark:text-[#f2f2f2]'>
-            {t('booking_details')}
-          </Text>
-        </View>
-
-        <View className="flex-[1] justify-center items-end">
-          {booking && booking.booking_status !== 'completed' && (
-            <TouchableOpacity onPress={() => setEditMode(!editMode)} className='mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
-              <Text className='font-inter-medium text-[12px] text-[#706f6e] dark:text-[#b6b5b5]'>
-                {editMode ? t('cancel') : t('edit')}
+            <View className="flex-[2] justify-center items-center">
+              <Text className='font-inter-bold text-[17px] text-[#444343] dark:text-[#f2f2f2]'>
+                {t('booking_details')}
               </Text>
-            </TouchableOpacity>
+            </View>
+
+            <View className="flex-[1] justify-center items-end">
+              {booking && !booking.is_paid && (
+                <TouchableOpacity onPress={() => setEditMode(!editMode)} className='mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
+                  <Text className='font-inter-medium text-[12px] text-[#706f6e] dark:text-[#b6b5b5]'>
+                    {editMode ? t('cancel') : t('edit')}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+          </View>
+
+          {statusMessage && (
+            <View className='items-center mt-1'>
+              <Text className='font-inter-semibold text-[14px] text-[#74A34F]'>
+                {statusMessage}
+              </Text>
+            </View>
           )}
         </View>
 
-      </View>
+        <ScrollView className='flex-1 px-6 mt-4' refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
-      {statusMessage && (
-        <View className='items-center mt-1'>
-          <Text className='font-inter-semibold text-[14px] text-[#74A34F]'>
-            {statusMessage}
-          </Text>
-        </View>
-      )}
-      </View>
-
-      <ScrollView className='flex-1 px-6 mt-4' refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-
-        <View className='mb-4'>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ServiceProfile', { serviceId: booking.service_id })}
-            className='rounded-2xl bg-[#fcfcfc] dark:bg-[#323131] p-5'
-          >
-            <View className='flex-row justify-between items-center'>
-              <Text className='ml-1 font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]'>
-                {(service && service.service_title) || booking.service_title}
-              </Text>
-            </View>
-
-            <View className='flex-row justify-between items-center mt-4'>
-              <Text className='ml-1 mr-5'>{getFormattedPrice()}</Text>
-              {service && service.tags && (
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} className='flex-1'>
-                  {service.tags.map((tag, index) => (
-                    <View key={index} className='pr-[6px]'>
-                      <View className='px-3 py-1 rounded-full bg-[#f2f2f2] dark:bg-[#272626]'>
-                        <Text className='font-inter-medium text-[12px] text-[#979797]'>{tag}</Text>
-                      </View>
-                    </View>
-                  ))}
-                </ScrollView>
-              )}
-            </View>
-
-            <View className='flex-row justify-between items-end mt-4'>
-              <View className='flex-row items-center'>
-                <Image
-                  source={service && service.profile_picture ? { uri: service.profile_picture } : require('../../assets/defaultProfilePic.jpg')}
-                  className='h-[45px] w-[45px] rounded-lg bg-[#706B5B]'
-                />
-                <View className='ml-3'>
-                  <Text className='mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                    {service ? `${service.first_name} ${service.surname}` : `${booking.first_name} ${booking.surname}`}
-                  </Text>
-                  <Text className='font-inter-semibold text-[11px] text-[#706F6E] dark:text-[#b6b5b5]'>
-                    {t('place')}
-                  </Text>
-                </View>
+          <View className='mb-4'>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ServiceProfile', { serviceId: booking.service_id })}
+              className='rounded-2xl bg-[#fcfcfc] dark:bg-[#323131] p-5'
+            >
+              <View className='flex-row justify-between items-center'>
+                <Text className='ml-1 font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]'>
+                  {(service && service.service_title) || booking.service_title}
+                </Text>
               </View>
 
-              {service && service.review_count > 0 && (
+              <View className='flex-row justify-between items-center mt-4'>
+                <Text className='ml-1 mr-5'>{getFormattedPrice()}</Text>
+                {service && service.tags && (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} className='flex-1'>
+                    {service.tags.map((tag, index) => (
+                      <View key={index} className='pr-[6px]'>
+                        <View className='px-3 py-1 rounded-full bg-[#f2f2f2] dark:bg-[#272626]'>
+                          <Text className='font-inter-medium text-[12px] text-[#979797]'>{tag}</Text>
+                        </View>
+                      </View>
+                    ))}
+                  </ScrollView>
+                )}
+              </View>
+
+              <View className='flex-row justify-between items-end mt-4'>
                 <View className='flex-row items-center'>
-                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.85 }] }} />
-                  <Text className='ml-[3px]'>
-                    <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                      {parseFloat(service.average_rating).toFixed(1)}
+                  <Image
+                    source={service && service.profile_picture ? { uri: service.profile_picture } : require('../../assets/defaultProfilePic.jpg')}
+                    className='h-[45px] w-[45px] rounded-lg bg-[#706B5B]'
+                  />
+                  <View className='ml-3'>
+                    <Text className='mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                      {service ? `${service.first_name} ${service.surname}` : `${booking.first_name} ${booking.surname}`}
                     </Text>
-                    <Text> </Text>
-                    <Text className='font-inter-medium text-[11px] text-[#706F6E] dark:text-[#B6B5B5]'>
-                      {service.review_count === 1 ? `1 ${t('review')}` : `${service.review_count} ${t('reviews')}`}
+                    <Text className='font-inter-semibold text-[11px] text-[#706F6E] dark:text-[#b6b5b5]'>
+                      {t('place')}
                     </Text>
-                  </Text>
+                  </View>
                 </View>
+
+                {service && service.review_count > 0 && (
+                  <View className='flex-row items-center'>
+                    <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.85 }] }} />
+                    <Text className='ml-[3px]'>
+                      <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                        {parseFloat(service.average_rating).toFixed(1)}
+                      </Text>
+                      <Text> </Text>
+                      <Text className='font-inter-medium text-[11px] text-[#706F6E] dark:text-[#B6B5B5]'>
+                        {service.review_count === 1 ? `(1 ${t('review')})` : `(${service.review_count} ${t('reviews')})`}
+                      </Text>
+                    </Text>
+                  </View>
+                )}
+              </View>
+
+              {service && service.images && (
+                <View className='px-2 pb-2 mt-4'>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} className='flex-1'>
+                    {service.images.map((image, index) => (
+                      <View key={index} className='pr-[6px]'>
+                        <View className='ml-1'>
+                          <Image
+                            source={image.image_url ? { uri: image.image_url } : null}
+                            className='h-[65px] w-[55px] rounded-lg bg-[#706B5B]'
+                          />
+                        </View>
+                      </View>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* Date and time */}
+          <View className='mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
+            <View className='w-full flex-row justify-between items-center '>
+              <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Date and time</Text>
+              {editMode && (
+                <TouchableOpacity onPress={() => { setShowPicker(true); openSheetWithInput(650); }}>
+                  <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
+                </TouchableOpacity>
               )}
             </View>
 
-        {service && service.images && (
-          <View className='px-2 pb-2 mt-4'>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} className='flex-1'>
-              {service.images.map((image, index) => (
-                <View key={index} className='pr-[6px]'>
-                  <View className='ml-1'>
-                    <Image
-                      source={image.image_url ? { uri: image.image_url } : null}
-                      className='h-[65px] w-[55px] rounded-lg bg-[#706B5B]'
-                    />
-                  </View>
-                </View>
-              ))}
-            </ScrollView>
-          </View>
-        )}
-      </TouchableOpacity>
-    </View>
-
-        {/* Date and time */}
-        <View className='mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
-          <View className='w-full flex-row justify-between items-center '>
-            <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Date and time</Text>
-            {editMode && (
-              <TouchableOpacity onPress={() => { setShowPicker(true); openSheetWithInput(650); }}>
-                <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
-              </TouchableOpacity>
-            )}
-          </View>
-
-          <View className='mt-4 flex-1'>
-            {selectedTime && !selectedTimeUndefined ? (
+            <View className='mt-4 flex-1'>
+              {selectedTime && !selectedTimeUndefined ? (
                 <View className='flex-1 justify-center items-center'>
                   <View className='w-full flex-row justify-between items-center'>
                     <View className='flex-row justify-start items-center'>
@@ -855,371 +869,416 @@ export default function BookingDetailsScreen() {
                   </Text>
                 </View>
               )}
-          </View>
-        </View>
-
-        {/* Address */}
-        <View className='mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
-          <View className='w-full flex-row justify-between items-center '>
-            <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Address</Text>
-            {editMode && (
-              <TouchableOpacity onPress={() => navigation.navigate('SearchDirectionAlone', { prevScreen: 'BookingDetails' })}>
-                <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
-              </TouchableOpacity>
-            )}
-          </View>
-
-          <View className='mt-4 flex-row justify-center items-center'>
-            {[booking.address_1, booking.street_number, booking.postal_code, booking.city, booking.state, booking.country].some(Boolean) ? (
-              <>
-                <View className='w-11 h-11 items-center justify-center'>
-                  <MapPin height={25} width={25} strokeWidth={1.6} color={iconColor} />
-                </View>
-                <View className='pl-3 pr-3 flex-1 justify-center items-start'>
-                  <Text numberOfLines={1} className='mb-[6px] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
-                    {[booking.address_1, booking.street_number].filter(Boolean).join(', ')}
-                  </Text>
-                  <Text numberOfLines={1} className='font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]'>
-                    {[booking.postal_code, booking.city, booking.state, booking.country].filter(Boolean).join(', ')}
-                  </Text>
-                </View>
-              </>
-            ) : (
-              <View className="mt-1 flex-1 justify-center items-center">
-                <MapPin height={40} width={40} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
-                <Text className="mt-4 font-inter-semibold text-[16px] text-[#979797]">
-                  Location not selected
-                </Text>
-              </View>
-            )}
-          </View>
-          
-        </View>
-
-        {/* Price details */}
-        <View className='mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
-          <View className='w-full flex-row justify-between items-center '>
-            <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Price details</Text>
-          </View>
-
-          <View className='mt-5 px-3 flex-1'>
-            <View className='flex-1 justify-center items-center'>
-              {(() => {
-                const priceSource = service || booking;
-                if (priceSource.price_type === 'hour') {
-                  return (
-                    <>
-                      <View className='flex-row'>
-                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Service price x {(selectedDuration / 60).toFixed(0)}h</Text>
-                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {'.'.repeat(80)}
-                        </Text>
-                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {formatCurrency(parseFloat(priceSource.price) * (selectedDuration / 60), priceSource.currency)}
-                        </Text>
-                      </View>
-
-                      <View className='mt-3 flex-row'>
-                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Quality commission</Text>
-                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {'.'.repeat(80)}
-                        </Text>
-                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {formatCurrency(calculateCommission(parseFloat(priceSource.price) * (selectedDuration / 60)), priceSource.currency)}
-                        </Text>
-                      </View>
-
-                      <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]'></View>
-
-                      <View className='mt-4 flex-row'>
-                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Final price</Text>
-                        <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {'.'.repeat(80)}
-                        </Text>
-                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                        {formatCurrency(parseFloat(priceSource.price) * (selectedDuration / 60) + calculateCommission(parseFloat(priceSource.price) * (selectedDuration / 60)), priceSource.currency)}
-                        </Text>
-                      </View>
-
-                      <View className='mt-4 flex-row'>
-                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Deposit</Text>
-                        <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {'.'.repeat(80)}
-                        </Text>
-                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {formatCurrency(1, priceSource.currency)}
-                        </Text>
-                      </View>
-                    </>
-                  );
-                } else if (priceSource.price_type === 'fix') {
-                  return (
-                    <>
-                      <View className='flex-row'>
-                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Fixed price</Text>
-                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {'.'.repeat(80)}
-                        </Text>
-                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {parseFloat(priceSource.price).toFixed(0)} {currencySymbols[priceSource.currency]}
-                        </Text>
-                      </View>
-
-                      <View className='mt-3 flex-row'>
-                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Quality commission</Text>
-                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {'.'.repeat(80)}
-                        </Text>
-                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {formatCurrency(calculateCommission(parseFloat(priceSource.price)), priceSource.currency)}
-                        </Text>
-                      </View>
-
-                      <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]'></View>
-
-                      <View className='mt-4 flex-row'>
-                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Final price</Text>
-                        <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {'.'.repeat(80)}
-                        </Text>
-                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {formatCurrency(parseFloat(priceSource.price) + calculateCommission(parseFloat(priceSource.price)), priceSource.currency)}
-                        </Text>
-                      </View>
-
-                      <View className='mt-4 flex-row'>
-                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Deposit</Text>
-                        <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {'.'.repeat(80)}
-                        </Text>
-                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {formatCurrency(1, priceSource.currency)}
-                        </Text>
-                      </View>
-                    </>
-                  );
-                } else {
-                  return (
-                    <>
-                      <View className='flex-row'>
-                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Service price</Text>
-                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {'.'.repeat(80)}
-                        </Text>
-                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>budget</Text>
-                      </View>
-
-                      <View className='mt-3 flex-row'>
-                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Deposit</Text>
-                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {'.'.repeat(80)}
-                        </Text>
-                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
-                          {formatCurrency(1, priceSource.currency)}
-                        </Text>
-                      </View>
-
-                      <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]'></View>
-
-                      <View className='mt-4 flex-row'>
-                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Final price</Text>
-                        <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {'.'.repeat(80)}
-                        </Text>
-                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                          {formatCurrency(1, priceSource.currency)}
-                        </Text>
-                      </View>
-                    </>
-                  );
-                }
-              })()}
             </View>
           </View>
-        </View>
 
-        {/* Payment Method */}
-        {role === 'client' && showServiceFinished && (
-          <View className='mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
+          {/* Address */}
+          <View className='mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
             <View className='w-full flex-row justify-between items-center '>
-              <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Payment method</Text>
-              {editMode && paymentMethod && (
-                <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'BookingDetails', bookingId, role })}>
+              <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Address</Text>
+              {editMode && (
+                <TouchableOpacity onPress={() => navigation.navigate('SearchDirectionAlone', { prevScreen: 'BookingDetails' })}>
                   <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
                 </TouchableOpacity>
               )}
             </View>
 
-            <View className='mt-4 flex-1'>
-              {paymentMethod ? (
-                <View className='flex-1 my-3 justify-center items-center '>
-                  <View className='px-7 pb-5 pt-[50px] bg-[#EEEEEE] dark:bg-[#111111] rounded-xl'>
-                    <Text>
-                      <Text className='font-inter-medium text-[16px] text-[#444343] dark:text-[#f2f2f2]'>••••   ••••   ••••   </Text>
-                      <Text className='font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.last4}</Text>
+            <View className='mt-4 flex-row justify-center items-center'>
+              {[booking.address_1, booking.street_number, booking.postal_code, booking.city, booking.state, booking.country].some(Boolean) ? (
+                <>
+                  <View className='w-11 h-11 items-center justify-center'>
+                    <MapPin height={25} width={25} strokeWidth={1.6} color={iconColor} />
+                  </View>
+                  <View className='pl-3 pr-3 flex-1 justify-center items-start'>
+                    <Text numberOfLines={1} className='mb-[6px] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+                      {[booking.address_1, booking.street_number].filter(Boolean).join(', ')}
                     </Text>
-
-                    <View className='mt-6 flex-row justify-between items-center'>
-                      <View className='flex-row items-center'>
-                        <View className='justify-center items-center'>
-                          <Text className='font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.expiryMonth}/{paymentMethod.expiryYear}</Text>
-                        </View>
-                      </View>
-
-                      <View className='h-5 w-8 bg-[#fcfcfc] dark:bg-[#323131] rounded-md'/>
-                    </View>
+                    <Text numberOfLines={1} className='font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]'>
+                      {[booking.postal_code, booking.city, booking.state, booking.country].filter(Boolean).join(', ')}
+                    </Text>
                   </View>
-                </View>
+                </>
               ) : (
-                <View className='mt-1 flex-1 justify-center items-center'>
-                  <CreditCard height={55} width={55} strokeWidth={1.3} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
-                  <View className='flex-row justify-center items-center px-6'>
-                  <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'BookingDetails', bookingId, role }) } style={{ opacity: 1 }} className='bg-[#706f6e] my-2 mt-3 dark:bg-[#b6b5b5] w-full py-[14px] rounded-full items-center justify-center'>
-                      <Text>
-                        <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                          {t('add_credit_card')}
-                        </Text>
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
+                <View className="mt-1 flex-1 justify-center items-center">
+                  <MapPin height={40} width={40} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+                  <Text className="mt-4 font-inter-semibold text-[16px] text-[#979797]">
+                    Location not selected
+                  </Text>
                 </View>
               )}
             </View>
-          </View>
-        )}
 
-        {/* Description */}
-        <View className='mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
-          <View className='w-full flex-row justify-between items-center '>
-            <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>{t('booking_description')}</Text>
           </View>
 
-          <View className='flex-1 w-full mt-6'>
-            {editMode ? (
-              <TextInput
-                value={edited.description || ''}
-                onChangeText={(text) => setEdited({ ...edited, description: text })}
-                multiline
-                className='w-full min-h-[150px] bg-[#f2f2f2] dark:bg-[#272626] rounded-2xl py-4 px-5 text-[15px] text-[#515150] dark:text-[#d4d4d3]'
-                style={{ textAlignVertical: 'top' }}
-              />
-            ) : (
-              <Text className='font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]'>{booking.description || '-'}</Text>
-            )}
+          {/* Price details */}
+          <View className='mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
+            <View className='w-full flex-row justify-between items-center '>
+              <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Price details</Text>
+            </View>
+
+            <View className='mt-5 px-3 flex-1'>
+              <View className='flex-1 justify-center items-center'>
+                {pricing.type === 'hour' && (
+                  <>
+                    {selectedTimeUndefined ? (
+                      <>
+                        <View className='flex-row'>
+                          <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                            Service price x ?h
+                          </Text>
+                          <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                            {'.'.repeat(80)}
+                          </Text>
+                          <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>? €</Text>
+                        </View>
+
+                        <View className='mt-3 flex-row'>
+                          <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Quality commission</Text>
+                          <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                            {'.'.repeat(80)}
+                          </Text>
+                          <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                            {formatCurrency(1, pricing.currency)}
+                          </Text>
+                        </View>
+
+                        <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]' />
+
+                        <View className='mt-4 flex-row'>
+                          <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Final price</Text>
+                          <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                            {'.'.repeat(80)}
+                          </Text>
+                          <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                            ? € + {formatCurrency(1, pricing.currency)}
+                          </Text>
+                        </View>
+
+                        <View className='mt-4 flex-row'>
+                          <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Deposit</Text>
+                          <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                            {'.'.repeat(80)}
+                          </Text>
+                          <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                            {formatCurrency(1, pricing.currency)}
+                          </Text>
+                        </View>
+                      </>
+                    ) : (
+                      <>
+                        <View className='flex-row'>
+                          <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                            Service price x {formatHMh(pricing.minutes)}
+                          </Text>
+                          <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                            {'.'.repeat(80)}
+                          </Text>
+                          <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                            {formatCurrency(pricing.base, pricing.currency)}
+                          </Text>
+                        </View>
+
+                        <View className='mt-3 flex-row'>
+                          <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Quality commission</Text>
+                          <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                            {'.'.repeat(80)}
+                          </Text>
+                          <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                            {formatCurrency(pricing.commission, pricing.currency)}
+                          </Text>
+                        </View>
+
+                        <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]' />
+
+                        <View className='mt-4 flex-row'>
+                          <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Final price</Text>
+                          <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                            {'.'.repeat(80)}
+                          </Text>
+                          <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                            {formatCurrency(pricing.final, pricing.currency)}
+                          </Text>
+                        </View>
+
+                        <View className='mt-4 flex-row'>
+                          <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Deposit</Text>
+                          <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                            {'.'.repeat(80)}
+                          </Text>
+                          <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                            {formatCurrency(pricing.commission, pricing.currency)}
+                          </Text>
+                        </View>
+                      </>
+                    )}
+                  </>
+                )}
+
+                {pricing.type === 'fix' && (
+                  <>
+                    <View className='flex-row'>
+                      <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Fixed price</Text>
+                      <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                        {formatCurrency(pricing.base, pricing.currency)}
+                      </Text>
+                    </View>
+
+                    <View className='mt-3 flex-row'>
+                      <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Quality commission</Text>
+                      <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                        {formatCurrency(pricing.commission, pricing.currency)}
+                      </Text>
+                    </View>
+
+                    <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]' />
+
+                    <View className='mt-4 flex-row'>
+                      <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Final price</Text>
+                      <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                        {formatCurrency(pricing.final, pricing.currency)}
+                      </Text>
+                    </View>
+
+                    <View className='mt-4 flex-row'>
+                      <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Deposit</Text>
+                      <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                        {formatCurrency(pricing.commission, pricing.currency)}
+                      </Text>
+                    </View>
+                  </>
+                )}
+
+                {pricing.type === 'budget' && (
+                  <>
+                    <View className='flex-row'>
+                      <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Service price</Text>
+                      <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>budget</Text>
+                    </View>
+
+                    <View className='mt-3 flex-row'>
+                      <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Deposit</Text>
+                      <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                        {formatCurrency(pricing.commission, pricing.currency)}
+                      </Text>
+                    </View>
+
+                    <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]' />
+
+                    <View className='mt-4 flex-row'>
+                      <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Final price</Text>
+                      <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                        {'.'.repeat(80)}
+                      </Text>
+                      <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                        {pricing.type === "budget" ? "budget+" : ""}{formatCurrency(pricing.final, pricing.currency)}
+                      </Text>
+                    </View>
+                  </>
+                )}
+              </View>
+            </View>
           </View>
-        </View>
+
+          {/* Payment Method */}
+          {role === 'client' && showServiceFinished && (
+            <View className='mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
+              <View className='w-full flex-row justify-between items-center '>
+                <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Payment method</Text>
+                {editMode && paymentMethod && (
+                  <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'BookingDetails', bookingId, role })}>
+                    <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              <View className='mt-4 flex-1'>
+                {paymentMethod ? (
+                  <View className='flex-1 my-3 justify-center items-center '>
+                    <View className='px-7 pb-5 pt-[50px] bg-[#EEEEEE] dark:bg-[#111111] rounded-xl'>
+                      <Text>
+                        <Text className='font-inter-medium text-[16px] text-[#444343] dark:text-[#f2f2f2]'>••••   ••••   ••••   </Text>
+                        <Text className='font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.last4}</Text>
+                      </Text>
+
+                      <View className='mt-6 flex-row justify-between items-center'>
+                        <View className='flex-row items-center'>
+                          <View className='justify-center items-center'>
+                            <Text className='font-inter-medium text-[12px] text-[#444343] dark:text-[#f2f2f2]'>{paymentMethod.expiryMonth}/{paymentMethod.expiryYear}</Text>
+                          </View>
+                        </View>
+
+                        <View className='h-5 w-8 bg-[#fcfcfc] dark:bg-[#323131] rounded-md' />
+                      </View>
+                    </View>
+                  </View>
+                ) : (
+                  <View className='mt-1 flex-1 justify-center items-center'>
+                    <CreditCard height={55} width={55} strokeWidth={1.3} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+                    <View className='flex-row justify-center items-center px-6'>
+                      <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'BookingDetails', bookingId, role })} style={{ opacity: 1 }} className='bg-[#706f6e] my-2 mt-3 dark:bg-[#b6b5b5] w-full py-[14px] rounded-full items-center justify-center'>
+                        <Text>
+                          <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                            {t('add_credit_card')}
+                          </Text>
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
+              </View>
+            </View>
+          )}
+
+          {/* Description */}
+          <View className='mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
+            <View className='w-full flex-row justify-between items-center '>
+              <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>{t('booking_description')}</Text>
+            </View>
+
+            <View className='flex-1 w-full mt-6'>
+              {editMode ? (
+                <TextInput
+                  value={edited.description || ''}
+                  onChangeText={(text) => setEdited({ ...edited, description: text })}
+                  multiline
+                  className='w-full min-h-[150px] bg-[#f2f2f2] dark:bg-[#272626] rounded-2xl py-4 px-5 text-[15px] text-[#515150] dark:text-[#d4d4d3]'
+                  style={{ textAlignVertical: 'top' }}
+                />
+              ) : (
+                <Text className='font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]'>{booking.description || '-'}</Text>
+              )}
+            </View>
+          </View>
 
 
-      </ScrollView>
+        </ScrollView>
 
         {editMode ? (
-        <View className='px-6 pb-4'>
-          <TouchableOpacity onPress={saveChanges} className='mt-2 mb-4 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
-            <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-              {t('save_changes')}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View className='px-6 pb-4'>
-          {isBookingInactive() ? (
-            <>
+          <View className='px-6 pb-4'>
+            <TouchableOpacity onPress={saveChanges} className='mt-2 mb-4 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
+              <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                {t('save_changes')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View className='px-6 pb-4'>
+            {isBookingInactive() ? (
+              <>
+                <TouchableOpacity disabled className='mt-2 flex-row bg-[#3D3D3D] dark:bg-[#E0E0E0] rounded-full items-center justify-center py-[18px] opacity-[.5]'>
+                  <LockClosedIcon strokeWidth={2.1} size={18} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
+                  <Text className='ml-2 font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                    {getInactiveMessage()}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={deleteBooking} className='mt-4 justify-center items-center w-full'>
+                  <Text className='font-inter-semibold text-[15px] text-[#ff633e]/50'>{t('delete_booking')}</Text>
+                </TouchableOpacity>
+              </>
+            ) : booking.is_paid ? (
               <TouchableOpacity disabled className='mt-2 flex-row bg-[#3D3D3D] dark:bg-[#E0E0E0] rounded-full items-center justify-center py-[18px] opacity-[.5]'>
                 <LockClosedIcon strokeWidth={2.1} size={18} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
                 <Text className='ml-2 font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                  {getInactiveMessage()}
+                  {t('finished_paid')}
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={deleteBooking} className='mt-4 justify-center items-center w-full'>
-                <Text className='font-inter-semibold text-[15px] text-[#ff633e]/50'>{t('delete_booking')}</Text>
-              </TouchableOpacity>
-            </>
-          ) : booking.is_paid ? (
-            <TouchableOpacity disabled className='mt-2 flex-row bg-[#3D3D3D] dark:bg-[#E0E0E0] rounded-full items-center justify-center py-[18px] opacity-[.5]'>
-              <LockClosedIcon strokeWidth={2.1} size={18} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
-              <Text className='ml-2 font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                {t('finished_paid')}
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            <>
-              {showServiceFinished ? (
-                role === 'pro' ? (
-                  <TouchableOpacity disabled className='mt-2 flex-row bg-[#3D3D3D] dark:bg-[#E0E0E0] rounded-full items-center justify-center py-[18px] opacity-[.5]'>
-                    <ClockIcon strokeWidth={2.1} size={18} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
-                    <Text className='ml-2 font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                      {t('waiting_final_payment')}
-                    </Text>
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    onPress={handleFinalPayment}
-                    className='mt-2 mb-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'
-                    style={{
-                      opacity: 1,
-                      shadowColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131',
-                      shadowOffset: { width: 0, height: 0 },
-                      shadowOpacity: 0.6,
-                      shadowRadius: 10,
-                      elevation: 10,
-                    }}>
-                    <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                      {t('final_payment')}
-                    </Text>
-                  </TouchableOpacity>
-                )
-              ) : (
-                <TouchableOpacity onPress={startChat} className='mt-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
-                  <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                    {t('write')}
-                  </Text>
-                </TouchableOpacity>
-              )}
-
-              {role !== 'pro' || booking.booking_status !== 'requested' ? (
-                showInProgress ? (
-                  <TouchableOpacity onPress={() => updateStatus('completed')} className='mt-4 justify-center items-center w-full'>
-                    <Text className='font-inter-semibold text-[15px] text-[#979797]'>
-                      {t('service_completed')}
-                    </Text>
-                  </TouchableOpacity>
-                ) : (
-                  !showServiceFinished && (
-                    <TouchableOpacity onPress={confirmCancel} className='mt-4 justify-center items-center w-full'>
-                      <Text className='font-inter-semibold text-[15px] text-[#ff633e]/50'>{t('cancel_booking')}</Text>
+            ) : (
+              <>
+                {showServiceFinished ? (
+                  role === 'pro' ? (
+                    <TouchableOpacity disabled className='mt-2 flex-row bg-[#3D3D3D] dark:bg-[#E0E0E0] rounded-full items-center justify-center py-[18px] opacity-[.5]'>
+                      <ClockIcon strokeWidth={2.1} size={18} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
+                      <Text className='ml-2 font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                        {t('waiting_final_payment')}
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={handleFinalPayment}
+                      className='mt-2 mb-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'
+                      style={{
+                        opacity: 1,
+                        shadowColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131',
+                        shadowOffset: { width: 0, height: 0 },
+                        shadowOpacity: 0.6,
+                        shadowRadius: 10,
+                        elevation: 10,
+                      }}>
+                      <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                        {t('final_payment')}
+                      </Text>
                     </TouchableOpacity>
                   )
-                )
-              ) : null}
-
-              {role === 'pro' && booking.booking_status === 'requested' && (
-                <View className='flex-row justify-between mt-3'>
-                  <TouchableOpacity onPress={() => updateStatus('rejected')} className='flex-[1px] mr-1 bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-full items-center py-[18px]'>
-                    <Text className='font-inter-semibold text-[15px] text-[#fcfcfc]'>
-                      {t('reject')}
+                ) : (
+                  <TouchableOpacity onPress={startChat} className='mt-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
+                    <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                      {t('write')}
                     </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => updateStatus('accepted')} className='flex-[2px] ml-1 bg-[#74A34F] rounded-full items-center py-[18px]'>
-                    <Text className='font-inter-semibold text-[15px] text-[#fcfcfc]'>
-                      {t('accept')}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </>
-          )}
-        </View>
+                )}
 
-      )}
-    </SafeAreaView>
-    <ModalMessage
-      visible={paymentErrorVisible}
-      title={t('payment_error')}
-      description={t('payment_error_description')}
-      showCancel={false}
-      confirmText={t('ok')}
-      onConfirm={() => setPaymentErrorVisible(false)}
-    />
+                {role !== 'pro' || booking.booking_status !== 'requested' ? (
+                  showInProgress ? (
+                    <TouchableOpacity onPress={() => updateStatus('completed')} className='mt-4 justify-center items-center w-full'>
+                      <Text className='font-inter-semibold text-[15px] text-[#979797]'>
+                        {t('service_completed')}
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    !showServiceFinished && (
+                      <TouchableOpacity onPress={confirmCancel} className='mt-4 justify-center items-center w-full'>
+                        <Text className='font-inter-semibold text-[15px] text-[#ff633e]/50'>{t('cancel_booking')}</Text>
+                      </TouchableOpacity>
+                    )
+                  )
+                ) : null}
+
+                {role === 'pro' && booking.booking_status === 'requested' && (
+                  <View className='flex-row justify-between mt-3'>
+                    <TouchableOpacity onPress={() => updateStatus('rejected')} className='flex-[1px] mr-1 bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-full items-center py-[18px]'>
+                      <Text className='font-inter-semibold text-[15px] text-[#fcfcfc]'>
+                        {t('reject')}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => updateStatus('accepted')} className='flex-[2px] ml-1 bg-[#74A34F] rounded-full items-center py-[18px]'>
+                      <Text className='font-inter-semibold text-[15px] text-[#fcfcfc]'>
+                        {t('accept')}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </>
+            )}
+          </View>
+
+        )}
+      </SafeAreaView>
+      <ModalMessage
+        visible={paymentErrorVisible}
+        title={t('payment_error')}
+        description={t('payment_error_description')}
+        showCancel={false}
+        confirmText={t('ok')}
+        onConfirm={() => setPaymentErrorVisible(false)}
+      />
     </>
   );
 }
