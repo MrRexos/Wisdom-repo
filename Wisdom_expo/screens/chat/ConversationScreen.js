@@ -14,6 +14,8 @@ import {
   Linking,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
+  Keyboard 
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -75,6 +77,7 @@ export default function ConversationScreen() {
   // • STATE
   // ---------------------------------------------------------------------------
   const route = useRoute();
+  const [composerHeight, setComposerHeight] = useState(80); // valor inicial aprox.
   const { conversationId, participants, name } = route.params;
   const [text, setText] = useState('');
   const [messages, setMessages] = useState([]);
@@ -85,6 +88,7 @@ export default function ConversationScreen() {
   const [selectedMsg, setSelectedMsg] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [replyTo, setReplyTo] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
   const otherUserId = participants?.find((id) => id !== userId);
   const msgSheet = useRef(null);
   const convSheet = useRef(null);
@@ -157,9 +161,14 @@ export default function ConversationScreen() {
     loadInfo();
   }, [otherUserId]);
 
+
+
+
   useEffect(() => {
     if (flatListRef.current && messages.length > 0) {
       flatListRef.current.scrollToEnd({ animated: false });
+      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: false }), 500);
+      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: false }), 1000);
     }
   }, [messages]);
 
@@ -198,6 +207,11 @@ export default function ConversationScreen() {
   // • ACTIONS
   // ---------------------------------------------------------------------------
   const handleSend = async () => {
+
+    if (attachment) {
+      setIsUploading(true);
+    }
+    
     const trimmed = text.trim();
     if (!attachment && trimmed && containsContactInfo(trimmed)) {
       Alert.alert(t('contact_not_allowed'));
@@ -256,8 +270,10 @@ export default function ConversationScreen() {
         );
     
         setAttachment(null);
+        setIsUploading(false);
       } catch (err) {
         console.error('Error subiendo archivo', err);
+        setIsUploading(false);
         // aquí podrías notificar al usuario
       }
     
@@ -270,6 +286,7 @@ export default function ConversationScreen() {
         replyTo: replyData,
       };
       await addDoc(collection(db, 'conversations', conversationId, 'messages'), newMsg);
+      setIsUploading(false);
       await setDoc(
         doc(db, 'conversations', conversationId),
         {
@@ -299,6 +316,7 @@ export default function ConversationScreen() {
       const asset = result.assets[0];
       setAttachment({ type: 'image', uri: asset.uri, name: asset.fileName || 'image.jpg' });
       attachSheet.current.close();
+
     }
     
   };
@@ -402,7 +420,7 @@ export default function ConversationScreen() {
             {content}
             {lastOfStreak && (
               <View className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}>
-                {item.fromMe && (item.read ? <DoubleCheck height={16} width={16} color={statusReadColor} /> : <Check height={16} width={16} color={statusUnreadColor} strokeWidth={3} />)}
+                {item.fromMe && (item.read ? <DoubleCheck height={16} width={16} color={statusReadColor} /> : <DoubleCheck height={16} width={16} color={statusUnreadColor} strokeWidth={3} />)}
                 <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
                   {item.createdAt && new Date(item.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </Text>
@@ -456,7 +474,7 @@ export default function ConversationScreen() {
             {content}
             {lastOfStreak && (
               <View className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}>
-                {item.fromMe && (item.read ? <DoubleCheck height={16} width={16} color={statusReadColor} /> : <Check height={16} width={16} color={statusUnreadColor} strokeWidth={3} />)}
+                {item.fromMe && (item.read ? <DoubleCheck height={16} width={16} color={statusReadColor} /> : <DoubleCheck height={16} width={16} color={statusUnreadColor} strokeWidth={3} />)}
                 <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
                   {item.createdAt && new Date(item.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </Text>
@@ -504,7 +522,7 @@ export default function ConversationScreen() {
           {content}
           {lastOfStreak && (
             <View className={`flex-row items-center mt-0.5 mb-2 ${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'}`}>
-              {item.fromMe && (item.read ? <DoubleCheck height={16} width={16} color={statusReadColor} /> : <Check height={16} width={16} color={statusUnreadColor} strokeWidth={3} />)}
+              {item.fromMe && (item.read ? <DoubleCheck height={16} width={16} color={statusReadColor} /> : <DoubleCheck height={16} width={16} color={statusUnreadColor} strokeWidth={3} />)}
               <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
                 {item.createdAt && new Date(item.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </Text>
@@ -557,15 +575,22 @@ export default function ConversationScreen() {
         <FlatList
           ref={flatListRef}
           data={messages}
+          automaticallyAdjustKeyboardInsets={true}
+          keyboardShouldPersistTaps="handled"
           keyExtractor={(item) => item.id}
           renderItem={renderMessage}
-          contentContainerStyle={{ padding: 16 }}
+          contentContainerStyle={{ paddingTop: 16, paddingBottom: 10}}
           showsVerticalScrollIndicator={false}
           onContentSizeChange={() =>
             flatListRef.current?.scrollToEnd({ animated: false })
+          
           }
+          onLayout={() => flatListRef.current?.scrollToEnd({ animated: false })}
+          
+          
 
         />
+        
       </View>
 
       {/* Composer ------------------------------------------------------------ */}
@@ -643,13 +668,19 @@ export default function ConversationScreen() {
             <View className="self-stretch items-center justify-end">
               <TouchableOpacity
                 onPress={handleSend}
-                disabled={!text.trim() && !attachment}
+                disabled={(!text.trim() && !attachment) || isUploading}
                 className={`h-8 w-8 my-2 rounded-full items-center justify-center
                             ${text.trim() || attachment
                     ? 'bg-[#323131] dark:bg-[#fcfcfc]'
                     : 'bg-[#d4d4d3] dark:bg-[#474646]'}`}
               >
-                <ArrowUpIcon
+                {isUploading ? (
+    <ActivityIndicator 
+      size="small" 
+      color="#FFFFFF" 
+    />
+  ) : (
+    <ArrowUpIcon
                   height={16}
                   width={16}
                   strokeWidth={3}
@@ -659,6 +690,8 @@ export default function ConversationScreen() {
                       : '#ffffff'
                   }
                 />
+  )}
+                
               </TouchableOpacity>
             </View>
           </View>
@@ -683,11 +716,11 @@ export default function ConversationScreen() {
         }}
       >
         <View className="py-4 px-7 space-y-4">
-          <TouchableOpacity onPress={handleImagePick} className="py-2 flex-row justify-start items-center ">
+          <TouchableOpacity onPress={handleImagePick} className="py-4 flex-row justify-start items-center ">
             <ImageIcon height={24} width={24} color={iconColor} strokeWidth={2} />
             <Text className=" ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_image')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleFilePick} className="py-1 flex-row justify-start items-center">
+          <TouchableOpacity onPress={handleFilePick} className="py-3 flex-row justify-start items-center">
             <Folder height={24} width={24} color={iconColor} strokeWidth={2} />
             <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_file')}</Text>
           </TouchableOpacity>
