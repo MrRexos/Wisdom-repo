@@ -233,18 +233,18 @@ export default function BookingDetailsScreen() {
   const formatCurrency = (value, currency = 'EUR') => {
     if (value === null || value === undefined) return '';
     const symbol = (typeof currencySymbols === 'object' && currencySymbols[currency]) ? currencySymbols[currency] : '€';
-  
+
     const n = Number(value);
     if (!Number.isFinite(n)) return '';
-  
+
     const s = n.toLocaleString('es-ES', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     });
-  
+
     return `${s} ${symbol}`;
   };
-  
+
   const pricing = useMemo(() => {
     const type = priceSource?.price_type;
     const unit = Number.parseFloat(priceSource?.price) || 0;
@@ -367,6 +367,14 @@ export default function BookingDetailsScreen() {
       minute: '2-digit',
     });
   };
+
+  const isStartDefinedButNoEndAndNoDuration = useMemo(() => {
+    if (!booking) return false;
+    const hasStart = Boolean(booking.booking_start_datetime);
+    const noEnd = booking.booking_end_datetime === null || booking.booking_end_datetime === undefined;
+    const noDuration = booking.service_duration === null || booking.service_duration === undefined;
+    return hasStart && noEnd && noDuration;
+  }, [booking]);
 
   const saveChanges = async () => {
     try {
@@ -854,11 +862,15 @@ export default function BookingDetailsScreen() {
                       <Text className='ml-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]'>{formatDate(selectedDay)}</Text>
                     </View>
                     <View className='justify-end items-center'>
-                      <Text className='font-inter-semibold text-[14px] text-[#515150] dark:text-[#979797]'>{formatDuration(selectedDuration)}</Text>
+                      <Text className='font-inter-semibold text-[14px] text-[#515150] dark:text-[#979797]'>
+                        {isStartDefinedButNoEndAndNoDuration ? 'Undefined' : formatDuration(selectedDuration)}
+                      </Text>
                     </View>
                   </View>
                   <View className='mt-4 justify-end items-center'>
-                    <Text className=' font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]'>{selectedTime} - {getEndTime()}</Text>
+                    <Text className=' font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]'>
+                      {selectedTime} - {isStartDefinedButNoEndAndNoDuration ? '??' : getEndTime()}
+                    </Text>
                   </View>
                 </View>
               ) : (
