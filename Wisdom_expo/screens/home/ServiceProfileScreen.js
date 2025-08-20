@@ -799,7 +799,7 @@ export default function ServiceProfileScreen() {
               <Text className="font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">0</Text>
               <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Services</Text>
             </View>
-            {serviceData.average_rating && (
+            {!!serviceData.average_rating && (
               <View className="flex-1 justify-center items-center ">
                 <View className="flex-row justify-center items-center">
                   <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 1.3 }] }} />
@@ -848,7 +848,7 @@ export default function ServiceProfileScreen() {
 
         {/* Galery */}
 
-        {serviceData.images && (
+        {Array.isArray(serviceData.images) && serviceData.images.length > 0 && (
           <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
             <View className="mb-5 w-full flex-row justify-between items-center">
@@ -922,7 +922,7 @@ export default function ServiceProfileScreen() {
 
         {/* Tags and habilities */}
 
-        {serviceData.tags && (
+        {Array.isArray(serviceData.tags) && serviceData.tags.length > 0 && (
 
           <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
@@ -947,14 +947,14 @@ export default function ServiceProfileScreen() {
           <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Personal information</Text>
 
 
-          {serviceData.languages && (
+          {Array.isArray(serviceData.languages) && serviceData.languages.length > 0 && (
             <Text>
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Languages: </Text>
               <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{formatLanguages(serviceData.languages)}</Text>
             </Text>
           )}
 
-          {serviceData.hobbies && (
+          {typeof serviceData.hobbies === 'string' && serviceData.hobbies.trim().length > 0 && (
             <Text className="mt-4">
               <Text className="mt-2 font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Hobbies: </Text>
               <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{serviceData.hobbies}</Text>
@@ -973,7 +973,7 @@ export default function ServiceProfileScreen() {
 
           {/* Experiences */}
 
-          {serviceData.experiences && (
+          {Array.isArray(serviceData.experiences) && serviceData.experiences.length > 0 && (
 
             <View >
 
@@ -1083,7 +1083,7 @@ export default function ServiceProfileScreen() {
 
         {/* Rating and reviews */}
 
-        {serviceData.reviews && (
+        {Array.isArray(serviceData.reviews) && serviceData.reviews.length > 0 && (
 
           <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
@@ -1200,7 +1200,7 @@ export default function ServiceProfileScreen() {
 
         {/* Consult */}
 
-        {(serviceData.user_can_ask || serviceData.user_can_consult) && (
+        {!!(serviceData.user_can_ask === 1 || serviceData.user_can_consult === 1) && (
 
           <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 

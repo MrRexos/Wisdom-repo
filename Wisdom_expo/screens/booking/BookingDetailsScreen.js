@@ -90,7 +90,7 @@ export default function BookingDetailsScreen() {
         data.booking_end_datetime &&
         new Date(data.booking_end_datetime) < new Date(getLocalDate(new Date()))
       ) {
-        await api.patch(`/api/bookings/${bookingId}/status`, { status: 'completed' });
+        await api.patch(`/api/bookings/${bookingId}/update-data`, { status: 'completed' });
         data.booking_status = 'completed';
       }
       setBooking(data);
@@ -407,7 +407,7 @@ export default function BookingDetailsScreen() {
   const updateStatus = async (status) => {
     try {
       const payload = { status };
-      await api.patch(`/api/bookings/${bookingId}/status`, payload);
+      await api.patch(`/api/bookings/${bookingId}/update-data`, payload);
 
       if (status === 'accepted' && (!booking || !booking.booking_start_datetime)) {
         const startDate = getLocalDateSql(new Date());
