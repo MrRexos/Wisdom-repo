@@ -64,6 +64,7 @@ export default function ServicesScreen() {
     const loadBookings = async () => {
       const bookingsData = await fetchBookings(selectedStatus);
       setBookings(bookingsData);
+      console.log(bookingsData);
     };
     loadBookings();
   }, [selectedStatus]);
@@ -114,7 +115,7 @@ export default function ServicesScreen() {
             <Text
               className={`font-inter-bold ${item.final_price ? 'text-[16px]' : 'text-[12px]'} text-[#444343] dark:text-[#f2f2f2]`}
             >
-              {item.final_price ? `${parseFloat(item.final_price).toFixed(0)} €` : t('on_budget')}
+              {item.final_price ? `${parseFloat(item.final_price).toFixed(2)} €` : t('pending')}
             </Text>
           </View>
         </View>

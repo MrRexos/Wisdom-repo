@@ -105,15 +105,15 @@ export default function BookingScreen() {
   const formatCurrency = (value, currency = 'EUR') => {
     if (value === null || value === undefined) return '';
     const symbol = (typeof currencySymbols === 'object' && currencySymbols[currency]) ? currencySymbols[currency] : '€';
-  
+
     const n = Number(value);
     if (!Number.isFinite(n)) return '';
-  
+
     const s = n.toLocaleString('es-ES', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     });
-  
+
     return `${s} ${symbol}`;
   };
 
@@ -418,6 +418,7 @@ export default function BookingScreen() {
   }
 
   const pricing = useMemo(() => {
+
     const type = serviceData?.price_type;
     const unit = Number.parseFloat(serviceData?.price) || 0;
     const minutes = Math.max(0, Math.round(Number(duration) || 0));
@@ -427,14 +428,33 @@ export default function BookingScreen() {
     if (type === 'hour') base = unit * hours;
     else if (type === 'fix') base = unit;
     base = round2(base);
-    console.log(base)
-
-    // En budget el depósito es 1 y mostramos final=1 para que coincida con la UI
+    // En budget el depósito es 1
     const commission = type === 'budget' ? 1 : Math.max(1, round1(base * 0.1));
-    const final = type === 'budget' ? commission : round2(base + commission);
+    // Si no hay duración (minutes=0) y el tipo es 'hour' o 'budget', final debe ser null
+    const shouldNullFinal = (type === 'hour' || type === 'budget') && minutes <= 0;
+    const final = shouldNullFinal ? null : (type === 'budget' ? commission : round2(base + commission));
 
     return { base, commission, final, minutes };
   }, [serviceData?.price_type, serviceData?.price, selectedDuration, duration]);
+
+  // Estados derivados para el bloque de fecha/hora (mismo diseño que en BookingDetails)
+  const isStartDefinedButNoEndAndNoDuration = useMemo(() => {
+    const hasStart = Boolean(startDate && startTime);
+    const noDuration = duration === null || duration === undefined;
+    const noEnd = !(duration && startDate && startTime);
+    return hasStart && noEnd && noDuration;
+  }, [startDate, startTime, duration]);
+
+  const areStartEndSameDay = useMemo(() => {
+    try {
+      if (!startDate || !startTime || !duration) return true;
+      const endSql = calculateEndDateTime();
+      const endDateStr = endSql.split(' ')[0];
+      return String(startDate) === String(endDateStr);
+    } catch {
+      return true;
+    }
+  }, [startDate, startTime, duration]);
 
   const createBooking = async () => {
 
@@ -934,24 +954,44 @@ export default function BookingScreen() {
 
             {!selectedTimeUndefined ? (
               <View className="flex-1 justify-center items-center">
-
-                <View className="w-full flex-row justify-between items-center">
-
-                  <View className="flex-row justify-start items-center">
-                    <CalendarIcon height={15} width={15} color={colorScheme === 'dark' ? '#d4d4d3' : '#515150'} strokeWidth={2.2} />
-                    <Text className="ml-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]">{formatDate(startDate)}</Text>
-                  </View>
-
-                  <View className="justify-end items-center">
-                    <Text className="font-inter-semibold text-[14px] text-[#515150] dark:text-[#979797]">{formatDuration(duration)}</Text>
-                  </View>
-
-                </View>
-
-                <View className="mt-4 justify-end items-center">
-                  <Text className=" font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]">{startTime} - {getEndTime()}</Text>
-                </View>
-
+                {startDate && startTime ? (
+                  areStartEndSameDay ? (
+                    <>
+                      <View className="w-full flex-row justify-between items-center">
+                        <View className="flex-row justify-start items-center">
+                          <CalendarIcon height={15} width={15} color={colorScheme === 'dark' ? '#d4d4d3' : '#515150'} strokeWidth={2.2} />
+                          <Text className="ml-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]">{formatDate(startDate)}</Text>
+                        </View>
+                        <View className="justify-end items-center">
+                          <Text className="font-inter-semibold text-[14px] text-[#515150] dark:text-[#979797]">
+                            {startTime} - {isStartDefinedButNoEndAndNoDuration ? '??' : getEndTime()}
+                          </Text>
+                        </View>
+                      </View>
+                      <View className="mt-4 justify-end items-center">
+                        <Text className=" font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]">
+                          {isStartDefinedButNoEndAndNoDuration ? t('undefined_time') : formatDuration(duration)}
+                        </Text>
+                      </View>
+                    </>
+                  ) : (
+                    <>
+                      <View className='w-full justify-center items-center'>
+                        <Text className='mb-2 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]'>
+                          {formatDate(startDate)}{' · '}{startTime}
+                        </Text>
+                        <View style={{ width: 2, height: 18, backgroundColor: colorScheme === 'dark' ? '#d4d4d3' : '#515150' }} />
+                        <Text className='mt-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]'>
+                          {calculateEndDateTime().split(' ')[0] ? formatDate(calculateEndDateTime().split(' ')[0]) : ''}
+                          {' · '}{getEndTime()}
+                        </Text>
+                        <View className="mt-4 justify-end items-center">
+                          <Text className=" font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]">{formatDuration(duration)}</Text>
+                        </View>
+                      </View>
+                    </>
+                  )
+                ) : null}
               </View>
             ) : (
 

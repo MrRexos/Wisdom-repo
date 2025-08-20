@@ -77,6 +77,7 @@ import DisplayReviewsScreen from '../screens/home/DisplayReviewsScreen';
 import AddReviewScreen from '../screens/home/AddReviewScreen';
 import EnlargedImageScreen from '../screens/home/EnlargedImageScreen';
 import BookingDetailsScreen from '../screens/booking/BookingDetailsScreen';
+import SetFinalPriceScreen from '../screens/booking/SetFinalPriceScreen';
 import CalendarProScreen from '../screens/professional/CalendarProScreen';
 import ListingsProScreen from '../screens/professional/ListingsProScreen';
 import SettingsProScreen from '../screens/professional/SettingsProScreen';
@@ -127,7 +128,7 @@ const linking = {
 
 export default function Navigation() {
   return (
-    <NavigationContainer  linking={linking}>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="WelcomeVideo" component={WelcomeVideoScreen} options={{ gestureEnabled: false }} />
         <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'none', gestureEnabled: false }} />
@@ -184,6 +185,7 @@ export default function Navigation() {
         <Stack.Screen name="AddReview" component={AddReviewScreen} />
         <Stack.Screen name="EnlargedImage" component={EnlargedImageScreen} />
         <Stack.Screen name="BookingDetails" component={BookingDetailsScreen} />
+        <Stack.Screen name="SetFinalPrice" component={SetFinalPriceScreen} />
         <Stack.Screen name="CalendarPro" component={CalendarProScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="ListingsPro" component={ListingsProScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="SettingsPro" component={SettingsProScreen} options={{ animation: 'none', gestureEnabled: false }} />
@@ -200,14 +202,14 @@ export default function Navigation() {
         <Stack.Screen name="ExpertPlans" component={ExpertPlansScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="FAQ" component={FAQScreen} />
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
-        <Stack.Screen name="CollectionMethodName" component={CollectionMethodNameScreen} options={{ animation: 'none', gestureEnabled: false }}/>
-        <Stack.Screen name="CollectionMethodBirth" component={CollectionMethodBirthScreen} options={{ animation: 'none', gestureEnabled: false }}/>
-        <Stack.Screen name="CollectionMethodDni" component={CollectionMethodDniScreen} options={{ animation: 'none', gestureEnabled: false }}/>
-        <Stack.Screen name="CollectionMethodPhone" component={CollectionMethodPhoneScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CollectionMethodName" component={CollectionMethodNameScreen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CollectionMethodBirth" component={CollectionMethodBirthScreen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CollectionMethodDni" component={CollectionMethodDniScreen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CollectionMethodPhone" component={CollectionMethodPhoneScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="DniCamera" component={DniCameraScreen} options={{ animation: 'none', gestureEnabled: false }} />
-        <Stack.Screen name="CollectionMethodIban" component={CollectionMethodIbanScreen} options={{ animation: 'none', gestureEnabled: false }}/>
-        <Stack.Screen name="CollectionMethodDirection" component={CollectionMethodDirectionScreen} options={{ animation: 'none', gestureEnabled: false }}/>
-        <Stack.Screen name="CollectionMethodConfirm" component={CollectionMethodConfirmScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+        <Stack.Screen name="CollectionMethodIban" component={CollectionMethodIbanScreen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CollectionMethodDirection" component={CollectionMethodDirectionScreen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="CollectionMethodConfirm" component={CollectionMethodConfirmScreen} options={{ animation: 'none', gestureEnabled: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -583,13 +585,13 @@ function SettingsStackNavigator() {
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="Directions" component={DirectionsScreen} />
       <Stack.Screen name="AddDirection" component={SearchDirectionScreen} />
-      <Stack.Screen name="CollectionMethodName" component={CollectionMethodNameScreen} options={{ animation: 'none', gestureEnabled: false }}/>
-      <Stack.Screen name="CollectionMethodBirth" component={CollectionMethodBirthScreen} options={{ animation: 'none', gestureEnabled: false }}/>
-      <Stack.Screen name="CollectionMethodDni" component={CollectionMethodDniScreen} options={{ animation: 'none', gestureEnabled: false }}/>
-      <Stack.Screen name="CollectionMethodPhone" component={CollectionMethodPhoneScreen} options={{ animation: 'none', gestureEnabled: false }}/>
-      <Stack.Screen name="CollectionMethodIban" component={CollectionMethodIbanScreen} options={{ animation: 'none', gestureEnabled: false }}/>
-      <Stack.Screen name="CollectionMethodDirection" component={CollectionMethodDirectionScreen} options={{ animation: 'none', gestureEnabled: false }}/>
-      <Stack.Screen name="CollectionMethodConfirm" component={CollectionMethodConfirmScreen} options={{ animation: 'none', gestureEnabled: false }}/>
+      <Stack.Screen name="CollectionMethodName" component={CollectionMethodNameScreen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CollectionMethodBirth" component={CollectionMethodBirthScreen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CollectionMethodDni" component={CollectionMethodDniScreen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CollectionMethodPhone" component={CollectionMethodPhoneScreen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CollectionMethodIban" component={CollectionMethodIbanScreen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CollectionMethodDirection" component={CollectionMethodDirectionScreen} options={{ animation: 'none', gestureEnabled: false }} />
+      <Stack.Screen name="CollectionMethodConfirm" component={CollectionMethodConfirmScreen} options={{ animation: 'none', gestureEnabled: false }} />
       <Stack.Screen name="DniCamera" component={DniCameraScreen} options={{ animation: 'none', gestureEnabled: false }} />
     </Stack.Navigator>
   );

@@ -256,9 +256,11 @@ export default function BookingDetailsScreen() {
     else if (type === 'fix') base = unit;
     base = round2(base);
 
-    // En budget el depósito es 1€ y el final mostrado también 1
+    // En budget el depósito es 1€
     const commission = type === 'budget' ? 1 : Math.max(1, round1(base * 0.1));
-    const final = type === 'budget' ? commission : round2(base + commission);
+    // Si no hay duración (minutes=0) y el tipo es 'hour' o 'budget', final debe ser null
+    const shouldNullFinal = (type === 'hour' || type === 'budget') && minutes <= 0;
+    const final = shouldNullFinal ? null : (type === 'budget' ? commission : round2(base + commission));
 
     return { base, commission, final, minutes, type, currency: priceSource?.currency };
   }, [priceSource?.price_type, priceSource?.price, selectedDuration]);
@@ -376,6 +378,24 @@ export default function BookingDetailsScreen() {
     return hasStart && noEnd && noDuration;
   }, [booking]);
 
+  // Caso solicitado: hay inicio y fin definidos, pero la duración es null
+  const isStartAndEndButNoDuration = useMemo(() => {
+    if (!booking) return false;
+    const hasStart = Boolean(booking.booking_start_datetime);
+    const hasEnd = Boolean(booking.booking_end_datetime);
+    const noDuration = booking.service_duration === null || booking.service_duration === undefined;
+    return hasStart && hasEnd && noDuration;
+  }, [booking]);
+
+  // Comprobar si inicio y fin son el mismo día
+  const areStartEndSameDay = useMemo(() => {
+    if (!booking) return true;
+    if (!booking.booking_start_datetime || !booking.booking_end_datetime) return true;
+    const sd = new Date(booking.booking_start_datetime);
+    const ed = new Date(booking.booking_end_datetime);
+    return sd.toDateString() === ed.toDateString();
+  }, [booking]);
+
   const saveChanges = async () => {
     try {
       const id = bookingId || (booking && booking.id);
@@ -422,6 +442,17 @@ export default function BookingDetailsScreen() {
         };
         await api.put(`/api/bookings/${bookingId}`, updatePayload);
         setBooking((prev) => ({ ...prev, booking_start_datetime: startDate, booking_status: status }));
+      }
+
+      // Si se marca como completado, el backend autocompleta booking_end_datetime = NOW() si faltaba.
+      // Si quien finaliza es el profesional y el precio no es fijo, redirigir a la pantalla para indicar el precio final.
+      if (status === 'completed') {
+        if (role === 'pro') {
+          const priceType = (service && service.price_type) || booking?.price_type;
+          if (priceType && priceType !== 'fix') {
+            navigation.navigate('SetFinalPrice', { bookingId });
+          }
+        }
       }
 
       fetchBooking();
@@ -575,6 +606,14 @@ export default function BookingDetailsScreen() {
     booking &&
     booking.booking_status === 'completed' &&
     !booking.is_paid;
+
+  const isFinalPricePending = useMemo(() => {
+    if (!booking) return false;
+    if (booking.booking_status !== 'completed') return false;
+    const fp = Number(booking.final_price || 0);
+    const cm = Number(booking.commission || 0);
+    return !(fp > 0 && cm > 0 && fp >= cm);
+  }, [booking]);
 
   const statusMessage = showServiceFinished
     ? t('service_completed')
@@ -856,22 +895,65 @@ export default function BookingDetailsScreen() {
             <View className='mt-4 flex-1'>
               {selectedTime && !selectedTimeUndefined ? (
                 <View className='flex-1 justify-center items-center'>
-                  <View className='w-full flex-row justify-between items-center'>
-                    <View className='flex-row justify-start items-center'>
-                      <CalendarIcon height={15} width={15} color={colorScheme === 'dark' ? '#d4d4d3' : '#515150'} strokeWidth={2.2} />
-                      <Text className='ml-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]'>{formatDate(selectedDay)}</Text>
-                    </View>
-                    <View className='justify-end items-center'>
-                      <Text className='font-inter-semibold text-[14px] text-[#515150] dark:text-[#979797]'>
-                        {isStartDefinedButNoEndAndNoDuration ? 'Undefined' : formatDuration(selectedDuration)}
-                      </Text>
-                    </View>
-                  </View>
-                  <View className='mt-4 justify-end items-center'>
-                    <Text className=' font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]'>
-                      {selectedTime} - {isStartDefinedButNoEndAndNoDuration ? '??' : getEndTime()}
-                    </Text>
-                  </View>
+                  {areStartEndSameDay ? (
+                    <>
+                      <View className='w-full flex-row justify-between items-center'>
+                        <View className='flex-row justify-start items-center'>
+                          <CalendarIcon height={15} width={15} color={colorScheme === 'dark' ? '#d4d4d3' : '#515150'} strokeWidth={2.2} />
+                          <Text className='ml-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]'>{formatDate(selectedDay)}</Text>
+                        </View>
+                        <View className='justify-end items-center'>
+                          <Text className='font-inter-semibold text-[14px] text-[#515150] dark:text-[#979797]'>
+                            {selectedTime} - {isStartDefinedButNoEndAndNoDuration ? '??' : getEndTime()}
+                          </Text>
+                        </View>
+                      </View>
+                      <View className='mt-4 justify-end items-center'>
+                        <Text className=' font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]'>
+                          {isStartAndEndButNoDuration
+                            ? t('pending')
+                            : (isStartDefinedButNoEndAndNoDuration ? t('undefined_time') : formatDuration(selectedDuration))}
+                        </Text>
+                      </View>
+                    </>
+                  ) : (
+                    <>
+                      {/* Bloque centrado para días distintos */}
+                      <View className='w-full justify-center items-center'>
+                        {/* Fecha inicio · hora */}
+                        <Text className='mb-2 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]'>
+                          {(booking?.booking_start_datetime
+                            ? formatDate(new Date(booking.booking_start_datetime).toISOString().split('T')[0])
+                            : formatDate(selectedDay))}
+                          {` · `}
+                          {(booking?.booking_start_datetime
+                            ? new Date(booking.booking_start_datetime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+                            : selectedTime)}
+                        </Text>
+
+                        {/* Línea vertical */}
+                        <View style={{ width: 2, height: 18, backgroundColor: colorScheme === 'dark' ? '#d4d4d3' : '#515150' }} />
+
+                        {/* Fecha fin · hora */}
+                        <Text className='mt-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]'>
+                          {(booking?.booking_end_datetime
+                            ? formatDate(new Date(booking.booking_end_datetime).toISOString().split('T')[0])
+                            : '')}
+                          {booking?.booking_end_datetime ? ' · ' : ''}
+                          {(booking?.booking_end_datetime
+                            ? new Date(booking.booking_end_datetime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+                            : (isStartDefinedButNoEndAndNoDuration ? '??' : getEndTime()))}
+                        </Text>
+
+                        {/* Duración debajo con estilo de horas */}
+                        <View className='mt-4 justify-end items-center'>
+                          <Text className=' font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]'>
+                            {isStartAndEndButNoDuration ? t('pending') : formatDuration(selectedDuration)}
+                          </Text>
+                        </View>
+                      </View>
+                    </>
+                  )}
                 </View>
               ) : (
                 <View className='mt-1 flex-1 justify-center items-center'>
@@ -1109,8 +1191,8 @@ export default function BookingDetailsScreen() {
             </View>
           </View>
 
-          {/* Payment Method */}
-          {role === 'client' && showServiceFinished && (
+          {/* Payment Method (solo cuando ya hay precio final) */}
+          {role === 'client' && showServiceFinished && !isFinalPricePending && (
             <View className='mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
               <View className='w-full flex-row justify-between items-center '>
                 <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Payment method</Text>
@@ -1215,29 +1297,56 @@ export default function BookingDetailsScreen() {
             ) : (
               <>
                 {showServiceFinished ? (
-                  role === 'pro' ? (
-                    <TouchableOpacity disabled className='mt-2 flex-row bg-[#3D3D3D] dark:bg-[#E0E0E0] rounded-full items-center justify-center py-[18px] opacity-[.5]'>
-                      <ClockIcon strokeWidth={2.1} size={18} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
-                      <Text className='ml-2 font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                        {t('waiting_final_payment')}
-                      </Text>
-                    </TouchableOpacity>
+                  isFinalPricePending ? (
+                    role === 'pro' ? (
+                      <>
+                        <TouchableOpacity
+                          onPress={() => navigation.navigate('SetFinalPrice', { bookingId })}
+                          className='mt-2 mb-2 rounded-full items-center py-[18px]'
+                          style={{ backgroundColor: '#fcfcfc' }}
+                        >
+                          <Text className='font-inter-semibold text-[15px]' style={{ color: '#323131' }}>
+                            {t('indicate_final_price')}
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={startChat} className='mt-4 justify-center items-center w-full'>
+                          <Text className='font-inter-semibold text-[15px] text-[#979797]'>
+                            {t('write')}
+                          </Text>
+                        </TouchableOpacity>
+                      </>
+                    ) : (
+                      <TouchableOpacity disabled className='mt-2 flex-row bg-[#3D3D3D] dark:bg-[#E0E0E0] rounded-full items-center justify-center py-[18px] opacity-[.5]'>
+                        <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                          {t('waiting_final_price')}
+                        </Text>
+                      </TouchableOpacity>
+                    )
                   ) : (
-                    <TouchableOpacity
-                      onPress={handleFinalPayment}
-                      className='mt-2 mb-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'
-                      style={{
-                        opacity: 1,
-                        shadowColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131',
-                        shadowOffset: { width: 0, height: 0 },
-                        shadowOpacity: 0.6,
-                        shadowRadius: 10,
-                        elevation: 10,
-                      }}>
-                      <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                        {t('final_payment')}
-                      </Text>
-                    </TouchableOpacity>
+                    role === 'pro' ? (
+                      <TouchableOpacity disabled className='mt-2 flex-row bg-[#3D3D3D] dark:bg-[#E0E0E0] rounded-full items-center justify-center py-[18px] opacity-[.5]'>
+                        <ClockIcon strokeWidth={2.1} size={18} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
+                        <Text className='ml-2 font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                          {t('waiting_final_payment')}
+                        </Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        onPress={handleFinalPayment}
+                        className='mt-2 mb-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'
+                        style={{
+                          opacity: 1,
+                          shadowColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131',
+                          shadowOffset: { width: 0, height: 0 },
+                          shadowOpacity: 0.6,
+                          shadowRadius: 10,
+                          elevation: 10,
+                        }}>
+                        <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                          {t('final_payment')}
+                        </Text>
+                      </TouchableOpacity>
+                    )
                   )
                 ) : (
                   <TouchableOpacity onPress={startChat} className='mt-2 bg-[#323131] dark:bg-[#fcfcfc] rounded-full items-center py-[18px]'>
