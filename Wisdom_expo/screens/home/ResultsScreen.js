@@ -1,13 +1,13 @@
 
-import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, RefreshControl } from 'react-native';
+import React, { useEffect, useState, useCallback, useRef } from 'react'
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
-import {XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon} from 'react-native-heroicons/outline';
+import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon } from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import {Search, Sliders, Heart, Plus} from "react-native-feather";
+import { Search, Sliders, Heart, Plus } from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import HeartFill from "../../assets/HeartFill.tsx"
@@ -18,7 +18,7 @@ import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 
 export default function ResultsScreen() {
-  const {colorScheme, toggleColorScheme} = useColorScheme();
+  const { colorScheme, toggleColorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
@@ -77,7 +77,7 @@ export default function ResultsScreen() {
     RMB: '¥',
   };
 
-  const inputListNameChanged  = (text) => {
+  const inputListNameChanged = (text) => {
     setListName(text);
   };
 
@@ -87,7 +87,7 @@ export default function ResultsScreen() {
 
   const fetchResultsByCategory = async (categoryId) => {
     try {
-      const response = await api.get(`/api/category/${categoryId}/services`); 
+      const response = await api.get(`/api/category/${categoryId}/services`);
       setResults(response.data);
     } catch (error) {
       console.error('Error al obtener los items:', error);
@@ -117,10 +117,10 @@ export default function ResultsScreen() {
     setUserId(user.id);
     try {
       const response = await api.get(`/api/user/${user.id}/lists`);
-      return response.data;        
+      return response.data;
     } catch (error) {
       console.error('Error fetching lists:', error);
-    } 
+    }
   };
 
   const loadResults = async () => {
@@ -146,13 +146,13 @@ export default function ResultsScreen() {
     if (fetchedLists) {
       setLists(fetchedLists); // Aquí se asignan las listas obtenidas
     }
-    sheet.current.open();   
+    sheet.current.open();
   };
 
-  const addItemList = async (listId) => { 
+  const addItemList = async (listId) => {
     try {
       const response = await api.post(`/api/lists/${listId}/items`, {
-        service_id: selectedServiceId,   
+        service_id: selectedServiceId,
       });
       console.log('Item added:', response.data);
       setAddedServices((prevServices) => [...prevServices, selectedServiceId]);
@@ -160,22 +160,22 @@ export default function ResultsScreen() {
 
     } catch (error) {
       console.error('Error fetching lists:', error);
-    } 
+    }
   };
 
-  const createList = async () => { 
+  const createList = async () => {
     try {
       const response = await api.post('/api/lists', {
         user_id: userId,
         list_name: listName,
-       
+
       });
       console.log('List created:', response.data);
       return response.data.listId
 
     } catch (error) {
       console.error('Error fetching lists:', error);
-    } 
+    }
   };
 
   const handleDone = async () => {
@@ -192,12 +192,12 @@ export default function ResultsScreen() {
   }
 
   const openSheetWithInput = (height) => {
-    
+
     setSheetHeight(height);
     setTimeout(() => {
       sheet.current.open();
     }, 0);
-    
+
   };
 
   const renderItem = ({ item, index }) => {
@@ -225,17 +225,17 @@ export default function ResultsScreen() {
     };
 
     return (
-      <TouchableOpacity style={{zIndex:10}} onPress={() => navigation.navigate('ServiceProfile', {serviceId: item.service_id})} className="mt-5 mx-5 z-10 rounded-3xl bg-[#fcfcfc] dark:bg-[#323131] ">
+      <TouchableOpacity style={{ zIndex: 10 }} onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.service_id })} className="mt-5 mx-5 z-10 rounded-3xl bg-[#fcfcfc] dark:bg-[#323131] ">
 
         <View className="flex-row justify-between items-center mt-5">
           <Text className="ml-5 mt-1 font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
           <TouchableOpacity onPress={() => heartClicked(item.service_id)}>
-            {isServiceAdded? (
+            {isServiceAdded ? (
               <HeartFill height={23} width={23} strokeWidth={1.7} color={'#ff633e'} style={{ marginRight: 20 }} />
-            ) :(
+            ) : (
               <Heart height={23} width={23} strokeWidth={1.7} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} style={{ marginRight: 20 }} />
             )}
-            
+
           </TouchableOpacity>
         </View>
 
@@ -261,29 +261,29 @@ export default function ResultsScreen() {
 
         <View className="flex-row justify-between items-end mx-5 mt-4 mb-6">
 
-            <View className="flex-row justify-start items-center">
-              <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[45px] w-[45px] bg-[#706B5B] rounded-lg" />
-              <View className="ml-3 justify-center items-start">
-                <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{item.first_name} {item.surname}</Text>
-                <Text className="font-inter-semibold text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">Place</Text>
-              </View>
+          <View className="flex-row justify-start items-center">
+            <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[45px] w-[45px] bg-[#706B5B] rounded-lg" />
+            <View className="ml-3 justify-center items-start">
+              <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{item.first_name} {item.surname}</Text>
+              <Text className="font-inter-semibold text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">Place</Text>
             </View>
+          </View>
 
-            {item.review_count > 0 && (
-              <View className="flex-row items-center ">
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.85 }] }} />
-                <Text className="ml-[3px]">
-                  <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(item.average_rating).toFixed(1)}</Text>
-                  <Text> </Text>
-                  <Text className="font-inter-medium text-[11px] text-[#706F6E] dark:text-[#B6B5B5]">({item.review_count === 1 ? `${item.review_count} review` : `${item.review_count} reviews`})</Text>
-                </Text>
-              </View>
-            )}
+          {item.review_count > 0 && (
+            <View className="flex-row items-center ">
+              <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.85 }] }} />
+              <Text className="ml-[3px]">
+                <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(item.average_rating).toFixed(1)}</Text>
+                <Text> </Text>
+                <Text className="font-inter-medium text-[11px] text-[#706F6E] dark:text-[#B6B5B5]">({item.review_count === 1 ? `${item.review_count} review` : `${item.review_count} reviews`})</Text>
+              </Text>
+            </View>
+          )}
 
         </View>
 
         {item.images && (
-        <View className="px-6 pb-6">
+          <View className="px-6 pb-6">
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="flex-1 roundex-lg">
               {item.images.map((image, index) => (
                 <View key={index} className="pr-[6px]">
@@ -294,43 +294,43 @@ export default function ResultsScreen() {
                 </View>
               ))}
             </ScrollView>
-        </View>
+          </View>
         )}
 
-        
+
       </TouchableOpacity>
     );
   };
 
   const buildDisplayText = () => {
     const parts = [];
-  
+
     // Función para formatear selectedDay
     const formatDate = (dateString) => {
       const date = new Date(dateString);
       const options = { month: 'long', day: 'numeric' }; // Formato: "July 12"
       return date.toLocaleDateString('en-US', options);
     };
-  
+
     // Agregar searchedDirection si no es null
     if (searchedDirection) {
       parts.push(searchedDirection.address_1);
-    } 
-  
+    }
+
     // Formatear selectedDay si no es null
     if (selectedDay) {
       const formattedDay = formatDate(selectedDay);
       parts.push(formattedDay);
     }
-  
+
     // Agregar selectedTime si no es null
     if (selectedTime) {
       parts.push(selectedTime);
     }
-  
+
     // Unir las partes
     let displayText = '';
-  
+
     if (parts.length === 3) {
       displayText = `${parts[0]} • ${parts[1]}, ${parts[2]}`; // Forma: "Place • July 12, 19:00"
     } else if (parts.length === 2) {
@@ -338,14 +338,14 @@ export default function ResultsScreen() {
     } else if (parts.length === 1) {
       displayText = parts[0]; // Solo "Place"
     }
-  
+
     return displayText;
   };
 
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
-      <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
+    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+      <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
       <RBSheet
         height={sheetHeight}
@@ -360,119 +360,119 @@ export default function ResultsScreen() {
             borderTopLeftRadius: 25,
             backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
           },
-          draggableIcon: {backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'}
+          draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' }
         }}>
 
-        
-          {showAddList? (
 
-            <View className="flex-1 justify-start items-center">
+        {showAddList ? (
 
-              <View className="mt-3 mb-12 flex-row justify-center items-center">
+          <View className="flex-1 justify-start items-center">
 
-                <View className="flex-1 items-start">
-                  <TouchableOpacity onPress={() => {setShowAddList(false); setListName(''); openSheetWithInput(450)}} className="ml-5">
-                      <ChevronLeftIcon height={21} width={21} strokeWidth={2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
-                  </TouchableOpacity>
-                </View>
+            <View className="mt-3 mb-12 flex-row justify-center items-center">
 
-                <View className="flex-row justify-center items-center">
-                  <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">New list</Text>
-                </View>
-
-                <View className="flex-1 items-end"> 
-                  {listName.length>0 ? (
-                    <TouchableOpacity onPress={handleDone}>
-                        <Text className="mr-7 text-center font-inter-medium text-[14px] text-[#979797]">Done</Text>
-                    </TouchableOpacity>
-                  ) : null }
-                </View>
+              <View className="flex-1 items-start">
+                <TouchableOpacity onPress={() => { setShowAddList(false); setListName(''); openSheetWithInput(450) }} className="ml-5">
+                  <ChevronLeftIcon height={21} width={21} strokeWidth={2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+                </TouchableOpacity>
               </View>
 
-              <View className="w-full px-5">
+              <View className="flex-row justify-center items-center">
+                <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">New list</Text>
+              </View>
 
-                <View className="w-full h-[55px] px-4  bg-[#f2f2f2] dark:bg-[#272626] rounded-full flex-row justify-start items-center">
-         
+              <View className="flex-1 items-end">
+                {listName.length > 0 ? (
+                  <TouchableOpacity onPress={handleDone}>
+                    <Text className="mr-7 text-center font-inter-medium text-[14px] text-[#979797]">Done</Text>
+                  </TouchableOpacity>
+                ) : null}
+              </View>
+            </View>
+
+            <View className="w-full px-5">
+
+              <View className="w-full h-[55px] px-4  bg-[#f2f2f2] dark:bg-[#272626] rounded-full flex-row justify-start items-center">
+
                 <TextInput
                   placeholder='Name*'
-                  autoFocus={true} 
+                  autoFocus={true}
                   selectionColor={cursorColorChange}
                   placeholderTextColor={placeHolderTextColorChange}
-                  onChangeText={inputListNameChanged} 
+                  onChangeText={inputListNameChanged}
                   value={listName}
                   keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                  className="font-inter-medium flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"           
+                  className="font-inter-medium flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"
                 />
 
-                {listName.length>0 ? (
+                {listName.length > 0 ? (
                   <TouchableOpacity onPress={handleClearText}>
-                      <View className='h-[23px] w-[23px] justify-center items-center rounded-full bg-[#fcfcfc] dark:bg-[#323131]'>
-                          <XMarkIcon height={13} color={iconColor} strokeWidth={2.6}/>
-                      </View>
+                    <View className='h-[23px] w-[23px] justify-center items-center rounded-full bg-[#fcfcfc] dark:bg-[#323131]'>
+                      <XMarkIcon height={13} color={iconColor} strokeWidth={2.6} />
+                    </View>
                   </TouchableOpacity>
-                ) : null }
-
-                </View>
+                ) : null}
 
               </View>
-
-            
 
             </View>
 
-            ) : (
 
-            <View className="flex-1 justify-center items-center">
 
-              <View className="mt-3 mb-12 flex-row justify-center items-center">
-                <View className="flex-1"/>
+          </View>
 
-                <View className="flex-row justify-center items-center">
-                  <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">Add to a list</Text>
-                </View>
+        ) : (
 
-                <View className="flex-1 items-end">
-                  <TouchableOpacity onPress={() => {setShowAddList(true), openSheetWithInput(250)}} className="mr-5">
-                      <Plus height={27} width={27} strokeWidth={1.7} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
-                  </TouchableOpacity>
-                </View>
+          <View className="flex-1 justify-center items-center">
+
+            <View className="mt-3 mb-12 flex-row justify-center items-center">
+              <View className="flex-1" />
+
+              <View className="flex-row justify-center items-center">
+                <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">Add to a list</Text>
               </View>
 
-              <ScrollView className="flex-1 w-full px-7">
-                {lists.map((list, index) => (
-                  <View key={index} className="justify-center items-center" >
-
-                    <TouchableOpacity onPress={() => addItemList(list.id)} className="mb-4 flex-row justify-between items-center w-full">
-
-                      <View className="flex-row justify-start items-center">
-                        <Image source={list.services[0]? list.services[0].image_url? { uri: list.services[0].image_url } : null : null} className="h-[50px] w-[50px] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-lg mr-4"/>
-                        <View className="justify-center items-start">
-                          <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{list.title}</Text>
-                          <Text className="text-center font-inter-medium text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{list.item_count === 0 ? '0 services' : list.item_count === 1 ? `${list.item_count} service` : `${list.item_count} services`}</Text>
-                        </View>
-                      </View>
-
-                      <View className="p-[5px] rounded-full border-[1.8px] border-[#b6b5b5] dark:border-[#706f6e]">
-                        <Plus height={15} width={15} strokeWidth={2.5} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} />
-                      </View>
-
-                    </TouchableOpacity>
-                  </View>
-                ))}
-
-                <TouchableOpacity onPress={() => {setShowAddList(true), openSheetWithInput(250)}} className="flex-row justify-start items-center w-full ">
-                  <View className="h-[50px] w-[50px] bg-[#444343] dark:bg-[#f2f2f2] rounded-lg mr-4 justify-center items-center">
-                    <Plus height={23} width={23} strokeWidth={2.5} color={colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'} />
-                  </View>
-                  <View className="justify-center items-start">
-                    <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">New list</Text>
-                  </View>
+              <View className="flex-1 items-end">
+                <TouchableOpacity onPress={() => { setShowAddList(true), openSheetWithInput(250) }} className="mr-5">
+                  <Plus height={27} width={27} strokeWidth={1.7} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
                 </TouchableOpacity>
-
-              </ScrollView>
-
+              </View>
             </View>
-          )}
+
+            <ScrollView className="flex-1 w-full px-7">
+              {lists.map((list, index) => (
+                <View key={index} className="justify-center items-center" >
+
+                  <TouchableOpacity onPress={() => addItemList(list.id)} className="mb-4 flex-row justify-between items-center w-full">
+
+                    <View className="flex-row justify-start items-center">
+                      <Image source={list.services[0] ? list.services[0].image_url ? { uri: list.services[0].image_url } : null : null} className="h-[50px] w-[50px] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-lg mr-4" />
+                      <View className="justify-center items-start">
+                        <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{list.title}</Text>
+                        <Text className="text-center font-inter-medium text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{list.item_count === 0 ? '0 services' : list.item_count === 1 ? `${list.item_count} service` : `${list.item_count} services`}</Text>
+                      </View>
+                    </View>
+
+                    <View className="p-[5px] rounded-full border-[1.8px] border-[#b6b5b5] dark:border-[#706f6e]">
+                      <Plus height={15} width={15} strokeWidth={2.5} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} />
+                    </View>
+
+                  </TouchableOpacity>
+                </View>
+              ))}
+
+              <TouchableOpacity onPress={() => { setShowAddList(true), openSheetWithInput(250) }} className="flex-row justify-start items-center w-full ">
+                <View className="h-[50px] w-[50px] bg-[#444343] dark:bg-[#f2f2f2] rounded-lg mr-4 justify-center items-center">
+                  <Plus height={23} width={23} strokeWidth={2.5} color={colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'} />
+                </View>
+                <View className="justify-center items-start">
+                  <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">New list</Text>
+                </View>
+              </TouchableOpacity>
+
+            </ScrollView>
+
+          </View>
+        )}
 
 
       </RBSheet>
@@ -481,34 +481,34 @@ export default function ResultsScreen() {
 
         <View className="w-10 justify-center items-center">
           <TouchableOpacity onPress={() => navigation.goBack()} >
-              <ChevronLeftIcon size={25} strokeWidth={1.8} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+            <ChevronLeftIcon size={25} strokeWidth={1.8} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
           </TouchableOpacity>
         </View>
 
         <View className="flex-1">
           <TouchableOpacity onPress={() => navigation.navigate('Results')} className="justify-center items-center">
             <View className="h-[55px] pl-5 pr-1 w-full flex-row justify-between items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
-              <Search height={19} color={iconColor} strokeWidth={2}/>
+              <Search height={19} color={iconColor} strokeWidth={2} />
               <View className="justify-center items-center px-2">
-                <Text className="mb-1 font-inter-semibold text-center text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService? getValue(searchedService):categoryName?categoryName:''}</Text>
+                <Text className="mb-1 font-inter-semibold text-center text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService ? getValue(searchedService) : categoryName ? categoryName : ''}</Text>
                 {searchedService && (
                   <Text className="font-inter-medium text-center text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">{buildDisplayText()}</Text>
                 )}
-              </View> 
+              </View>
               {/* DE MOMENTO ESTA BORRADO FILTERS BUTON */}
-              <TouchableOpacity className="rounded-full px-3 py-4 bg- [#fcfcfc] dark:bg- [#323131]"> 
+              <TouchableOpacity className="rounded-full px-3 py-4 bg- [#fcfcfc] dark:bg- [#323131]">
                 {/*<Sliders height={17} color={iconColor} strokeWidth={1.8}/>*/}
               </TouchableOpacity>
             </View>
-          </TouchableOpacity> 
+          </TouchableOpacity>
         </View>
 
-        <View className="w-10"/>
+        <View className="w-10" />
 
       </View>
 
       {/* Contenedor del botón "Order by" */}
-      
+
       <View style={{ zIndex: 10 }} className="flex-row p-5 justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
         <Text className="mb-1 font-inter-bold text-center text-[18px] text-[#444343] dark:text-[#f2f2f2]">Order by</Text>
 
@@ -530,11 +530,11 @@ export default function ResultsScreen() {
 
           {/* Opciones desplegables */}
           {isDropdownOpen && (
-            <View 
-              style={{ 
-                position: 'absolute', 
+            <View
+              style={{
+                position: 'absolute',
                 top: 50, // Ajusta la posición verticalmente
-                left: 0, 
+                left: 0,
                 right: 0,
                 zIndex: 9999, // Asegura que esté por encima de otros elementos
                 elevation: 5, // Para dispositivos Android
@@ -557,7 +557,7 @@ export default function ResultsScreen() {
                     }}
                     className={`px-3  rounded-2xl ${selectedOrderBy === option.type ? 'bg-[#d4d3d3] dark:bg-[#474646]' : 'bg-[#e0e0e0] dark:bg-[#3d3d3d]'}`}
                   >
-                    {index>0 && (<View className="mx-1 border-t-[1px] border-[#b6b5b5] dark:border-[#706f6e]"/>)}
+                    {index > 0 && (<View className="mx-1 border-t-[1px] border-[#b6b5b5] dark:border-[#706f6e]" />)}
                     <Text className={`py-2 text-center font-inter-medium text-[12px] ${selectedOrderBy === option.type ? 'text-white' : 'text-[#444343] dark:text-[#f2f2f2]'}`}>
                       {option.label}
                     </Text>
@@ -571,17 +571,17 @@ export default function ResultsScreen() {
 
       {!results || results.notFound ? (
 
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <SuitcaseFill height={60} width={60} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
-        <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
-          Services not found
-        </Text>
-        <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-4 w-[250px]">
-          Try later.
-        </Text>
-      </View>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <SuitcaseFill height={60} width={60} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+          <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
+            Services not found
+          </Text>
+          <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-4 w-[250px]">
+            Try later.
+          </Text>
+        </View>
       ) : (
-        <View style={{zIndex:1}}>
+        <View style={{ zIndex: 1 }}>
           <FlatList
             data={results}
             keyExtractor={(item, index) => index.toString()}
@@ -590,14 +590,14 @@ export default function ResultsScreen() {
             onRefresh={onRefresh}
             contentContainerStyle={{
               justifyContent: 'space-between',
-              paddingBottom:200,
-              zIndex:"1",
+              paddingBottom: 200,
+              zIndex: "1",
             }}
           />
         </View>
       )}
 
-      
+
 
     </SafeAreaView>
   );

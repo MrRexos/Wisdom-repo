@@ -112,7 +112,7 @@ export default function CreateServiceDiscountsScreen() {
 
               <TouchableOpacity 
               disabled={false}
-onPress={() => {navigation.navigate('CreateServiceAsk', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate})}}
+              onPress={() => {navigation.navigate('CreateServiceAsk', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate})}}
               style={{opacity: 1}}
               className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>

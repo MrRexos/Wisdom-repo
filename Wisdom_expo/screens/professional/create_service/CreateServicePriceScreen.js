@@ -29,22 +29,29 @@ export default function CreateServicePriceScreen() {
     return Math.round((x + Number.EPSILON) * 100) / 100;
   };
 
-  // Formatos de salida: base/final hasta 2 decimales, comisión con 1 decimal
-  const formatUpTo2 = (n) => {
-    const x = Number(n);
-    if (!Number.isFinite(x)) return '0';
-    // toFixed(2) y luego quitamos ceros y el punto si quedan
-    return x
-      .toFixed(2)
-      .replace(/\.0+$/, '')
-      .replace(/(\.\d)0$/, '$1')
-      .replace(/\.$/, '');
+  const currencySymbols = {
+    EUR: '€',
+    USD: '$',
+    MAD: 'د.م.',
+    RMB: '¥',
   };
-  const format1 = (n) => {
-    const x = Number(n);
-    if (!Number.isFinite(x)) return '0.0';
-    return x.toFixed(1);
+
+  const formatCurrency = (value, currency = 'EUR') => {
+    if (value === null || value === undefined) return '';
+    const symbol = (typeof currencySymbols === 'object' && currencySymbols[currency]) ? currencySymbols[currency] : '€';
+
+    const n = Number(value);
+    if (!Number.isFinite(n)) return '';
+
+    const s = n.toLocaleString('es-ES', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+
+    const unitSymbol = priceType === 'hour' ? `${symbol}/h` : symbol;
+    return `${s} ${unitSymbol}`;
   };
+
 
   const computePricing = (unitStr) => {
     const type = priceType;
@@ -110,7 +117,7 @@ export default function CreateServicePriceScreen() {
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                 className=" font-inter-bold text-right text-[50px] text-[#323131] dark:text-[#fcfcfc]"
               />
-              <Text className={`font-inter-bold text-right text-[50px] ${priceValue ? 'text-[#323131] dark:text-[#fcfcfc]' : 'text-[#979797]'}`}> €</Text>
+              <Text className={`font-inter-bold text-right text-[50px] ${priceValue ? 'text-[#323131] dark:text-[#fcfcfc]' : 'text-[#979797]'}`}> {priceType === 'hour' ? '€/h' : '€'}</Text>
               <TouchableOpacity onPress={() => inputRef.current?.focus()} className="ml-5">
                 <Edit3 size={30} color={'#706F6E'} strokeWidth={2} />
               </TouchableOpacity>
@@ -120,7 +127,7 @@ export default function CreateServicePriceScreen() {
           {priceValue && (
             <View className="pb-7 px-8 justify-center items-center">
               <TouchableOpacity onPress={() => setShowDetails(!showDetails)} className="flex-row justify-center items-center">
-                <Text className="mr-3 font-inter-semibold text-center text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{t('the_client_pays')} {formatUpTo2(computePricing(priceValue).final)} €</Text>
+                <Text className="mr-3 font-inter-semibold text-center text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{t('the_client_pays')} {formatCurrency(computePricing(priceValue).final)}</Text>
                 {showDetails ? (
                   <ChevronUpIcon size={15} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} strokeWidth={2.5} />
                 ) : (
@@ -133,20 +140,20 @@ export default function CreateServicePriceScreen() {
                   <View className="mt-8 flex-row">
                     <Text className="font-inter-medium  text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{t('you_recibes')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
-                    <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">{formatUpTo2(computePricing(priceValue).base)} €</Text>
+                    <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">{formatCurrency(computePricing(priceValue).base)}</Text>
                   </View>
 
                   <View className="mt-6 flex-row">
                     <Text className="font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{t('quality_commission')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
-                    <Text className="text-[14px] font-inter-semibold text-[#74a450]">+{format1(computePricing(priceValue).commission)} €</Text>
+                    <Text className="text-[14px] font-inter-semibold text-[#74a450]">+{formatCurrency(computePricing(priceValue).commission)}</Text>
                   </View>
 
 
                   <View className="mt-6 mb-6 flex-row">
                     <Text className="font-inter-medium  text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{t('client_final_price')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
-                    <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">{formatUpTo2(computePricing(priceValue).final)} €</Text>
+                    <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">{formatCurrency(computePricing(priceValue).final)}</Text>
                   </View>
 
                 </View>

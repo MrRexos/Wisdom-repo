@@ -21,6 +21,28 @@ export default function ServicesScreen() {
   const [userId, setUserId] = useState();
   const [refreshing, setRefreshing] = useState(false);
 
+  const currencySymbols = {
+    EUR: '€',
+    USD: '$',
+    MAD: 'د.م.',
+    RMB: '¥',
+  };
+
+  const formatCurrency = (value, currency = 'EUR') => {
+    if (value === null || value === undefined) return '';
+    const symbol = (typeof currencySymbols === 'object' && currencySymbols[currency]) ? currencySymbols[currency] : '€';
+
+    const n = Number(value);
+    if (!Number.isFinite(n)) return '';
+
+    const s = n.toLocaleString('es-ES', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
+
+    return `${s} ${symbol}`;
+  };
+
   const suggestions = [
     { label: t('upcoming'), value:'accepted', id:1 },
     { label: t('requested'), value:'requested', id:2 },
@@ -115,7 +137,7 @@ export default function ServicesScreen() {
             <Text
               className={`font-inter-bold ${item.final_price ? 'text-[16px]' : 'text-[12px]'} text-[#444343] dark:text-[#f2f2f2]`}
             >
-              {item.final_price ? `${parseFloat(item.final_price).toFixed(2)} €` : t('pending')}
+              {item.final_price ? `${formatCurrency(parseFloat(item.final_price))}` : t('pending')}
             </Text>
           </View>
         </View>

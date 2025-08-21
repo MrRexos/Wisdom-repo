@@ -255,6 +255,7 @@ export default function BookingDetailsScreen() {
     if (type === 'hour') base = unit * hours;
     else if (type === 'fix') base = unit;
     base = round2(base);
+    
 
     // En budget el depósito es 1€
     const commission = type === 'budget' ? 1 : Math.max(1, round1(base * 0.1));
@@ -622,7 +623,7 @@ export default function BookingDetailsScreen() {
       : null;
 
   if (!booking) {
-    return null;
+    return <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'/>;
   }
 
   return (
@@ -802,7 +803,7 @@ export default function BookingDetailsScreen() {
           )}
         </View>
 
-        <ScrollView className='flex-1 px-6 mt-4' refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <ScrollView className='flex-1 px-6 mt-4 pb-4 ' refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
           <View className='mb-4'>
             <TouchableOpacity
