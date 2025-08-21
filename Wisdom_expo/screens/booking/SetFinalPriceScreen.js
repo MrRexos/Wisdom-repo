@@ -30,7 +30,7 @@ export default function SetFinalPriceScreen() {
   const [durationMinutes, setDurationMinutes] = useState('');
   const hoursInputRef = useRef(null);
   const minutesInputRef = useRef(null);
-  const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2': '#444343';
+  const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
 
   useEffect(() => {
     const load = async () => {
@@ -272,10 +272,10 @@ export default function SetFinalPriceScreen() {
                       placeholder="XX"
                       placeholderTextColor={'#979797'}
                       selectionColor={cursorColorChange}
-                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                      className="min-w-[30px] items-stretch font-inter-semibold text-[24px] py-2 rounded-md bg-[#f2f2f2] dark:bg-[#272626] text-[#323131] dark:text-[#fcfcfc]"
+                      keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                      className="items-stretch font-inter-semibold text-[28px] py-2 rounded-md bg-[#f2f2f2] dark:bg-[#272626] text-[#323131] dark:text-[#fcfcfc]"
                     />
-                    <Text className="ml-2 mr-5 font-inter-medium text-[20px] text-[#444343] dark:text-[#f2f2f2]">
+                    <Text className="ml-2 mr-5 font-inter-medium text-[24px] text-[#444343] dark:text-[#f2f2f2]">
                       {parseInt(durationHours || '0', 10) === 1 ? t('hour') : t('hours')}
                     </Text>
                     <TextInput
@@ -288,9 +288,9 @@ export default function SetFinalPriceScreen() {
                       placeholderTextColor={'#979797'}
                       selectionColor={cursorColorChange}
                       keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                      className="w-[37px] font-inter-semibold text-[24px] py-2 rounded-md bg-[#f2f2f2] dark:bg-[#272626] text-[#323131] dark:text-[#fcfcfc]"
+                      className="items-stretch font-inter-semibold text-[28px] py-2 rounded-md bg-[#f2f2f2] dark:bg-[#272626] text-[#323131] dark:text-[#fcfcfc]"
                     />
-                    <Text className="ml-2 font-inter-medium text-[20px] text-[#444343] dark:text-[#f2f2f2]">
+                    <Text className="ml-2 font-inter-medium text-[24px] text-[#444343] dark:text-[#f2f2f2]">
                       {parseInt(durationMinutes || '0', 10) === 1 ? t('min') : t('mins')}
                     </Text>
                   </View>
