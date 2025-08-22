@@ -255,13 +255,13 @@ export default function BookingDetailsScreen() {
     if (type === 'hour') base = unit * hours;
     else if (type === 'fix') base = unit;
     base = round2(base);
-    
+
 
     // En budget el depósito es 1€
     const commission = type === 'budget' ? 1 : Math.max(1, round1(base * 0.1));
     // Si no hay duración (minutes=0) y el tipo es 'hour' o 'budget', final debe ser null
     const shouldNullFinal = (type === 'hour' || type === 'budget') && minutes <= 0;
-    const final = shouldNullFinal ? null : (type === 'budget' ? commission : round2(base + commission));
+    const final = shouldNullFinal ? null : (type === 'budget' ? null : round2(base + commission));
 
     return { base, commission, final, minutes, type, currency: priceSource?.currency };
   }, [priceSource?.price_type, priceSource?.price, selectedDuration]);
@@ -405,6 +405,7 @@ export default function BookingDetailsScreen() {
         return;
       }
       const includePricing = !selectedTimeUndefined && Number(pricing.minutes) > 0;
+      const shouldNullFinal = selectedTimeUndefined && (pricing.type === 'hour' || pricing.type === 'budget');
       const payload = {
         ...edited,
         id,
@@ -416,6 +417,7 @@ export default function BookingDetailsScreen() {
             ? { final_price: 1, commission: 1 }
             : { final_price: pricing.final, commission: pricing.commission })
           : {}),
+        ...(shouldNullFinal ? { final_price: null } : {}),
       };
       await api.put(`/api/bookings/${id}`, payload);
       setBooking((prev) => ({ ...prev, ...payload }));
@@ -438,7 +440,6 @@ export default function BookingDetailsScreen() {
           booking_end_datetime: booking ? booking.booking_end_datetime : null,
           service_duration: booking ? booking.service_duration : null,
           final_price: booking ? booking.final_price : null,
-          commission: booking ? booking.commission : null,
           description: booking ? booking.description : null,
         };
         await api.put(`/api/bookings/${bookingId}`, updatePayload);
@@ -623,7 +624,7 @@ export default function BookingDetailsScreen() {
       : null;
 
   if (!booking) {
-    return <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'/>;
+    return <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]' />;
   }
 
   return (
@@ -803,7 +804,7 @@ export default function BookingDetailsScreen() {
           )}
         </View>
 
-        <ScrollView className='flex-1 px-6 mt-4 pb-4 ' refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <ScrollView showsVerticalScrollIndicator={false} className='flex-1 px-6 mt-4 pb-4 ' refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
           <View className='mb-4'>
             <TouchableOpacity

@@ -432,7 +432,7 @@ export default function BookingScreen() {
     const commission = type === 'budget' ? 1 : Math.max(1, round1(base * 0.1));
     // Si no hay duración (minutes=0) y el tipo es 'hour' o 'budget', final debe ser null
     const shouldNullFinal = (type === 'hour' || type === 'budget') && minutes <= 0;
-    const final = shouldNullFinal ? null : (type === 'budget' ? commission : round2(base + commission));
+    const final = shouldNullFinal ? null : (type === 'budget' ? null : round2(base + commission));
 
     return { base, commission, final, minutes };
   }, [serviceData?.price_type, serviceData?.price, selectedDuration, duration]);
@@ -470,12 +470,12 @@ export default function BookingScreen() {
         state: direction ? direction.state : null,
         country: direction ? direction.country : null,
         service_id: serviceData.service_id,
-        booking_start_datetime: startDate && startTime ? combineDateTime() : null,
-        booking_end_datetime: duration && startDate && startTime ? calculateEndDateTime() : null,
+        booking_start_datetime: timeUndefined ? null : (startDate && startTime ? combineDateTime() : null),
+        booking_end_datetime: timeUndefined ? null : (duration && startDate && startTime ? calculateEndDateTime() : null),
         recurrent_pattern_id: null,
         promotion_id: null,
         service_duration: timeUndefined ? null : pricing.minutes,
-        final_price: pricing.final,
+        final_price: (timeUndefined && (serviceData.price_type === 'hour' || serviceData.price_type === 'budget')) ? null : pricing.final,
         commission: pricing.commission,
         description: description ? description : null
       });
@@ -522,7 +522,7 @@ export default function BookingScreen() {
         return;
       }
 
-            // Si falta clientSecret pero el estado pide método de pago, deja al usuario añadir tarjeta (no canceles)
+      // Si falta clientSecret pero el estado pide método de pago, deja al usuario añadir tarjeta (no canceles)
       if (status === 'requires_payment_method' || res.data?.requiresPaymentMethod) {
         navigation.navigate('PaymentMethod', {
           origin: 'Booking',
@@ -533,7 +533,7 @@ export default function BookingScreen() {
       }
 
       // Solo como último recurso, cancelar impagadas
-      if (booking?.id) { await api.post(`/api/bookings/${booking.id}/cancel-if-unpaid`).catch(() => {}); }
+      if (booking?.id) { await api.post(`/api/bookings/${booking.id}/cancel-if-unpaid`).catch(() => { }); }
       setPaymentErrorVisible(true);
     } catch (e) {
       if (booking?.id) { await api.post(`/api/bookings/${booking.id}/cancel-if-unpaid`).catch(() => { }); }
@@ -671,7 +671,19 @@ export default function BookingScreen() {
 
                 <TouchableOpacity
                   disabled={!(selectedDay && selectedTime && selectedDuration) && !selectedTimeUndefined}
-                  onPress={() => { setStartDate(selectedDay); setDuration(selectedDuration); setStartTime(selectedTime); setTimeUndefined(selectedTimeUndefined); sheet.current.close(); }}
+                  onPress={() => {
+                    if (selectedTimeUndefined) {
+                      setStartDate(null);
+                      setStartTime(null);
+                      setDuration(null);
+                    } else {
+                      setStartDate(selectedDay);
+                      setDuration(selectedDuration);
+                      setStartTime(selectedTime);
+                    }
+                    setTimeUndefined(selectedTimeUndefined);
+                    sheet.current.close();
+                  }}
                   style={{ opacity: !(selectedDay && selectedTime && selectedDuration) && !selectedTimeUndefined ? 0.5 : 1 }}
                   className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17px] rounded-full items-center justify-center"
                 >

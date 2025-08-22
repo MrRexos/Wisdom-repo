@@ -489,10 +489,10 @@ export default function ResultsScreen() {
           <TouchableOpacity onPress={() => navigation.navigate('Results')} className="justify-center items-center">
             <View className="h-[55px] pl-5 pr-1 w-full flex-row justify-between items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               <Search height={19} color={iconColor} strokeWidth={2} />
-              <View className="justify-center items-center px-2">
+              <View className="flex-1 justify-center items-center px-2">
                 <Text className="mb-1 font-inter-semibold text-center text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService ? getValue(searchedService) : categoryName ? categoryName : ''}</Text>
                 {searchedService && (
-                  <Text className="font-inter-medium text-center text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">{buildDisplayText()}</Text>
+                  <Text numberOfLines={1} className="font-inter-medium text-center text-[11px] text-[#706F6E] dark:text-[#b6b5b5] truncate">{buildDisplayText()}</Text>
                 )}
               </View>
               {/* DE MOMENTO ESTA BORRADO FILTERS BUTON */}

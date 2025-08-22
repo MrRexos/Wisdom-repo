@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Image, Linking, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -95,10 +96,15 @@ export default function SettingsScreen() {
   );
 
   const logOut = async () => {
-    let emptyUser = { token: false }
-    await storeDataLocally('user', JSON.stringify(emptyUser));
-    eventEmitter.emit('profileUpdated');
-    navigation.navigate('GetStarted');
+    try {
+      await AsyncStorage.clear();
+    } catch (error) {
+      console.error('Error al limpiar el almacenamiento:', error);
+    } finally {
+      await storeDataLocally('user', JSON.stringify({ token: false }));
+      eventEmitter.emit('profileUpdated');
+      navigation.reset({ index: 0, routes: [{ name: 'GetStarted' }] });
+    }
   };
 
   const changeAllowNotis = async (userId, allowNotis) => {
