@@ -502,17 +502,14 @@ export default function BookingScreen() {
       const res = await api.post(`/api/bookings/${booking.id}/deposit`);
       const { clientSecret, requiresAction, status, processing, message } = res.data || {};
 
-      // Éxito inmediato: no abrir pantalla de tarjeta
+      // Éxito inmediato
       if (processing === true || status === 'processing' || status === 'succeeded' || message) {
         navigation.navigate('ConfirmPayment', { bookingId: booking.id, origin: 'Booking' });
         return;
       }
 
-      // Requiere tarjeta/autenticación
-      if (
-        clientSecret &&
-        (requiresAction || status === 'requires_action' || status === 'requires_payment_method')
-      ) {
+      // Requiere tarjeta / autenticación (con clientSecret)
+      if (clientSecret && (requiresAction || status === 'requires_action' || status === 'requires_payment_method' || res.data?.requiresPaymentMethod)) {
         navigation.navigate('PaymentMethod', {
           clientSecret,
           onSuccess: 'ConfirmPayment',
@@ -525,7 +522,18 @@ export default function BookingScreen() {
         return;
       }
 
-      if (booking?.id) { await api.post(`/api/bookings/${booking.id}/cancel-if-unpaid`).catch(() => { }); }
+            // Si falta clientSecret pero el estado pide método de pago, deja al usuario añadir tarjeta (no canceles)
+      if (status === 'requires_payment_method' || res.data?.requiresPaymentMethod) {
+        navigation.navigate('PaymentMethod', {
+          origin: 'Booking',
+          bookingId: booking.id,
+          prevParams: route.params,
+        });
+        return;
+      }
+
+      // Solo como último recurso, cancelar impagadas
+      if (booking?.id) { await api.post(`/api/bookings/${booking.id}/cancel-if-unpaid`).catch(() => {}); }
       setPaymentErrorVisible(true);
     } catch (e) {
       if (booking?.id) { await api.post(`/api/bookings/${booking.id}/cancel-if-unpaid`).catch(() => { }); }
