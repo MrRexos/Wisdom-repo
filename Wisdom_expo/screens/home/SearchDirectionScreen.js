@@ -241,7 +241,9 @@ export default function SearchDirectionScreen() {
           country: country
         });
 
-        const searchedDirection = { location, country, state, city, address_1: street, street_number: streetNumber, postal_code: postalCode, address_2: address2 }
+        const addrId = response?.data?.address_id ?? addressId ?? null;
+
+        const searchedDirection = { address_id: addrId, location, country, state, city, address_1: street, street_number: streetNumber, postal_code: postalCode, address_2: address2 }
         await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
         navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible });
 
@@ -264,7 +266,9 @@ export default function SearchDirectionScreen() {
           country: country
         });
 
-        const searchedDirection = { location, country, state, city, address_1: street, street_number: streetNumber, postal_code: postalCode, address_2: address2 }
+        const addrId = response?.data?.address_id ?? null;
+
+        const searchedDirection = { address_id: addrId, location, country, state, city, address_1: street, street_number: streetNumber, postal_code: postalCode, address_2: address2 }
         await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
         navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible });
 
@@ -276,9 +280,12 @@ export default function SearchDirectionScreen() {
 
   };
 
-  const handleDirectionSelected = async (searchedDirection) => {
-
-    await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
+  const handleDirectionSelected = async (dir) => {
+    const withId = {
+      ...dir,
+      address_id: dir.address_id ?? null,
+    };
+    await storeDataLocally('searchedDirection', JSON.stringify(withId));
 
     navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible });
   };
@@ -451,6 +458,7 @@ export default function SearchDirectionScreen() {
                       <TouchableOpacity
                         onPress={async () => {
                           const searchedDirection = {
+                            address_id: direction.address_id,
                             location: direction.location,
                             country: direction.country,
                             state: direction.state,

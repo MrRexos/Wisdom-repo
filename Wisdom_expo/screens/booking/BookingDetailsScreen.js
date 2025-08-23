@@ -14,7 +14,7 @@ import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
 import { Check, Calendar as CalendarIcon, Edit3, Edit2, Plus, Clock, MapPin, CreditCard } from 'react-native-feather';
 import SliderThumbDark from '../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../assets/SliderThumbLight.png';
-import { getDataLocally } from '../../utils/asyncStorage';
+import { getDataLocally, storeDataLocally } from '../../utils/asyncStorage';
 import { setDoc, doc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import api from '../../utils/api.js';
@@ -169,7 +169,7 @@ export default function BookingDetailsScreen() {
         data.booking_status = 'completed';
       }
       setBooking(data);
-      setEdited(data);
+      setEdited(prev => (editMode ? prev : data));
       const serviceResp = await api.get(`/api/services/${data.service_id}`);
       setService(serviceResp.data);
       if (response.data.booking_start_datetime) {
@@ -279,8 +279,12 @@ export default function BookingDetailsScreen() {
     const raw = await getDataLocally('searchedDirection');
     if (raw) {
       const dir = JSON.parse(raw);
+      console.log('loadSearchedDirection', dir);
+      // Asegura que capturas el id correcto, venga como address_id, direction_id o id
+      const addrId = dir.address_id ?? dir.direction_id ?? dir.id ?? null;
       setEdited((prev) => ({
         ...prev,
+        address_id: addrId ?? prev?.address_id ?? null,
         address_1: dir.address_1,
         street_number: dir.street_number,
         postal_code: dir.postal_code,
@@ -289,6 +293,8 @@ export default function BookingDetailsScreen() {
         country: dir.country,
         address_2: dir.address_2,
       }));
+      if (addrId) setSelectedAddressId(addrId);
+      storeDataLocally('searchedDirection', null);
     }
   };
 
@@ -563,7 +569,6 @@ export default function BookingDetailsScreen() {
       const payload = {
         ...edited,
         id,
-        address_id: edited.address_id ?? selectedAddressId ?? null,
         booking_start_datetime: selectedTimeUndefined ? null : combineDateTime(),
         booking_end_datetime:   selectedTimeUndefined ? null : calculateEndDateTime(),
         service_duration: selectedTimeUndefined ? null : selectedDuration,
@@ -574,6 +579,9 @@ export default function BookingDetailsScreen() {
           : {}),
         ...(shouldNullFinal ? { final_price: null } : {}),
       };
+      const resolvedAddressId = edited.address_id ?? selectedAddressId;
+      if (resolvedAddressId) payload.address_id = resolvedAddressId;
+      console.log('SAVE payload', payload);
       await api.put(`/api/bookings/${id}`, payload);
       await fetchBooking();
       setBooking((prev) => ({ ...prev, ...payload }));
