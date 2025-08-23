@@ -910,7 +910,7 @@ export default function BookingDetailsScreen() {
           <View className='flex-1 w-full justify-start items-center pt-5 pb-5'>
             <View className='px-7 flex-row w-full justify-between items-center'>
               <Text className='text-center font-inter-semibold text-[20px] text-[#444343] dark:text-[#f2f2f2]'>{t('your_directions')}</Text>
-              <TouchableOpacity onPress={() => { sheet.current.close(); navigation.navigate('SearchDirectionAlone', { prevScreen: 'BookingDetails' }); }} className='justify-center items-end'>
+              <TouchableOpacity onPress={() => { sheet.current.close(); navigation.navigate('SearchDirectionAlone', { prevScreen: 'BookingDetails', prevParams: route.params }); }} className='justify-center items-end'>
                 <Plus height={23} width={23} strokeWidth={1.7} color={iconColor} />
               </TouchableOpacity>
             </View>

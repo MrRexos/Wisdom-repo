@@ -25,7 +25,7 @@ export default function SearchDirectionScreen() {
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
 
   const route = useRoute();
-  const { prevScreen } = route.params;
+  const { prevScreen, prevParams } = route.params;
 
   const [searchText, setSearchText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -243,7 +243,7 @@ export default function SearchDirectionScreen() {
 
         const searchedDirection = { location, country, state, city, address_1: street, street_number: streetNumber, postal_code: postalCode, address_2: address2 }
         await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
-        navigation.navigate(prevScreen, { blurVisible });
+        navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible });
 
       } catch (error) {
         console.error('Error updating address:', error);
@@ -266,7 +266,7 @@ export default function SearchDirectionScreen() {
 
         const searchedDirection = { location, country, state, city, address_1: street, street_number: streetNumber, postal_code: postalCode, address_2: address2 }
         await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
-        navigation.navigate(prevScreen, { blurVisible });
+        navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible });
 
       } catch (error) {
         console.error('Error fetching directions:', error);
@@ -280,7 +280,7 @@ export default function SearchDirectionScreen() {
 
     await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
 
-    navigation.navigate(prevScreen, { blurVisible });
+    navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible });
   };
 
   const clearHistory = async () => {
@@ -639,7 +639,7 @@ export default function SearchDirectionScreen() {
 
         <View className="flex-row justify-start items-center mb-5">
 
-          <TouchableOpacity onPress={() => navigation.navigate(prevScreen, { blurVisible })}>
+          <TouchableOpacity onPress={() => navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible })}>
             <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
           </TouchableOpacity>
 
