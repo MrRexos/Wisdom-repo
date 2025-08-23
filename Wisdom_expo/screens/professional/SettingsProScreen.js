@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Image, Linking, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +8,7 @@ import '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
+import eventEmitter from '../../utils/eventEmitter';
 
 
 import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram, Link } from "react-native-feather";
@@ -87,6 +87,9 @@ export default function SettingsScreen() {
       console.error('Error al limpiar el almacenamiento:', error);
     } finally {
       await storeDataLocally('user', JSON.stringify({ token: false }));
+      setTimeout(() => {
+        eventEmitter.emit('profileUpdated');
+      }, 0);
       navigation.reset({ index: 0, routes: [{ name: 'GetStarted' }] });
     }
   };

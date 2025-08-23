@@ -6,13 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
-import { XMarkIcon, LockClosedIcon, ChevronRightIcon, XCircleIcon, ClockIcon } from 'react-native-heroicons/outline';
+import { XMarkIcon, LockClosedIcon, ClockIcon } from 'react-native-heroicons/outline';
 import { Calendar } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import { Check, Lock, Calendar as CalendarIcon, Edit3, Clock, MapPin, CreditCard, AlertTriangle, Phone } from 'react-native-feather';
-import WisdomLogo from '../../assets/wisdomLogo.tsx';
+import { Check, Calendar as CalendarIcon, Edit3, Edit2, Plus, Clock, MapPin, CreditCard } from 'react-native-feather';
 import SliderThumbDark from '../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../assets/SliderThumbLight.png';
 import { getDataLocally } from '../../utils/asyncStorage';
@@ -38,7 +37,7 @@ export default function BookingDetailsScreen() {
   const [selectedDay, setSelectedDay] = useState(null);
   const [tempDate, setTempDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState('');
-  const [selectedDuration, setSelectedDuration] = useState(60);
+  const [selectedDuration, setSelectedDuration] = useState(null);
   const [sliderValue, setSliderValue] = useState(12);
   const [paymentMethod, setPaymentMethod] = useState();
   const sliderTimeoutId = useRef(null);
@@ -49,12 +48,32 @@ export default function BookingDetailsScreen() {
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
   const [refreshing, setRefreshing] = useState(false);
   const [paymentErrorVisible, setPaymentErrorVisible] = useState(false);
+  const [sheetOption, setSheetOption] = useState('date');
+  const [directions, setDirections] = useState([]);
+  const [userId, setUserId] = useState();
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [country, setCountry] = useState('');
+  const [street, setStreet] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [streetNumber, setStreetNumber] = useState('');
+  const [address2, setAddress2] = useState('');
+  const [draftDay, setDraftDay] = useState(null);
+  const [draftTime, setDraftTime] = useState('');
+  const [draftDuration, setDraftDuration] = useState(60);
+  const [draftSliderValue, setDraftSliderValue] = useState(12);
+  const [draftSelectedDate, setDraftSelectedDate] = useState({});
+  const [draftTempDate, setDraftTempDate] = useState(new Date());
+  const [draftTimeUndefined, setDraftTimeUndefined] = useState(false);
+  const current = editMode ? edited : booking;
   const round1 = (x) => Number((Math.round(Number(x) * 10) / 10).toFixed(1));
   const round2 = (n) => {
     const x = Number(n);
     if (!Number.isFinite(x)) return 0;
     return Math.round((x + Number.EPSILON) * 100) / 100; // máx. 2 decimales
   };
+  const pad2 = (n) => String(n).padStart(2, '0');
   const priceSource = service || booking;
 
   useEffect(() => {
@@ -66,6 +85,18 @@ export default function BookingDetailsScreen() {
 
   useEffect(() => {
     fetchBooking();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const userData = await getDataLocally('user');
+        if (userData) {
+          const me = JSON.parse(userData);
+          setUserId(me.id);
+        }
+      } catch { }
+    })();
   }, []);
 
   useFocusEffect(
@@ -81,15 +112,59 @@ export default function BookingDetailsScreen() {
     return m === 0 ? `${h}h` : `${h}:${String(m).padStart(2, '0')}h`;
   };
 
+  // Divide un "YYYY-MM-DD HH:mm:ss" o "YYYY-MM-DDTHH:mm:ss" a partes sin interpretar zona
+  const splitSql = (s) => {
+    if (!s) return null;
+    const txt = String(s).trim()
+      .replace('T', ' ')
+      .replace(/\s+/g, ' ')
+      // quita sufijo de zona si viene
+      .replace(/(?:Z|[+-]\d{2}:?\d{2})$/i, '');
+    // admite con o sin segundos y con milis
+    const m = txt.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,6})?)?$/);
+    if (!m) return null;
+    const hh = m[2], mm = m[3], ss = m[4] || '00';
+    return { ymd: m[1], hm: `${hh}:${mm}`, hms: `${hh}:${mm}:${ss}` };
+  };
+
+  const nowSql = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+  };
+
+  const toMs = (sql) => {
+    const p = splitSql(sql);
+    if (!p) return null;
+    const [Y,M,D] = p.ymd.split('-').map(Number);
+    const [h,m,s] = p.hms.split(':').map(Number);
+    return Date.UTC(Y, M-1, D, h, m, s||0);
+  };
+
+  // Suma minutos “en crudo” sin husos: pasamos a UTC SOLO para hacer la suma y volvemos a strings
+  const addMinutesNaive = (ymd, hm, minutesToAdd) => {
+    const [Y, M, D] = ymd.split('-').map(Number);
+    const [h, m] = hm.split(':').map(Number);
+    const startMs = Date.UTC(Y, M - 1, D, h, m, 0, 0);
+    const end = new Date(startMs + (Number(minutesToAdd) || 0) * 60000);
+    const y = end.getUTCFullYear();
+    const mon = pad2(end.getUTCMonth() + 1);
+    const day = pad2(end.getUTCDate());
+    const hh = pad2(end.getUTCHours());
+    const mm = pad2(end.getUTCMinutes());
+    const ss = pad2(end.getUTCSeconds());
+    return { ymd: `${y}-${mon}-${day}`, hm: `${hh}:${mm}`, hms: `${hh}:${mm}:${ss}` };
+  };
+
   const fetchBooking = async () => {
     try {
       const response = await api.get(`/api/bookings/${bookingId}`);
       let data = response.data;
-      if (
-        data.booking_status === 'accepted' &&
-        data.booking_end_datetime &&
-        new Date(data.booking_end_datetime) < new Date(getLocalDate(new Date()))
-      ) {
+      const endMs = data.booking_end_datetime ? toMs(data.booking_end_datetime) : null; 
+      const nowNaiveMs = (() => { 
+        const d = new Date(); 
+        return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds()); 
+      })(); 
+      if (data.booking_status === 'accepted' && endMs && endMs < nowNaiveMs) {
         await api.patch(`/api/bookings/${bookingId}/update-data`, { status: 'completed' });
         data.booking_status = 'completed';
       }
@@ -98,9 +173,9 @@ export default function BookingDetailsScreen() {
       const serviceResp = await api.get(`/api/services/${data.service_id}`);
       setService(serviceResp.data);
       if (response.data.booking_start_datetime) {
-        const date = new Date(response.data.booking_start_datetime);
-        const dateString = date.toISOString().split('T')[0];
-        const timeString = date.toISOString().split('T')[1].slice(0, 5);
+        const p = splitSql(response.data.booking_start_datetime);
+        const dateString = p.ymd;
+        const timeString = p.hm;
         setSelectedDate({
           [dateString]: {
             selected: true,
@@ -110,7 +185,11 @@ export default function BookingDetailsScreen() {
         });
         setSelectedDay(dateString);
         setSelectedTime(timeString);
-        setTempDate(date);
+        // Semilla para el DateTimePicker con la hora recibida 
+        const [hh, mm] = timeString.split(':').map(Number); 
+        const seed = new Date(); 
+        seed.setHours(hh, mm, 0, 0); 
+        setTempDate(seed);
         setSelectedTimeUndefined(false);
       } else {
         setSelectedTimeUndefined(true);
@@ -133,27 +212,18 @@ export default function BookingDetailsScreen() {
 
   useRefreshOnFocus(fetchBooking);
 
-  const onDayPress = (day) => {
-    setSelectedDate({
-      [day.dateString]: {
-        selected: true,
-        selectedColor: colorScheme === 'dark' ? '#979797' : '#979797',
-        selectedTextColor: '#ffffff',
-      },
-    });
-    setSelectedDay(day.dateString);
+  const onDayPress = (day) => { 
+    setDraftSelectedDate({ [day.dateString]: { selected: true, selectedColor: colorScheme === 'dark' ? '#979797' : '#979797', selectedTextColor: '#ffffff' }}); 
+    setDraftDay(day.dateString); 
   };
 
-  const handleHourSelected = (event, date) => {
-    const currentDate = date || tempDate;
-    setTempDate(currentDate);
-    const hours = currentDate.getHours();
-    const minutes = currentDate.getMinutes();
-    const formattedTime = `${hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
-    setSelectedTime(formattedTime);
-    if (Platform.OS === 'android') {
-      setShowPicker(false);
-    }
+  const handleHourSelected = (event, date) => { 
+    const currentDate = date || draftTempDate; 
+    setDraftTempDate(currentDate); 
+    const h = pad2(currentDate.getHours()); 
+    const m = pad2(currentDate.getMinutes()); 
+    setDraftTime(`${h}:${m}`); 
+    if (Platform.OS === 'android') setShowPicker(false); 
   };
 
   const handleSliderChange = (value) => {
@@ -162,9 +232,39 @@ export default function BookingDetailsScreen() {
     }
     sliderTimeoutId.current = setTimeout(() => {
       const adjusted = sliderValueToMinutes(value);
-      setSliderValue(value);
-      setSelectedDuration(adjusted);
+      setDraftSliderValue(value);
+      setDraftDuration(adjusted);
     }, 100);
+  };
+
+  const primeDraftsFromSelected = () => {
+    setDraftDay(selectedDay);
+    setDraftTime(selectedTime);
+    setDraftDuration(selectedDuration ? selectedDuration : 60);
+    setDraftSliderValue(sliderValue);
+    setDraftSelectedDate(selectedDate);
+    setDraftTempDate(tempDate);
+    setDraftTimeUndefined(selectedTimeUndefined);
+  };
+  
+  const handleAcceptDate = () => {
+    if (draftTimeUndefined) {
+      setSelectedTimeUndefined(true);
+      setSelectedDay(null);
+      setSelectedTime('');
+      setSelectedDuration(null);
+      setSliderValue(12);
+      setSelectedDate({});
+    } else {
+      setSelectedTimeUndefined(false);
+      setSelectedDay(draftDay);
+      setSelectedTime(draftTime);
+      setSelectedDuration(draftDuration);
+      setSliderValue(draftSliderValue);
+      setSelectedDate(draftSelectedDate);
+      setTempDate(draftTempDate);
+    }
+    sheet.current.close();
   };
 
   useEffect(() => {
@@ -314,88 +414,142 @@ export default function BookingDetailsScreen() {
     }
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const options = { weekday: 'long', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
+  const formatDate = (ymd) => { 
+    // Solo para nombre de día/mes; no afecta a los números que muestras 
+    const [Y,M,D] = String(ymd).split('-').map(Number); 
+    const d = new Date(Date.UTC(Y, (M||1)-1, D||1)); 
+    return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' }); 
   };
 
-  const getLocalDate = (date) => {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;      // p. ej. "Europe/Madrid"
+  const getEndTime = () => addMinutesNaive('1970-01-01', selectedTime, selectedDuration).hm;
 
-    // "2025-06-28 16:10:37"  →  "2025-06-28T16:10:37"
-    const isoLocal = date
-      .toLocaleString('sv-SE', { timeZone: tz, hourCycle: 'h23' })
-      .replace(' ', 'T');
-
-    return `${isoLocal}.000Z`;   // ya NO será NaN
-  };
-
-  const getLocalDateSql = (date) => {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;      // p. ej. "Europe/Madrid"
-
-    // "2025-06-28 16:10:37"  →  "2025-06-28T16:10:37"
-    const isoLocal = date
-      .toLocaleString('sv-SE', { timeZone: tz, hourCycle: 'h23' })
-      .replace(' ', 'T');
-
-    return isoLocal;   // ya NO será NaN
-  };
-
-  const getEndTime = () => {
-    const end = new Date(`1970-01-01T${selectedTime}:00`);
-    end.setMinutes(end.getMinutes() + selectedDuration);
-    return end.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
-  };
-
-  const combineDateTime = () => {
-    return `${selectedDay}T${selectedTime}:00`;
-  };
+  const combineDateTime = () => `${selectedDay} ${selectedTime}:00`;
 
   const calculateEndDateTime = () => {
-    const startDateTime = new Date(`${selectedDay}T${selectedTime}:00`);
-    startDateTime.setMinutes(startDateTime.getMinutes() + selectedDuration);
-    const endDate = startDateTime.toISOString().split('T')[0];
-    const endTime = startDateTime.toTimeString().split(' ')[0];
-    return `${endDate} ${endTime}`;
+    const { ymd, hms } = addMinutesNaive(selectedDay, selectedTime, selectedDuration);
+    return `${ymd} ${hms}`;
   };
 
-  const formatDateTime = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  // Valores en vivo cuando editas (o los de la reserva cuando no editas)
+  const liveStartDate = editMode 
+    ? (selectedTimeUndefined ? null : selectedDay) 
+    : (booking?.booking_start_datetime ? splitSql(booking.booking_start_datetime)?.ymd : null); 
+
+  const liveStartTime = editMode 
+    ? (selectedTimeUndefined ? null : selectedTime) 
+    : (booking?.booking_start_datetime ? splitSql(booking.booking_start_datetime)?.hm : null);
+
+  const liveDuration = editMode
+    ? (selectedTimeUndefined ? null : selectedDuration)
+    : (booking?.service_duration ?? null);
+
+  const liveEnd = useMemo(() => { 
+    if (!liveStartDate || !liveStartTime || !liveDuration) return { endDate: null, endTime: null }; 
+    const { ymd, hm } = addMinutesNaive(liveStartDate, liveStartTime, liveDuration); 
+    return { endDate: ymd, endTime: hm }; 
+  }, [liveStartDate, liveStartTime, liveDuration]);
+
+  const liveAreSameDay = !liveStartDate || !liveEnd.endDate ? true : (liveStartDate === liveEnd.endDate);
+
+  const liveIsStartDefinedButNoEndAndNoDuration = useMemo(() => {
+    const hasStart = Boolean(liveStartDate && liveStartTime);
+    const noDuration = liveDuration === null || liveDuration === undefined;
+    return hasStart && noDuration;
+  }, [liveStartDate, liveStartTime, liveDuration]);
+
+  const fetchDirections = async () => {
+    if (!userId) return [];
+    try {
+      const res = await api.get(`/api/directions/${userId}`);
+      const list = res?.data?.directions || [];
+      setDirections(list);
+      return list;
+    } catch (e) {
+      console.error('Error fetching directions:', e);
+      return [];
+    }
   };
 
-  const isStartDefinedButNoEndAndNoDuration = useMemo(() => {
-    if (!booking) return false;
-    const hasStart = Boolean(booking.booking_start_datetime);
-    const noEnd = booking.booking_end_datetime === null || booking.booking_end_datetime === undefined;
-    const noDuration = booking.service_duration === null || booking.service_duration === undefined;
-    return hasStart && noEnd && noDuration;
-  }, [booking]);
+  const handleConfirmAddress = async () => {
+    try {
+      await api.put(`/api/address/${selectedAddressId}`, {
+        address_type: address2 ? 'flat' : 'house',
+        street_number: streetNumber,
+        address_1: street,
+        address_2: address2,
+        postal_code: postalCode,
+        city,
+        state,
+        country
+      });
+      setSheetOption('directions');
+      openSheetWithInput(350);
+      await fetchDirections();
+    } catch (error) {
+      console.error('Error updating address:', error);
+    }
+  };
 
-  // Caso solicitado: hay inicio y fin definidos, pero la duración es null
-  const isStartAndEndButNoDuration = useMemo(() => {
-    if (!booking) return false;
-    const hasStart = Boolean(booking.booking_start_datetime);
-    const hasEnd = Boolean(booking.booking_end_datetime);
-    const noDuration = booking.service_duration === null || booking.service_duration === undefined;
-    return hasStart && hasEnd && noDuration;
-  }, [booking]);
-
-  // Comprobar si inicio y fin son el mismo día
-  const areStartEndSameDay = useMemo(() => {
-    if (!booking) return true;
-    if (!booking.booking_start_datetime || !booking.booking_end_datetime) return true;
-    const sd = new Date(booking.booking_start_datetime);
-    const ed = new Date(booking.booking_end_datetime);
-    return sd.toDateString() === ed.toDateString();
-  }, [booking]);
+  const handleToggleEdit = () => {
+    if (!editMode) {
+      // Entrar en edición: baseline = booking actual
+      setEdited(booking);
+      if (booking?.booking_start_datetime) {
+        const p = splitSql(booking.booking_start_datetime);
+        const ds = p.ymd;
+        const ts = p.hm;
+        setSelectedDate({ [ds]: { selected: true, selectedColor: '#979797', selectedTextColor: '#ffffff' } });
+        setSelectedDay(ds);
+        setSelectedTime(ts);
+        const [hh2, mm2] = ts.split(':').map(Number);
+        const seed2 = new Date();
+        seed2.setHours(hh2, mm2, 0, 0);
+        setTempDate(seed2);
+        setSelectedTimeUndefined(false);
+      } else {
+        setSelectedDate({});
+        setSelectedDay(null);
+        setSelectedTime('');
+        setSelectedTimeUndefined(true);
+      }
+      if (booking?.service_duration) {
+        const dur = parseInt(booking.service_duration);
+        setSelectedDuration(dur);
+        setSliderValue(minutesToSliderValue(dur));
+      }
+      setEditMode(true);
+      return;
+    }
+    // Cancelar: volver a booking original
+    setEdited(booking);
+    if (booking?.booking_start_datetime) {
+      const p2 = splitSql(booking.booking_start_datetime); 
+      const ds = p2.ymd; 
+      const ts = p2.hm; 
+      const [hh3, mm3] = ts.split(':').map(Number); 
+      const seed3 = new Date(); 
+      seed3.setHours(hh3, mm3, 0, 0); 
+      setTempDate(seed3);
+      setSelectedDate({ [ds]: { selected: true, selectedColor: '#979797', selectedTextColor: '#ffffff' } });
+      setSelectedDay(ds);
+      setSelectedTime(ts);
+      setSelectedTimeUndefined(false);
+    } else {
+      setSelectedDate({});
+      setSelectedDay(null);
+      setSelectedTime('');
+      setSelectedTimeUndefined(true);
+    }
+    if (booking?.service_duration) {
+      const dur = parseInt(booking.service_duration);
+      setSelectedDuration(dur);
+      setSliderValue(minutesToSliderValue(dur));
+    } else {
+      setSelectedDuration(60);
+      setSliderValue(12);
+    }
+    setEditMode(false);
+  };
 
   const saveChanges = async () => {
     try {
@@ -409,8 +563,9 @@ export default function BookingDetailsScreen() {
       const payload = {
         ...edited,
         id,
+        address_id: edited.address_id ?? selectedAddressId ?? null,
         booking_start_datetime: selectedTimeUndefined ? null : combineDateTime(),
-        booking_end_datetime: selectedTimeUndefined ? null : calculateEndDateTime(),
+        booking_end_datetime:   selectedTimeUndefined ? null : calculateEndDateTime(),
         service_duration: selectedTimeUndefined ? null : selectedDuration,
         ...(includePricing
           ? (pricing.type === 'budget'
@@ -420,6 +575,7 @@ export default function BookingDetailsScreen() {
         ...(shouldNullFinal ? { final_price: null } : {}),
       };
       await api.put(`/api/bookings/${id}`, payload);
+      await fetchBooking();
       setBooking((prev) => ({ ...prev, ...payload }));
       setEditMode(false);
     } catch (error) {
@@ -433,7 +589,7 @@ export default function BookingDetailsScreen() {
       await api.patch(`/api/bookings/${bookingId}/update-data`, payload);
 
       if (status === 'accepted' && (!booking || !booking.booking_start_datetime)) {
-        const startDate = getLocalDateSql(new Date());
+        const startDate = nowSql();
         const updatePayload = {
           id: bookingId,
           booking_start_datetime: startDate,
@@ -562,14 +718,10 @@ export default function BookingDetailsScreen() {
 
   const isBookingInactive = () => {
     if (!booking) return false;
-    const now = new Date(getLocalDate(new Date()));
-    const startDate = booking.booking_start_datetime
-      ? new Date(booking.booking_start_datetime)
-      : null;
     return (
       booking.booking_status === 'canceled' ||
       booking.booking_status === 'rejected' ||
-      (startDate && startDate < now && booking.booking_status === 'requested')
+      (startMs && startMs < nowMs && booking.booking_status === 'requested')
     );
   };
 
@@ -581,27 +733,14 @@ export default function BookingDetailsScreen() {
   };
 
 
-  const now = new Date(getLocalDate(new Date()));
+  const nowMs = (() => {
+    const d = new Date();
+    return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds());
+  })();
+  const startMs = booking?.booking_start_datetime ? toMs(booking.booking_start_datetime) : null;
+  const endMs   = booking?.booking_end_datetime   ? toMs(booking.booking_end_datetime)   : null;
 
-  const startDate =
-    booking && booking.booking_start_datetime
-      ? new Date(
-        booking.booking_start_datetime
-      )
-      : null;
-  const endDate =
-    booking && booking.booking_end_datetime
-      ? new Date(booking.booking_end_datetime)
-      : null;
-
-  const showInProgress =
-    booking &&
-    booking.booking_status === 'accepted' &&
-    (
-      (startDate && !endDate) ||
-      (startDate && !endDate && now >= startDate) ||
-      (startDate && endDate && now >= startDate && now < endDate)
-    );
+  const showInProgress = booking && booking.booking_status === 'accepted' && ((startMs && !endMs) || (startMs && !endMs && nowMs >= startMs) || (startMs && endMs && nowMs >= startMs && nowMs < endMs));
 
 
   const showServiceFinished =
@@ -644,124 +783,270 @@ export default function BookingDetailsScreen() {
           draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
         }}
       >
-        <View className='flex-1 justify-start items-center'>
-          <View className='mt-4 mb-2 flex-row justify-center items-center'>
-            <Text className='text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]'>
-              {t('select_a_date')}
-            </Text>
-          </View>
 
-          <ScrollView
-            horizontal={false}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            directionalLockEnabled
-            bounces={false}
-            className="flex-1"
-            contentContainerStyle={{ paddingBottom: 20 }}
-          >
-            <View className='w-full px-6'>
-              <Calendar
-                onDayPress={onDayPress}
-                markedDates={selectedDate}
-                firstDay={1}
-                theme={{
-                  todayTextColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
-                  monthTextColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
-                  textMonthFontSize: 15,
-                  textMonthFontWeight: 'bold',
-                  dayTextColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
-                  textDayFontWeight: 'bold',
-                  textInactiveColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                  textSectionTitleColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                  textDisabledColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
-                  selectedDayBackgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3',
-                  selectedDayTextColor: '#ffffff',
-                  arrowColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
-                  calendarBackground: 'transparent',
-                }}
-                style={{ backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', padding: 20, borderRadius: 20 }}
-              />
-            </View>
+        {sheetOption === 'date' ? (
 
-            <View className='mt-2 w-full px-6'>
-              <TouchableOpacity onPress={() => setShowPicker(true)}>
-                <Text className='ml-3 mb-2 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]'>
-                  {t('start_time')}
-                </Text>
-              </TouchableOpacity>
-
-              {showPicker && (
-                <DateTimePicker
-                  value={tempDate}
-                  mode='time'
-                  display='spinner'
-                  onChange={handleHourSelected}
-                  style={{ width: 320, height: 150 }}
-                />
-              )}
-            </View>
-
-            <View className='mt-6 mb-10 w-full px-6'>
-              <Text className='ml-3 mb-8 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]'>
-                {t('duration')}: {formatDuration(selectedDuration)}
+          <View className='flex-1 justify-start items-center'>
+            <View className='mt-4 mb-2 flex-row justify-center items-center'>
+              <Text className='text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]'>
+                {t('select_a_date')}
               </Text>
-              <View className='flex-1 px-4 justify-center items-center'>
-                <Slider
-                  style={{ width: '100%', height: 10 }}
-                  minimumValue={1}
-                  maximumValue={34}
-                  step={1}
-                  thumbImage={thumbImage}
-                  minimumTrackTintColor='#b6b5b5'
-                  maximumTrackTintColor='#474646'
-                  value={sliderValue}
-                  onValueChange={handleSliderChange}
+            </View>
+
+            <ScrollView
+              horizontal={false}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+              directionalLockEnabled
+              bounces={false}
+              className="flex-1"
+              contentContainerStyle={{ paddingBottom: 20 }}
+            >
+              <View className='w-full px-6'>
+                <Calendar
+                  onDayPress={onDayPress} 
+                  markedDates={draftSelectedDate}
+                  firstDay={1}
+                  theme={{
+                    todayTextColor: colorScheme === 'dark' ? '#ffffff' : '#000000',
+                    monthTextColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
+                    textMonthFontSize: 15,
+                    textMonthFontWeight: 'bold',
+                    dayTextColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                    textDayFontWeight: 'bold',
+                    textInactiveColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                    textSectionTitleColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                    textDisabledColor: colorScheme === 'dark' ? '#706F6E' : '#b6b5b5',
+                    selectedDayBackgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3',
+                    selectedDayTextColor: '#ffffff',
+                    arrowColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
+                    calendarBackground: 'transparent',
+                  }}
+                  style={{ backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', padding: 20, borderRadius: 20 }}
                 />
               </View>
-            </View>
 
-            <View className='pl-10 flex-row w-full justify-start  items-center'>
-              <TouchableOpacity
-                onPress={() => setSelectedTimeUndefined(!selectedTimeUndefined)}
-                style={{
-                  width: 22,
-                  height: 22,
-                  borderWidth: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: 4,
-                  borderColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
-                  backgroundColor: selectedTimeUndefined ? (colorScheme === 'dark' ? '#fcfcfc' : '#323131') : 'transparent',
-                }}
-              >
-                {selectedTimeUndefined && (
-                  <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5} />
+              <View className='mt-2 w-full px-6'>
+                <TouchableOpacity onPress={() => setShowPicker(true)}>
+                  <Text className='ml-3 mb-2 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]'>
+                    {t('start_time')}
+                  </Text>
+                </TouchableOpacity>
+
+                {showPicker && (
+                  <DateTimePicker
+                    value={draftTempDate}
+                    mode='time'
+                    display='spinner'
+                    onChange={handleHourSelected}
+                    style={{ width: 320, height: 150 }}
+                  />
                 )}
-              </TouchableOpacity>
-              <Text className='ml-3 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>
-                {t('undefined_time')}
-              </Text>
-            </View>
+              </View>
 
-            <View className='mt-6 pb-3 px-6 flex-row justify-center items-center'>
-              <TouchableOpacity
-                disabled={!(selectedDay && selectedTime && selectedDuration) && !selectedTimeUndefined}
-                onPress={() => sheet.current.close()}
-                style={{
-                  opacity: !(selectedDay && selectedTime && selectedDuration) && !selectedTimeUndefined ? 0.5 : 1,
-                }}
-                className='bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17px] rounded-full items-center justify-center'
-              >
-                <Text className='text-center font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
-                  {t('accept')}
+              <View className='mt-6 mb-10 w-full px-6'>
+                <Text className='ml-3 mb-8 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]'>
+                  {t('duration')}: {formatDuration(draftDuration)}
                 </Text>
+                <View className='flex-1 px-4 justify-center items-center'>
+                  <Slider
+                    style={{ width: '100%', height: 10 }}
+                    minimumValue={1}
+                    maximumValue={34}
+                    step={1}
+                    thumbImage={thumbImage}
+                    minimumTrackTintColor='#b6b5b5'
+                    maximumTrackTintColor='#474646'
+                    value={draftSliderValue}
+                    onValueChange={handleSliderChange}
+                  />
+                </View>
+              </View>
+
+              <View className='pl-10 flex-row w-full justify-start  items-center'>
+                <TouchableOpacity
+                  onPress={() => setDraftTimeUndefined(!draftTimeUndefined)}
+                  style={{
+                    width: 22,
+                    height: 22,
+                    borderWidth: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: 4,
+                    borderColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                    backgroundColor: draftTimeUndefined ? (colorScheme === 'dark' ? '#fcfcfc' : '#323131') : 'transparent',
+                  }}
+                >
+                  {draftTimeUndefined && (
+                    <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5} />
+                  )}
+                </TouchableOpacity>
+                <Text className='ml-3 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]'>
+                  {t('undefined_time')}
+                </Text>
+              </View>
+
+              <View className='mt-6 pb-3 px-6 flex-row justify-center items-center'>
+                <TouchableOpacity
+                  disabled={!draftTimeUndefined && !(draftDay && draftTime && draftDuration)}
+                  onPress={handleAcceptDate}
+                  style={{
+                    opacity: !draftTimeUndefined && !(draftDay && draftTime && draftDuration) ? 0.5 : 1,
+                  }}
+                  className='bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full px-4 py-[17px] rounded-full items-center justify-center'
+                >
+                  <Text className='text-center font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>
+                    {t('accept')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <View className='h-[20px]' />
+            </ScrollView>
+          </View>
+
+        ) : sheetOption === 'directions' ? (
+
+          <View className='flex-1 w-full justify-start items-center pt-5 pb-5'>
+            <View className='px-7 flex-row w-full justify-between items-center'>
+              <Text className='text-center font-inter-semibold text-[20px] text-[#444343] dark:text-[#f2f2f2]'>{t('your_directions')}</Text>
+              <TouchableOpacity onPress={() => { sheet.current.close(); navigation.navigate('SearchDirectionAlone', { prevScreen: 'BookingDetails' }); }} className='justify-center items-end'>
+                <Plus height={23} width={23} strokeWidth={1.7} color={iconColor} />
               </TouchableOpacity>
             </View>
 
-            <View className='h-[20px]' />
+            {(!directions || directions.length < 1) ? (
+              <View className='mt-[80px] justify-center items-center'>
+                <MapPin height={30} width={30} strokeWidth={1.7} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+                <Text className='mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]'>{t('no_directions_found')}</Text>
+              </View>
+            ) : (
+              <ScrollView showsVerticalScrollIndicator={false} className='w-full'>
+                <View className='flex-1 px-6 mt-10'>
+                  {directions.map((d) => (
+                    <TouchableOpacity
+                      key={d.address_id || d.direction_id}
+                      onPress={() => {
+                        setSelectedAddressId(d.address_id);
+                        setEdited((prev) => ({
+                          ...prev,
+                          address_id: d.address_id,
+                          address_1: d.address_1,
+                          street_number: d.street_number,
+                          postal_code: d.postal_code,
+                          city: d.city,
+                          state: d.state,
+                          country: d.country,
+                          address_2: d.address_2,
+                        }));
+                        sheet.current.close();
+                      }}
+                      className='pb-5 mb-5 flex-row w-full justify-center items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]'
+                    >
+                      <View className='w-11 h-11 items-center justify-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
+                        <MapPin height={22} width={22} strokeWidth={1.6} color={iconColor} />
+                      </View>
+                      <View className='pl-4 pr-3 flex-1 justify-center items-start'>
+                        <Text numberOfLines={1} className='mb-[6px] font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {[d.address_1, d.street_number].filter(Boolean).join(', ')}
+                        </Text>
+                        <Text numberOfLines={1} className='font-inter-medium text-[12px] text-[#706f6e] dark:text-[#b6b5b5]'>
+                          {[d.postal_code, d.city, d.state, d.country].filter(Boolean).join(', ')}
+                        </Text>
+                      </View>
+                      <View className='h-full justify-start items-center'>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setSheetOption('edit');
+                            setSelectedAddressId(d.address_id);
+                            setCountry(d.country || '');
+                            setState(d.state || '');
+                            setCity(d.city || '');
+                            setStreet(d.address_1 || '');
+                            setStreetNumber(d.street_number || '');
+                            setPostalCode(d.postal_code || '');
+                            setAddress2(d.address_2 || '');
+                            openSheetWithInput(700);
+                          }}
+                        >
+                          <Edit2 height={18} width={18} strokeWidth={1.7} color={iconColor} />
+                        </TouchableOpacity>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
+            )}
+          </View>
+        ) : (
+          /* === FORMULARIO EDITAR DIRECCIÓN === */
+          <ScrollView>
+            <View className='flex-1 w-full justify-start items-center pt-3 pb-5 px-5'>
+              <View className='justify-between items-center mb-10'>
+                <Text className='text-center font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>{t('confirm_your_direction') || 'Confirm your direction'}</Text>
+              </View>
+              {/* Country */}
+              <View className='w-full h-[55px] mx-2 mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
+                {country?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>Country/region</Text>) : null}
+                <TextInput value={country} onChangeText={setCountry} placeholder='Country/region...'
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
+              </View>
+              {/* State */}
+              <View className='w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
+                {state?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>State</Text>) : null}
+                <TextInput value={state} onChangeText={setState} placeholder='State...'
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
+              </View>
+              {/* City */}
+              <View className='w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
+                {city?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>City/town</Text>) : null}
+                <TextInput value={city} onChangeText={setCity} placeholder='City/town...'
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
+              </View>
+              {/* Street */}
+              <View className='w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
+                {street?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>Street</Text>) : null}
+                <TextInput value={street} onChangeText={setStreet} placeholder='Street...'
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
+              </View>
+              {/* Postal  Number */}
+              <View className='flex-row w-full justify-between items-center'>
+                <View className='flex-1 h-[55px] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
+                  {postalCode?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>Postal code</Text>) : null}
+                  <TextInput value={postalCode} onChangeText={setPostalCode} placeholder='Postal code...'
+                    keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                    className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
+                </View>
+                <View className='flex-1 h-[55px] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
+                  {String(streetNumber || '').length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>Street number</Text>) : null}
+                  <TextInput value={streetNumber ? String(streetNumber) : ''} onChangeText={setStreetNumber} placeholder='Street number...'
+                    keyboardType='number-pad' keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                    className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
+                </View>
+              </View>
+              {/* Address2 */}
+              <View className='w-full h-[55px] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
+                {address2?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>Floor, door, stair (optional)</Text>) : null}
+                <TextInput value={address2} onChangeText={setAddress2} placeholder='Floor, door, stair (optional)...'
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
+              </View>
+              <TouchableOpacity
+                disabled={String(streetNumber || '').length < 1}
+                onPress={handleConfirmAddress}
+                style={{ opacity: String(streetNumber || '').length < 1 ? 0.5 : 1 }}
+                className='bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center'
+              >
+                <Text className='font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]'>{t('confirm') || 'Confirm'}</Text>
+              </TouchableOpacity>
+            </View>
           </ScrollView>
-        </View>
+        )}
+
       </RBSheet>
 
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
@@ -785,7 +1070,7 @@ export default function BookingDetailsScreen() {
 
             <View className="flex-[1] justify-center items-end">
               {booking && !booking.is_paid && (
-                <TouchableOpacity onPress={() => setEditMode(!editMode)} className='mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
+                <TouchableOpacity onPress={handleToggleEdit} className='mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
                   <Text className='font-inter-medium text-[12px] text-[#706f6e] dark:text-[#b6b5b5]'>
                     {editMode ? t('cancel') : t('edit')}
                   </Text>
@@ -888,33 +1173,31 @@ export default function BookingDetailsScreen() {
             <View className='w-full flex-row justify-between items-center '>
               <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Date and time</Text>
               {editMode && (
-                <TouchableOpacity onPress={() => { setShowPicker(true); openSheetWithInput(650); }}>
+                <TouchableOpacity onPress={() => { setSheetOption('date'); setShowPicker(true); primeDraftsFromSelected(); openSheetWithInput(650); }}>
                   <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
                 </TouchableOpacity>
               )}
             </View>
 
             <View className='mt-4 flex-1'>
-              {selectedTime && !selectedTimeUndefined ? (
+              {liveStartTime && !selectedTimeUndefined ? (
                 <View className='flex-1 justify-center items-center'>
-                  {areStartEndSameDay ? (
+                  {liveAreSameDay ? (
                     <>
                       <View className='w-full flex-row justify-between items-center'>
                         <View className='flex-row justify-start items-center'>
                           <CalendarIcon height={15} width={15} color={colorScheme === 'dark' ? '#d4d4d3' : '#515150'} strokeWidth={2.2} />
-                          <Text className='ml-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]'>{formatDate(selectedDay)}</Text>
+                          <Text className='ml-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]'>{formatDate(liveStartDate)}</Text>
                         </View>
                         <View className='justify-end items-center'>
                           <Text className='font-inter-semibold text-[14px] text-[#515150] dark:text-[#979797]'>
-                            {selectedTime} - {isStartDefinedButNoEndAndNoDuration ? '??' : getEndTime()}
+                            {liveStartTime} - {liveIsStartDefinedButNoEndAndNoDuration ? '??' : (liveEnd.endTime || '')}
                           </Text>
                         </View>
                       </View>
                       <View className='mt-4 justify-end items-center'>
                         <Text className=' font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]'>
-                          {isStartAndEndButNoDuration
-                            ? t('pending')
-                            : (isStartDefinedButNoEndAndNoDuration ? t('undefined_time') : formatDuration(selectedDuration))}
+                          {liveIsStartDefinedButNoEndAndNoDuration ? t('undefined_time') : formatDuration(liveDuration)}
                         </Text>
                       </View>
                     </>
@@ -924,13 +1207,7 @@ export default function BookingDetailsScreen() {
                       <View className='w-full justify-center items-center'>
                         {/* Fecha inicio · hora */}
                         <Text className='mb-2 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]'>
-                          {(booking?.booking_start_datetime
-                            ? formatDate(new Date(booking.booking_start_datetime).toISOString().split('T')[0])
-                            : formatDate(selectedDay))}
-                          {` · `}
-                          {(booking?.booking_start_datetime
-                            ? new Date(booking.booking_start_datetime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
-                            : selectedTime)}
+                          {formatDate(liveStartDate)} · {liveStartTime}
                         </Text>
 
                         {/* Línea vertical */}
@@ -938,19 +1215,13 @@ export default function BookingDetailsScreen() {
 
                         {/* Fecha fin · hora */}
                         <Text className='mt-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]'>
-                          {(booking?.booking_end_datetime
-                            ? formatDate(new Date(booking.booking_end_datetime).toISOString().split('T')[0])
-                            : '')}
-                          {booking?.booking_end_datetime ? ' · ' : ''}
-                          {(booking?.booking_end_datetime
-                            ? new Date(booking.booking_end_datetime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
-                            : (isStartDefinedButNoEndAndNoDuration ? '??' : getEndTime()))}
+                          {liveEnd.endDate ? formatDate(liveEnd.endDate) : ''}{liveEnd.endDate ? ' · ' : ''}{liveIsStartDefinedButNoEndAndNoDuration ? '??' : (liveEnd.endTime || '')}
                         </Text>
 
                         {/* Duración debajo con estilo de horas */}
                         <View className='mt-4 justify-end items-center'>
                           <Text className=' font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]'>
-                            {isStartAndEndButNoDuration ? t('pending') : formatDuration(selectedDuration)}
+                            {formatDuration(liveDuration)}
                           </Text>
                         </View>
                       </View>
@@ -973,24 +1244,24 @@ export default function BookingDetailsScreen() {
             <View className='w-full flex-row justify-between items-center '>
               <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Address</Text>
               {editMode && (
-                <TouchableOpacity onPress={() => navigation.navigate('SearchDirectionAlone', { prevScreen: 'BookingDetails' })}>
+                <TouchableOpacity onPress={() => { setSheetOption('directions'); openSheetWithInput(350); fetchDirections(); }}>
                   <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
                 </TouchableOpacity>
               )}
             </View>
 
             <View className='mt-4 flex-row justify-center items-center'>
-              {[booking.address_1, booking.street_number, booking.postal_code, booking.city, booking.state, booking.country].some(Boolean) ? (
+              {[current?.address_1, current?.street_number, current?.postal_code, current?.city, current?.state, current?.country].some(Boolean) ? (
                 <>
                   <View className='w-11 h-11 items-center justify-center'>
                     <MapPin height={25} width={25} strokeWidth={1.6} color={iconColor} />
                   </View>
                   <View className='pl-3 pr-3 flex-1 justify-center items-start'>
                     <Text numberOfLines={1} className='mb-[6px] font-inter-semibold text-center text-[15px] text-[#444343] dark:text-[#f2f2f2]'>
-                      {[booking.address_1, booking.street_number].filter(Boolean).join(', ')}
+                      {[current?.address_1, current?.street_number].filter(Boolean).join(', ')}
                     </Text>
                     <Text numberOfLines={1} className='font-inter-medium text-center text-[12px] text-[#706f6e] dark:text-[#b6b5b5]'>
-                      {[booking.postal_code, booking.city, booking.state, booking.country].filter(Boolean).join(', ')}
+                      {[current?.postal_code, current?.city, current?.state, current?.country].filter(Boolean).join(', ')}
                     </Text>
                   </View>
                 </>

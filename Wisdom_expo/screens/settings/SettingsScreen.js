@@ -102,7 +102,9 @@ export default function SettingsScreen() {
       console.error('Error al limpiar el almacenamiento:', error);
     } finally {
       await storeDataLocally('user', JSON.stringify({ token: false }));
-      eventEmitter.emit('profileUpdated');
+      setTimeout(() => {
+        eventEmitter.emit('profileUpdated');
+      }, 0);
       navigation.reset({ index: 0, routes: [{ name: 'GetStarted' }] });
     }
   };

@@ -125,10 +125,32 @@ export default function BookingScreen() {
         setStartTime(bookingStartTime);
         setTimeUndefined(bookingDateUndefined);
 
-        setSelectedDay(bookingStartDate);
-        setSelectedDate({ bookingStartDate });
-        setSelectedTime(bookingStartTime);
-        setSelectedTimeUndefined(bookingDateUndefined);
+        setSelectedDay(bookingStartDate || null);
+        setSelectedDate(
+          bookingStartDate
+            ? {
+                [bookingStartDate]: {
+                  selected: true,
+                  selectedColor: colorScheme === 'dark' ? '#979797' : '#979797',
+                  selectedTextColor: '#ffffff',
+                },
+              }
+            : {}
+        );
+        setSelectedTime(bookingStartTime || '');
+        setSelectedTimeUndefined(!!bookingDateUndefined);
+        if (bookingStartTime) {
+          const [h, m] = String(bookingStartTime).split(':');
+          const d = new Date();
+          d.setHours(Number(h) || 0);
+          d.setMinutes(Number(m) || 0);
+          setTempDate(d);
+        }
+        if (typeof bookingDuration === 'number') {
+          setSelectedDuration(bookingDuration);
+          setSliderValue(minutesToSliderValue(bookingDuration));
+        }
+
 
         const userData = await getDataLocally('user');
         const user = JSON.parse(userData);
@@ -232,6 +254,14 @@ export default function BookingScreen() {
     }
   };
 
+  const minutesToSliderValue = (minutes) => {
+    const total = Math.max(1, Math.round(Number(minutes) || 60));
+    if (total <= 60) return Math.max(1, Math.min(12, Math.round(total / 5)));
+    if (total <= 120) return Math.max(13, Math.min(18, Math.round(12 + (total - 60) / 10)));
+    if (total <= 240) return Math.max(19, Math.min(26, Math.round(18 + (total - 120) / 15)));
+    return Math.max(27, Math.min(34, Math.round(26 + (total - 240) / 30)));
+  };
+
   const formatDuration = (durationTime) => {
     const hours = Math.floor(durationTime / 60);
     const minutes = durationTime % 60;
@@ -294,6 +324,46 @@ export default function BookingScreen() {
     setSheetHeight(height);
 
     setTimeout(() => {
+      // Sincroniza SIEMPRE con los valores actuales
+      if (sheetOption === 'date') {
+        setSelectedTimeUndefined(!!timeUndefined);
+
+        if (startDate) {
+          setSelectedDay(startDate);
+          setSelectedDate({
+            [startDate]: {
+              selected: true,
+              selectedColor: colorScheme === 'dark' ? '#979797' : '#979797',
+              selectedTextColor: '#ffffff',
+            },
+          });
+        } else {
+          setSelectedDay(null);
+          setSelectedDate({});
+        }
+
+        if (startTime) {
+          setSelectedTime(startTime);
+          const [h, m] = String(startTime).split(':');
+          const d = new Date();
+          d.setHours(Number(h) || 0);
+          d.setMinutes(Number(m) || 0);
+          setTempDate(d);
+        } else {
+          setSelectedTime('');
+          setTempDate(new Date());
+        }
+
+        if (typeof duration === 'number') {
+          const mins = Number(duration) || 0;
+          setSelectedDuration(mins);
+          setSliderValue(minutesToSliderValue(mins));
+        } else {
+          setSelectedDuration(60);
+          setSliderValue(minutesToSliderValue(60));
+        }
+      }
+      
       sheet.current.open();
     }, 0);
 
@@ -588,6 +658,7 @@ export default function BookingScreen() {
 
               <View className="w-full px-6">
                 <Calendar
+                  initialDate={selectedDay || startDate || undefined}
                   onDayPress={onDayPress}
                   markedDates={selectedDate}
                   firstDay={1}
