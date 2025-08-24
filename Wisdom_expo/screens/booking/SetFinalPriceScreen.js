@@ -164,7 +164,7 @@ export default function SetFinalPriceScreen() {
           return;
         }
         payload = {
-          final_price: budgetPricing.final,
+          final_price: budgetPricing.base,
         };
       } else {
         // fixed: no debería llegar aquí, pero por seguridad

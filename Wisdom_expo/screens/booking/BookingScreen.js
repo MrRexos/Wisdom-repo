@@ -129,12 +129,12 @@ export default function BookingScreen() {
         setSelectedDate(
           bookingStartDate
             ? {
-                [bookingStartDate]: {
-                  selected: true,
-                  selectedColor: colorScheme === 'dark' ? '#979797' : '#979797',
-                  selectedTextColor: '#ffffff',
-                },
-              }
+              [bookingStartDate]: {
+                selected: true,
+                selectedColor: colorScheme === 'dark' ? '#979797' : '#979797',
+                selectedTextColor: '#ffffff',
+              },
+            }
             : {}
         );
         setSelectedTime(bookingStartTime || '');
@@ -363,7 +363,7 @@ export default function BookingScreen() {
           setSliderValue(minutesToSliderValue(60));
         }
       }
-      
+
       sheet.current.open();
     }, 0);
 
@@ -1309,7 +1309,7 @@ export default function BookingScreen() {
                   </View>
 
                   <View className="mt-3 flex-row">
-                    <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">Deposit</Text>
+                    <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">Quality commission</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
                       {'.'.repeat(80)}
                     </Text>
@@ -1326,7 +1326,16 @@ export default function BookingScreen() {
                       {'.'.repeat(80)}
                     </Text>
                     <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
-                      {serviceData.price_type === "budget" ? "budget+" : ""}{formatCurrency(pricing.final, serviceData.currency)}
+                      {'budget+'}{formatCurrency(pricing.commission, serviceData.currency)}
+                    </Text>
+                  </View>
+                  <View className="mt-4 flex-row">
+                    <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Deposit</Text>
+                    <Text numberOfLines={1} className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+                      {'.'.repeat(80)}
+                    </Text>
+                    <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+                      {formatCurrency(pricing.commission, serviceData.currency)}
                     </Text>
                   </View>
                 </>

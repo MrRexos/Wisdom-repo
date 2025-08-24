@@ -109,13 +109,13 @@ export default function PaymentMethodScreen() {
           setProcessing(false);
           handlePaymentError();
           return;
-        }
-        setProcessing(false);
+        }     
         if (onSuccess) {
           navigation.navigate(onSuccess, bookingId ? { bookingId } : {});
         } else {
           handleBack();
         }
+        setProcessing(false);
         return;
       }
   

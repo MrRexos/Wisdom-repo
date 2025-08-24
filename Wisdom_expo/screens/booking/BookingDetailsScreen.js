@@ -129,15 +129,15 @@ export default function BookingDetailsScreen() {
 
   const nowSql = () => {
     const d = new Date();
-    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+    return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
   };
 
   const toMs = (sql) => {
     const p = splitSql(sql);
     if (!p) return null;
-    const [Y,M,D] = p.ymd.split('-').map(Number);
-    const [h,m,s] = p.hms.split(':').map(Number);
-    return Date.UTC(Y, M-1, D, h, m, s||0);
+    const [Y, M, D] = p.ymd.split('-').map(Number);
+    const [h, m, s] = p.hms.split(':').map(Number);
+    return Date.UTC(Y, M - 1, D, h, m, s || 0);
   };
 
   // Suma minutos “en crudo” sin husos: pasamos a UTC SOLO para hacer la suma y volvemos a strings
@@ -159,16 +159,17 @@ export default function BookingDetailsScreen() {
     try {
       const response = await api.get(`/api/bookings/${bookingId}`);
       let data = response.data;
-      const endMs = data.booking_end_datetime ? toMs(data.booking_end_datetime) : null; 
-      const nowNaiveMs = (() => { 
-        const d = new Date(); 
-        return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds()); 
-      })(); 
+      const endMs = data.booking_end_datetime ? toMs(data.booking_end_datetime) : null;
+      const nowNaiveMs = (() => {
+        const d = new Date();
+        return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds());
+      })();
       if (data.booking_status === 'accepted' && endMs && endMs < nowNaiveMs) {
         await api.patch(`/api/bookings/${bookingId}/update-data`, { status: 'completed' });
         data.booking_status = 'completed';
       }
       setBooking(data);
+      console.log('data', data);
       setEdited(prev => (editMode ? prev : data));
       const serviceResp = await api.get(`/api/services/${data.service_id}`);
       setService(serviceResp.data);
@@ -186,9 +187,9 @@ export default function BookingDetailsScreen() {
         setSelectedDay(dateString);
         setSelectedTime(timeString);
         // Semilla para el DateTimePicker con la hora recibida 
-        const [hh, mm] = timeString.split(':').map(Number); 
-        const seed = new Date(); 
-        seed.setHours(hh, mm, 0, 0); 
+        const [hh, mm] = timeString.split(':').map(Number);
+        const seed = new Date();
+        seed.setHours(hh, mm, 0, 0);
         setTempDate(seed);
         setSelectedTimeUndefined(false);
       } else {
@@ -212,18 +213,18 @@ export default function BookingDetailsScreen() {
 
   useRefreshOnFocus(fetchBooking);
 
-  const onDayPress = (day) => { 
-    setDraftSelectedDate({ [day.dateString]: { selected: true, selectedColor: colorScheme === 'dark' ? '#979797' : '#979797', selectedTextColor: '#ffffff' }}); 
-    setDraftDay(day.dateString); 
+  const onDayPress = (day) => {
+    setDraftSelectedDate({ [day.dateString]: { selected: true, selectedColor: colorScheme === 'dark' ? '#979797' : '#979797', selectedTextColor: '#ffffff' } });
+    setDraftDay(day.dateString);
   };
 
-  const handleHourSelected = (event, date) => { 
-    const currentDate = date || draftTempDate; 
-    setDraftTempDate(currentDate); 
-    const h = pad2(currentDate.getHours()); 
-    const m = pad2(currentDate.getMinutes()); 
-    setDraftTime(`${h}:${m}`); 
-    if (Platform.OS === 'android') setShowPicker(false); 
+  const handleHourSelected = (event, date) => {
+    const currentDate = date || draftTempDate;
+    setDraftTempDate(currentDate);
+    const h = pad2(currentDate.getHours());
+    const m = pad2(currentDate.getMinutes());
+    setDraftTime(`${h}:${m}`);
+    if (Platform.OS === 'android') setShowPicker(false);
   };
 
   const handleSliderChange = (value) => {
@@ -246,7 +247,7 @@ export default function BookingDetailsScreen() {
     setDraftTempDate(tempDate);
     setDraftTimeUndefined(selectedTimeUndefined);
   };
-  
+
   const handleAcceptDate = () => {
     if (draftTimeUndefined) {
       setSelectedTimeUndefined(true);
@@ -373,6 +374,15 @@ export default function BookingDetailsScreen() {
   }, [priceSource?.price_type, priceSource?.price, selectedDuration]);
 
 
+  const budgetFromBooking = useMemo(() => {
+    const base = Number(booking?.final_price || 0);
+    if (!(base > 0)) return null;
+    const commission = Math.max(1, round1(base * 0.1));
+    const final = round2(base + commission);
+    return { base: round2(base), commission, final };
+  }, [booking?.final_price]);
+
+
   const getFormattedPrice = () => {
     const priceSource = service || booking;
     if (!priceSource) return null;
@@ -420,11 +430,11 @@ export default function BookingDetailsScreen() {
     }
   };
 
-  const formatDate = (ymd) => { 
+  const formatDate = (ymd) => {
     // Solo para nombre de día/mes; no afecta a los números que muestras 
-    const [Y,M,D] = String(ymd).split('-').map(Number); 
-    const d = new Date(Date.UTC(Y, (M||1)-1, D||1)); 
-    return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' }); 
+    const [Y, M, D] = String(ymd).split('-').map(Number);
+    const d = new Date(Date.UTC(Y, (M || 1) - 1, D || 1));
+    return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' });
   };
 
   const getEndTime = () => addMinutesNaive('1970-01-01', selectedTime, selectedDuration).hm;
@@ -436,32 +446,49 @@ export default function BookingDetailsScreen() {
     return `${ymd} ${hms}`;
   };
 
+  const bookingStartParts = booking?.booking_start_datetime ? splitSql(booking.booking_start_datetime) : null;
+  const bookingEndParts = booking?.booking_end_datetime ? splitSql(booking.booking_end_datetime) : null;
+
   // Valores en vivo cuando editas (o los de la reserva cuando no editas)
-  const liveStartDate = editMode 
-    ? (selectedTimeUndefined ? null : selectedDay) 
-    : (booking?.booking_start_datetime ? splitSql(booking.booking_start_datetime)?.ymd : null); 
+  const liveStartDate = editMode
+    ? (selectedTimeUndefined ? null : selectedDay)
+    : (bookingStartParts ? bookingStartParts.ymd : null);
 
-  const liveStartTime = editMode 
-    ? (selectedTimeUndefined ? null : selectedTime) 
-    : (booking?.booking_start_datetime ? splitSql(booking.booking_start_datetime)?.hm : null);
+  const liveStartTime = editMode
+    ? (selectedTimeUndefined ? null : selectedTime)
+    : (bookingStartParts ? bookingStartParts.hm : null);
 
-  const liveDuration = editMode
-    ? (selectedTimeUndefined ? null : selectedDuration)
-    : (booking?.service_duration ?? null);
+  const liveDuration = useMemo(() => {
+    if (editMode) return selectedTimeUndefined ? null : selectedDuration;
+    return booking?.service_duration != null ? Number(booking.service_duration) : null;
+  }, [
+    editMode,
+    selectedTimeUndefined,
+    selectedDuration,
+    booking?.service_duration,
+  ]);
 
-  const liveEnd = useMemo(() => { 
-    if (!liveStartDate || !liveStartTime || !liveDuration) return { endDate: null, endTime: null }; 
-    const { ymd, hm } = addMinutesNaive(liveStartDate, liveStartTime, liveDuration); 
-    return { endDate: ymd, endTime: hm }; 
-  }, [liveStartDate, liveStartTime, liveDuration]);
+  const liveEnd = useMemo(() => {
+    if (!editMode && bookingEndParts) {
+      return { endDate: bookingEndParts.ymd, endTime: bookingEndParts.hm };
+    }
+    if (!liveStartDate || !liveStartTime || liveDuration == null) {
+      return { endDate: null, endTime: null };
+    }
+    const { ymd, hm } = addMinutesNaive(liveStartDate, liveStartTime, liveDuration);
+    return { endDate: ymd, endTime: hm };
+  }, [
+    editMode,
+    bookingEndParts?.ymd,
+    bookingEndParts?.hm,
+    liveStartDate,
+    liveStartTime,
+    liveDuration,
+  ]);
 
   const liveAreSameDay = !liveStartDate || !liveEnd.endDate ? true : (liveStartDate === liveEnd.endDate);
 
-  const liveIsStartDefinedButNoEndAndNoDuration = useMemo(() => {
-    const hasStart = Boolean(liveStartDate && liveStartTime);
-    const noDuration = liveDuration === null || liveDuration === undefined;
-    return hasStart && noDuration;
-  }, [liveStartDate, liveStartTime, liveDuration]);
+
 
   const fetchDirections = async () => {
     if (!userId) return [];
@@ -529,12 +556,12 @@ export default function BookingDetailsScreen() {
     // Cancelar: volver a booking original
     setEdited(booking);
     if (booking?.booking_start_datetime) {
-      const p2 = splitSql(booking.booking_start_datetime); 
-      const ds = p2.ymd; 
-      const ts = p2.hm; 
-      const [hh3, mm3] = ts.split(':').map(Number); 
-      const seed3 = new Date(); 
-      seed3.setHours(hh3, mm3, 0, 0); 
+      const p2 = splitSql(booking.booking_start_datetime);
+      const ds = p2.ymd;
+      const ts = p2.hm;
+      const [hh3, mm3] = ts.split(':').map(Number);
+      const seed3 = new Date();
+      seed3.setHours(hh3, mm3, 0, 0);
       setTempDate(seed3);
       setSelectedDate({ [ds]: { selected: true, selectedColor: '#979797', selectedTextColor: '#ffffff' } });
       setSelectedDay(ds);
@@ -566,16 +593,17 @@ export default function BookingDetailsScreen() {
       }
       const includePricing = !selectedTimeUndefined && Number(pricing.minutes) > 0;
       const shouldNullFinal = selectedTimeUndefined && (pricing.type === 'hour' || pricing.type === 'budget');
+      const { commission: _omitCommission, ...editedNoCommission } = edited || {};
       const payload = {
-        ...edited,
+        ...editedNoCommission,
         id,
         booking_start_datetime: selectedTimeUndefined ? null : combineDateTime(),
-        booking_end_datetime:   selectedTimeUndefined ? null : calculateEndDateTime(),
+        booking_end_datetime: selectedTimeUndefined ? null : calculateEndDateTime(),
         service_duration: selectedTimeUndefined ? null : selectedDuration,
         ...(includePricing
           ? (pricing.type === 'budget'
-            ? { final_price: 1, commission: 1 }
-            : { final_price: pricing.final, commission: pricing.commission })
+            ? { final_price: 1 }                  // ← sin commission
+            : { final_price: pricing.final })     // ← sin commission
           : {}),
         ...(shouldNullFinal ? { final_price: null } : {}),
       };
@@ -746,7 +774,7 @@ export default function BookingDetailsScreen() {
     return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds());
   })();
   const startMs = booking?.booking_start_datetime ? toMs(booking.booking_start_datetime) : null;
-  const endMs   = booking?.booking_end_datetime   ? toMs(booking.booking_end_datetime)   : null;
+  const endMs = booking?.booking_end_datetime ? toMs(booking.booking_end_datetime) : null;
 
   const showInProgress = booking && booking.booking_status === 'accepted' && ((startMs && !endMs) || (startMs && !endMs && nowMs >= startMs) || (startMs && endMs && nowMs >= startMs && nowMs < endMs));
 
@@ -812,7 +840,7 @@ export default function BookingDetailsScreen() {
             >
               <View className='w-full px-6'>
                 <Calendar
-                  onDayPress={onDayPress} 
+                  onDayPress={onDayPress}
                   markedDates={draftSelectedDate}
                   firstDay={1}
                   theme={{
@@ -1077,7 +1105,7 @@ export default function BookingDetailsScreen() {
             </View>
 
             <View className="flex-[1] justify-center items-end">
-              {booking && !booking.is_paid && (
+              {booking && !booking.is_paid && booking.booking_status !== 'rejected' && booking.booking_status !== 'canceled' && booking.booking_status !== 'completed' && (
                 <TouchableOpacity onPress={handleToggleEdit} className='mr-2 justify-center items-center rounded-full px-3 py-2 bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
                   <Text className='font-inter-medium text-[12px] text-[#706f6e] dark:text-[#b6b5b5]'>
                     {editMode ? t('cancel') : t('edit')}
@@ -1188,7 +1216,7 @@ export default function BookingDetailsScreen() {
             </View>
 
             <View className='mt-4 flex-1'>
-              {liveStartTime && !selectedTimeUndefined ? (
+              {liveStartTime && (!editMode || !selectedTimeUndefined) ? (
                 <View className='flex-1 justify-center items-center'>
                   {liveAreSameDay ? (
                     <>
@@ -1199,13 +1227,13 @@ export default function BookingDetailsScreen() {
                         </View>
                         <View className='justify-end items-center'>
                           <Text className='font-inter-semibold text-[14px] text-[#515150] dark:text-[#979797]'>
-                            {liveStartTime} - {liveIsStartDefinedButNoEndAndNoDuration ? '??' : (liveEnd.endTime || '')}
+                            {liveStartTime} - {(liveEnd.endTime ? liveEnd.endTime : '??')}
                           </Text>
                         </View>
                       </View>
                       <View className='mt-4 justify-end items-center'>
                         <Text className=' font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]'>
-                          {liveIsStartDefinedButNoEndAndNoDuration ? t('undefined_time') : formatDuration(liveDuration)}
+                          {(liveDuration === null || liveDuration === undefined) ? t('undefined_time') : formatDuration(liveDuration)}
                         </Text>
                       </View>
                     </>
@@ -1223,13 +1251,13 @@ export default function BookingDetailsScreen() {
 
                         {/* Fecha fin · hora */}
                         <Text className='mt-1 font-inter-semibold text-[14px] text-[#515150] dark:text-[#d4d4d3]'>
-                          {liveEnd.endDate ? formatDate(liveEnd.endDate) : ''}{liveEnd.endDate ? ' · ' : ''}{liveIsStartDefinedButNoEndAndNoDuration ? '??' : (liveEnd.endTime || '')}
+                          {liveEnd.endDate ? formatDate(liveEnd.endDate) : ''}{liveEnd.endDate ? ' · ' : ''}{(liveEnd.endTime ? liveEnd.endTime : '??')}
                         </Text>
 
                         {/* Duración debajo con estilo de horas */}
                         <View className='mt-4 justify-end items-center'>
                           <Text className=' font-inter-bold text-[20px] text-[#515150] dark:text-[#979797]'>
-                            {formatDuration(liveDuration)}
+                            {(liveDuration === null || liveDuration === undefined) ? t('undefined_time') : formatDuration(liveDuration)}
                           </Text>
                         </View>
                       </View>
@@ -1295,7 +1323,7 @@ export default function BookingDetailsScreen() {
               <View className='flex-1 justify-center items-center'>
                 {pricing.type === 'hour' && (
                   <>
-                    {selectedTimeUndefined ? (
+                    {((editMode && selectedTimeUndefined) || (!editMode && booking?.service_duration == null)) ? (
                       <>
                         <View className='flex-row'>
                           <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
@@ -1329,15 +1357,6 @@ export default function BookingDetailsScreen() {
                           </Text>
                         </View>
 
-                        <View className='mt-4 flex-row'>
-                          <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Deposit</Text>
-                          <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                            {'.'.repeat(80)}
-                          </Text>
-                          <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                            {formatCurrency(1, pricing.currency)}
-                          </Text>
-                        </View>
                       </>
                     ) : (
                       <>
@@ -1375,15 +1394,6 @@ export default function BookingDetailsScreen() {
                           </Text>
                         </View>
 
-                        <View className='mt-4 flex-row'>
-                          <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Deposit</Text>
-                          <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                            {'.'.repeat(80)}
-                          </Text>
-                          <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                            {formatCurrency(pricing.commission, pricing.currency)}
-                          </Text>
-                        </View>
                       </>
                     )}
                   </>
@@ -1423,50 +1433,77 @@ export default function BookingDetailsScreen() {
                       </Text>
                     </View>
 
-                    <View className='mt-4 flex-row'>
-                      <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Deposit</Text>
-                      <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                        {'.'.repeat(80)}
-                      </Text>
-                      <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                        {formatCurrency(pricing.commission, pricing.currency)}
-                      </Text>
-                    </View>
                   </>
                 )}
 
                 {pricing.type === 'budget' && (
-                  <>
-                    <View className='flex-row'>
-                      <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Service price</Text>
-                      <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
-                        {'.'.repeat(80)}
-                      </Text>
-                      <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>budget</Text>
-                    </View>
+                  budgetFromBooking ? (
+                    <>
+                      <View className='flex-row'>
+                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Service price</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {formatCurrency(budgetFromBooking.base, pricing.currency)}
+                        </Text>
+                      </View>
 
-                    <View className='mt-3 flex-row'>
-                      <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Deposit</Text>
-                      <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
-                        {'.'.repeat(80)}
-                      </Text>
-                      <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
-                        {formatCurrency(pricing.commission, pricing.currency)}
-                      </Text>
-                    </View>
+                      <View className='mt-3 flex-row'>
+                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Quality commission</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {formatCurrency(budgetFromBooking.commission, pricing.currency)}
+                        </Text>
+                      </View>
 
-                    <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]' />
+                      <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]' />
 
-                    <View className='mt-4 flex-row'>
-                      <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Final price</Text>
-                      <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                        {'.'.repeat(80)}
-                      </Text>
-                      <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
-                        {pricing.type === "budget" ? "budget+" : ""}{formatCurrency(pricing.final, pricing.currency)}
-                      </Text>
-                    </View>
-                  </>
+                      <View className='mt-4 flex-row'>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Final price</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {formatCurrency(budgetFromBooking.final, pricing.currency)}
+                        </Text>
+                      </View>
+                    </>
+                  ) : (
+                    <>
+                      <View className='flex-row'>
+                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Service price</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>budget</Text>
+                      </View>
+
+                      <View className='mt-3 flex-row'>
+                        <Text className='font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>Quality commission</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]'>
+                          {formatCurrency(pricing.commission, pricing.currency)}
+                        </Text>
+                      </View>
+
+                      <View className='w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]' />
+
+                      <View className='mt-4 flex-row'>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>Final price</Text>
+                        <Text numberOfLines={1} className='flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {'.'.repeat(80)}
+                        </Text>
+                        <Text className='font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]'>
+                          {'budget+'}{formatCurrency(pricing.commission, pricing.currency)}
+                        </Text>
+                      </View>
+                    </>
+                  )
                 )}
               </View>
             </View>
