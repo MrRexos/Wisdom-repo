@@ -55,7 +55,6 @@ export default function ServicesScreen() {
     useCallback(() => {
       const checkUserData = async () => {
         const userData = await getDataLocally('user');
-        console.log(userData);
 
         // Comprobar si userData indica que no hay usuario
         if (userData === '{"token":false}') {
@@ -86,7 +85,6 @@ export default function ServicesScreen() {
     const loadBookings = async () => {
       const bookingsData = await fetchBookings(selectedStatus);
       setBookings(bookingsData);
-      console.log(bookingsData);
     };
     loadBookings();
   }, [selectedStatus]);

@@ -68,6 +68,11 @@ export default function ServiceProfileScreen() {
   const [timeUndefined, setTimeUndefined] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const round2 = (n) => {
+    const x = Number(n);
+    if (!Number.isFinite(x)) return 0;
+    return Math.round((x + Number.EPSILON) * 100) / 100;
+  };
 
   const languagesMap = {
     es: 'Spanish',
@@ -442,7 +447,7 @@ export default function ServiceProfileScreen() {
     }
 
     // 4. Construir el mensaje de reserva final
-    const priceLabel = `${totalPrice.toFixed(0)}€`; // Asegurarnos de que el precio tenga dos decimales si es necesario
+    const priceLabel = `${round2(totalPrice)}€`; // Asegurarnos de que el precio tenga dos decimales si es necesario
     return `Book for ${formattedDay} \n ${formattedTime} - ${formattedEndTime} for ${serviceData.price_type === "budget" ? "budget" : priceLabel}`;
   };
 

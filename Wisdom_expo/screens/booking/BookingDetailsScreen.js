@@ -169,7 +169,6 @@ export default function BookingDetailsScreen() {
         data.booking_status = 'completed';
       }
       setBooking(data);
-      console.log('data', data);
       setEdited(prev => (editMode ? prev : data));
       const serviceResp = await api.get(`/api/services/${data.service_id}`);
       setService(serviceResp.data);
@@ -602,7 +601,7 @@ export default function BookingDetailsScreen() {
         service_duration: selectedTimeUndefined ? null : selectedDuration,
         ...(includePricing
           ? (pricing.type === 'budget'
-            ? { final_price: 1 }                  // ← sin commission
+            ? { final_price: null }
             : { final_price: pricing.final })     // ← sin commission
           : {}),
         ...(shouldNullFinal ? { final_price: null } : {}),
@@ -622,30 +621,48 @@ export default function BookingDetailsScreen() {
   const updateStatus = async (status) => {
     try {
       const payload = { status };
+
+      if (status === 'completed') {
+        // 1) Cierra con la hora local del cliente (formato naive de tu app)
+        const endLocal = nowSql(); // "YYYY-MM-DD HH:mm:ss"
+        payload.booking_end_datetime = endLocal;
+
+        // 2) Solo si YA había duration (>0) y hay start, recalcúlala con el nuevo end
+        const hadDurationBefore = booking?.service_duration != null && Number(booking.service_duration) > 0;
+        const startStr = booking?.booking_start_datetime || null;
+
+        if (hadDurationBefore && startStr) {
+          const sp = splitSql(startStr);
+          const ep = splitSql(endLocal);
+          if (sp && ep) {
+            const startMs = toMs(`${sp.ymd} ${sp.hms}`);
+            const endMs = toMs(`${ep.ymd} ${ep.hms}`);
+            const minutes = Math.max(0, Math.round((endMs - startMs) / 60000));
+            payload.service_duration = minutes; // solo en este caso lo enviamos
+          }
+        }
+      }
+
       await api.patch(`/api/bookings/${bookingId}/update-data`, payload);
 
+      // Mantén tu lógica existente para 'accepted'
       if (status === 'accepted' && (!booking || !booking.booking_start_datetime)) {
         const startDate = nowSql();
-        const updatePayload = {
+        await api.put(`/api/bookings/${bookingId}`, {
           id: bookingId,
           booking_start_datetime: startDate,
           booking_end_datetime: booking ? booking.booking_end_datetime : null,
-          service_duration: booking ? booking.service_duration : null,
           final_price: booking ? booking.final_price : null,
           description: booking ? booking.description : null,
-        };
-        await api.put(`/api/bookings/${bookingId}`, updatePayload);
+        });
         setBooking((prev) => ({ ...prev, booking_start_datetime: startDate, booking_status: status }));
       }
 
-      // Si se marca como completado, el backend autocompleta booking_end_datetime = NOW() si faltaba.
-      // Si quien finaliza es el profesional y el precio no es fijo, redirigir a la pantalla para indicar el precio final.
-      if (status === 'completed') {
-        if (role === 'pro') {
-          const priceType = (service && service.price_type) || booking?.price_type;
-          if (priceType && priceType !== 'fix') {
-            navigation.navigate('SetFinalPrice', { bookingId });
-          }
+      // Navegación cuando se completa y no es precio fijo
+      if (status === 'completed' && role === 'pro') {
+        const priceType = (service && service.price_type) || booking?.price_type;
+        if (priceType && priceType !== 'fix') {
+          navigation.navigate('SetFinalPrice', { bookingId });
         }
       }
 
@@ -675,6 +692,18 @@ export default function BookingDetailsScreen() {
           });
           return;
         }
+        if (res.data?.requiresPaymentMethod && res.data?.clientSecret) {
+          navigation.navigate('PaymentMethod', {
+            clientSecret: res.data.clientSecret,
+            paymentMethodId: pm.id,
+            onSuccess: 'ConfirmPayment',
+            bookingId,
+            origin: 'BookingDetails',
+            role,
+            autoConfirm: true, // tu pantalla ya lo soporta como en el depósito
+          });
+          return;
+        }
         if (res.data?.processing || res.data?.message) {
           navigation.navigate('ConfirmPayment', { bookingId });
           fetchBooking();
@@ -690,7 +719,7 @@ export default function BookingDetailsScreen() {
         });
       }
     } catch (e) {
-      console.error('handleFinalPayment error:', e);
+      console.error('handleFinalPayment error:', e.response?.data || e);
       setPaymentErrorVisible(true);
     }
   };
@@ -789,8 +818,8 @@ export default function BookingDetailsScreen() {
     if (booking.booking_status !== 'completed') return false;
     const fp = Number(booking.final_price || 0);
     const cm = Number(booking.commission || 0);
-    return !(fp > 0 && cm > 0 && fp >= cm);
-  }, [booking]);
+    return !(fp > 0 && cm > 0);
+  }, [booking?.final_price, booking?.commission, booking?.booking_status]);
 
   const statusMessage = showServiceFinished
     ? t('service_completed')
@@ -1125,7 +1154,7 @@ export default function BookingDetailsScreen() {
           )}
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} className='flex-1 px-6 mt-4 pb-4 ' refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        <ScrollView showsVerticalScrollIndicator={false} className='flex-1 px-6 mt-4  pb-4' refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
           <View className='mb-4'>
             <TouchableOpacity
@@ -1514,11 +1543,9 @@ export default function BookingDetailsScreen() {
             <View className='mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
               <View className='w-full flex-row justify-between items-center '>
                 <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Payment method</Text>
-                {editMode && paymentMethod && (
-                  <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'BookingDetails', bookingId, role })}>
-                    <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'BookingDetails', bookingId, role })}>
+                  <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
+                </TouchableOpacity>
               </View>
 
               <View className='mt-4 flex-1'>
