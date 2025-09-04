@@ -18,7 +18,9 @@ export default function CreateServicePriceScreen() {
   const route = useRoute();
   const prevParams = route.params?.prevParams || {};
   const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, priceValue: prevPrice } = prevParams;
-  const [priceValue, setPriceValue] = useState(prevPrice || '10');
+  const [priceValue, setPriceValue] = useState(
+    prevPrice === undefined ? '10' : prevPrice === null ? '' : String(prevPrice)
+  );
   const [showDetails, setShowDetails] = useState(false);
   const inputRef = useRef(null);
 

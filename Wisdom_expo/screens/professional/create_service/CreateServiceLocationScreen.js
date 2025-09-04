@@ -41,7 +41,8 @@ export default function CreateServiceLocationScreen() {
   const [streetNumber, setStreetNumber] = useState(prevParams.streetNumber || '');
   const [address2, setAddress2] = useState(prevParams.address2 || '');
   const [location, setLocation] = useState(prevParams.location);
-  const [actionRate, setActionRate] = useState(prevParams.actionRate || 1);
+  // Preserve explicit 0 values when coming back from other screens
+  const [actionRate, setActionRate] = useState(prevParams.actionRate ?? 1);
 
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
 
@@ -206,7 +207,27 @@ export default function CreateServiceLocationScreen() {
             </View>
           ) : null}
 
-          <TouchableOpacity onPress={() => setIsUnlocated(!isUnlocated)} className="flex-row w-full justify-start pl-4 items-center mt-1">
+          <TouchableOpacity
+            onPress={() => {
+              const newValue = !isUnlocated;
+              setIsUnlocated(newValue);
+              if (newValue) {
+                // Clear previously selected address and radius when switching to unlocated
+                setDirection('');
+                setCountry('');
+                setStreet('');
+                setCity('');
+                setState('');
+                setPostalCode('');
+                setStreetNumber('');
+                setAddress2('');
+                setLocation(null);
+                setActionRate(1);
+                setCurrentLocation({ lat: 41.5421100, lng: 2.4445000 });
+              }
+            }}
+            className="flex-row w-full justify-start pl-4 items-center mt-1"
+          >
             <Text className="mr-6 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">{t('unlocated_service')}</Text>
             <View
               style={[
