@@ -19,8 +19,9 @@ export default function CreateServiceAskScreen() {
   const route = useRoute();
   const prevParams = route.params?.prevParams || {};
   const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, priceValue, allowDiscounts, discountRate, allowAsk: prevAllowAsk } = prevParams;
-  const [typeSelected, setTypeSelected] = useState(prevAllowAsk ? 1 : 0);
-  const [allowAsk, setAllowAsk] = useState(prevAllowAsk ?? true);
+  const allowAskDefault = prevAllowAsk ?? true;
+  const [allowAsk, setAllowAsk] = useState(allowAskDefault);
+  const [typeSelected, setTypeSelected] = useState(allowAskDefault ? 1 : 0);
   
   const options  = [
     {

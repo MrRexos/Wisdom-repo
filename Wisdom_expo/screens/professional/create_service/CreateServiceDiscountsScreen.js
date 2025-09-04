@@ -18,8 +18,9 @@ export default function CreateServiceDiscountsScreen() {
   const route = useRoute();
   const prevParams = route.params?.prevParams || {};
   const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, priceValue } = prevParams;
-  const [typeSelected, setTypeSelected] = useState(prevParams.allowDiscounts ? 1 : 0);
-  const [allowDiscounts, setAllowDiscounts] = useState(prevParams.allowDiscounts ?? true);
+  const allowDiscountsDefault = prevParams.allowDiscounts ?? true;
+  const [allowDiscounts, setAllowDiscounts] = useState(allowDiscountsDefault);
+  const [typeSelected, setTypeSelected] = useState(allowDiscountsDefault ? 1 : 0);
   const [discountRate, setDiscountRate] = useState(prevParams.discountRate ?? 10);
   const [discountRateText, setDiscountRateText] = useState(String(prevParams.discountRate ?? 10));
 
@@ -105,7 +106,11 @@ export default function CreateServiceDiscountsScreen() {
               
               <TouchableOpacity
               disabled={false}
-              onPress={() => navigation.navigate('CreateServicePrice', { prevParams: { ...prevParams, allowDiscounts, discountRate } })}
+              onPress={() =>
+                priceType === 'budget'
+                  ? navigation.navigate('CreateServicePriceType', { prevParams: { ...prevParams, allowDiscounts, discountRate } })
+                  : navigation.navigate('CreateServicePrice', { prevParams: { ...prevParams, allowDiscounts, discountRate } })
+              }
               style={{opacity: 1}}
               className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
                   <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
