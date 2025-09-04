@@ -5,7 +5,7 @@ import { useColorScheme } from 'nativewind'
 import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {XMarkIcon, ChevronLeftIcon, GlobeAltIcon, GlobeEuropeAfricaIcon} from 'react-native-heroicons/outline';
-import MapView, { Circle } from 'react-native-maps';
+import MapView, { Marker, Circle } from 'react-native-maps';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
 import {Heart} from 'react-native-feather';
 import api from '../../../utils/api.js';
@@ -379,13 +379,25 @@ export default function CreateServiceReviewScreen() {
                     longitudeDelta: 0.03,
                   }}
                 >
-                  <Circle
-                      center={{ latitude: location.lat, longitude: location.lng }}
-                      radius={actionRate*1000}
-                      strokeColor="rgba(182,181,181,0.8)"
-                      fillColor="rgba(182,181,181,0.5)"
-                      strokeWidth={2}
-                    />
+                  {location && (
+                    <View>
+                      <Marker
+                        coordinate={{ latitude: location.lat, longitude: location.lng }}
+                        image={require('../../../assets/MapMarker.png')}
+                        anchor={{ x: 0.5, y: 1 }}
+                        centerOffset={{ x: 0.5, y: -20 }}
+                      />
+                      {actionRate < 100 && (
+                        <Circle
+                          center={{ latitude: location.lat, longitude: location.lng }}
+                          radius={actionRate * 1000}
+                          strokeColor="rgba(182,181,181,0.8)"
+                          fillColor="rgba(182,181,181,0.5)"
+                          strokeWidth={2}
+                        />
+                      )}
+                    </View>
+                  )}
                 </MapView>
                 <View className="mt-3 px-3 w-full flex-row justify-between items-center">
                 <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{address ? address : 'Loading...'}</Text>

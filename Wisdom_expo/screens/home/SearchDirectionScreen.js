@@ -283,6 +283,7 @@ export default function SearchDirectionScreen() {
       ...dir,
       address_id: dir.address_id ?? null,
     };
+    console.log(withId)
     await storeDataLocally('searchedDirection', JSON.stringify(withId));
 
     navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible });
@@ -323,6 +324,35 @@ export default function SearchDirectionScreen() {
 
     } catch (error) {
       console.error('Error fetching location details:', error);
+    }
+  };
+
+  const geocodeDirectionToLocation = async (direction) => {
+    try {
+      const addressParts = [
+        direction.address_1,
+        direction.street_number,
+        direction.postal_code,
+        direction.city,
+        direction.state,
+        direction.country
+      ].filter(Boolean).join(', ');
+
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json`, {
+        params: {
+          address: addressParts,
+          key: 'AIzaSyA9IKAf2YvpjiyNfDpPUUsv_Xz-flkJFCY',
+          language: 'en',
+        },
+      }
+      );
+
+      const result = response?.data?.results?.[0];
+      return result?.geometry?.location ?? null;
+    } catch (error) {
+      console.error('Error geocoding direction:', error);
+      return null;
     }
   };
 
@@ -455,9 +485,14 @@ export default function SearchDirectionScreen() {
 
                       <TouchableOpacity
                         onPress={async () => {
+                          let computedLocation = direction?.location;
+                          if (!computedLocation || computedLocation?.lat == null || computedLocation?.lng == null) {
+                            computedLocation = await geocodeDirectionToLocation(direction);
+                          }
+
                           const searchedDirection = {
                             address_id: direction.address_id,
-                            location: direction.location,
+                            location: computedLocation,
                             country: direction.country,
                             state: direction.state,
                             city: direction.city,
