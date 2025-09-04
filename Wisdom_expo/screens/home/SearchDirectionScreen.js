@@ -243,7 +243,7 @@ export default function SearchDirectionScreen() {
 
         const searchedDirection = { address_id: addrId, location, country, state, city, address_1: street, street_number: streetNumber, postal_code: postalCode, address_2: address2 }
         await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
-        navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible });
+        navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible, selectedDirection: searchedDirection });
 
       } catch (error) {
         console.error('Error updating address:', error);
@@ -268,7 +268,7 @@ export default function SearchDirectionScreen() {
 
         const searchedDirection = { address_id: addrId, location, country, state, city, address_1: street, street_number: streetNumber, postal_code: postalCode, address_2: address2 }
         await storeDataLocally('searchedDirection', JSON.stringify(searchedDirection));
-        navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible });
+        navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible, selectedDirection: searchedDirection });
 
       } catch (error) {
         console.error('Error fetching directions:', error);
@@ -286,7 +286,7 @@ export default function SearchDirectionScreen() {
     console.log(withId)
     await storeDataLocally('searchedDirection', JSON.stringify(withId));
 
-    navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible });
+    navigation.navigate(prevScreen, { ...(prevParams || {}), blurVisible, selectedDirection: withId });
   };
 
   const clearHistory = async () => {

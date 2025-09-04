@@ -81,14 +81,23 @@ export default function HomeScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      if (route.params?.blurVisible !== undefined) {
-        setSearchOptionsVisible(route.params.blurVisible);
-        loadSearchedDirection();
-        loadSearchedService();
+      const blurVisible = route.params?.blurVisible;
+      if (blurVisible === true) {
+        setSearchOptionsVisible(true);
+        if (route.params?.selectedDirection) {
+          setSearchedDirection(route.params.selectedDirection);
+        } else {
+          loadSearchedDirection();
+        }
+        if (route.params?.selectedService) {
+          setSearchedService([route.params.selectedService]);
+        } else {
+          loadSearchedService();
+        }
       } else {
         setSearchOptionsVisible(false);
       }
-    }, [route.params?.blurVisible])
+    }, [route.params?.blurVisible, route.params?.selectedService, route.params?.selectedDirection])
   );
 
 
@@ -500,9 +509,9 @@ export default function HomeScreen() {
   };
 
   const closeSearchOverlay = async () => {
-    await setSearchOptionsVisible(false);
-    resetSearchParameters();
-    navigation.setParams({ blurVisible: false });
+    setSearchOptionsVisible(false);
+    await resetSearchParameters();
+    navigation.setParams({ blurVisible: false, selectedDirection: undefined, selectedService: undefined });
   };
 
   const formatDate = () => {
@@ -593,7 +602,7 @@ export default function HomeScreen() {
 
                   {searchOption === 'service' ? (
 
-                    <TouchableOpacity onPress={() => { navigation.navigate('SearchService', { blurVisible: true, prevScreen: 'HomeScreen' }); setSearchOptionsVisible(false); }} className="mt-8 mb-7 w-full justify-center items-center ">
+                    <TouchableOpacity onPress={() => navigation.navigate('SearchService', { blurVisible: true, prevScreen: 'HomeScreen' })} className="mt-8 mb-7 w-full justify-center items-center ">
                       <View className="py-[20px] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
                         <Search height={19} color={iconColor} strokeWidth={2} />
                         <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService ? getValue(searchedService) : t('search_a_service')}</Text>
@@ -636,7 +645,7 @@ export default function HomeScreen() {
 
                     <View className="w-full justify-start items-center">
 
-                      <TouchableOpacity onPress={() => { setSearchOptionsVisible(false); navigation.navigate('SearchDirection', { blurVisible: true, prevScreen: 'HomeScreen' }) }} className="mt-8 mb-6 w-full justify-center items-center ">
+                      <TouchableOpacity onPress={() => navigation.navigate('SearchDirection', { blurVisible: true, prevScreen: 'HomeScreen' })} className="mt-8 mb-6 w-full justify-center items-center ">
                         <View className="py-[20px] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
                           <Search height={19} color={iconColor} strokeWidth={2} />
                           <Text numberOfLines={1} className="truncate flex-1 ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">

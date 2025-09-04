@@ -92,13 +92,13 @@ export default function SearchServiceScreen() {
 
   const handleSelected = async (service) => {
     saveHistorySearchedService(service);
-    saveSearchedService(service); 
-    navigation.navigate(prevScreen, { blurVisible });
+    saveSearchedService(service);
+    navigation.navigate(prevScreen, { blurVisible, selectedService: service });
   };
 
   const handleHistorySelected = async (service) => {
-    saveSearchedService(service); 
-    navigation.navigate(prevScreen, { blurVisible });
+    saveSearchedService(service);
+    navigation.navigate(prevScreen, { blurVisible, selectedService: service });
   };
 
   const clearHistory = async () => {
