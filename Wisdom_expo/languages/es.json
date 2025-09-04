@@ -52,6 +52,8 @@
     "change_the_name": "Cambiar el nombre",
     "empty_list": "Lista vacía",
     "save_services_to_this_list": "Guarda servicios en esta lista para acceder fácilmente a ellos.",
+    "no_favorite_lists": "No hay listas favoritas",
+    "create_or_save_to_start": "Crea una lista o guarda servicios para empezar.",
     "add_a_note": "Añadir una nota...",
     "fixed_price_prefix": "Precio fijo: ",
     "price_on_budget": "Precio a convenir",

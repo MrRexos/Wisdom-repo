@@ -99,12 +99,20 @@ export default function CreateServiceImagesScreen() {
   const handlePickMainImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert(t('permission_denied'));
+      Alert.alert(
+        'Allow "Wisdom" to Access to Your Gallery',
+        "We need access to your photo library so you can choose and set a profile picture.",
+        [
+            { text: "Cancel", style: "cancel" },
+            { text: "Settings", onPress: () => Linking.openSettings() }
+        ],
+        { cancelable: true }
+    );
       return;
     }
 
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'images',
       aspect: [1, 1],
       quality: 1,
     });
@@ -115,17 +123,25 @@ export default function CreateServiceImagesScreen() {
   };
 
   const handlePickImages = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert(t('permission_denied'));
+      Alert.alert(
+        t('allow_wisdom_to_access_gallery'),
+        t('need_gallery_access_service'),
+        [
+          { text: t('cancel'), style: 'cancel' },
+          { text: t('settings'), onPress: () => Linking.openSettings() }
+        ],
+        { cancelable: true }
+      );
       return;
     }
 
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'images',
       aspect: [1, 1],
       quality: 1,
-      allowsMultipleSelection: false,
+      allowsMultipleSelection: true,
     });
 
     if (!result.canceled) {

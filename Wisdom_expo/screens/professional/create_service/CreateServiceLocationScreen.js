@@ -167,20 +167,18 @@ export default function CreateServiceLocationScreen() {
               </View>
 
               {direction? (
-                <View className="w-full px-4 flex-row justify-start items-center">
-                  <View className="flex-1 justify-center items-start">
-                  <Text className="mr-2">
-                    <Text className="font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">{t('action_rate_dash')} </Text>
+                <View className="w-full px-4 flex-row items-center">
+                  <Text className="shrink-0 mr-3">
                     <Text className="font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">
-                        {actionRate === 100 ? t('full') : `${actionRate} km`}
+                      {t('action_rate_dash')}{" "}
+                    </Text>
+                    <Text className="font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">
+                      {actionRate === 100 ? t('full') : `${actionRate} km`}
                     </Text>
                   </Text>
-
-                  </View>
-                  
-                  <View className="flex-1 justify-center items-end">
+              
                   <Slider
-                    style={{ width: '100%', height:10 }} 
+                    style={{ flex: 1, height: 10 }}
                     minimumValue={0}
                     maximumValue={100}
                     step={1}
@@ -190,7 +188,6 @@ export default function CreateServiceLocationScreen() {
                     maximumTrackTintColor="#474646"
                     onValueChange={value => setActionRate(value)}
                   />
-                  </View>
                 </View>
               ) : null}
 

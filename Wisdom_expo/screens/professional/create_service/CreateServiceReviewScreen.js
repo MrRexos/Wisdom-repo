@@ -25,6 +25,7 @@ export default function CreateServiceReviewScreen() {
     title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate,
     experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk
   } = route.params;
+  console.log(route.params)
   const [userId, setUserId] = useState();
   const [userInfo, setUserInfo] = useState({});
   const [address, setAddress] = useState('');
@@ -118,8 +119,6 @@ export default function CreateServiceReviewScreen() {
   };
 
   const getUserId = async () => {
-    console.log(title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate,
-      experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk)
     const userData = await getDataLocally('user');
     const user = JSON.parse(userData);
     setUserId(user.id);
@@ -482,8 +481,6 @@ export default function CreateServiceReviewScreen() {
         name: `image${index + 1}.jpg`,
       });
     });
-
-    console.log(formData)
   
     try {
       const res = await api.post('/api/upload-images', formData, {
@@ -538,7 +535,6 @@ export default function CreateServiceReviewScreen() {
       if (serviceImages.length > 0) {
         imageURLS = await uploadImages(serviceImages);       
       }
-      console.log(imageURLS)
       await createService(imageURLS);
       navigation.navigate('Professional', { screen: 'Listings' });
     } catch (error) {

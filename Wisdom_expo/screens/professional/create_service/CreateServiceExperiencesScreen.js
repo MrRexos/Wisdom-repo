@@ -139,9 +139,9 @@ export default function CreateServiceExperiencesScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
 
-        <View className="flex-1 px-6 pt-5 pb-6">
+        <View className="flex-1 px-6 pt-5 pb-10">
           <TouchableOpacity onPress={() => navigation.pop(7)}>
             <View className="flex-row justify-start">
               <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
@@ -256,7 +256,7 @@ export default function CreateServiceExperiencesScreen() {
                   {openStartDate && (
                     <View>
                       {showStartPicker && (
-                        <View className={Platform.OS === 'ios' ? 'w-[300px] h-[110px]' : 'w-[0px] h-[0px]'}>
+                        <View className={Platform.OS === 'ios' ? 'w-[300px] h-[110px] items-center justify-center' : 'w-[0px] h-[0px] items-center justify-center'}>
                           <DateTimePicker
                             value={tempDate}
                             mode="date"
@@ -283,7 +283,7 @@ export default function CreateServiceExperiencesScreen() {
                   {openEndDate && (
                     <View>
                       {showEndPicker && (
-                        <View className={Platform.OS === 'ios' ? 'w-[300px] h-[110px]' : 'w-[0px] h-[0px]'}>
+                        <View className={Platform.OS === 'ios' ? 'w-[300px] h-[110px] items-center justify-center' : 'w-[0px] h-[0px] items-center justify-center'}>
                           <DateTimePicker
                             value={tempDate}
                             mode="date"

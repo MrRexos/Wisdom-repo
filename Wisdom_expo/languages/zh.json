@@ -52,6 +52,8 @@
     "change_the_name": "更改名称",
     "empty_list": "列表为空",
     "save_services_to_this_list": "将服务保存到此列表以便轻松访问。",
+    "no_favorite_lists": "暂无收藏列表",
+    "create_or_save_to_start": "创建一个列表或保存服务以开始。",
     "add_a_note": "添加备注...",
     "fixed_price_prefix": "固定价格：",
     "price_on_budget": "价格面议",

@@ -52,6 +52,8 @@
     "change_the_name": "تغيير الاسم",
     "empty_list": "قائمة فارغة",
     "save_services_to_this_list": "احفظ الخدمات في هذه القائمة للوصول إليها بسهولة.",
+    "no_favorite_lists": "لا توجد قوائم مفضلة",
+    "create_or_save_to_start": "أنشئ قائمة أو احفظ خدمات للبدء.",
     "add_a_note": "أضف ملاحظة...",
     "fixed_price_prefix": "سعر ثابت: ",
     "price_on_budget": "السعر عند الطلب",

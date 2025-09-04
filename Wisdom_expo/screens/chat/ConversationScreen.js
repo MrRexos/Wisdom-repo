@@ -288,13 +288,21 @@ export default function ConversationScreen() {
   };
 
   const handleImagePick = async () => {
-    const perm = await ImagePicker.requestCameraPermissionsAsync();
+    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (perm.status !== 'granted') {
-      Alert.alert(t('permission_denied'));
+      Alert.alert(
+        t('allow_wisdom_to_access_gallery'),
+        t('need_gallery_access_service'),
+        [
+          { text: t('cancel'), style: 'cancel' },
+          { text: t('settings'), onPress: () => Linking.openSettings() }
+        ],
+        { cancelable: true }
+      );
       return;
     }
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'images',
       quality: 0.7,
     });
     if (!result.canceled) {

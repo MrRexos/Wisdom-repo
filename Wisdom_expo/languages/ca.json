@@ -52,6 +52,8 @@
     "change_the_name": "Canviar el nom",
     "empty_list": "Llista buida",
     "save_services_to_this_list": "Desa serveis en aquesta llista per accedir-hi fàcilment.",
+    "no_favorite_lists": "No hi ha llistes preferides",
+    "create_or_save_to_start": "Crea una llista o desa serveis per començar.",
     "add_a_note": "Afegeix una nota...",
     "fixed_price_prefix": "Preu fix: ",
     "price_on_budget": "Preu a convenir",

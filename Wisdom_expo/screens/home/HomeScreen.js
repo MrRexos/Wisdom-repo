@@ -534,7 +534,7 @@ export default function HomeScreen() {
 
           <View style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.1)' }}>
 
-            <TouchableWithoutFeedback onPress={() => setSearchOptionsVisible(false)}>
+            <TouchableWithoutFeedback onPress={() => { setSearchOptionsVisible(false); navigation.setParams({ blurVisible: false }); }}>
               <BlurView style={styles.blur} blurType="light" blurAmount={10} intensity={70} />
             </TouchableWithoutFeedback>
 
@@ -554,7 +554,7 @@ export default function HomeScreen() {
 
                   <View className="mt-[70px] flex-row justify-between items-center pb-4 ">
                     <View className="flex-1 ">
-                      <TouchableOpacity onPress={() => { setSearchOptionsVisible(false); setSearchDateOptionSelected('frequency'); setSearchOption('service') }}>
+                      <TouchableOpacity onPress={() => { setSearchOptionsVisible(false); navigation.setParams({ blurVisible: false }); setSearchDateOptionSelected('frequency'); setSearchOption('service') }}>
                         <ChevronLeftIcon size={24} strokeWidth={1.8} color={iconColor} />
                       </TouchableOpacity>
                     </View>
@@ -741,7 +741,7 @@ export default function HomeScreen() {
 
                         ) : (
 
-                          <View className="mt-2 w-full px-6 ">
+                          <View className="mt-2 w-full px-6 items-center justify-center ">
                             {showPicker && (
                               <DateTimePicker
                                 value={tempDate}
@@ -810,7 +810,13 @@ export default function HomeScreen() {
         </View>
       )}
 
-      <TouchableOpacity onPress={() => { removeSearchedDirection(); removeSearchedService(); setSearchedDirection(); setSearchedService(); setSearchOptionsVisible(true); toggleTabs(); setDuration(); setSelectedDay(), setSelectedTime() }} className="justify-center items-center pt-8 px-10">
+      <TouchableOpacity 
+        onPress={() => { 
+          setSearchOptionsVisible(true); 
+          toggleTabs(); 
+        }} 
+        className="justify-center items-center pt-8 px-10" 
+      >
         <View className="h-[55px] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
           <Search height={19} color={iconColor} strokeWidth={2} />
           <Text className="ml-2 font-inter-medium text-[14px] text-[#979797]">{t('search_a_service')}</Text>
