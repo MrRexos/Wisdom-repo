@@ -16,11 +16,12 @@ export default function CreateServiceDiscountsScreen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice} = route.params;
-  const [typeSelected, setTypeSelected] = useState(1);
-  const [allowDiscounts, setAllowDiscounts] = useState(true);
-  const [discountRate, setDiscountRate] = useState(10);
-  const [discountRateText, setDiscountRateText] = useState('10');
+  const prevParams = route.params?.prevParams || {};
+  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, priceValue } = prevParams;
+  const [typeSelected, setTypeSelected] = useState(prevParams.allowDiscounts ? 1 : 0);
+  const [allowDiscounts, setAllowDiscounts] = useState(prevParams.allowDiscounts ?? true);
+  const [discountRate, setDiscountRate] = useState(prevParams.discountRate ?? 10);
+  const [discountRateText, setDiscountRateText] = useState(String(prevParams.discountRate ?? 10));
 
 
   const options  = [
@@ -90,7 +91,7 @@ export default function CreateServiceDiscountsScreen() {
                                 />
                                 <Text className={isActive? `font-inter-bold text-[14px] text-[#323131] dark:text-[#fcfcfc]`: `font-inter-bold text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>%</Text>
                                 <Text numberOfLines={1} className={isActive? `font-inter-medium flex-1 text-[14px] text-[#979797] `: `font-inter-medium flex-1 text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>{'.'.repeat(80)}</Text>
-                                <Text className={isActive? `font-inter-semibold text-[14px] text-[#979797] `: `font-inter-semibold text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>{finalPrice? finalPrice-(finalPrice*0.1).toFixed(1): 'X'} €</Text>
+                                <Text className={isActive? `font-inter-semibold text-[14px] text-[#979797] `: `font-inter-semibold text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>{priceValue? priceValue-(priceValue*0.1).toFixed(1): 'X'} €</Text>
                               </View>
                             )}
                              
@@ -102,17 +103,17 @@ export default function CreateServiceDiscountsScreen() {
 
             <View className="flex-row justify-center items-center">
               
-              <TouchableOpacity 
+              <TouchableOpacity
               disabled={false}
-              onPress={() => navigation.goBack()}
+              onPress={() => navigation.navigate('CreateServicePrice', { prevParams: { ...prevParams, allowDiscounts, discountRate } })}
               style={{opacity: 1}}
               className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
                   <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
               disabled={false}
-              onPress={() => {navigation.navigate('CreateServiceAsk', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate})}}
+              onPress={() => {navigation.navigate('CreateServiceAsk', { prevParams: { ...prevParams, allowDiscounts, discountRate } })}}
               style={{opacity: 1}}
               className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>

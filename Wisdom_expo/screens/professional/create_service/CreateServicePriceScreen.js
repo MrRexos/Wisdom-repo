@@ -16,8 +16,9 @@ export default function CreateServicePriceScreen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType } = route.params;
-  const [priceValue, setPriceValue] = useState('10');
+  const prevParams = route.params?.prevParams || {};
+  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, priceValue: prevPrice } = prevParams;
+  const [priceValue, setPriceValue] = useState(prevPrice || '10');
   const [showDetails, setShowDetails] = useState(false);
   const inputRef = useRef(null);
 
@@ -164,7 +165,7 @@ export default function CreateServicePriceScreen() {
           <View className="flex-row justify-center items-center">
             <TouchableOpacity
               disabled={false}
-              onPress={() => navigation.goBack()}
+              onPress={() => navigation.navigate('CreateServicePriceType', { prevParams: { ...prevParams, priceValue } })}
               style={{ opacity: 1 }}
               className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center"
             >
@@ -173,7 +174,7 @@ export default function CreateServicePriceScreen() {
 
             <TouchableOpacity
               disabled={!priceValue}
-              onPress={() => navigation.navigate('CreateServiceDiscounts', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice: priceValue })}
+              onPress={() => navigation.navigate('CreateServiceDiscounts', { prevParams: { ...prevParams, priceValue } })}
               style={{ opacity: priceValue ? 1.0 : 0.5 }}
               className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
             >

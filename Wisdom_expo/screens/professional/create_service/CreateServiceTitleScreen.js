@@ -3,7 +3,7 @@ import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInp
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../../languages/i18n';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import {XMarkIcon} from 'react-native-heroicons/outline';
 
 
@@ -13,9 +13,11 @@ export default function CreateServiceTitleScreen() {
   const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const navigation = useNavigation();
+  const route = useRoute();
+  const prevParams = route.params?.prevParams || {};
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState(prevParams.title || '');
 
   const inputChanged = (text) => {
     setTitle(text);
@@ -58,7 +60,7 @@ export default function CreateServiceTitleScreen() {
               </TouchableOpacity>
               <TouchableOpacity 
               disabled={title.length < 1}
-onPress={() => navigation.navigate('CreateServiceClassification', {title})}
+onPress={() => navigation.navigate('CreateServiceClassification', { prevParams: { ...prevParams, title } })}
               style={{opacity: title.length < 1 ? 0.5 : 1.0}}
               className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                   <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>

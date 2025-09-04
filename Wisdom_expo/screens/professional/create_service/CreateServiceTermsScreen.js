@@ -14,16 +14,17 @@ export default function CreateServiceTermsScreen() {
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const route = useRoute();
+  const prevParams = route.params?.prevParams || {};
   const {
     title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate,
-    experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk
-  } = route.params;
+    experiences, serviceImages, priceType, priceValue, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk
+  } = prevParams;
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         <View className="flex-1 px-6 pt-5 pb-6">
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => navigation.navigate('CreateServiceConsult', { prevParams })}>
                 <View className="flex-row justify-start">
                     <ChevronLeftIcon size={25} color={iconColor} strokeWidth={2} />
                 </View> 
@@ -38,9 +39,9 @@ export default function CreateServiceTermsScreen() {
                       <Text className="text-[11px] font-inter-medium text-[#b6b5b5] dark:text-[#706f6e] text-center"> and </Text>
                       <Text onPress={() => navigation.navigate('PrivacyPolicy')} className="text-[11px] font-inter-medium text-[#b6b5b5] dark:text-[#706f6e] text-center underline">{t('policies')}</Text>
                 </Text>
-                <TouchableOpacity 
+                <TouchableOpacity
                 disabled={false}
-onPress={() => navigation.navigate('CreateServiceReview', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk})}
+onPress={() => navigation.navigate('CreateServiceReview', { prevParams })}
                 style={{opacity: 1}}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('accept_wisdom_terms')}</Text>

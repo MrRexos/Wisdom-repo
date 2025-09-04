@@ -17,12 +17,13 @@ export default function CreateServiceConsultScreen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowAsk} = route.params;
-  const [typeSelected, setTypeSelected] = useState(1);
-  const [allowConsults, setAllowConsults] = useState(true);
-  const [consultPriceText, setConsultPriceText] = useState('5');
-  const [consultPrice, setConsultPrice] = useState(5);
-  const [consultVia, setConsultVia] = useState('');
+  const prevParams = route.params?.prevParams || {};
+  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, priceValue, allowDiscounts, discountRate, allowAsk, allowConsults: prevAllowConsults, consultPrice: prevConsultPrice, consultVia: prevConsultVia } = prevParams;
+  const [typeSelected, setTypeSelected] = useState(prevAllowConsults ? 1 : 0);
+  const [allowConsults, setAllowConsults] = useState(prevAllowConsults ?? true);
+  const [consultPriceText, setConsultPriceText] = useState(String(prevConsultPrice ?? 5));
+  const [consultPrice, setConsultPrice] = useState(prevConsultPrice ?? 5);
+  const [consultVia, setConsultVia] = useState(prevConsultVia || '');
   const inputRef = useRef(null);
   
 
@@ -144,17 +145,17 @@ export default function CreateServiceConsultScreen() {
 
               <View className="flex-row justify-center items-center">
                 
-                <TouchableOpacity 
+                <TouchableOpacity
                 disabled={false}
-                onPress={() => navigation.goBack()}
+                onPress={() => navigation.navigate('CreateServiceAsk', { prevParams: { ...prevParams, allowConsults, consultPrice, consultVia } })}
                 style={{opacity: 1}}
                 className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity 
+                <TouchableOpacity
                 disabled={allowConsults? consultVia.length<1 || !consultPrice? true : false: false}
-onPress={() => {navigation.navigate('CreateServiceTerms', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk})}}
+onPress={() => {navigation.navigate('CreateServiceTerms', { prevParams: { ...prevParams, allowConsults, consultPrice, consultVia } })}}
                 style={{opacity: allowConsults? consultVia.length<1 || !consultPrice? 0.5 : 1: 1}}
                 className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>

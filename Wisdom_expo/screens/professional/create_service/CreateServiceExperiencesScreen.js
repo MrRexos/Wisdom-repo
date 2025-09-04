@@ -16,10 +16,11 @@ export default function CreateServiceExperiencesScreen() {
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate } = route.params;
+  const prevParams = route.params?.prevParams || {};
+  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate } = prevParams;
   const [position, setPosition] = useState('');
   const [place, setPlace] = useState('');
-  const [experiences, setExperiences] = useState([]);
+  const [experiences, setExperiences] = useState(prevParams.experiences || []);
   const [experienceId, setExperienceId] = useState(1);
   const [showAddExperience, setShowAddExperience] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
@@ -331,13 +332,13 @@ export default function CreateServiceExperiencesScreen() {
 
       {/* Botones fijos abajo */}
       <View className="flex-row justify-center items-center pt-4 pb-6 px-6">
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center">
+        <TouchableOpacity onPress={() => navigation.navigate('CreateServiceLocation', { prevParams: { ...prevParams, experiences } })} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center">
           <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           disabled={false}
-onPress={() => navigation.navigate('CreateServiceImages', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences })}
+onPress={() => navigation.navigate('CreateServiceImages', { prevParams: { ...prevParams, experiences } })}
           style={{ opacity: 1 }}
           className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
         >

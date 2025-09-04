@@ -52,7 +52,7 @@ export default function CreateServiceStartScreen() {
             <View className="justify-center items-center">
                 <TouchableOpacity 
                 disabled={false}
-                onPress={() => navigation.navigate('CreateServiceTitle')}
+                onPress={() => navigation.navigate('CreateServiceTitle', { prevParams: {} })}
                 style={{opacity: 1}}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('start')}</Text>

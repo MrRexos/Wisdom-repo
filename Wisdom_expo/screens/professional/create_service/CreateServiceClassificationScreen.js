@@ -26,13 +26,14 @@ export default function CreateServiceClassificationScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
-  const { title } = route.params;
+  const prevParams = route.params?.prevParams || {};
+  const { title } = prevParams;
 
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
 
   // ---------- state general ----------
-  const [family, setFamily] = useState(null);
-  const [category, setCategory] = useState(null);
+  const [family, setFamily] = useState(prevParams.family || null);
+  const [category, setCategory] = useState(prevParams.category || null);
 
   const [showFamilyDropdown, setShowFamilyDropdown] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
@@ -240,7 +241,7 @@ export default function CreateServiceClassificationScreen() {
         {/* ---------- Footer ---------- */}
         <View className="flex-row justify-center items-center">
           <TouchableOpacity
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.navigate('CreateServiceTitle', { prevParams: { ...prevParams, family, category } })}
             className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center"
           >
             <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">
@@ -250,7 +251,7 @@ export default function CreateServiceClassificationScreen() {
 
           <TouchableOpacity
             disabled={!family || !category}
-onPress={() => navigation.navigate('CreateServiceDescription', { title, family, category })}
+onPress={() => navigation.navigate('CreateServiceDescription', { prevParams: { ...prevParams, family, category } })}
             style={{ opacity: family && category ? 1 : 0.5 }}
             className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
           >
