@@ -479,6 +479,32 @@ export default function HomeScreen() {
     }
   };
 
+  const resetSearchParameters = async () => {
+    setSearchOption('service');
+    setSearchDateOptionSelected('frequency');
+    setSelectedDate({});
+    setSelectedDay(null);
+    setTempDate(new Date());
+    setSelectedTime(undefined);
+    setDuration(undefined);
+    setSliderValue(undefined);
+    setShowPicker(false);
+    setSearchedDirection(undefined);
+    setSearchedService(undefined);
+    try {
+      await removeSearchedDirection();
+      await removeSearchedService();
+    } catch (e) {
+      console.error('Error al reiniciar parámetros de búsqueda:', e);
+    }
+  };
+
+  const closeSearchOverlay = async () => {
+    await setSearchOptionsVisible(false);
+    resetSearchParameters();
+    navigation.setParams({ blurVisible: false });
+  };
+
   const formatDate = () => {
     let formattedDay = '';
     let formattedTime = '';
@@ -534,7 +560,7 @@ export default function HomeScreen() {
 
           <View style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.1)' }}>
 
-            <TouchableWithoutFeedback onPress={() => { setSearchOptionsVisible(false); navigation.setParams({ blurVisible: false }); }}>
+            <TouchableWithoutFeedback onPress={() => { closeSearchOverlay(); }}>
               <BlurView style={styles.blur} blurType="light" blurAmount={10} intensity={70} />
             </TouchableWithoutFeedback>
 
@@ -554,7 +580,7 @@ export default function HomeScreen() {
 
                   <View className="mt-[70px] flex-row justify-between items-center pb-4 ">
                     <View className="flex-1 ">
-                      <TouchableOpacity onPress={() => { setSearchOptionsVisible(false); navigation.setParams({ blurVisible: false }); setSearchDateOptionSelected('frequency'); setSearchOption('service') }}>
+                      <TouchableOpacity onPress={() => { closeSearchOverlay(); }}>
                         <ChevronLeftIcon size={24} strokeWidth={1.8} color={iconColor} />
                       </TouchableOpacity>
                     </View>
@@ -613,7 +639,12 @@ export default function HomeScreen() {
                       <TouchableOpacity onPress={() => { setSearchOptionsVisible(false); navigation.navigate('SearchDirection', { blurVisible: true, prevScreen: 'HomeScreen' }) }} className="mt-8 mb-6 w-full justify-center items-center ">
                         <View className="py-[20px] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
                           <Search height={19} color={iconColor} strokeWidth={2} />
-                          <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedDirection ? searchedDirection.address_1 : t('search_a_location')}</Text>
+                          <Text numberOfLines={1} className="truncate flex-1 ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">
+                            {searchedDirection
+                              ? `${searchedDirection?.address_1 ?? ''}${searchedDirection?.street_number ? ' ' + searchedDirection.street_number : ''
+                              }, ${searchedDirection?.city ?? ''}, ${searchedDirection?.state ?? ''}, ${searchedDirection?.country ?? ''}`
+                              : t('search_a_location')}
+                          </Text>
                         </View>
                       </TouchableOpacity>
 
@@ -626,12 +657,12 @@ export default function HomeScreen() {
                   ) : (
 
                     <TouchableOpacity onPress={() => setSearchOption('direction')} className="mt-7 mb-7 w-full justify-center items-center">
-                      <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">
+                      <Text numberOfLines={1} className="truncate ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">
                         {t('location')}
                         {searchedDirection && (
                           <>
                             <Text className="font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">: </Text>
-                            <Text className="font-inter-bold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedDirection.address_1}</Text>
+                            <Text numberOfLines={1} className="truncate font-inter-bold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedDirection.address_1}, {searchedDirection.street_number}, {searchedDirection.city}, {searchedDirection.state}, {searchedDirection.country}</Text>
                           </>
                         )}
                       </Text>
@@ -810,12 +841,12 @@ export default function HomeScreen() {
         </View>
       )}
 
-      <TouchableOpacity 
-        onPress={() => { 
-          setSearchOptionsVisible(true); 
-          toggleTabs(); 
-        }} 
-        className="justify-center items-center pt-8 px-10" 
+      <TouchableOpacity
+        onPress={() => {
+          setSearchOptionsVisible(true);
+          toggleTabs();
+        }}
+        className="justify-center items-center pt-8 px-10"
       >
         <View className="h-[55px] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
           <Search height={19} color={iconColor} strokeWidth={2} />

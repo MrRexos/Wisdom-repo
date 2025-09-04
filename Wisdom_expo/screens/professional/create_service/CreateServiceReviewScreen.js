@@ -515,7 +515,7 @@ export default function CreateServiceReviewScreen() {
         user_id:userId,
         description:description,
         service_category_id:category.service_category_id,
-        price:priceValue,
+        price:priceType === "budget" ? null : priceValue,
         price_type:priceType,
         latitude:location? location.lat: null,
         longitude:location? location.lng: null,
