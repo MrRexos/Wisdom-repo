@@ -19,11 +19,29 @@ export default function CreateServiceConsultScreen() {
   const route = useRoute();
   const prevParams = route.params?.prevParams || {};
   const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, priceValue, allowDiscounts, discountRate, allowAsk, allowConsults: prevAllowConsults, consultPrice: prevConsultPrice, consultVia: prevConsultVia } = prevParams;
+
   const allowConsultsDefault = prevAllowConsults ?? true;
   const [allowConsults, setAllowConsults] = useState(allowConsultsDefault);
   const [typeSelected, setTypeSelected] = useState(allowConsultsDefault ? 1 : 0);
-  const [consultPriceText, setConsultPriceText] = useState(String(prevConsultPrice ?? 5));
-  const [consultPrice, setConsultPrice] = useState(prevConsultPrice ?? 5);
+
+  let defaultConsultPriceText;
+  let defaultConsultPrice;
+  if (!allowConsultsDefault) {
+    defaultConsultPriceText = '';
+    defaultConsultPrice = null;
+  } else if (prevConsultPrice === undefined) {
+    defaultConsultPriceText = '5';
+    defaultConsultPrice = 5;
+  } else if (prevConsultPrice === null) {
+    defaultConsultPriceText = '';
+    defaultConsultPrice = null;
+  } else {
+    defaultConsultPriceText = String(prevConsultPrice);
+    defaultConsultPrice = prevConsultPrice;
+  }
+
+  const [consultPriceText, setConsultPriceText] = useState(defaultConsultPriceText);
+  const [consultPrice, setConsultPrice] = useState(defaultConsultPrice);
   const [consultVia, setConsultVia] = useState(prevConsultVia || '');
   const inputRef = useRef(null);
   
@@ -43,7 +61,8 @@ export default function CreateServiceConsultScreen() {
 
   const inputPriceChanged = (text) => {
     setConsultPriceText(text);
-    setConsultPrice(parseInt(text));
+    const parsed = parseInt(text, 10);
+    setConsultPrice(text === '' || isNaN(parsed) ? null : parsed);
   };
 
   const inputViaChanged = (text) => {
@@ -76,7 +95,16 @@ export default function CreateServiceConsultScreen() {
                       return (
                           <TouchableOpacity
                               key={index}
-                              onPress={() => {setTypeSelected(index); setAllowConsults(value)}}
+                              onPress={() => {
+                                setTypeSelected(index);
+                                setAllowConsults(value);
+                                if (!value) {
+                                  // Clear consult details when disabling consults
+                                  setConsultPriceText('');
+                                  setConsultPrice(null);
+                                  setConsultVia('');
+                                }
+                              }}
                               className={isActive? `mb-5 p-5 pr-7 w-full justify-start items-start rounded-xl bg-[#e0e0e0] dark:bg-[#3d3d3d] border-[1px] border-[#b6b5b5] dark:border-[#706f6e]` : `mb-5 p-5 pr-7 justify-start items-start w-full rounded-xl border-[1px] border-[#b6b5b5] dark:border-[#706f6e]`}
                               >
                               <View className="flex-row w-full items-center">
@@ -148,7 +176,16 @@ export default function CreateServiceConsultScreen() {
                 
                 <TouchableOpacity
                 disabled={false}
-                onPress={() => navigation.navigate('CreateServiceAsk', { prevParams: { ...prevParams, allowConsults, consultPrice, consultVia } })}
+                onPress={() =>
+                  navigation.navigate('CreateServiceAsk', {
+                    prevParams: {
+                      ...prevParams,
+                      allowConsults,
+                      consultPrice: allowConsults ? consultPrice : null,
+                      consultVia: allowConsults ? consultVia : '',
+                    },
+                  })
+                }
                 style={{opacity: 1}}
                 className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
@@ -156,7 +193,16 @@ export default function CreateServiceConsultScreen() {
 
                 <TouchableOpacity
                 disabled={allowConsults? consultVia.length<1 || !consultPrice? true : false: false}
-onPress={() => {navigation.navigate('CreateServiceTerms', { prevParams: { ...prevParams, allowConsults, consultPrice, consultVia } })}}
+                onPress={() => {
+                  navigation.navigate('CreateServiceTerms', {
+                    prevParams: {
+                      ...prevParams,
+                      allowConsults,
+                      consultPrice: allowConsults ? consultPrice : null,
+                      consultVia: allowConsults ? consultVia : '',
+                    },
+                  });
+                }}
                 style={{opacity: allowConsults? consultVia.length<1 || !consultPrice? 0.5 : 1: 1}}
                 className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
