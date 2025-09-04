@@ -25,7 +25,8 @@ export default function CreateServiceLocationScreen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const prevParams = route.params?.prevParams || {};
+  const rawParams = route.params?.prevParams || route.params || {};
+  const { blurVisible, ...prevParams } = rawParams;
   const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags } = prevParams;
   const [isUnlocated, setIsUnlocated] = useState(prevParams.isUnlocated || false);
 

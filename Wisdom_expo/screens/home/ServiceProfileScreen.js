@@ -1062,13 +1062,23 @@ export default function ServiceProfileScreen() {
                       longitudeDelta: 0.03, // Zoom en la longitud
                     }}
                   >
-                    <Circle
-                      center={{ latitude: serviceData.latitude, longitude: serviceData.longitude }}
-                      radius={serviceData.action_rate * 1000}
-                      strokeColor="rgba(182,181,181,0.8)"
-                      fillColor="rgba(182,181,181,0.5)"
-                      strokeWidth={2}
-                    />
+                    <View>
+                      <Marker
+                        coordinate={{ latitude: serviceData.latitude, longitude: serviceData.longitude }}
+                        image={require('../../assets/MapMarker.png')}
+                        anchor={{ x: 0.5, y: 1 }}
+                        centerOffset={{ x: 0.5, y: -20 }}
+                      />
+                      {serviceData.action_rate < 100 && (
+                        <Circle
+                          center={{ latitude: serviceData.latitude, longitude: serviceData.longitude }}
+                          radius={serviceData.action_rate * 1000}
+                          strokeColor="rgba(182,181,181,0.8)"
+                          fillColor="rgba(182,181,181,0.5)"
+                          strokeWidth={2}
+                        />
+                      )}
+                    </View>
 
                   </MapView>
 
