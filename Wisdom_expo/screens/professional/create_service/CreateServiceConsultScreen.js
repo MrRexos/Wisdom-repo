@@ -44,6 +44,13 @@ export default function CreateServiceConsultScreen() {
   const [consultPrice, setConsultPrice] = useState(defaultConsultPrice);
   const [consultVia, setConsultVia] = useState(prevConsultVia || '');
   const inputRef = useRef(null);
+
+  const canContinue = !allowConsults || (
+    consultVia.trim().length > 0 &&
+    consultPrice != null &&
+    !Number.isNaN(consultPrice) &&
+    consultPrice > 0
+  );
   
 
 
@@ -99,10 +106,14 @@ export default function CreateServiceConsultScreen() {
                                 setTypeSelected(index);
                                 setAllowConsults(value);
                                 if (!value) {
-                                  // Clear consult details when disabling consults
                                   setConsultPriceText('');
                                   setConsultPrice(null);
                                   setConsultVia('');
+                                } else {
+                                  if (consultPrice == null || consultPriceText === '') {
+                                    setConsultPrice(5);
+                                    setConsultPriceText('5');
+                                  }
                                 }
                               }}
                               className={isActive? `mb-5 p-5 pr-7 w-full justify-start items-start rounded-xl bg-[#e0e0e0] dark:bg-[#3d3d3d] border-[1px] border-[#b6b5b5] dark:border-[#706f6e]` : `mb-5 p-5 pr-7 justify-start items-start w-full rounded-xl border-[1px] border-[#b6b5b5] dark:border-[#706f6e]`}
@@ -192,7 +203,7 @@ export default function CreateServiceConsultScreen() {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                disabled={allowConsults? consultVia.length<1 || !consultPrice? true : false: false}
+                disabled={!canContinue}
                 onPress={() => {
                   navigation.navigate('CreateServiceTerms', {
                     prevParams: {
@@ -203,7 +214,7 @@ export default function CreateServiceConsultScreen() {
                     },
                   });
                 }}
-                style={{opacity: allowConsults? consultVia.length<1 || !consultPrice? 0.5 : 1: 1}}
+                style={{ opacity: canContinue ? 1 : 0.5 }}
                 className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
                 </TouchableOpacity>
