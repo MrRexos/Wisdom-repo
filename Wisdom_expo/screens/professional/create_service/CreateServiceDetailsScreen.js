@@ -17,15 +17,16 @@ export default function CreateServiceDetailsScreen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const {title, family, category, description} = route.params;
+  const prevParams = route.params?.prevParams || {};
+  const {title, family, category, description} = prevParams;
   const [showLanguages, setShowLanguages] = useState(false);
   const [showAboutYou, setShowAboutYou] = useState(false);
-  const [showTags, setShowTags] = useState(false); 
-  const [selectedLanguages, setSelectedLanguages] = useState([]);
-  const [isIndividual, setIsIndividual] = useState(true); 
-  const [hobbies, setHobbies] = useState('');
+  const [showTags, setShowTags] = useState(false);
+  const [selectedLanguages, setSelectedLanguages] = useState(prevParams.selectedLanguages || []);
+  const [isIndividual, setIsIndividual] = useState(prevParams.isIndividual ?? true);
+  const [hobbies, setHobbies] = useState(prevParams.hobbies || '');
   const [tagsText, setTagsText] = useState('');
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState(prevParams.tags || []);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const inputRef = useRef(null);
   const input2Ref = useRef(null);
@@ -304,17 +305,17 @@ export default function CreateServiceDetailsScreen() {
 
         <View className="flex-row justify-center items-center pt-4 pb-6 px-6">
               
-          <TouchableOpacity 
+          <TouchableOpacity
           disabled={false}
-          onPress={() => navigation.goBack()}
+          onPress={() => navigation.navigate('CreateServiceDescription', { prevParams: { ...prevParams, selectedLanguages, isIndividual, hobbies, tags } })}
           style={{opacity: 1}}
           className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
                 <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
           disabled={selectedLanguages.length<1 || tags.length<1}
-onPress={() => navigation.navigate('CreateServiceLocation', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags})}
+onPress={() => navigation.navigate('CreateServiceLocation', { prevParams: { ...prevParams, selectedLanguages, isIndividual, hobbies, tags } })}
           style={{opacity: (selectedLanguages.length>0 && tags.length>0)? 1 : 0.5}}
           className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                 <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>

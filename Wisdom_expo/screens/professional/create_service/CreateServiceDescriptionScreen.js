@@ -14,8 +14,9 @@ export default function CreateServiceDescriptionScreen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const { title, family, category } = route.params;
-  const [description, setDescription] = useState('');
+  const prevParams = route.params?.prevParams || {};
+  const { title, family, category } = prevParams;
+  const [description, setDescription] = useState(prevParams.description || '');
   const maxLength = 2000;
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const inputRef = useRef(null);
@@ -110,13 +111,13 @@ export default function CreateServiceDescriptionScreen() {
 
         {/* Botones fijos abajo */}
         <View className="flex-row justify-center items-center pt-4 pb-6 px-6">
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center">
+          <TouchableOpacity onPress={() => navigation.navigate('CreateServiceClassification', { prevParams: { ...prevParams, description } })} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center">
             <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             disabled={!description}
-onPress={() => navigation.navigate('CreateServiceDetails', { title, family, category, description })}
+onPress={() => navigation.navigate('CreateServiceDetails', { prevParams: { ...prevParams, description } })}
             style={{ opacity: description ? 1.0 : 0.5 }}
             className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
           >

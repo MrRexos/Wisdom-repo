@@ -16,9 +16,10 @@ export default function CreateServicePriceTypeScreen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages} = route.params;
-  const [typeSelected, setTypeSelected] = useState(0);
-  const [priceType, setPriceType] = useState('hour');
+  const prevParams = route.params?.prevParams || {};
+  const {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages} = prevParams;
+  const [typeSelected, setTypeSelected] = useState(prevParams.priceType === 'budget' ? 1 : prevParams.priceType === 'fix' ? 2 : 0);
+  const [priceType, setPriceType] = useState(prevParams.priceType || 'hour');
 
   const options  = [
     {
@@ -85,17 +86,17 @@ export default function CreateServicePriceTypeScreen() {
 
             <View className="flex-row justify-center items-center">
               
-              <TouchableOpacity 
+              <TouchableOpacity
               disabled={false}
-              onPress={() => navigation.goBack()}
+              onPress={() => navigation.navigate('CreateServiceImages', { prevParams: { ...prevParams, priceType } })}
               style={{opacity: 1}}
               className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity 
+              <TouchableOpacity
               disabled={false}
-onPress={() => {priceType==='budget'? navigation.navigate('CreateServiceDiscounts', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType}) : navigation.navigate('CreateServicePrice', {title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType})}}
+onPress={() => {priceType==='budget'? navigation.navigate('CreateServiceDiscounts', { prevParams: { ...prevParams, priceType } }) : navigation.navigate('CreateServicePrice', { prevParams: { ...prevParams, priceType } })}}
               style={{opacity: 1}}
               className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>

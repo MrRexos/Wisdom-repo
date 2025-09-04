@@ -91,8 +91,9 @@ export default function CreateServiceImagesScreen() {
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const navigation = useNavigation();
   const route = useRoute();
-  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences } = route.params;
-  const [serviceImages, setServiceImages] = useState([]);
+  const prevParams = route.params?.prevParams || {};
+  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences } = prevParams;
+  const [serviceImages, setServiceImages] = useState(prevParams.serviceImages || []);
   const patternHeight = Math.ceil(serviceImages.length / 6) * 3 * 160;
   const patternWidth = 315;
 
@@ -228,13 +229,13 @@ export default function CreateServiceImagesScreen() {
 
       <View className="flex-row justify-center items-center pt-4 pb-6 px-6">
 
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center">
+        <TouchableOpacity onPress={() => navigation.navigate('CreateServiceExperiences', { prevParams: { ...prevParams, serviceImages } })} style={{ opacity: 1 }} className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center">
           <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           disabled={false}
-onPress={() => navigation.navigate('CreateServicePriceType', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages })}
+onPress={() => navigation.navigate('CreateServicePriceType', { prevParams: { ...prevParams, serviceImages } })}
           style={{ opacity: 1 }}
           className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
         >

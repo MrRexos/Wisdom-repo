@@ -25,22 +25,23 @@ export default function CreateServiceLocationScreen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags } = route.params;
-  const [isUnlocated, setIsUnlocated] = useState(false);
+  const prevParams = route.params?.prevParams || {};
+  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags } = prevParams;
+  const [isUnlocated, setIsUnlocated] = useState(prevParams.isUnlocated || false);
 
-  const [direction, setDirection] = useState('');
-  const [currentLocation, setCurrentLocation] = useState({ lat: 41.5421100, lng: 2.4445000 });
+  const [direction, setDirection] = useState(prevParams.direction || '');
+  const [currentLocation, setCurrentLocation] = useState(prevParams.location || { lat: 41.5421100, lng: 2.4445000 });
   const isFocused = useIsFocused();
 
-  const [country, setCountry] = useState('');
-  const [street, setStreet] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [postalCode, setPostalCode] = useState('');
-  const [streetNumber, setStreetNumber] = useState('');
-  const [address2, setAddress2] = useState('');
-  const [location, setLocation] = useState();
-  const [actionRate, setActionRate] = useState(1);
+  const [country, setCountry] = useState(prevParams.country || '');
+  const [street, setStreet] = useState(prevParams.street || '');
+  const [city, setCity] = useState(prevParams.city || '');
+  const [state, setState] = useState(prevParams.state || '');
+  const [postalCode, setPostalCode] = useState(prevParams.postalCode || '');
+  const [streetNumber, setStreetNumber] = useState(prevParams.streetNumber || '');
+  const [address2, setAddress2] = useState(prevParams.address2 || '');
+  const [location, setLocation] = useState(prevParams.location);
+  const [actionRate, setActionRate] = useState(prevParams.actionRate || 1);
 
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
 
@@ -133,7 +134,7 @@ export default function CreateServiceLocationScreen() {
 
         <View className="flex-1 pb-[80px] justify-start items-center ">
 
-          <TouchableOpacity onPress={() => navigation.navigate('SearchDirectionCreateService', { prevScreen: 'CreateServiceLocation', prevParams: route.params })} className="mt-5 px-3 justify-center items-center w-full">
+          <TouchableOpacity onPress={() => navigation.navigate('SearchDirectionCreateService', { prevScreen: 'CreateServiceLocation', prevParams: { ...prevParams, isUnlocated, direction, country, street, city, state, postalCode, streetNumber, address2, location, actionRate } })} className="mt-5 px-3 justify-center items-center w-full">
             <View className="mt-7 h-[50px] px-4 w-full flex-row justify-start items-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
               <Search height={20} color={colorScheme == 'dark' ? '#f2f2f2' : '#444343'} strokeWidth={2} />
               <Text
@@ -231,7 +232,7 @@ export default function CreateServiceLocationScreen() {
 
           <TouchableOpacity
             disabled={false}
-            onPress={() => navigation.goBack()}
+            onPress={() => navigation.navigate('CreateServiceDetails', { prevParams: { ...prevParams, isUnlocated, direction, country, street, city, state, postalCode, streetNumber, address2, location, actionRate } })}
             style={{ opacity: 1 }}
             className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
             <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
@@ -239,7 +240,7 @@ export default function CreateServiceLocationScreen() {
 
           <TouchableOpacity
             disabled={!isUnlocated && !direction}
-            onPress={() => navigation.navigate('CreateServiceExperiences', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate })}
+            onPress={() => navigation.navigate('CreateServiceExperiences', { prevParams: { ...prevParams, isUnlocated, direction, country, street, city, state, postalCode, streetNumber, address2, location, actionRate } })}
             style={{ opacity: isUnlocated || direction ? 1.0 : 0.5 }}
             className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>

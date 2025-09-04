@@ -17,9 +17,10 @@ export default function CreateServiceAskScreen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate} = route.params;
-  const [typeSelected, setTypeSelected] = useState(1);
-  const [allowAsk, setAllowAsk] = useState(true);
+  const prevParams = route.params?.prevParams || {};
+  const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, priceValue, allowDiscounts, discountRate, allowAsk: prevAllowAsk } = prevParams;
+  const [typeSelected, setTypeSelected] = useState(prevAllowAsk ? 1 : 0);
+  const [allowAsk, setAllowAsk] = useState(prevAllowAsk ?? true);
   
   const options  = [
     {
@@ -76,17 +77,17 @@ export default function CreateServiceAskScreen() {
 
               <View className="flex-row justify-center items-center">
                 
-                <TouchableOpacity 
+                <TouchableOpacity
                 disabled={false}
-                onPress={() => navigation.goBack()}
+                onPress={() => navigation.navigate('CreateServiceDiscounts', { prevParams: { ...prevParams, allowAsk } })}
                 style={{opacity: 1}}
                 className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">{t('back')}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity 
+                <TouchableOpacity
                 disabled={false}
-onPress={() => {navigation.navigate('CreateServiceConsult', { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowAsk})}}
+onPress={() => {navigation.navigate('CreateServiceConsult', { prevParams: { ...prevParams, allowAsk } })}}
                 style={{opacity: 1}}
                 className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>

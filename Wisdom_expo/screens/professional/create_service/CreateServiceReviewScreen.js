@@ -21,10 +21,11 @@ export default function CreateServiceReviewScreen() {
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const route = useRoute();
+  const prevParams = route.params?.prevParams || {};
   const {
     title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate,
-    experiences, serviceImages, priceType, finalPrice, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk
-  } = route.params;
+    experiences, serviceImages, priceType, priceValue, allowDiscounts, discountRate, allowConsults, consultPrice, consultVia, allowAsk
+  } = prevParams;
   console.log(route.params)
   const [userId, setUserId] = useState();
   const [userInfo, setUserInfo] = useState({});
@@ -152,7 +153,7 @@ export default function CreateServiceReviewScreen() {
   }, [location]);
 
   const getFormattedPrice = () => {
-    const numericPrice = parseFloat(finalPrice);
+    const numericPrice = parseFloat(priceValue);
     const formattedPrice = numericPrice % 1 === 0 ? numericPrice.toFixed(0) : numericPrice.toFixed(1);
     if (priceType === 'hour') {
       return (
@@ -514,7 +515,7 @@ export default function CreateServiceReviewScreen() {
         user_id:userId,
         description:description,
         service_category_id:category.service_category_id,
-        price:finalPrice,
+        price:priceValue,
         price_type:priceType,
         latitude:location? location.lat: null,
         longitude:location? location.lng: null,
@@ -558,7 +559,7 @@ export default function CreateServiceReviewScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         <View className="flex-1 pb-6">
-            <TouchableOpacity onPress={() => navigation.goBack()} className='pt-5 pb-1 px-6'>
+            <TouchableOpacity onPress={() => navigation.navigate('CreateServiceTerms', { prevParams })} className='pt-5 pb-1 px-6'>
                 <View className="flex-row justify-start">
                     <ChevronLeftIcon size={25} color={iconColor} strokeWidth={2} />
                 </View> 
