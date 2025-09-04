@@ -19,8 +19,9 @@ export default function CreateServiceConsultScreen() {
   const route = useRoute();
   const prevParams = route.params?.prevParams || {};
   const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, priceValue, allowDiscounts, discountRate, allowAsk, allowConsults: prevAllowConsults, consultPrice: prevConsultPrice, consultVia: prevConsultVia } = prevParams;
-  const [typeSelected, setTypeSelected] = useState(prevAllowConsults ? 1 : 0);
-  const [allowConsults, setAllowConsults] = useState(prevAllowConsults ?? true);
+  const allowConsultsDefault = prevAllowConsults ?? true;
+  const [allowConsults, setAllowConsults] = useState(allowConsultsDefault);
+  const [typeSelected, setTypeSelected] = useState(allowConsultsDefault ? 1 : 0);
   const [consultPriceText, setConsultPriceText] = useState(String(prevConsultPrice ?? 5));
   const [consultPrice, setConsultPrice] = useState(prevConsultPrice ?? 5);
   const [consultVia, setConsultVia] = useState(prevConsultVia || '');
