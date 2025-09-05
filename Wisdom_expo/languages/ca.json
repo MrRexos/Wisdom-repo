@@ -142,6 +142,8 @@
     "need_camera_access_scan_dni": "Necessitem accés a la teva càmera perquè puguis escanejar el document d'identitat.",
     "allow_wisdom_to_access_location": "Permetre que Wisdom accedeixi a la teva ubicació",
     "need_location_access": "Necessitem accés a la teva ubicació per cercar serveis a prop teu o desar les teves adreces.",
+    "allow_wisdom_to_send_notifications": "Permetre que Wisdom enviï notificacions",
+    "need_notifications_access": "Necessitem permís per enviar-te notificacions.",
     "terms_and_conditions": "Termes i condicions",
     "settings": "Configuració",
     "privacy_policy_title": "Política de privacitat",

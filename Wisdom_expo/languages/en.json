@@ -142,6 +142,8 @@
     "need_camera_access_scan_dni": "We need access to your camera so you can scan your ID card.",
     "allow_wisdom_to_access_location": "Allow Wisdom to access your location",
     "need_location_access": "We need access to your location so you can search for services near you or save your directions.",
+    "allow_wisdom_to_send_notifications": "Allow Wisdom to send notifications",
+    "need_notifications_access": "We need permission to send you notifications.",
     "terms_and_conditions": "Terms and Conditions",
     "settings": "Settings",
     "privacy_policy_title": "Privacy Policy",

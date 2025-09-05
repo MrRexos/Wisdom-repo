@@ -142,6 +142,8 @@
     "need_camera_access_scan_dni": "نحتاج إلى الوصول إلى الكاميرا حتى تتمكن من مسح بطاقة هويتك.",
     "allow_wisdom_to_access_location": "السماح لـWisdom بالوصول إلى موقعك",
     "need_location_access": "نحتاج إلى الوصول إلى موقعك حتى تتمكن من البحث عن خدمات بالقرب منك أو حفظ عناوينك.",
+    "allow_wisdom_to_send_notifications": "السماح لـWisdom بإرسال الإشعارات",
+    "need_notifications_access": "نحتاج إلى إذن لإرسال الإشعارات إليك.",
     "terms_and_conditions": "الشروط والأحكام",
     "settings": "الإعدادات",
     "privacy_policy_title": "سياسة الخصوصية",

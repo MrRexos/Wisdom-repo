@@ -45,6 +45,7 @@
     "expo-sharing": "^13.1.5",
     "expo-splash-screen": "~0.30.8",
     "expo-status-bar": "~2.2.3",
+    "expo-notifications": "~0.31.4",
     "expo-updates": "~0.28.13",
     "expo-web-browser": "~14.1.6",
     "feather-icons": "^4.29.2",

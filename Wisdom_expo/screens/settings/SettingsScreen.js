@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Image, Linking, RefreshControl } from 'react-native';
+import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Image, Linking, RefreshControl, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,6 +8,7 @@ import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import api from '../../utils/api.js';
+import * as Notifications from 'expo-notifications';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import eventEmitter from '../../utils/eventEmitter';
 import Message from '../../components/Message';
@@ -120,26 +121,51 @@ export default function SettingsScreen() {
     }
   };
 
+  const updateNotificationsStatus = async (value) => {
+    const userData = await getDataLocally('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      user.allow_notis = value;
+      await storeDataLocally('user', JSON.stringify(user));
+      setAllowNotis(value);
+      setForm({ ...form, notifications: value });
+      await changeAllowNotis(user.id, value);
+    } else {
+      console.log('No user found in AsyncStorage');
+    }
+  };
+
   const handleToggleAllowNotis = async (value) => {
     try {
-      const userData = await getDataLocally('user');
-      if (userData) {
-        const user = JSON.parse(userData);
-        user.allow_notis = value;
-
-        // Actualizar AsyncStorage
-        await storeDataLocally('user', JSON.stringify(user));
-
-        // Actualizar el estado local
-        setAllowNotis(value);
-        setForm({ ...form, notifications: value });
-
-        // Llamar a la API para actualizar en el backend
-        await changeAllowNotis(user.id, value);
-
-      } else {
-        console.log('No user found in AsyncStorage');
+      if (value) {
+        const { status } = await Notifications.getPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert(
+            t('allow_wisdom_to_send_notifications'),
+            t('need_notifications_access'),
+            [
+              {
+                text: t('cancel'),
+                style: 'cancel',
+                onPress: () => setForm({ ...form, notifications: false })
+              },
+              {
+                text: t('allow'),
+                onPress: async () => {
+                  const { status: reqStatus } = await Notifications.requestPermissionsAsync();
+                  if (reqStatus === 'granted') {
+                    await updateNotificationsStatus(true);
+                  } else {
+                    setForm({ ...form, notifications: false });
+                  }
+                }
+              }
+            ]
+          );
+          return;
+        }
       }
+      await updateNotificationsStatus(value);
     } catch (error) {
       console.error('Error al actualizar las notificaciones:', error);
     }

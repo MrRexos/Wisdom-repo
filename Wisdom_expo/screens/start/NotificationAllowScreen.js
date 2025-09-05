@@ -1,6 +1,7 @@
 
 import React, {useState} from 'react';
 import {View, StatusBar,SafeAreaView, Platform, Text, Alert, TouchableOpacity, ScrollView} from 'react-native';
+import * as Notifications from 'expo-notifications';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -147,7 +148,9 @@ export default function NotificationAllowScreen() {
     }
 
     const allowPressed = async () =>{
-        const result = await createUser(true);
+        const { status } = await Notifications.requestPermissionsAsync();
+        const granted = status === 'granted';
+        const result = await createUser(granted);
         if (!result) return;
 
         user.id = result.id;
@@ -158,7 +161,7 @@ export default function NotificationAllowScreen() {
         user.username = username;
         user.language =  i18n.language;
         user.joined_datetime = new Date().toISOString();
-        user.allow_notis = true;
+        user.allow_notis = granted;
         user.profile_picture = null;
 
         await storeDataLocally('user', JSON.stringify(user));
