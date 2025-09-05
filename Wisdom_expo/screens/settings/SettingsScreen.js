@@ -41,6 +41,7 @@ export default function SettingsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [showSlideMessage, setShowSlideMessage] = useState(false);
   const [showModalMessage, setShowModalMessage] = useState(false);
+  const [allowNotisReady, setAllowNotisReady] = useState(false);
 
 
 
@@ -147,6 +148,7 @@ export default function SettingsScreen() {
       const userData = await getDataLocally('user');
       if (!userData) {
         setAllowNotis(deviceEnabled);
+        setAllowNotisReady(true);
         return;
       }
 
@@ -156,12 +158,15 @@ export default function SettingsScreen() {
       // si no cuadra, actualiza app + storage + backend
       if (appValue !== deviceEnabled) {
         await persistAllowNotis(deviceEnabled);
+        setAllowNotisReady(true);
       } else {
         setAllowNotis(deviceEnabled);
         setForm(prev => ({ ...prev, notifications: deviceEnabled }));
+        setAllowNotisReady(true);
       }
     } catch (e) {
       console.error('syncAllowNotisFromOS error:', e);
+      setAllowNotisReady(true);
     }
   };
 
@@ -230,6 +235,7 @@ export default function SettingsScreen() {
       setUsername(user.username);
       setAllowNotis(user.allow_notis);
       setForm({ notifications: user.allow_notis });
+      setAllowNotisReady(true);
     }
   };
 
@@ -336,11 +342,17 @@ export default function SettingsScreen() {
                         <View className="flex-1" />
 
                         {type === 'toggle' && (
-                          <Switch
-                            style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
-                            value={allowNotis}
-                            onValueChange={handleToggleAllowNotis}
-                          />
+                          <View style={{ width: 50, alignItems: 'flex-end' }}>
+                            {allowNotisReady ? (
+                              <Switch
+                                style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
+                                value={!!allowNotis}
+                                onValueChange={handleToggleAllowNotis}
+                              />
+                            ) : (
+                              <View style={{ width: 40, height: 24 }} />
+                            )}
+                          </View>
                         )}
 
                         {['select', 'link'].includes(type) && (

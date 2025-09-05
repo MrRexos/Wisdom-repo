@@ -46,9 +46,9 @@ export default function ChatScreen() {
 
   const suggestions = [
     { label: t('all'), value: 'all', id: 1 },
-    { label: t('professionals'), value: 'professionals', id: 2 },
-    { label: t('clients'), value: 'clients', id: 3 },
-    { label: t('not_read'), value: 'not_read', id: 4 },
+    { label: t('not_read'), value: 'not_read', id: 2 },
+    { label: t('professionals'), value: 'professionals', id: 3 },
+    { label: t('clients'), value: 'clients', id: 4 },
     { label: t('help'), value: 'help', id: 5 },
   ];
 
@@ -73,28 +73,98 @@ export default function ChatScreen() {
   };
 
   const filteredConversations = conversations.filter(c => {
-    const base = searchActive
-      ? c.name?.toLowerCase().includes(searchQuery.toLowerCase())
-      : true;
-    if (!base) return false;
-
+    // 3) Unificar bandera de ayuda (compatibilidad con documentos antiguos)
+    const isHelp =
+      c.type === 'help' ||
+      c.isHelp === true ||
+      c.help === true;
+  
+    // Id del otro participante
     const otherId = c.participants?.find(id => id !== userId);
     const info = otherId ? usersInfo[otherId] : null;
-    const unread = c.lastMessageSenderId !== userId && !(c.readBy || []).includes(userId);
-
+  
+    // 1) Búsqueda más robusta (evita crash y busca por "display name")
+    const q = (searchQuery || '').toLowerCase();
+  
+    const nameToSearch = (c.name || '').toLowerCase();
+    const displayNameToSearch = info
+      ? `${info.first_name || ''} ${info.surname || ''}`.trim().toLowerCase()
+      : '';
+  
+    const base = searchActive
+      ? (nameToSearch.includes(q) || displayNameToSearch.includes(q))
+      : true;
+  
+    if (!base) return false;
+  
+    // no leído
+    const unread =
+      c.lastMessageSenderId !== userId &&
+      !(c.readBy || []).includes(userId);
+  
+    // 2) Evitar parpadeo: prioriza datos denormalizados en la conversación
+    //    participantesMeta: { [uid]: { is_professional: boolean } }
+    //    otherIsProfessional: boolean (alias sencillo si lo prefieres)
+    const otherIsProfessional =
+      (c.participantsMeta && otherId != null
+        ? c.participantsMeta[otherId]?.is_professional
+        : undefined) ??
+      c.otherIsProfessional ??
+      (info != null ? !!info.is_professional : undefined);
+  
     switch (selectedStatus) {
       case 'professionals':
-        return info?.is_professional;
+        // Si ya tenemos el flag denormalizado, filtra sin esperar a usuarios;
+        // si no está, cae al valor de usersInfo; si sigue undefined, NO lo excluye.
+        return otherIsProfessional === true;
       case 'clients':
-        return info && info.is_professional === false;
+        return otherIsProfessional === false;
       case 'not_read':
         return unread;
       case 'help':
-        return c.isHelp || c.help || c.type === 'help';
+        return isHelp;
       default:
         return true;
     }
   });
+
+  useEffect(() => {
+    if (!userId) return;
+  
+    // Por cada conversación, si ya conocemos el otro usuario y su info,
+    // persiste en la conversación `participantsMeta[otherId].is_professional`
+    // (o `otherIsProfessional` si prefieres un alias plano).
+    const updates = conversations.map(async (c) => {
+      const otherId = c.participants?.find(id => id !== userId);
+      if (!otherId) return;
+  
+      const info = usersInfo[otherId];
+      if (!info || typeof info.is_professional === 'undefined') return;
+  
+      const hasParticipantsMeta = !!c.participantsMeta;
+      const alreadyCached =
+        hasParticipantsMeta &&
+        typeof c.participantsMeta?.[otherId]?.is_professional !== 'undefined';
+  
+      const alreadyCachedAlias =
+        typeof c.otherIsProfessional !== 'undefined';
+  
+      if (alreadyCached || alreadyCachedAlias) return;
+  
+      try {
+        // Opción A: estructura detallada por participante
+        await updateDoc(doc(db, 'conversations', c.id), {
+          [`participantsMeta.${otherId}.is_professional`]: !!info.is_professional,
+          // Opción B (alias plano, por si te resulta útil en el filtro):
+          otherIsProfessional: !!info.is_professional,
+        });
+      } catch (err) {
+        console.error('denormalize is_professional error:', err);
+      }
+    });
+  
+    Promise.allSettled(updates);
+  }, [conversations, usersInfo, userId]);
 
   const loadConversations = async () => {
     const userData = await getDataLocally('user');
@@ -112,6 +182,7 @@ export default function ChatScreen() {
       const filtered = data.filter(c => !(c.deletedFor || []).includes(user.id));
       setConversations(filtered);
     });
+    console.log(conversations);
   };
 
   useEffect(() => {
