@@ -1,7 +1,8 @@
+import './polyfills';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import Navigation from './navigation/navigation';
 import { StripeProvider } from '@stripe/stripe-react-native';
-import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import './languages/i18n';
 import * as Font from 'expo-font';

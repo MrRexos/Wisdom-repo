@@ -34,7 +34,7 @@ export default function SettingsScreen() {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [username, setUsername] = useState('');
-  const [allowNotis, setAllowNotis] = useState(false);
+  const [allowNotis, setAllowNotis] = useState(null);
   const [form, setForm] = useState({
     notifications: false,
   });
