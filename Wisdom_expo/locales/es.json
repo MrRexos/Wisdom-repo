@@ -1,0 +1,6 @@
+{
+    "NSPhotoLibraryUsageDescription": "Necesitamos acceso a tu biblioteca de fotos para que puedas establecer una foto de perfil o mostrarlas en tus servicios.",
+    "NSCameraUsageDescription": "Necesitamos acceso a tu cámara para que puedas tomar fotos y usarlas en las funcionalidades de la app.",
+    "NSPhotoLibraryAddUsageDescription": "Necesitamos permiso para guardar imágenes de la app en tu galería.",
+    "NSLocationWhenInUseUsageDescription": "Necesitamos acceso a tu ubicación actual para mostrarte servicios cercanos o guardar tus direcciones."
+}

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -299,7 +299,15 @@ export default function SearchDirectionScreen() {
       // Solicitar permisos
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        console.log('Permission to access location was denied');
+        Alert.alert(
+          t('allow_wisdom_to_access_location'),
+          t('need_location_access'),
+          [
+            { text: t('cancel'), style: "cancel" },
+            { text: t('settings'), onPress: () => Linking.openSettings() }
+          ],
+          { cancelable: true }
+        );
         return;
       }
 

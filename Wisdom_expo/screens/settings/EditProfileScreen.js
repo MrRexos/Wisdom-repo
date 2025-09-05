@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Keyboard, ActivityIndicator, Alert, RefreshControl } from 'react-native';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Keyboard, Linking, ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -176,11 +176,11 @@ export default function EditProfileScreen() {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
             Alert.alert(
-                'Allow "Wisdom" to Access to Your Gallery',
-                "We need access to your photo library so you can choose and set a profile picture.",
+                t('allow_wisdom_to_access_gallery'),
+                t('need_gallery_access'),
                 [
-                    { text: "Cancel", style: "cancel" },
-                    { text: "Settings", onPress: () => Linking.openSettings() }
+                    { text: t('cancel'), style: "cancel" },
+                    { text: t('settings'), onPress: () => Linking.openSettings() }
                 ],
                 { cancelable: true }
             );

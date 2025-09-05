@@ -170,11 +170,11 @@ export default function ConversationScreen() {
       xhr.open('GET', uri, true);
       xhr.send(null);
     });
-  
+
 
     const fileRef = ref(storage, path);
     const task = uploadBytesResumable(fileRef, blob, { contentType: mime });
-  
+
     return new Promise((resolve, reject) => {
       task.on(
         'state_changed',
@@ -209,10 +209,10 @@ export default function ConversationScreen() {
     }
     const replyData = replyTo
       ? (() => {
-          const base = { id: replyTo.id, type: replyTo.type, senderId: replyTo.senderId };
-          if (replyTo.text) base.text = replyTo.text;
-          return base;
-        })()
+        const base = { id: replyTo.id, type: replyTo.type, senderId: replyTo.senderId };
+        if (replyTo.text) base.text = replyTo.text;
+        return base;
+      })()
       : null;
     if (editingId) {
       await updateDoc(doc(db, 'conversations', conversationId, 'messages', editingId), {
@@ -227,7 +227,7 @@ export default function ConversationScreen() {
           filePath,
           attachment.type
         );
-    
+
         await addDoc(
           collection(db, 'conversations', conversationId, 'messages'),
           {
@@ -239,25 +239,25 @@ export default function ConversationScreen() {
             replyTo: replyData,
           }
         );
-    
+
         await updateDoc(
           doc(db, 'conversations', conversationId),
           {
             participants,
             name,
-          lastMessage: attachment.type.startsWith('image') ? t('image') : t('file'),
+            lastMessage: attachment.type.startsWith('image') ? t('image') : t('file'),
             updatedAt: serverTimestamp(),
             lastMessageSenderId: userId,
             readBy: arrayUnion(userId),
           }
         );
-    
+
         setAttachment(null);
       } catch (err) {
         console.error('Error subiendo archivo', err);
         // aquí podrías notificar al usuario
       }
-    
+
     } else if (trimmed) {
       const newMsg = {
         senderId: userId,
@@ -292,7 +292,7 @@ export default function ConversationScreen() {
     if (perm.status !== 'granted') {
       Alert.alert(
         t('allow_wisdom_to_access_gallery'),
-        t('need_gallery_access_service'),
+        t('need_gallery_access_chat'),
         [
           { text: t('cancel'), style: 'cancel' },
           { text: t('settings'), onPress: () => Linking.openSettings() }
@@ -315,7 +315,7 @@ export default function ConversationScreen() {
   const handleFilePick = async () => {
     const result = await DocumentPicker.getDocumentAsync({});
     if (!result.canceled) {
-      
+
       const asset = result.assets?.[0] || result;
       setAttachment({ type: 'file', uri: asset.uri, name: asset.name });
       attachSheet.current.close();
@@ -352,7 +352,7 @@ export default function ConversationScreen() {
   // ---------------------------------------------------------------------------
   // • RENDER HELPERS
   // ---------------------------------------------------------------------------
-  const bubbleBase = 'rounded-2xl px-3 py-2 max-w-[70%] my-[2] flex-row items-end '; 
+  const bubbleBase = 'rounded-2xl px-3 py-2 max-w-[70%] my-[2] flex-row items-end ';
 
   const renderMessage = ({ item, index }) => {
     if (item.type === 'label') {
@@ -375,7 +375,7 @@ export default function ConversationScreen() {
     const fromMeStyles = common + corner;
     const textColor = 'text-[15px] font-medium text-[#515150] dark:text-[#d4d4d3]';
 
-    
+
     if (item.type === 'image') {
       const imgIndex = imageMessages.findIndex(img => img.id === item.id);
       const content = (
@@ -441,7 +441,9 @@ export default function ConversationScreen() {
             </View>
             <View className="flex-1 justify-center">
               <Text numberOfLines={1} className={`${textColor}`}>{item.name}</Text>
-              <Text numberOfLines={1} className='text-[14px] font-medium text-[#979797]'>{item.name?.includes('.') ? item.name.split('.').pop().toUpperCase() : 'Desconocido'}</Text>
+              <Text numberOfLines={1} className='text-[14px] font-medium text-[#979797]'>
+                {item.name?.includes('.') ? item.name.split('.').pop().toUpperCase() : t('unknown')}
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -522,7 +524,7 @@ export default function ConversationScreen() {
     );
   };
 
-    
+
 
   // ---------------------------------------------------------------------------
   // • MAIN UI
@@ -618,21 +620,21 @@ export default function ConversationScreen() {
           >
             {attachment && (
               <View className="relative mr-2">
-              {attachment.type === 'image' ? (
-                <Image source={{ uri: attachment.uri }} className="h-10 w-10 rounded-lg" />
-              ) : (
-                <View className="h-10 w-10 rounded-lg bg-[#323131] dark:bg-[#fcfcfc] items-center justify-center">
-                  <File height={24} width={24} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
-                </View>
-              )}
-              <TouchableOpacity
-                onPress={() => setAttachment(null)}
-                hitSlop={8}
-                className="absolute -top-1 -right-1 bg-[#d4d4d3] dark:bg-[#474646] rounded-full p-[1px]"
-              >
-                <XMarkIcon height={16} width={16} color={iconColor} strokeWidth={2} />
-              </TouchableOpacity>
-            </View>
+                {attachment.type === 'image' ? (
+                  <Image source={{ uri: attachment.uri }} className="h-10 w-10 rounded-lg" />
+                ) : (
+                  <View className="h-10 w-10 rounded-lg bg-[#323131] dark:bg-[#fcfcfc] items-center justify-center">
+                    <File height={24} width={24} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
+                  </View>
+                )}
+                <TouchableOpacity
+                  onPress={() => setAttachment(null)}
+                  hitSlop={8}
+                  className="absolute -top-1 -right-1 bg-[#d4d4d3] dark:bg-[#474646] rounded-full p-[1px]"
+                >
+                  <XMarkIcon height={16} width={16} color={iconColor} strokeWidth={2} />
+                </TouchableOpacity>
+              </View>
             )}
             <View className="flex-1 justify-center">
               <TextInput

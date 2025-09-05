@@ -18,9 +18,9 @@
       "buildNumber": "4",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "We need access to your photo library so you can set a profile picture or display them in your services.",
-        "NSCameraUsageDescription": "We need access to your camera so you can set a profile picture or display them in your services.",
-        "NSPhotoLibraryAddUsageDescription": "We need permission to save images from your profile to your gallery.",
-        "NSLocationWhenInUseUsageDescription": "We need access to your current location in order to show you services near you.",
+        "NSCameraUsageDescription": "We need access to your camera so you can take photos and use them in the app’s features.",
+        "NSPhotoLibraryAddUsageDescription": "We need permission to save images from the app to your gallery.",
+        "NSLocationWhenInUseUsageDescription": "We need access to your current location in order to show you services near you or save your directions.",
         "CFBundleURLTypes": [
           {
             "CFBundleURLSchemes": [
@@ -33,7 +33,6 @@
       },
       "newArchEnabled": true
     },
-
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -45,20 +44,25 @@
       "intentFilters": [
         {
           "action": "VIEW",
-          "category": ["BROWSABLE", "DEFAULT"],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ],
           "data": [
-            { "scheme": "Wisdom_expo" }, 
-            { "scheme": "wisdomexpo" }  
+            {
+              "scheme": "Wisdom_expo"
+            },
+            {
+              "scheme": "wisdomexpo"
+            }
           ]
         }
       ]
     },
-
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-
     "extra": {
       "eas": {
         "projectId": "d34848bf-7bb0-442f-a1d7-5ddf9b8e7392"
@@ -66,6 +70,14 @@
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "locales": {
+      "ar": "./locales/ar.json",
+      "ca": "./locales/ca.json",
+      "en": "./locales/en.json",
+      "es": "./locales/es.json",
+      "fr": "./locales/fr.json",
+      "zh": "./locales/zh.json"
+    }
   }
 }
