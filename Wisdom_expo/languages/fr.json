@@ -142,6 +142,8 @@
     "need_camera_access_scan_dni": "Nous avons besoin d'accéder à votre appareil photo pour que vous puissiez scanner votre carte d'identité.",
     "allow_wisdom_to_access_location": "Autoriser Wisdom à accéder à votre position",
     "need_location_access": "Nous avons besoin d'accéder à votre position pour rechercher des services près de chez vous ou enregistrer vos adresses.",
+    "allow_wisdom_to_send_notifications": "Autoriser Wisdom à envoyer des notifications",
+    "need_notifications_access": "Nous avons besoin de permission pour vous envoyer des notifications.",
     "terms_and_conditions": "Conditions générales",
     "settings": "Paramètres",
     "privacy_policy_title": "Politique de confidentialité",

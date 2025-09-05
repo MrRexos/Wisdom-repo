@@ -1,6 +1,7 @@
 
 import React, {useState} from 'react';
 import {View, StatusBar,SafeAreaView, Platform, Text, Alert, TouchableOpacity, ScrollView} from 'react-native';
+import * as Notifications from 'expo-notifications';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -116,63 +117,66 @@ export default function NotificationAllowScreen() {
       }
     };
 
-    
-
-    const notAllowPressed = async () =>{
+    const notAllowPressed = async () => {
+      try {
         const result = await createUser(false);
         if (!result) return;
-
+    
         user.id = result.id;
         user.token = result.token;
         user.email = email;
         user.first_name = firstName;
         user.surname = surname;
         user.username = username;
-        user.language =  i18n.language;
+        user.language = i18n.language;
         user.joined_datetime = new Date().toISOString();
         user.allow_notis = false;
         user.profile_picture = null;
-
+    
         await storeDataLocally('user', JSON.stringify(user));
-
+    
         const imageURL = await uploadImage();
         if (imageURL) {
-            await updateUserProfile(imageURL);
-            user.profile_picture = imageURL;
-            await storeDataLocally('user', JSON.stringify(user));
+          await updateUserProfile(imageURL);
+          user.profile_picture = imageURL;
+          await storeDataLocally('user', JSON.stringify(user));
         }
-
+    
         navigation.navigate('HomeScreen');
-
-    }
+      } catch (e) {
+        console.error('Error en notAllowPressed:', e);
+      }
+    };
 
     const allowPressed = async () =>{
-        const result = await createUser(true);
-        if (!result) return;
+      const { status } = await Notifications.requestPermissionsAsync();
+      const granted = status === 'granted';
+      const result = await createUser(granted);
+      if (!result) return;
 
-        user.id = result.id;
-        user.token = result.token;
-        user.email = email;
-        user.first_name = firstName;
-        user.surname = surname;
-        user.username = username;
-        user.language =  i18n.language;
-        user.joined_datetime = new Date().toISOString();
-        user.allow_notis = true;
-        user.profile_picture = null;
+      user.id = result.id;
+      user.token = result.token;
+      user.email = email;
+      user.first_name = firstName;
+      user.surname = surname;
+      user.username = username;
+      user.language =  i18n.language;
+      user.joined_datetime = new Date().toISOString();
+      user.allow_notis = granted;
+      user.profile_picture = null;
 
-        await storeDataLocally('user', JSON.stringify(user));
+      await storeDataLocally('user', JSON.stringify(user));
 
-        const imageURL = await uploadImage();
-        if (imageURL) {
-            await updateUserProfile(imageURL);
-            user.profile_picture = imageURL;
-            await storeDataLocally('user', JSON.stringify(user));
-        }
+      const imageURL = await uploadImage();
+      if (imageURL) {
+          await updateUserProfile(imageURL);
+          user.profile_picture = imageURL;
+          await storeDataLocally('user', JSON.stringify(user));
+      }
 
-        navigation.navigate('HomeScreen');
+      navigation.navigate('HomeScreen');
 
-    }
+  }
   
     return (
       <SafeAreaView style={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Image, Linking, RefreshControl } from 'react-native';
+import { Text, View, AppState, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Image, Linking, RefreshControl, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,6 +11,7 @@ import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import eventEmitter from '../../utils/eventEmitter';
 import Message from '../../components/Message';
+import * as Notifications from 'expo-notifications';
 
 
 import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram, Link } from "react-native-feather";
@@ -33,7 +34,7 @@ export default function SettingsScreen() {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [username, setUsername] = useState('');
-  const [allowNotis, setAllowNotis] = useState(null);
+  const [allowNotis, setAllowNotis] = useState(false);
   const [form, setForm] = useState({
     notifications: false,
   });
@@ -109,10 +110,11 @@ export default function SettingsScreen() {
     }
   };
 
-  const changeAllowNotis = async (userId, allowNotis) => {
+  // API para actualizar en tu backend (la tienes ya igual):
+  const changeAllowNotis = async (userId, allowNotisValue) => {
     try {
       const response = await api.put(`/api/user/${userId}/allow_notis`, {
-        allow_notis: allowNotis,
+        allow_notis: allowNotisValue,
       });
       return response.data;
     } catch (error) {
@@ -120,28 +122,100 @@ export default function SettingsScreen() {
     }
   };
 
-  const handleToggleAllowNotis = async (value) => {
+  // Persistir en AsyncStorage + estado + backend:
+  const persistAllowNotis = async (value) => {
     try {
       const userData = await getDataLocally('user');
-      if (userData) {
-        const user = JSON.parse(userData);
-        user.allow_notis = value;
+      if (!userData) return;
+      const user = JSON.parse(userData);
+      user.allow_notis = value;
+      await storeDataLocally('user', JSON.stringify(user));
+      setAllowNotis(value);
+      setForm(prev => ({ ...prev, notifications: value }));
+      await changeAllowNotis(user.id, value);
+    } catch (e) {
+      console.error('persistAllowNotis error:', e);
+    }
+  };
 
-        // Actualizar AsyncStorage
-        await storeDataLocally('user', JSON.stringify(user));
+  // Sincroniza con el permiso real del SO (llamar al entrar en Settings o al volver a la app)
+  const syncAllowNotisFromOS = async () => {
+    try {
+      const { status } = await Notifications.getPermissionsAsync();
+      const deviceEnabled = status === 'granted';
 
-        // Actualizar el estado local
-        setAllowNotis(value);
-        setForm({ ...form, notifications: value });
-
-        // Llamar a la API para actualizar en el backend
-        await changeAllowNotis(user.id, value);
-
-      } else {
-        console.log('No user found in AsyncStorage');
+      const userData = await getDataLocally('user');
+      if (!userData) {
+        setAllowNotis(deviceEnabled);
+        return;
       }
-    } catch (error) {
-      console.error('Error al actualizar las notificaciones:', error);
+
+      const user = JSON.parse(userData);
+      const appValue = !!user.allow_notis;
+
+      // si no cuadra, actualiza app + storage + backend
+      if (appValue !== deviceEnabled) {
+        await persistAllowNotis(deviceEnabled);
+      } else {
+        setAllowNotis(deviceEnabled);
+        setForm(prev => ({ ...prev, notifications: deviceEnabled }));
+      }
+    } catch (e) {
+      console.error('syncAllowNotisFromOS error:', e);
+    }
+  };
+
+  // Lanza la sync al enfocar la pantalla de Settings
+  useFocusEffect(
+    useCallback(() => {
+      syncAllowNotisFromOS();
+      console.log('syncAllowNotisFromOS');
+    }, [])
+  );
+
+  // Y también al volver de background (por si el usuario cambió el ajuste en el SO)
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') syncAllowNotisFromOS();
+    });
+    return () => sub.remove();
+  }, []);
+
+  // Handler del switch
+  const handleToggleAllowNotis = async (value) => {
+    try {
+      if (value) {
+        const { status } = await Notifications.getPermissionsAsync();
+        let finalStatus = status;
+
+        if (status !== 'granted') {
+          const req = await Notifications.requestPermissionsAsync();
+          finalStatus = req.status;
+        }
+
+        if (finalStatus !== 'granted') {
+          Alert.alert(
+            t('allow_wisdom_to_send_notifications'),
+            t('need_notifications_access'),
+            [
+              { text: t('cancel'), style: 'cancel' },
+              { text: t('settings'), onPress: () => Linking.openSettings() },
+            ],
+            { cancelable: true }
+          );
+          // revertir visualmente el switch
+          setAllowNotis(false);
+          setForm(prev => ({ ...prev, notifications: false }));
+          return;
+        }
+      }
+
+      // permisos OK o estamos desactivando: persistir
+      await persistAllowNotis(value);
+    } catch (e) {
+      console.error('Error al actualizar las notificaciones:', e);
+      setAllowNotis(prev => !prev);
+      setForm(prev => ({ ...prev, notifications: !prev.notifications }));
     }
   };
 
@@ -149,7 +223,7 @@ export default function SettingsScreen() {
     const userData = await getDataLocally('user');
 
     if (userData) {
-      user = JSON.parse(userData);
+      const user = JSON.parse(userData);
       setImage(user.profile_picture);
       setName(user.first_name);
       setSurname(user.surname);
@@ -208,7 +282,7 @@ export default function SettingsScreen() {
 
       <ScrollView
         className="flex-1 px-6 pt-[55px]"
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={[colorScheme === 'dark' ? '#f2f2f2' : '#434343']} colors={[colorScheme === 'dark' ? '#f2f2f2' : '#434343']} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colorScheme === 'dark' ? '#f2f2f2' : '#434343'} colors={[colorScheme === 'dark' ? '#f2f2f2' : '#434343']} />}
         showsVerticalScrollIndicator={false}
       >
         <View className='gap-y-9'>
@@ -264,11 +338,8 @@ export default function SettingsScreen() {
                         {type === 'toggle' && (
                           <Switch
                             style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
-                            value={form[id]}
-                            onValueChange={(value) => {
-                              setForm({ ...form, [id]: value });
-                              handleToggleAllowNotis(value);
-                            }}
+                            value={allowNotis}
+                            onValueChange={handleToggleAllowNotis}
                           />
                         )}
 

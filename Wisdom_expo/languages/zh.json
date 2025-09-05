@@ -142,6 +142,8 @@
     "need_camera_access_scan_dni": "我们需要访问您的相机，以便您能扫描身份证。",
     "allow_wisdom_to_access_location": "允许Wisdom访问您的位置",
     "need_location_access": "我们需要访问您的位置，以便您能搜索附近的服务或保存地址。",
+    "allow_wisdom_to_send_notifications": "允许Wisdom发送通知",
+    "need_notifications_access": "我们需要权限向你发送通知。",
     "terms_and_conditions": "条款和条件",
     "settings": "设置",
     "privacy_policy_title": "隐私政策",
