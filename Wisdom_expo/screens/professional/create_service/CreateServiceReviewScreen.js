@@ -408,9 +408,9 @@ export default function CreateServiceReviewScreen() {
                   </MapView>
                   <TouchableOpacity
                     onPress={() => navigation.navigate('FullScreenMap', { location: { latitude: location.lat, longitude: location.lng }, actionRate })}
-                    style={{ position: 'absolute', top: 10, right: 10, backgroundColor: colorScheme === 'dark' ? '#3D3D3D' : '#FFFFFF', borderRadius: 20, padding: 6 }}
+                    style={{ position: 'absolute', top: 10, right: 10, backgroundColor: colorScheme === 'dark' ? '#3D3D3D' : '#FFFFFF', borderRadius: 20, padding: 8 }}
                   >
-                    <Maximize2 width={16} height={16} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+                    <Maximize2 width={18} height={18} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
                   </TouchableOpacity>
                 </View>
                 <View className="mt-3 px-3 w-full flex-row justify-between items-center">
