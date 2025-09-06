@@ -101,6 +101,7 @@ import DniCameraScreen from '../screens/professional/collection_method/DniCamera
 import CollectionMethodIbanScreen from '../screens/professional/collection_method/CollectionMethodIbanScreen';
 import CollectionMethodDirectionScreen from '../screens/professional/collection_method/CollectionMethodDirectionScreen';
 import CollectionMethodConfirmScreen from '../screens/professional/collection_method/CollectionMethodConfirmScreen';
+import FullScreenMapScreen from '../screens/common/FullScreenMapScreen';
 
 
 
@@ -184,6 +185,7 @@ export default function Navigation() {
         <Stack.Screen name="DisplayReviews" component={DisplayReviewsScreen} />
         <Stack.Screen name="AddReview" component={AddReviewScreen} />
         <Stack.Screen name="EnlargedImage" component={EnlargedImageScreen} />
+        <Stack.Screen name="FullScreenMap" component={FullScreenMapScreen} />
         <Stack.Screen name="BookingDetails" component={BookingDetailsScreen} />
         <Stack.Screen name="SetFinalPrice" component={SetFinalPriceScreen} />
         <Stack.Screen name="CalendarPro" component={CalendarProScreen} options={{ animation: 'none', gestureEnabled: false }} />
