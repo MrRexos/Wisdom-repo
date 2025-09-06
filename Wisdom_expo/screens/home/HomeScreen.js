@@ -30,7 +30,7 @@ export default function HomeScreen() {
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const [selectedCategoryID, setSelectedCategoryID] = useState(null);
-  const [suggestedProfessionals, setSuggestedProfessionals] = useState({});
+  const [suggestedProfessionals, setSuggestedProfessionals] = useState([]);
 
   const [isSearchOptionsVisible, setSearchOptionsVisible] = useState(false);
 
@@ -325,16 +325,16 @@ export default function HomeScreen() {
       ) : (
 
         <View className="p-3 mr-4 justify-start items-center">
-          <TouchableOpacity onPress={() => removeProfessional(item.service_id)} className="w-full justify-start items-end">
+          <TouchableOpacity onPress={() => removeProfessional(item.best_service_id)} className="w-full justify-start items-end">
             <XMarkIcon height={19} color={iconColor} strokeWidth={2} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.service_id })} className="justify-center items-center">
+          <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.best_service_id })} className="justify-center items-center">
             <Image source={{ uri: item.profile_picture }} className="mb-4 w-[90px] h-[90px] rounded-full bg-slate-500" />
-            <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
+            <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{item.best_service_title}</Text>
             <Text className="mb-3 font-inter-medium text-[10px] text-[#706F6E] dark:text-[#b6b5b5]">{item.first_name} {item.surname}</Text>
           </TouchableOpacity>
           <View className="justify-center items-center">
-            <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.service_id })} className="py-2 px-5 justify-center items-center bg-[#444343] dark:bg-[#f2f2f2] rounded-lg" >
+            <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.best_dservice_id })} className="py-2 px-5 justify-center items-center bg-[#444343] dark:bg-[#f2f2f2] rounded-lg" >
               <Text className="font-inter-semibold text-[13px] text-[#f2f2f2] dark:text-[#272626]">{t('visit')}</Text>
             </TouchableOpacity>
           </View>
@@ -360,7 +360,7 @@ export default function HomeScreen() {
                 className="px-5"
                 horizontal
                 renderItem={renderProfile}
-                keyExtractor={(category) => category.service_id.toString()}
+                keyExtractor={(category, idx) => String(category?.service_id ?? idx)}
                 showsHorizontalScrollIndicator={false}
               />
             </View>
