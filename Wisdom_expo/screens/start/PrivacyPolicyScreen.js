@@ -14,7 +14,7 @@ export default function PrivacyPolicy() {
   const navigation = useNavigation();
   const titleColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const textColor = '#979797';
-  const textStyle='mb-2 font-inter-medium';
+  const textStyle='mb-2 font-inter-medium ';
   const iconColor = colorScheme === 'dark' ? '#f2f2f2': '#444343';
 
 
@@ -27,8 +27,8 @@ export default function PrivacyPolicy() {
         </TouchableOpacity>
       </View>
       
-      <ScrollView className="p-4">
-        <Text style={{ color: titleColor }} className="text-2xl font-inter-semibold mb-4">
+      <ScrollView showsVerticalScrollIndicator={false} className="p-4">
+        <Text style={{ color: titleColor }} className="text-2xl font-inter-semibold mb-10">
             {t('privacy_policy_title')}
         </Text>
 

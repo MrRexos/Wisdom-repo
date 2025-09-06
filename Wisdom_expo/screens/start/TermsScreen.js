@@ -28,7 +28,7 @@ export default function TermsScreen() {
         </TouchableOpacity>
       </View>
       
-      <ScrollView className="p-4">
+      <ScrollView showsVerticalScrollIndicator={false} className="p-4">
         <Text style={{ color: titleColor }} className="text-2xl font-inter-bold mb-10">
         {t('terms_and_conditions')}
         </Text>

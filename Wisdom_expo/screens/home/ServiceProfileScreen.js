@@ -1286,6 +1286,16 @@ export default function ServiceProfileScreen() {
             </View>
           </TouchableOpacity>
 
+          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start" onPress={() => navigation.navigate('ReservationPolicy')}>
+            <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
+              <FileText width={23} height={23} color={iconColor} strokeWidth={1.6} />
+            </View>
+            <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('reservation_policy')}</Text>
+              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
+            </View>
+          </TouchableOpacity>
+
           <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start" onPress={() => navigation.navigate('CancellationPolicy')}>
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
               <XCircleIcon width={24} height={24} color={iconColor} strokeWidth={1.6} />
@@ -1312,16 +1322,6 @@ export default function ServiceProfileScreen() {
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
               <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('contact_wisdom')}</Text>
-              <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start" onPress={() => navigation.navigate('ReservationPolicy')}>
-            <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
-              <FileText width={23} height={23} color={iconColor} strokeWidth={1.6} />
-            </View>
-            <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('reservation_policy')}</Text>
               <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
             </View>
           </TouchableOpacity>
