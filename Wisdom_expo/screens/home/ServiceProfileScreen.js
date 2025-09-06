@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Alert, RefreshControl } from 'react-native';
+import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Alert, RefreshControl, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -1274,54 +1274,54 @@ export default function ServiceProfileScreen() {
 
         <View className="mt-8 justify-center items-start pb-7">
 
-          <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Others</Text>
+          <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('others')}</Text>
 
-          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
+          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start" onPress={() => navigation.navigate('WisdomWarranty')}>
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
               <WisdomLogo width={23} height={23} color={iconColor} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Wisdom Warranty</Text>
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('wisdom_warranty')}</Text>
               <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
+          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start" onPress={() => navigation.navigate('CancellationPolicy')}>
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
               <XCircleIcon width={24} height={24} color={iconColor} strokeWidth={1.6} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Cancellation Policy</Text>
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('cancellation_policy')}</Text>
               <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
+          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start" onPress={() => navigation.navigate('Help')}>
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
               <Info width={23} height={23} color={iconColor} strokeWidth={1.6} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Help</Text>
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('help')}</Text>
               <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
+          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start" onPress={() => Linking.openURL('mailto:wisdom.helpcontact@gmail.com')}>
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
               <Phone width={22} height={22} color={iconColor} strokeWidth={1.6} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Contact Wisdom</Text>
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('contact_wisdom')}</Text>
               <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
+          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start" onPress={() => navigation.navigate('ReservationPolicy')}>
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
               <FileText width={23} height={23} color={iconColor} strokeWidth={1.6} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Reservation policy</Text>
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('reservation_policy')}</Text>
               <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
             </View>
           </TouchableOpacity>

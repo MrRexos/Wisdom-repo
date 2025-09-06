@@ -87,6 +87,9 @@ import DirectionsScreen from '../screens/settings/DirectionsScreen';
 import EditAccountScreen from '../screens/settings/EditAccountScreen';
 import ChangePasswordScreen from '../screens/settings/ChangePasswordScreen';
 import HelpScreen from '../screens/settings/HelpScreen';
+import WisdomWarrantyScreen from '../screens/settings/WisdomWarrantyScreen';
+import CancellationPolicyScreen from '../screens/settings/CancellationPolicyScreen';
+import ReservationPolicyScreen from '../screens/settings/ReservationPolicyScreen';
 import TurnExpertScreen from '../screens/settings/TurnExpertScreen';
 import WalletScreen from '../screens/settings/WalletScreen';
 import WalletProScreen from '../screens/professional/WalletProScreen';
@@ -198,6 +201,9 @@ export default function Navigation() {
         <Stack.Screen name="EditAccount" component={EditAccountScreen} />
         <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
         <Stack.Screen name="Help" component={HelpScreen} />
+        <Stack.Screen name="WisdomWarranty" component={WisdomWarrantyScreen} />
+        <Stack.Screen name="CancellationPolicy" component={CancellationPolicyScreen} />
+        <Stack.Screen name="ReservationPolicy" component={ReservationPolicyScreen} />
         <Stack.Screen name="TurnExpert" component={TurnExpertScreen} />
         <Stack.Screen name="Wallet" component={WalletScreen} />
         <Stack.Screen name="WalletPro" component={WalletProScreen} />
