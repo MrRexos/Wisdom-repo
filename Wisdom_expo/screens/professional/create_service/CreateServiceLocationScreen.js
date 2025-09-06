@@ -5,8 +5,9 @@ import { useColorScheme } from 'nativewind'
 import '../../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
-import { Search, Check } from "react-native-feather";
+import { Search, Check, Maximize2 } from "react-native-feather";
 import MapView, { Marker, Circle } from 'react-native-maps';
+import { getRegionForRadius } from '../../../utils/mapUtils';
 import { storeDataLocally, getDataLocally } from '../../../utils/asyncStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Slider from '@react-native-community/slider';
@@ -117,6 +118,15 @@ export default function CreateServiceLocationScreen() {
     }, [location])
   );
 
+  const mapRegion = actionRate < 100
+    ? getRegionForRadius(currentLocation.lat, currentLocation.lng, actionRate)
+    : {
+        latitude: currentLocation.lat,
+        longitude: currentLocation.lng,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.03,
+      };
+
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
@@ -151,36 +161,38 @@ export default function CreateServiceLocationScreen() {
           </TouchableOpacity>
 
           <View className="mb-2 justify-center items-center">
-            <MapView
-              style={{ height: 250, width: 300, borderRadius: 12, marginTop: 20 }}
-              region={{
-                latitude: currentLocation.lat, // Latitud inicial
-                longitude: currentLocation.lng, // Longitud inicial
-                latitudeDelta: 0.02, // Zoom en la latitud
-                longitudeDelta: 0.01, // Zoom en la longitud
-              }}
-            >
-              {/* Solo renderizar el marcador si 'location' existe */}
-              {location && (
-                <View>
-                  <Marker
-                    coordinate={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}
-                    image={require('../../../assets/MapMarker.png')}
-                    anchor={{ x: 0.5, y: 1 }}
-                    centerOffset={{ x: 0.5, y: -20 }}
-                  />
-                  {actionRate < 100 && (
-                    <Circle
-                      center={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}
-                      radius={actionRate * 1000}
-                      strokeColor="rgba(182,181,181,0.8)"
-                      fillColor="rgba(182,181,181,0.5)"
-                      strokeWidth={2}
+            <View style={{ marginTop: 20, position: 'relative' }}>
+              <MapView
+                style={{ height: 250, width: 300, borderRadius: 12 }}
+                region={mapRegion}
+              >
+                {location && (
+                  <View>
+                    <Marker
+                      coordinate={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}
+                      image={require('../../../assets/MapMarker.png')}
+                      anchor={{ x: 0.5, y: 1 }}
+                      centerOffset={{ x: 0.5, y: -20 }}
                     />
-                  )}
-                </View>
-              )}
-            </MapView>
+                    {actionRate < 100 && (
+                      <Circle
+                        center={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}
+                        radius={actionRate * 1000}
+                        strokeColor="rgba(182,181,181,0.8)"
+                        fillColor="rgba(182,181,181,0.5)"
+                        strokeWidth={2}
+                      />
+                    )}
+                  </View>
+                )}
+              </MapView>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('FullScreenMap', { location: { latitude: currentLocation.lat, longitude: currentLocation.lng }, actionRate })}
+                style={{ position: 'absolute', top: 10, right: 10, backgroundColor: colorScheme === 'dark' ? '#3D3D3D' : '#FFFFFF', borderRadius: 20, padding: 6 }}
+              >
+                <Maximize2 width={16} height={16} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+              </TouchableOpacity>
+            </View>
           </View>
 
           {direction ? (

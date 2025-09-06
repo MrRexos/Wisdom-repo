@@ -7,7 +7,7 @@ import '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon, GlobeAltIcon, GlobeEuropeAfricaIcon, XCircleIcon } from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import { Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X, Check } from "react-native-feather";
+import { Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X, Check, Maximize2 } from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import HeartFill from "../../assets/HeartFill.tsx"
@@ -16,6 +16,7 @@ import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import MapView, { Marker, Circle } from 'react-native-maps';
+import { getRegionForRadius } from '../../utils/mapUtils';
 import { doc, setDoc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import axios from 'axios';
@@ -58,6 +59,17 @@ export default function ServiceProfileScreen() {
   const [listName, setListName] = useState('');
   const [isAddingDate, setIsAddingDate] = useState(false);
   const [selectedDate, setSelectedDate] = useState({});
+
+  const mapRegion = serviceData.latitude
+    ? (serviceData.action_rate && serviceData.action_rate < 100
+        ? getRegionForRadius(serviceData.latitude, serviceData.longitude, serviceData.action_rate)
+        : {
+            latitude: serviceData.latitude,
+            longitude: serviceData.longitude,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.03,
+          })
+    : null;
 
   const [selectedDay, setSelectedDay] = useState(null);
   const [tempDate, setTempDate] = useState(new Date());
@@ -1053,34 +1065,36 @@ export default function ServiceProfileScreen() {
                 <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Location</Text>
 
                 <View className="justify-center items-center w-full">
-                  <MapView
-                    style={{ height: 160, width: 280, borderRadius: 12 }}
-                    region={{
-                      latitude: serviceData.latitude, // Latitud inicial
-                      longitude: serviceData.longitude, // Longitud inicial
-                      latitudeDelta: 0.05, // Zoom en la latitud
-                      longitudeDelta: 0.03, // Zoom en la longitud
-                    }}
-                  >
-                    <View>
-                      <Marker
-                        coordinate={{ latitude: serviceData.latitude, longitude: serviceData.longitude }}
-                        image={require('../../assets/MapMarker.png')}
-                        anchor={{ x: 0.5, y: 1 }}
-                        centerOffset={{ x: 0.5, y: -20 }}
-                      />
-                      {serviceData.action_rate < 100 && (
-                        <Circle
-                          center={{ latitude: serviceData.latitude, longitude: serviceData.longitude }}
-                          radius={serviceData.action_rate * 1000}
-                          strokeColor="rgba(182,181,181,0.8)"
-                          fillColor="rgba(182,181,181,0.5)"
-                          strokeWidth={2}
+                  <View style={{ position: 'relative' }}>
+                    <MapView
+                      style={{ height: 160, width: 280, borderRadius: 12 }}
+                      region={mapRegion}
+                    >
+                      <View>
+                        <Marker
+                          coordinate={{ latitude: serviceData.latitude, longitude: serviceData.longitude }}
+                          image={require('../../assets/MapMarker.png')}
+                          anchor={{ x: 0.5, y: 1 }}
+                          centerOffset={{ x: 0.5, y: -20 }}
                         />
-                      )}
-                    </View>
-
-                  </MapView>
+                        {serviceData.action_rate < 100 && (
+                          <Circle
+                            center={{ latitude: serviceData.latitude, longitude: serviceData.longitude }}
+                            radius={serviceData.action_rate * 1000}
+                            strokeColor="rgba(182,181,181,0.8)"
+                            fillColor="rgba(182,181,181,0.5)"
+                            strokeWidth={2}
+                          />
+                        )}
+                      </View>
+                    </MapView>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('FullScreenMap', { location: { latitude: serviceData.latitude, longitude: serviceData.longitude }, actionRate: serviceData.action_rate })}
+                      style={{ position: 'absolute', top: 10, right: 10, backgroundColor: colorScheme === 'dark' ? '#3D3D3D' : '#FFFFFF', borderRadius: 20, padding: 6 }}
+                    >
+                      <Maximize2 width={16} height={16} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+                    </TouchableOpacity>
+                  </View>
 
                   <View className="mt-3 px-3 w-full flex-row justify-between items-center">
                     <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{address ? address : 'Loading...'}</Text>

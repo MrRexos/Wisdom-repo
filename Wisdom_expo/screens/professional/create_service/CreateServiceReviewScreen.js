@@ -7,7 +7,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import {XMarkIcon, ChevronLeftIcon, GlobeAltIcon, GlobeEuropeAfricaIcon} from 'react-native-heroicons/outline';
 import MapView, { Marker, Circle } from 'react-native-maps';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import {Heart} from 'react-native-feather';
+import {Heart, Maximize2} from 'react-native-feather';
+import { getRegionForRadius } from '../../../utils/mapUtils';
 import api from '../../../utils/api.js';
 import { getDataLocally } from '../../../utils/asyncStorage';
 import axios from 'axios';
@@ -118,6 +119,15 @@ export default function CreateServiceReviewScreen() {
         return null;
     }
   };
+
+  const mapRegion = location && actionRate < 100
+    ? getRegionForRadius(location.lat, location.lng, actionRate)
+    : {
+        latitude: location?.lat || 0,
+        longitude: location?.lng || 0,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.03,
+      };
 
   const getUserId = async () => {
     const userData = await getDataLocally('user');
@@ -371,38 +381,41 @@ export default function CreateServiceReviewScreen() {
             <View className='w-full'>
               <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Location</Text>
               <View className="justify-center items-center w-full">
-                <MapView
-                  style={{ height: 160, width: 280, borderRadius: 12 }}
-                  region={{
-                    latitude: location.lat,
-                    longitude: location.lng,
-                    latitudeDelta: 0.05,
-                    longitudeDelta: 0.03,
-                  }}
-                >
-                  {location && (
-                    <View>
-                      <Marker
-                        coordinate={{ latitude: location.lat, longitude: location.lng }}
-                        image={require('../../../assets/MapMarker.png')}
-                        anchor={{ x: 0.5, y: 1 }}
-                        centerOffset={{ x: 0.5, y: -20 }}
-                      />
-                      {actionRate < 100 && (
-                        <Circle
-                          center={{ latitude: location.lat, longitude: location.lng }}
-                          radius={actionRate * 1000}
-                          strokeColor="rgba(182,181,181,0.8)"
-                          fillColor="rgba(182,181,181,0.5)"
-                          strokeWidth={2}
+                <View style={{ position: 'relative' }}>
+                  <MapView
+                    style={{ height: 160, width: 280, borderRadius: 12 }}
+                    region={mapRegion}
+                  >
+                    {location && (
+                      <View>
+                        <Marker
+                          coordinate={{ latitude: location.lat, longitude: location.lng }}
+                          image={require('../../../assets/MapMarker.png')}
+                          anchor={{ x: 0.5, y: 1 }}
+                          centerOffset={{ x: 0.5, y: -20 }}
                         />
-                      )}
-                    </View>
-                  )}
-                </MapView>
+                        {actionRate < 100 && (
+                          <Circle
+                            center={{ latitude: location.lat, longitude: location.lng }}
+                            radius={actionRate * 1000}
+                            strokeColor="rgba(182,181,181,0.8)"
+                            fillColor="rgba(182,181,181,0.5)"
+                            strokeWidth={2}
+                          />
+                        )}
+                      </View>
+                    )}
+                  </MapView>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('FullScreenMap', { location: { latitude: location.lat, longitude: location.lng }, actionRate })}
+                    style={{ position: 'absolute', top: 10, right: 10, backgroundColor: colorScheme === 'dark' ? '#3D3D3D' : '#FFFFFF', borderRadius: 20, padding: 6 }}
+                  >
+                    <Maximize2 width={16} height={16} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+                  </TouchableOpacity>
+                </View>
                 <View className="mt-3 px-3 w-full flex-row justify-between items-center">
-                <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{address ? address : 'Loading...'}</Text>
-                <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">{localHour ? `${localHour} local hour` : ''}</Text>
+                  <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{address ? address : 'Loading...'}</Text>
+                  <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">{localHour ? `${localHour} local hour` : ''}</Text>
                 </View>
               </View>
             </View>
