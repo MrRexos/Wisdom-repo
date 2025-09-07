@@ -7,7 +7,7 @@ import '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon, GlobeAltIcon, GlobeEuropeAfricaIcon, XCircleIcon } from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import { Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X, Check, Maximize2 } from "react-native-feather";
+import { Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X, Check, Maximize2, File, Image as ImageIcon, Folder } from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import HeartFill from "../../assets/HeartFill.tsx"
@@ -18,8 +18,11 @@ import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import MapView, { Marker, Circle } from 'react-native-maps';
 import { getRegionForRadius } from '../../utils/mapUtils';
 import { doc, setDoc, serverTimestamp, arrayRemove } from 'firebase/firestore';
-import { db } from '../../utils/firebase';
+import { db, storage } from '../../utils/firebase';
 import axios from 'axios';
+import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { Calendar } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
@@ -80,6 +83,217 @@ export default function ServiceProfileScreen() {
   const [timeUndefined, setTimeUndefined] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const reportSheet = useRef(null);
+  const reportAttachSheet = useRef(null);
+  const [reportStep, setReportStep] = useState(1);
+  const [reportReason, setReportReason] = useState(null);
+  const [reportOther, setReportOther] = useState('');
+  const [reportDescription, setReportDescription] = useState('');
+  const [reportAttachments, setReportAttachments] = useState([]);
+  const reasonOptions = [
+    { code: 'fraud', textKey: 'report_reason_fraud' },
+    { code: 'incorrect_info', textKey: 'report_reason_incorrect_info' },
+    { code: 'inappropriate', textKey: 'report_reason_offensive', reasonText: 'offensive' },
+    { code: 'inappropriate', textKey: 'report_reason_illegal', reasonText: 'illegal' },
+    { code: 'spam', textKey: 'report_reason_spam' },
+    { code: 'external_contact', textKey: 'report_reason_external_contact' },
+    { code: 'inappropriate', textKey: 'report_reason_harassment', reasonText: 'harassment' },
+    { code: 'other', textKey: 'report_reason_ip', reasonText: 'intellectual_property' },
+    { code: 'inappropriate', textKey: 'report_reason_inappropriate_images', reasonText: 'inappropriate_images' },
+    { code: 'other', textKey: 'report_reason_other' },
+  ];
+
+  const openReportSheet = () => {
+    setReportStep(1);
+    setReportReason(null);
+    setReportOther('');
+    setReportDescription('');
+    setReportAttachments([]);
+    reportSheet.current.open();
+  };
+
+  const handleImagePick = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: 'images', quality: 0.7 });
+    if (!result.canceled && reportAttachments.length < 3) {
+      const asset = result.assets[0];
+      setReportAttachments(prev => [...prev, { type: 'image', uri: asset.uri, name: asset.fileName || 'image.jpg', mime: asset.mimeType || 'image/jpeg' }]);
+    }
+    reportAttachSheet.current?.close();
+  };
+
+  const handleFilePick = async () => {
+    const result = await DocumentPicker.getDocumentAsync({});
+    if (!result.canceled && reportAttachments.length < 3) {
+      const asset = result.assets?.[0] || result;
+      setReportAttachments(prev => [...prev, { type: 'file', uri: asset.uri, name: asset.name, mime: asset.mimeType || asset.mimeType || 'application/octet-stream' }]);
+    }
+    reportAttachSheet.current?.close();
+  };
+
+  const removeAttachment = (index) => {
+    setReportAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadFile = async (uri, path, mime) => {
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = () => resolve(xhr.response);
+      xhr.onerror = () => reject(new TypeError('Network request failed'));
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+      xhr.send(null);
+    });
+
+    const fileRef = ref(storage, path);
+    const task = uploadBytesResumable(fileRef, blob, { contentType: mime });
+
+    return new Promise((resolve, reject) => {
+      task.on(
+        'state_changed',
+        null,
+        reject,
+        async () => {
+          blob.close?.();
+          const url = await getDownloadURL(task.snapshot.ref);
+          resolve(url);
+        }
+      );
+    });
+  };
+
+  const submitReport = async () => {
+    try {
+      const uploaded = await Promise.all(
+        reportAttachments.map((a, idx) => {
+          const ext = a.name?.split('.').pop() || (a.type === 'image' ? 'jpg' : 'file');
+          const path = `service_reports/${serviceId}/${Date.now()}_${idx}.${ext}`;
+          return uploadFile(a.uri, path, a.mime).then(url => ({ file_url: url, file_type: a.type }));
+        })
+      );
+      const reason_text = reportReason?.code === 'other' ? reportOther : reportReason?.reasonText;
+      await api.post('/api/service_reports', {
+        service_id: serviceId,
+        reason_code: reportReason?.code,
+        reason_text,
+        description: reportDescription,
+        attachments: uploaded,
+      });
+      setReportStep(4);
+    } catch (err) {
+      console.error('report error', err);
+      Alert.alert(t('unexpected_error'));
+    }
+  };
+
+  const reportSheetHeight = reportStep === 1 || reportStep === 2 ? 520 : reportStep === 3 ? 260 : 200;
+
+  const renderReportSheetContent = () => {
+    if (reportStep === 1) {
+      return (
+        <View className="flex-1 px-7 pt-4">
+          <Text className="text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2] mb-4">{t('report_service')}</Text>
+          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+            {reasonOptions.map((opt, idx) => (
+              <TouchableOpacity key={idx} onPress={() => setReportReason(opt)} className="flex-row items-center py-2">
+                <View className={`h-5 w-5 rounded-full border mr-3 ${reportReason?.textKey === opt.textKey ? 'bg-[#323131] dark:bg-[#f2f2f2]' : 'bg-transparent'} border-[#979797]`}>
+                  {reportReason?.textKey === opt.textKey && (
+                    <View className="flex-1 bg-[#323131] dark:bg-[#f2f2f2] rounded-full" />
+                  )}
+                </View>
+                <Text className="flex-1 font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t(opt.textKey)}</Text>
+              </TouchableOpacity>
+            ))}
+            {reportReason?.code === 'other' && (
+              <TextInput
+                className="mt-2 mb-4 border border-[#e0e0e0] dark:border-[#3d3d3d] rounded-lg p-2 text-[#444343] dark:text-[#f2f2f2]"
+                placeholder={t('report_other_placeholder')}
+                placeholderTextColor={placeHolderTextColorChange}
+                value={reportOther}
+                onChangeText={setReportOther}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+              />
+            )}
+          </ScrollView>
+          <TouchableOpacity
+            onPress={() => setReportStep(2)}
+            disabled={!reportReason || (reportReason.code === 'other' && !reportOther.trim())}
+            className={`mt-3 mb-5 h-12 rounded-full items-center justify-center ${!reportReason || (reportReason.code === 'other' && !reportOther.trim()) ? 'bg-[#d4d4d3] dark:bg-[#474646]' : 'bg-[#323131] dark:bg-[#fcfcfc]'}`}
+          >
+            <Text className={`font-inter-semibold text-[15px] ${!reportReason || (reportReason.code === 'other' && !reportOther.trim()) ? 'text-[#fcfcfc] dark:text-[#323131]' : 'text-[#fcfcfc] dark:text-[#323131]'}`}>{t('report_next')}</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    if (reportStep === 2) {
+      return (
+        <View className="flex-1 px-7 pt-4">
+          <TextInput
+            className="border border-[#e0e0e0] dark:border-[#3d3d3d] rounded-lg p-3 text-[#444343] dark:text-[#f2f2f2] min-h-[120px]"
+            placeholder={t('report_description_placeholder')}
+            placeholderTextColor={placeHolderTextColorChange}
+            multiline
+            value={reportDescription}
+            onChangeText={setReportDescription}
+            keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+            textAlignVertical="top"
+          />
+          <View className="flex-row flex-wrap mt-4">
+            {reportAttachments.map((att, idx) => (
+              <View key={idx} className="relative mr-3 mb-3">
+                {att.type === 'image' ? (
+                  <Image source={{ uri: att.uri }} className="h-20 w-20 rounded-lg" />
+                ) : (
+                  <View className="h-20 w-20 rounded-lg bg-[#323131] dark:bg-[#fcfcfc] items-center justify-center">
+                    <File height={24} width={24} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
+                  </View>
+                )}
+                <TouchableOpacity onPress={() => removeAttachment(idx)} className="absolute -top-1 -right-1 bg-[#d4d4d3] dark:bg-[#474646] rounded-full p-[1px]">
+                  <XMarkIcon height={16} width={16} color={iconColor} strokeWidth={2} />
+                </TouchableOpacity>
+              </View>
+            ))}
+            {reportAttachments.length < 3 && (
+              <TouchableOpacity onPress={() => reportAttachSheet.current.open()} className="h-20 w-20 rounded-lg bg-[#e0e0e0] dark:bg-[#3d3d3d] items-center justify-center">
+                <Plus height={28} width={28} color={iconColor} strokeWidth={2} />
+              </TouchableOpacity>
+            )}
+          </View>
+          <TouchableOpacity
+            onPress={() => setReportStep(3)}
+            disabled={reportDescription.trim().length < 20}
+            className={`mt-auto mb-5 h-12 rounded-full items-center justify-center ${reportDescription.trim().length < 20 ? 'bg-[#d4d4d3] dark:bg-[#474646]' : 'bg-[#323131] dark:bg-[#fcfcfc]'}`}
+          >
+            <Text className={`font-inter-semibold text-[15px] ${reportDescription.trim().length < 20 ? 'text-[#fcfcfc] dark:text-[#323131]' : 'text-[#fcfcfc] dark:text-[#323131]'}`}>{t('report_next')}</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    if (reportStep === 3) {
+      return (
+        <View className="flex-1 px-7 pt-4">
+          <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2] mb-6">{t('report_warning')}</Text>
+          <TouchableOpacity
+            onPress={submitReport}
+            className="mt-auto mb-5 h-12 rounded-full items-center justify-center bg-[#323131] dark:bg-[#fcfcfc]"
+          >
+            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('report_send')}</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return (
+      <View className="flex-1 justify-center items-center px-7">
+        <Text className="font-inter-medium text-[16px] text-center text-[#444343] dark:text-[#f2f2f2] mb-6">{t('report_success')}</Text>
+        <TouchableOpacity
+          onPress={() => reportSheet.current.close()}
+          className="h-12 w-40 rounded-full items-center justify-center bg-[#323131] dark:bg-[#fcfcfc]"
+        >
+          <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('ok')}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   const round2 = (n) => {
     const x = Number(n);
     if (!Number.isFinite(x)) return 0;
@@ -766,7 +980,50 @@ export default function ServiceProfileScreen() {
 
       </RBSheet>
 
-      <ScrollView showsVerticalScrollIndicator={false} className="px-5 pt-6 flex-1" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      <RBSheet
+        ref={reportSheet}
+        height={reportSheetHeight}
+        openDuration={250}
+        closeDuration={250}
+        customStyles={{
+          container: {
+            borderTopRightRadius: 25,
+            borderTopLeftRadius: 25,
+            backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+          },
+          draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
+        }}
+      >
+        {renderReportSheetContent()}
+      </RBSheet>
+
+      <RBSheet
+        ref={reportAttachSheet}
+        height={160}
+        openDuration={200}
+        closeDuration={200}
+        customStyles={{
+          container: {
+            borderTopRightRadius: 25,
+            borderTopLeftRadius: 25,
+            backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+          },
+          draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
+        }}
+      >
+        <View className="py-4 px-7 gap-y-4">
+          <TouchableOpacity onPress={handleImagePick} className="py-2 flex-row justify-start items-center ">
+            <ImageIcon height={24} width={24} color={iconColor} strokeWidth={2} />
+            <Text className=" ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_image')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleFilePick} className="py-1 flex-row justify-start items-center">
+            <Folder height={24} width={24} color={iconColor} strokeWidth={2} />
+            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_file')}</Text>
+          </TouchableOpacity>
+        </View>
+      </RBSheet>
+
+      <ScrollView showsVerticalScrollIndicator={false} className="px-5 pt-6 flex-1" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}> 
 
         {/* Top FALTA */}
 
@@ -1326,12 +1583,12 @@ export default function ServiceProfileScreen() {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start">
+          <TouchableOpacity className="mb-3 flex-row w-full justify-between items-start" onPress={openReportSheet}>
             <View className="mr-4 py-2 px-3 h-11 w-11 justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-full">
               <Flag width={23} height={23} color={iconColor} strokeWidth={1.6} />
             </View>
             <View className="pt-3 pb-7 flex-1 flex-row justify-between items-center">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Report this service</Text>
+              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('report_service')}</Text>
               <ChevronRightIcon size={20} color={'#979797'} strokeWidth={2} className="p-6" />
             </View>
           </TouchableOpacity>
