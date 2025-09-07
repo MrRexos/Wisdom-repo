@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Alert, RefreshControl, Linking } from 'react-native';
+import { View, StatusBar, SafeAreaView, Platform, TouchableWithoutFeedback, TouchableOpacity, Keyboard, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Alert, RefreshControl, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -90,6 +90,7 @@ export default function ServiceProfileScreen() {
   const [reportOther, setReportOther] = useState('');
   const [reportDescription, setReportDescription] = useState('');
   const [reportAttachments, setReportAttachments] = useState([]);
+  const [sendingReport, setSendingReport] = useState(false);
   const reasonOptions = [
     { code: 'fraud', textKey: 'report_reason_fraud' },
     { code: 'incorrect_info', textKey: 'report_reason_incorrect_info' },
@@ -113,10 +114,25 @@ export default function ServiceProfileScreen() {
   };
 
   const handleImagePick = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: 'images', quality: 0.7 });
-    if (!result.canceled && reportAttachments.length < 3) {
+    if (reportAttachments.length >= 3) return;
+    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (perm.status !== 'granted') {
+      Alert.alert(t('allow_wisdom_to_access_gallery'), t('need_gallery_access_chat'), [
+        { text: t('cancel'), style: 'cancel' },
+        { text: t('settings'), onPress: () => Linking.openSettings() },
+      ]);
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: "images",
+      quality: 0.7,
+    });
+    if (!result.canceled) {
       const asset = result.assets[0];
-      setReportAttachments(prev => [...prev, { type: 'image', uri: asset.uri, name: asset.fileName || 'image.jpg', mime: asset.mimeType || 'image/jpeg' }]);
+      setReportAttachments(prev => [
+        ...prev,
+        { type: 'image', uri: asset.uri, name: asset.fileName || `image_${Date.now()}.jpg`, mime: asset.mimeType || 'image/jpeg' }
+      ]);
     }
     reportAttachSheet.current?.close();
   };
@@ -162,6 +178,8 @@ export default function ServiceProfileScreen() {
   };
 
   const submitReport = async () => {
+    if (sendingReport) return;
+    setSendingReport(true);
     try {
       const uploaded = await Promise.all(
         reportAttachments.map((a, idx) => {
@@ -182,6 +200,8 @@ export default function ServiceProfileScreen() {
     } catch (err) {
       console.error('report error', err);
       Alert.alert(t('unexpected_error'));
+    } finally {
+      setSendingReport(false);
     }
   };
 
@@ -994,7 +1014,9 @@ export default function ServiceProfileScreen() {
           draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
         }}
       >
-        {renderReportSheetContent()}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          {renderReportSheetContent()}
+        </TouchableWithoutFeedback>
       </RBSheet>
 
       <RBSheet
