@@ -65,13 +65,13 @@ export default function ServiceProfileScreen() {
 
   const mapRegion = serviceData.latitude
     ? (serviceData.action_rate && serviceData.action_rate < 100
-        ? getRegionForRadius(serviceData.latitude, serviceData.longitude, serviceData.action_rate)
-        : {
-            latitude: serviceData.latitude,
-            longitude: serviceData.longitude,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.03,
-          })
+      ? getRegionForRadius(serviceData.latitude, serviceData.longitude, serviceData.action_rate)
+      : {
+        latitude: serviceData.latitude,
+        longitude: serviceData.longitude,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.03,
+      })
     : null;
 
   const [selectedDay, setSelectedDay] = useState(null);
@@ -91,6 +91,9 @@ export default function ServiceProfileScreen() {
   const [reportDescription, setReportDescription] = useState('');
   const [reportAttachments, setReportAttachments] = useState([]);
   const [sendingReport, setSendingReport] = useState(false);
+  const reportDescInputRef = useRef(null);
+  const [showAttachOptions, setShowAttachOptions] = useState(false);
+  const [reportSheetHeight, setReportSheetHeight] = useState(520);
   const reasonOptions = [
     { code: 'fraud', textKey: 'report_reason_fraud' },
     { code: 'incorrect_info', textKey: 'report_reason_incorrect_info' },
@@ -115,6 +118,7 @@ export default function ServiceProfileScreen() {
 
   const handleImagePick = async () => {
     if (reportAttachments.length >= 3) return;
+
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (perm.status !== 'granted') {
       Alert.alert(t('allow_wisdom_to_access_gallery'), t('need_gallery_access_chat'), [
@@ -123,27 +127,42 @@ export default function ServiceProfileScreen() {
       ]);
       return;
     }
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: "images",
       quality: 0.7,
     });
+
     if (!result.canceled) {
       const asset = result.assets[0];
       setReportAttachments(prev => [
         ...prev,
-        { type: 'image', uri: asset.uri, name: asset.fileName || `image_${Date.now()}.jpg`, mime: asset.mimeType || 'image/jpeg' }
+        {
+          type: 'image',
+          uri: asset.uri,
+          name: asset.fileName || `image_${Date.now()}.jpg`,
+          mime: asset.mimeType || 'image/jpeg'
+        }
       ]);
     }
-    reportAttachSheet.current?.close();
+    setShowAttachOptions(false);
   };
 
   const handleFilePick = async () => {
     const result = await DocumentPicker.getDocumentAsync({});
     if (!result.canceled && reportAttachments.length < 3) {
       const asset = result.assets?.[0] || result;
-      setReportAttachments(prev => [...prev, { type: 'file', uri: asset.uri, name: asset.name, mime: asset.mimeType || asset.mimeType || 'application/octet-stream' }]);
+      setReportAttachments(prev => [
+        ...prev,
+        {
+          type: 'file',
+          uri: asset.uri,
+          name: asset.name,
+          mime: asset.mimeType || 'application/octet-stream'
+        }
+      ]);
     }
-    reportAttachSheet.current?.close();
+    setShowAttachOptions(false);
   };
 
   const removeAttachment = (index) => {
@@ -205,19 +224,54 @@ export default function ServiceProfileScreen() {
     }
   };
 
-  const reportSheetHeight = reportStep === 1 || reportStep === 2 ? 520 : reportStep === 3 ? 260 : 200;
-
   const renderReportSheetContent = () => {
+
+    if (showAttachOptions) {
+      return (
+        <View className="flex-1 py-4 px-7">
+          <View className="flex-row justify-end items-center mb-2">
+            <TouchableOpacity onPress={() => setShowAttachOptions(false)} className="p-1">
+              <XMarkIcon height={22} width={22} color={iconColor} strokeWidth={2} />
+            </TouchableOpacity>
+          </View>
+          <View className="gap-y-4">
+            <TouchableOpacity onPress={handleImagePick} className="py-2 flex-row items-center">
+              <ImageIcon height={24} width={24} color={iconColor} strokeWidth={2} />
+              <Text className=" ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">
+                {t('choose_image')}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={handleFilePick} className="py-1 flex-row items-center">
+              <Folder height={24} width={24} color={iconColor} strokeWidth={2} />
+              <Text className=" ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">
+                {t('choose_file')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    }
     if (reportStep === 1) {
       return (
         <View className="flex-1 px-7 pt-4">
-          <Text className="text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2] mb-4">{t('report_service')}</Text>
-          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+          <Text className="text-center pb-5 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2] mb-4">{t('report_service_for')}</Text>
+          <ScrollView className="flex-1 pb-5" showsVerticalScrollIndicator={false}>
             {reasonOptions.map((opt, idx) => (
               <TouchableOpacity key={idx} onPress={() => setReportReason(opt)} className="flex-row items-center py-2">
-                <View className={`h-5 w-5 rounded-full border mr-3 ${reportReason?.textKey === opt.textKey ? 'bg-[#323131] dark:bg-[#f2f2f2]' : 'bg-transparent'} border-[#979797]`}>
+                <View
+                  style={[
+                    styles.checkbox,
+                    { borderColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E' },
+                    reportReason?.textKey === opt.textKey && {
+                      backgroundColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131',
+                      borderWidth: 0,
+                    },
+                    { marginRight: 12 },
+                  ]}
+                >
                   {reportReason?.textKey === opt.textKey && (
-                    <View className="flex-1 bg-[#323131] dark:bg-[#f2f2f2] rounded-full" />
+                    <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5} />
                   )}
                 </View>
                 <Text className="flex-1 font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t(opt.textKey)}</Text>
@@ -235,7 +289,7 @@ export default function ServiceProfileScreen() {
             )}
           </ScrollView>
           <TouchableOpacity
-            onPress={() => setReportStep(2)}
+            onPress={() => { setReportSheetHeight(200); setReportStep(2);}}
             disabled={!reportReason || (reportReason.code === 'other' && !reportOther.trim())}
             className={`mt-3 mb-5 h-12 rounded-full items-center justify-center ${!reportReason || (reportReason.code === 'other' && !reportOther.trim()) ? 'bg-[#d4d4d3] dark:bg-[#474646]' : 'bg-[#323131] dark:bg-[#fcfcfc]'}`}
           >
@@ -247,16 +301,34 @@ export default function ServiceProfileScreen() {
     if (reportStep === 2) {
       return (
         <View className="flex-1 px-7 pt-4">
-          <TextInput
-            className="border border-[#e0e0e0] dark:border-[#3d3d3d] rounded-lg p-3 text-[#444343] dark:text-[#f2f2f2] min-h-[120px]"
-            placeholder={t('report_description_placeholder')}
-            placeholderTextColor={placeHolderTextColorChange}
-            multiline
-            value={reportDescription}
-            onChangeText={setReportDescription}
-            keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-            textAlignVertical="top"
-          />
+          <View className="mt-1 mb-4 flex-row justify-center items-center">
+            <View className="flex-1 items-start">
+              <TouchableOpacity onPress={() => setReportStep(1)} className="ml-1">
+                <ChevronLeftIcon height={21} width={21} strokeWidth={2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+              </TouchableOpacity>
+            </View>
+            <View className="flex-row justify-center items-center">
+              <Text className="text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('description')}</Text>
+            </View>
+            <View className="flex-1" />
+          </View>
+
+          <TouchableWithoutFeedback onPress={() => reportDescInputRef.current?.focus()}>
+            <View className="h-[150px] bg-[#f2f2f2] dark:bg-[#3d3d3d] rounded-2xl py-4 px-5 ">
+              <TextInput
+                ref={reportDescInputRef}
+                placeholder={t('report_description_placeholder')}
+                selectionColor={cursorColorChange}
+                placeholderTextColor={placeHolderTextColorChange}
+                multiline
+                value={reportDescription}
+                onChangeText={setReportDescription}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                className="w-full font-inter-medium text-[15px] text-[#515150] dark:text-[#d4d4d3]"
+                style={{ textAlignVertical: 'top' }}
+              />
+            </View>
+          </TouchableWithoutFeedback>
           <View className="flex-row flex-wrap mt-4">
             {reportAttachments.map((att, idx) => (
               <View key={idx} className="relative mr-3 mb-3">
@@ -267,13 +339,16 @@ export default function ServiceProfileScreen() {
                     <File height={24} width={24} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
                   </View>
                 )}
-                <TouchableOpacity onPress={() => removeAttachment(idx)} className="absolute -top-1 -right-1 bg-[#d4d4d3] dark:bg-[#474646] rounded-full p-[1px]">
+                <TouchableOpacity onPress={() => removeAttachment(idx)} className="absolute -top-1 -right-1 bg-[#f2f2f2] dark:bg-[#474646] rounded-full p-[1px]">
                   <XMarkIcon height={16} width={16} color={iconColor} strokeWidth={2} />
                 </TouchableOpacity>
               </View>
             ))}
             {reportAttachments.length < 3 && (
-              <TouchableOpacity onPress={() => reportAttachSheet.current.open()} className="h-20 w-20 rounded-lg bg-[#e0e0e0] dark:bg-[#3d3d3d] items-center justify-center">
+              <TouchableOpacity
+                onPress={() => { Keyboard.dismiss(); setShowAttachOptions(true); }}
+                className="h-20 w-20 rounded-lg bg-[#e0e0e0] dark:bg-[#3d3d3d] items-center justify-center"
+              >
                 <Plus height={28} width={28} color={iconColor} strokeWidth={2} />
               </TouchableOpacity>
             )}
@@ -291,7 +366,15 @@ export default function ServiceProfileScreen() {
     if (reportStep === 3) {
       return (
         <View className="flex-1 px-7 pt-4">
-          <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2] mb-6">{t('report_warning')}</Text>
+          <View className="mt-1 mb-4 flex-row justify-center items-center">
+            <View className="flex-1 items-start">
+              <TouchableOpacity onPress={() => setReportStep(2)} className="ml-1">
+                <ChevronLeftIcon height={21} width={21} strokeWidth={2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+              </TouchableOpacity>
+            </View>
+            <View className="flex-1" />
+          </View>
+          <Text className="text-center font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2] mt-10 mb-6">{t('report_warning')}</Text>
           <TouchableOpacity
             onPress={submitReport}
             className="mt-auto mb-5 h-12 rounded-full items-center justify-center bg-[#323131] dark:bg-[#fcfcfc]"
@@ -1002,9 +1085,18 @@ export default function ServiceProfileScreen() {
 
       <RBSheet
         ref={reportSheet}
-        height={reportSheetHeight}
+        height={reportSheetHeight}   // puede cambiar; NO uses key dinámica
         openDuration={250}
         closeDuration={250}
+        draggable
+        onClose={() => {
+          setShowAttachOptions(false);
+          setReportStep(1);
+          setReportReason(null);
+          setReportOther('');
+          setReportDescription('');
+          setReportAttachments([]);
+        }}
         customStyles={{
           container: {
             borderTopRightRadius: 25,
@@ -1019,33 +1111,7 @@ export default function ServiceProfileScreen() {
         </TouchableWithoutFeedback>
       </RBSheet>
 
-      <RBSheet
-        ref={reportAttachSheet}
-        height={160}
-        openDuration={200}
-        closeDuration={200}
-        customStyles={{
-          container: {
-            borderTopRightRadius: 25,
-            borderTopLeftRadius: 25,
-            backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
-          },
-          draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
-        }}
-      >
-        <View className="py-4 px-7 gap-y-4">
-          <TouchableOpacity onPress={handleImagePick} className="py-2 flex-row justify-start items-center ">
-            <ImageIcon height={24} width={24} color={iconColor} strokeWidth={2} />
-            <Text className=" ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_image')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleFilePick} className="py-1 flex-row justify-start items-center">
-            <Folder height={24} width={24} color={iconColor} strokeWidth={2} />
-            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_file')}</Text>
-          </TouchableOpacity>
-        </View>
-      </RBSheet>
-
-      <ScrollView showsVerticalScrollIndicator={false} className="px-5 pt-6 flex-1" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}> 
+      <ScrollView showsVerticalScrollIndicator={false} className="px-5 pt-6 flex-1" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
         {/* Top FALTA */}
 

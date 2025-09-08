@@ -363,6 +363,7 @@
     "choose_file": "Choisir un fichier",
     "contact_not_allowed": "Il est interdit de partager des informations de contact. Veuillez effectuer toutes les communications et paiements dans l'application.",
     "report_service": "Signaler ce service",
+    "report_service_for": "Signaler ce service pour :",
     "report_reason_fraud": "Fraude/arnaque ou frais trompeurs",
     "report_reason_incorrect_info": "Informations fausses (titre, prix, localisation, expérience)",
     "report_reason_offensive": "Contenu offensant/haineux/sexuel",

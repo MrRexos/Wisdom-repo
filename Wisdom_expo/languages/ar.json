@@ -362,6 +362,7 @@
     "choose_file": "اختر ملف",
     "contact_not_allowed": "مشاركة معلومات الاتصال ممنوعة. يرجى إجراء جميع الاتصالات والمدفوعات داخل التطبيق.",
     "report_service": "الإبلاغ عن هذه الخدمة",
+    "report_service_for": "الإبلاغ عن هذه الخدمة بسبب:",
     "report_reason_fraud": "احتيال/خدعة أو رسوم مضللة",
     "report_reason_incorrect_info": "معلومات خاطئة (العنوان، السعر، الموقع، الخبرة)",
     "report_reason_offensive": "محتوى مسيء/كراهية/جنسي",

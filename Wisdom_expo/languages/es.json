@@ -363,6 +363,7 @@
     "choose_file": "Elegir archivo",
     "contact_not_allowed": "Está prohibido compartir información de contacto. Por favor, realiza todas las comunicaciones y pagos dentro de la aplicación.",
     "report_service": "Denunciar servicio",
+    "report_service_for": "Denunciar servicio por:",
     "report_reason_fraud": "Fraude/estafa o cobro engañoso",
     "report_reason_incorrect_info": "Información falsa (título, precio, ubicación, experiencia)",
     "report_reason_offensive": "Contenido ofensivo/odio/sexual",

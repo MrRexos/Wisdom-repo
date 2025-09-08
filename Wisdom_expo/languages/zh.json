@@ -363,6 +363,7 @@
     "choose_file": "选择文件",
     "contact_not_allowed": "禁止分享联系方式，请在应用内完成所有沟通和支付。",
     "report_service": "举报该服务",
+    "report_service_for": "举报该服务的原因：",
     "report_reason_fraud": "欺诈/诈骗或误导性收费",
     "report_reason_incorrect_info": "虚假信息（标题、价格、位置、经验）",
     "report_reason_offensive": "冒犯/仇恨/色情内容",
