@@ -119,7 +119,7 @@ export default function HomeScreen() {
     );
   };
 
-  suggestions = [
+  const suggestions = [
     {
       label: 'All',
       categoryID: null,
@@ -456,7 +456,7 @@ export default function HomeScreen() {
     const searchedDirectionRaw = await getDataLocally('searchedDirection');
     console.log(searchedDirectionRaw)
     if (searchedDirectionRaw) {
-      searchedDirectionData = JSON.parse(searchedDirectionRaw);
+      const searchedDirectionData = JSON.parse(searchedDirectionRaw);
       setSearchedDirection(searchedDirectionData)
     }
   };
@@ -465,7 +465,7 @@ export default function HomeScreen() {
 
     const searchedServiceRaw = await getDataLocally('searchedService');
     if (searchedServiceRaw) {
-      searchedServiceData = JSON.parse(searchedServiceRaw);
+      const searchedServiceData = JSON.parse(searchedServiceRaw);
       setSearchedService([searchedServiceData])
     }
   };

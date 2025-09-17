@@ -78,30 +78,30 @@ export default function ChatScreen() {
       c.type === 'help' ||
       c.isHelp === true ||
       c.help === true;
-  
+
     // Id del otro participante
     const otherId = c.participants?.find(id => id !== userId);
     const info = otherId ? usersInfo[otherId] : null;
-  
+
     // 1) Búsqueda más robusta (evita crash y busca por "display name")
     const q = (searchQuery || '').toLowerCase();
-  
+
     const nameToSearch = (c.name || '').toLowerCase();
     const displayNameToSearch = info
       ? `${info.first_name || ''} ${info.surname || ''}`.trim().toLowerCase()
       : '';
-  
+
     const base = searchActive
       ? (nameToSearch.includes(q) || displayNameToSearch.includes(q))
       : true;
-  
+
     if (!base) return false;
-  
+
     // no leído
     const unread =
       c.lastMessageSenderId !== userId &&
       !(c.readBy || []).includes(userId);
-  
+
     // 2) Evitar parpadeo: prioriza datos denormalizados en la conversación
     //    participantesMeta: { [uid]: { is_professional: boolean } }
     //    otherIsProfessional: boolean (alias sencillo si lo prefieres)
@@ -111,7 +111,7 @@ export default function ChatScreen() {
         : undefined) ??
       c.otherIsProfessional ??
       (info != null ? !!info.is_professional : undefined);
-  
+
     switch (selectedStatus) {
       case 'professionals':
         // Si ya tenemos el flag denormalizado, filtra sin esperar a usuarios;
@@ -130,27 +130,27 @@ export default function ChatScreen() {
 
   useEffect(() => {
     if (!userId) return;
-  
+
     // Por cada conversación, si ya conocemos el otro usuario y su info,
     // persiste en la conversación `participantsMeta[otherId].is_professional`
     // (o `otherIsProfessional` si prefieres un alias plano).
     const updates = conversations.map(async (c) => {
       const otherId = c.participants?.find(id => id !== userId);
       if (!otherId) return;
-  
+
       const info = usersInfo[otherId];
       if (!info || typeof info.is_professional === 'undefined') return;
-  
+
       const hasParticipantsMeta = !!c.participantsMeta;
       const alreadyCached =
         hasParticipantsMeta &&
         typeof c.participantsMeta?.[otherId]?.is_professional !== 'undefined';
-  
+
       const alreadyCachedAlias =
         typeof c.otherIsProfessional !== 'undefined';
-  
+
       if (alreadyCached || alreadyCachedAlias) return;
-  
+
       try {
         // Opción A: estructura detallada por participante
         await updateDoc(doc(db, 'conversations', c.id), {
@@ -162,7 +162,7 @@ export default function ChatScreen() {
         console.error('denormalize is_professional error:', err);
       }
     });
-  
+
     Promise.allSettled(updates);
   }, [conversations, usersInfo, userId]);
 
@@ -309,35 +309,37 @@ export default function ChatScreen() {
               : '';
 
             return (
-              <Pressable
-                onPress={() =>
-                  navigation.navigate('Conversation', {
-                    conversationId: item.id,
-                    participants: item.participants,
-                    name: displayName,
-                  })
-                }
-              >
-                <View className="flex-row items-center px-6 py-4 bg-[#f2f2f2] dark:bg-[#272626]">
+              <View>
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate('Conversation', {
+                      conversationId: item.id,
+                      participants: item.participants,
+                      name: displayName,
+                    })
+                  }
+                >
+                  <View className="flex-row items-center px-6 py-4 bg-[#f2f2f2] dark:bg-[#272626]">
 
-                  <Image source={profilePic ? { uri: profilePic } : defaultProfilePic} className="h-[55px] w-[55px] rounded-full bg-[#e0e0e0] dark:bg-[#3d3d3d] mr-3" />
+                    <Image source={profilePic ? { uri: profilePic } : defaultProfilePic} className="h-[55px] w-[55px] rounded-full bg-[#e0e0e0] dark:bg-[#3d3d3d] mr-3" />
 
-                  <View className="flex-1 flex-row justify-between items-center">
+                    <View className="flex-1 flex-row justify-between items-center">
 
-                    <View className="flex-1 justify-center items-start">
-                      <Text className="font-inter-semibold text-[16px] text-[#323131] dark:text-[#fcfcfc]">{displayName}</Text>
-                      <Text className="mt-[2px] font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]" numberOfLines={1}>{item.lastMessage}</Text>
+                      <View className="flex-1 justify-center items-start">
+                        <Text className="font-inter-semibold text-[16px] text-[#323131] dark:text-[#fcfcfc]">{displayName}</Text>
+                        <Text className="mt-[2px] font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]" numberOfLines={1}>{item.lastMessage}</Text>
+                      </View>
+
+                      <View className="justify-center items-center">
+                        <Text className={`text-[12px] font-inter-medium ${unread ? 'text-[#3695FF]' : 'text-[#b6b5b5] dark:text-[#706F6E]'}`}>{timeStr}</Text>
+                        {unread && <View className="mt-2 h-3 w-3 rounded-full bg-[#3695FF]" />}
+                      </View>
                     </View>
 
-                    <View className="justify-center items-center">
-                      <Text className={`text-[12px] font-inter-medium ${unread ? 'text-[#3695FF]' : 'text-[#b6b5b5] dark:text-[#706F6E]'}`}>{timeStr}</Text>
-                      {unread && <View className="mt-2 h-3 w-3 rounded-full bg-[#3695FF]" />}
-                    </View>
                   </View>
 
-                </View>
-
-              </Pressable>
+                </Pressable>
+              </View>
             );
           }}
           renderHiddenItem={({ item }) => (
