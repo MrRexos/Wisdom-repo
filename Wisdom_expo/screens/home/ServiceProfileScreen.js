@@ -1085,7 +1085,7 @@ export default function ServiceProfileScreen() {
 
       <RBSheet
         ref={reportSheet}
-        height={reportSheetHeight}   // puede cambiar; NO uses key dinámica
+        height={reportSheetHeight}
         openDuration={250}
         closeDuration={250}
         draggable

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import './languages/i18n';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useColorScheme, TailwindProvider } from 'nativewind';
 import "./global.css"
@@ -55,7 +56,9 @@ export default function App() {
       className={`${colorScheme} color-scheme-${colorScheme}`}
     >
       <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
-        <Navigation />
+        <BottomSheetModalProvider>
+          <Navigation />
+         </BottomSheetModalProvider>
       </StripeProvider>
     </GestureHandlerRootView>
   );
