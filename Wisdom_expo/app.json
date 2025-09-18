@@ -69,7 +69,6 @@
       }
     },
     "plugins": [
-      "expo-font"
     ],
     "locales": {
       "ar": "./locales/ar.json",
