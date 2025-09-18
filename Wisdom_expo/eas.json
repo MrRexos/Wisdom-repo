@@ -6,14 +6,16 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "ios": {
-        "simulator":true
-      }
+      "ios": { "simulator": true },
+      "node": "20.19.4"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "node": "20.19.4"
     },
-    "production": {}
+    "production": {
+      "node": "20.19.4"
+    }
   },
   "submit": {
     "production": {}
