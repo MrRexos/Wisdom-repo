@@ -68,8 +68,10 @@
         "projectId": "d34848bf-7bb0-442f-a1d7-5ddf9b8e7392"
       }
     },
-    "plugins": [
-    ],
+    "plugins": [],
+    "cli": {
+      "appVersionSource": "local"
+    },
     "locales": {
       "ar": "./locales/ar.json",
       "ca": "./locales/ca.json",
