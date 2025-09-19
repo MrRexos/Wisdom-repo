@@ -6,7 +6,8 @@ module.exports = function (api) {
       "nativewind/babel",
     ],
     plugins: [
-      'react-native-worklets-core/plugin',
+      'nativewind/babel',
+      'react-native-worklets/plugin',
       "react-native-reanimated/plugin",
     ],
   };
