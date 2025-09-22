@@ -2,7 +2,7 @@
   "expo": {
     "name": "Wisdom",
     "slug": "Wisdom_expo",
-    "scheme": "Wisdom_expo",
+    "scheme": "wisdomexpo",
     "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/WisdomIcon.png",
@@ -25,14 +25,12 @@
           {
             "CFBundleURLSchemes": [
               "com.googleusercontent.apps.232292898356-o6jj43dnn8uqg139udlvtptcaj8551rp",
-              "Wisdom_expo",
               "wisdomexpo"
             ]
           },
           {
             "CFBundleURLSchemes": [
               "com.googleusercontent.apps.232292898356-o6jj43dnn8uqg139udlvtptcaj8551rp",
-              "Wisdom_expo",
               "wisdomexpo"
             ]
           }
@@ -57,9 +55,6 @@
             "DEFAULT"
           ],
           "data": [
-            {
-              "scheme": "Wisdom_expo"
-            },
             {
               "scheme": "wisdomexpo"
             }

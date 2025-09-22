@@ -114,7 +114,7 @@ const Tab = createBottomTabNavigator();
 const linking = {
   prefixes: [
     Linking.createURL('/'),
-    'Wisdom_expo://',
+    'wisdomexpo://',
     'https://wisdom-app-34b3fb420f18.herokuapp.com'
   ],
   config: {
