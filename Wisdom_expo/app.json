@@ -28,8 +28,16 @@
               "Wisdom_expo",
               "wisdomexpo"
             ]
+          },
+          {
+            "CFBundleURLSchemes": [
+              "com.googleusercontent.apps.232292898356-o6jj43dnn8uqg139udlvtptcaj8551rp",
+              "Wisdom_expo",
+              "wisdomexpo"
+            ]
           }
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       },
       "newArchEnabled": true
     },
