@@ -1,7 +1,6 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { SafeAreaView as SafeTop, SafeAreaView as SafeBottom } from 'react-native-safe-area-context';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { SafeAreaView as SafeTop } from 'react-native-safe-area-context';
 import {
-  SafeAreaView,
   View,
   StatusBar,
   Platform,
@@ -14,6 +13,8 @@ import {
   Linking,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
+  Keyboard,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -30,7 +31,7 @@ import {
   XMarkIcon,
   DocumentDuplicateIcon,
 } from 'react-native-heroicons/outline';
-import { MoreHorizontal, Image as ImageIcon, Folder, Check, Edit2, Trash2, File, CornerUpLeft } from "react-native-feather";
+import { MoreHorizontal, Image as ImageIcon, Folder, File, CornerUpLeft } from 'react-native-feather';
 import { useTranslation } from 'react-i18next';
 import {
   collection,
@@ -46,15 +47,13 @@ import {
   arrayRemove,
   deleteDoc,
 } from 'firebase/firestore';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../utils/firebase';
 import { getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
 import { containsContactInfo } from '../../utils/moderation';
 import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
-import DoubleCheck from '../../assets/DoubleCheck'
-
-
+import DoubleCheck from '../../assets/DoubleCheck';
 
 export default function ConversationScreen() {
   // --------------------------------------------------------------------------
@@ -63,9 +62,8 @@ export default function ConversationScreen() {
   const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
-  const statusReadColor = colorScheme === 'dark' ? '#d4d4d3' : '#515150';
-  const statusUnreadColor = '#9ca3af';
-  const navigation = useNavigation();
+  const statusUnreadColor = '#9ca3af'; // gris para "enviado/no leído"
+  const statusReadColorStrong = colorScheme === 'dark' ? '#fcfcfc' : '#323131';
   const flatListRef = useRef(null);
   const attachSheet = useRef(null);
 
@@ -73,6 +71,7 @@ export default function ConversationScreen() {
   // • STATE
   // ---------------------------------------------------------------------------
   const route = useRoute();
+  const navigation = useNavigation();
   const { conversationId, participants, name } = route.params;
   const [text, setText] = useState('');
   const [messages, setMessages] = useState([]);
@@ -83,17 +82,41 @@ export default function ConversationScreen() {
   const [selectedMsg, setSelectedMsg] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [replyTo, setReplyTo] = useState(null);
+  const [isSending, setIsSending] = useState(false);
   const otherUserId = participants?.find((id) => id !== userId);
   const msgSheet = useRef(null);
   const convSheet = useRef(null);
+
   const isLastOfStreak = (msgs, idx) =>
     idx === msgs.length - 1 || msgs[idx].fromMe !== msgs[idx + 1].fromMe;
-  // Objeto de refs para Swipeable
   const swipeRefs = useRef({});
-  const imageMessages = useMemo(
-    () => messages.filter(m => m.type === 'image'),
-    [messages]
-  );
+  const imageMessages = useMemo(() => messages.filter((m) => m.type === 'image'), [messages]);
+
+  const scrollToBottom = useCallback((animated = true) => {
+    flatListRef.current?.scrollToEnd({ animated });
+  }, []);
+
+  // Escucha teclado para empujar lista y mantener bottom visible
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardDidShow', () => {
+      setTimeout(() => scrollToBottom(true), 50);
+    });
+    const hide = Keyboard.addListener('keyboardDidHide', () => {
+      // opcional: nada
+    });
+    return () => {
+      show.remove();
+      hide.remove();
+    };
+  }, [scrollToBottom]);
+
+  // Autoscroll al enfocar pantalla
+  useEffect(() => {
+    const unsub = navigation.addListener('focus', () => {
+      requestAnimationFrame(() => scrollToBottom(false));
+    });
+    return unsub;
+  }, [navigation, scrollToBottom]);
 
   useEffect(() => {
     let unsub;
@@ -119,9 +142,7 @@ export default function ConversationScreen() {
         const processed = [];
         let lastDate = null;
         raw.forEach((m) => {
-          const dateStr = m.createdAt?.seconds
-            ? new Date(m.createdAt.seconds * 1000).toDateString()
-            : null;
+          const dateStr = m.createdAt?.seconds ? new Date(m.createdAt.seconds * 1000).toDateString() : null;
           if (dateStr && dateStr !== lastDate) {
             processed.push({ id: `label-${m.id}`, type: 'label', text: dateStr });
             lastDate = dateStr;
@@ -129,18 +150,23 @@ export default function ConversationScreen() {
           processed.push(m);
         });
         setMessages(processed);
-        raw.forEach(async m => {
+
+        // Marca como leído lo que no es tuyo
+        raw.forEach(async (m) => {
           if (!m.fromMe && !m.read) {
             await updateDoc(doc(db, 'conversations', conversationId, 'messages', m.id), { read: true });
           }
         });
         await updateDoc(doc(db, 'conversations', conversationId), { readBy: arrayUnion(user.id) });
+
+        // Tras pintar, lleva al final sin animación para evitar glitches
+        requestAnimationFrame(() => scrollToBottom(false));
       });
     };
     init();
 
     return () => unsub && unsub();
-  }, [conversationId]);
+  }, [conversationId, scrollToBottom]);
 
   useEffect(() => {
     const loadInfo = async () => {
@@ -155,12 +181,6 @@ export default function ConversationScreen() {
     loadInfo();
   }, [otherUserId]);
 
-  useEffect(() => {
-    if (flatListRef.current && messages.length > 0) {
-      flatListRef.current.scrollToEnd({ animated: false });
-    }
-  }, [messages]);
-
   const uploadFile = async (uri, path, mime, onProgress) => {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -171,14 +191,13 @@ export default function ConversationScreen() {
       xhr.send(null);
     });
 
-
     const fileRef = ref(storage, path);
     const task = uploadBytesResumable(fileRef, blob, { contentType: mime });
 
     return new Promise((resolve, reject) => {
       task.on(
         'state_changed',
-        snap => onProgress && onProgress((snap.bytesTransferred / snap.totalBytes) * 100),
+        (snap) => onProgress && onProgress((snap.bytesTransferred / snap.totalBytes) * 100),
         reject,
         async () => {
           blob.close?.();
@@ -189,13 +208,14 @@ export default function ConversationScreen() {
     });
   };
 
-
-
   // ---------------------------------------------------------------------------
   // • ACTIONS
   // ---------------------------------------------------------------------------
   const handleSend = async () => {
+    if (isSending) return; // 🔒 evita taps repetidos
+
     const trimmed = text.trim();
+
     if (!attachment && trimmed && containsContactInfo(trimmed)) {
       Alert.alert(t('contact_not_allowed'));
       if (currentUser?.is_professional) {
@@ -207,6 +227,7 @@ export default function ConversationScreen() {
       }
       return;
     }
+
     const replyData = replyTo
       ? (() => {
         const base = { id: replyTo.id, type: replyTo.type, senderId: replyTo.senderId };
@@ -214,77 +235,69 @@ export default function ConversationScreen() {
         return base;
       })()
       : null;
-    if (editingId) {
-      await updateDoc(doc(db, 'conversations', conversationId, 'messages', editingId), {
-        text: trimmed,
-      });
-      setEditingId(null);
-    } else if (attachment) {
-      try {
+
+    try {
+      // Si hay adjunto, bloqueamos el botón hasta terminar la subida
+      if (attachment) {
+        setIsSending(true);
         const filePath = `chat/${conversationId}/${Date.now()}_${attachment.name}`;
-        const url = await uploadFile(
-          attachment.uri,
-          filePath,
-          attachment.type
-        );
+        const url = await uploadFile(attachment.uri, filePath, attachment.type);
 
-        await addDoc(
-          collection(db, 'conversations', conversationId, 'messages'),
-          {
-            senderId: userId,
-            type: attachment.type.startsWith('image') ? 'image' : 'file',
-            uri: url,
-            name: attachment.name,
-            createdAt: serverTimestamp(),
-            replyTo: replyData,
-          }
-        );
+        await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
+          senderId: userId,
+          type: attachment.type.startsWith('image') ? 'image' : 'file',
+          uri: url,
+          name: attachment.name,
+          createdAt: serverTimestamp(),
+          replyTo: replyData,
+          read: false,
+        });
 
-        await updateDoc(
+        await updateDoc(doc(db, 'conversations', conversationId), {
+          participants,
+          name,
+          lastMessage: attachment.type.startsWith('image') ? t('image') : t('file'),
+          updatedAt: serverTimestamp(),
+          lastMessageSenderId: userId,
+          readBy: arrayUnion(userId),
+        });
+
+        setAttachment(null);
+      } else if (trimmed) {
+        setIsSending(true); // también bloquea para evitar spam de textos seguidos por error
+        const newMsg = {
+          senderId: userId,
+          type: 'text',
+          text: trimmed,
+          createdAt: serverTimestamp(),
+          replyTo: replyData,
+          read: false,
+        };
+        await addDoc(collection(db, 'conversations', conversationId, 'messages'), newMsg);
+        await setDoc(
           doc(db, 'conversations', conversationId),
           {
             participants,
             name,
-            lastMessage: attachment.type.startsWith('image') ? t('image') : t('file'),
+            lastMessage: trimmed,
             updatedAt: serverTimestamp(),
             lastMessageSenderId: userId,
-            readBy: arrayUnion(userId),
-          }
+            readBy: [userId],
+            deletedFor: arrayRemove(userId),
+          },
+          { merge: true }
         );
-
-        setAttachment(null);
-      } catch (err) {
-        console.error('Error subiendo archivo', err);
-        // aquí podrías notificar al usuario
+      } else {
+        return;
       }
-
-    } else if (trimmed) {
-      const newMsg = {
-        senderId: userId,
-        type: 'text',
-        text: trimmed,
-        createdAt: serverTimestamp(),
-        replyTo: replyData,
-      };
-      await addDoc(collection(db, 'conversations', conversationId, 'messages'), newMsg);
-      await setDoc(
-        doc(db, 'conversations', conversationId),
-        {
-          participants,
-          name,
-          lastMessage: trimmed,
-          updatedAt: serverTimestamp(),
-          lastMessageSenderId: userId,
-          readBy: [userId],
-          deletedFor: arrayRemove(userId),
-        },
-        { merge: true }
-      );
-    } else {
-      return;
+      setText('');
+      setReplyTo(null);
+      requestAnimationFrame(() => scrollToBottom(true));
+    } catch (err) {
+      console.error('Error enviando mensaje', err);
+    } finally {
+      setIsSending(false);
     }
-    setText('');
-    setReplyTo(null);
   };
 
   const handleImagePick = async () => {
@@ -295,7 +308,7 @@ export default function ConversationScreen() {
         t('need_gallery_access_chat'),
         [
           { text: t('cancel'), style: 'cancel' },
-          { text: t('settings'), onPress: () => Linking.openSettings() }
+          { text: t('settings'), onPress: () => Linking.openSettings() },
         ],
         { cancelable: true }
       );
@@ -309,16 +322,17 @@ export default function ConversationScreen() {
       const asset = result.assets[0];
       setAttachment({ type: 'image', uri: asset.uri, name: asset.fileName || 'image.jpg' });
       attachSheet.current.close();
+      setTimeout(() => scrollToBottom(true), 0);
     }
   };
 
   const handleFilePick = async () => {
     const result = await DocumentPicker.getDocumentAsync({});
     if (!result.canceled) {
-
       const asset = result.assets?.[0] || result;
       setAttachment({ type: 'file', uri: asset.uri, name: asset.name });
       attachSheet.current.close();
+      setTimeout(() => scrollToBottom(true), 0);
     }
   };
 
@@ -334,12 +348,12 @@ export default function ConversationScreen() {
     setText(selectedMsg.text);
     setEditingId(selectedMsg.id);
     msgSheet.current.close();
+    setTimeout(() => scrollToBottom(true), 0);
   };
 
   const handleCopyMessage = async () => {
     if (!selectedMsg) return;
     await Clipboard.setStringAsync(selectedMsg.text);
-
     msgSheet.current.close();
   };
 
@@ -367,26 +381,65 @@ export default function ConversationScreen() {
 
     const lastOfStreak = isLastOfStreak(messages, index);
     const LeftStub = () => <View style={{ width: 64 }} />;
-    const RightStub = () => null;
+    const RightStub = () => <View style={{ width: 64 }} />; // ▶️ ahora también muestra zona a la derecha
 
-    const common =
-      item.fromMe ? 'self-end bg-[#FCFCFC] dark:bg-[#706f6e]' : 'self-start bg-[#D4D4D3] dark:bg-[#474646]';
+    const common = item.fromMe
+      ? 'self-end bg-[#FCFCFC] dark:bg-[#706f6e]'
+      : 'self-start bg-[#D4D4D3] dark:bg-[#474646]';
     const corner = item.fromMe ? (lastOfStreak ? ' rounded-br' : '') : lastOfStreak ? ' rounded-bl' : '';
     const fromMeStyles = common + corner;
     const textColor = 'text-[15px] font-medium text-[#515150] dark:text-[#d4d4d3]';
 
+    const renderStatusTime = () => (
+      <View
+        className={`flex-row items-center mt-0.5 mb-2 ${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'
+          }`}
+      >
+        {item.fromMe && (
+          <DoubleCheck
+            height={16}
+            width={16}
+            color={item.read ? statusReadColorStrong : statusUnreadColor}
+          />
+        )}
+        <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
+          {item.createdAt &&
+            new Date(item.createdAt.seconds * 1000).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+        </Text>
+      </View>
+    );
+
+    const onSwipeOpen = (dir) => {
+      // ↔️ Ambos sentidos hacen lo mismo: responder
+      if (dir === 'left' || dir === 'right') {
+        swipeRefs.current[item.id]?.close();
+        setReplyTo(item);
+      }
+    };
 
     if (item.type === 'image') {
-      const imgIndex = imageMessages.findIndex(img => img.id === item.id);
+      const imgIndex = imageMessages.findIndex((img) => img.id === item.id);
       const content = (
-        <View className={`${item.replyTo ? `${bubbleBase} ${fromMeStyles}` : `py-1 flex-row items-end ${item.fromMe ? 'self-end' : 'self-start'}`}`}>
+        <View
+          className={`${item.replyTo
+            ? `${bubbleBase} ${fromMeStyles}`
+            : `py-1 flex-row items-end ${item.fromMe ? 'self-end' : 'self-start'}`
+            }`}
+        >
           {item.replyTo && (
             <View className="border-l-2 border-[#3695FF] pl-2 mb-1">
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]">
                 {item.replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? t('image') : t('file')}
+                {item.replyTo.type === 'text'
+                  ? item.replyTo.text
+                  : item.replyTo.type === 'image'
+                    ? t('image')
+                    : t('file')}
               </Text>
             </View>
           )}
@@ -395,28 +448,24 @@ export default function ConversationScreen() {
       );
       return (
         <Swipeable
-          ref={ref => { swipeRefs.current[item.id] = ref; }}
+          ref={(ref) => {
+            swipeRefs.current[item.id] = ref;
+          }}
           renderLeftActions={LeftStub}
           renderRightActions={RightStub}
           friction={1.5}
           activeOffsetX={[-10, 10]}
-          onSwipeableOpen={(dir) => {
-            if (dir === 'left') {
-              swipeRefs.current[item.id]?.close();
-              setReplyTo(item);
-            }
-          }}
+          onSwipeableOpen={onSwipeOpen}
         >
-          <Pressable onPress={() => navigation.navigate('ChatImageViewer', { images: imageMessages, index: imgIndex })} onLongPress={() => { setSelectedMsg(item); setTimeout(() => msgSheet.current.open(), 0); }}>
+          <Pressable
+            onPress={() => navigation.navigate('ChatImageViewer', { images: imageMessages, index: imgIndex })}
+            onLongPress={() => {
+              setSelectedMsg(item);
+              setTimeout(() => msgSheet.current.open(), 0);
+            }}
+          >
             {content}
-            {lastOfStreak && (
-              <View className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}>
-                {item.fromMe && (item.read ? <DoubleCheck height={16} width={16} color={statusReadColor} /> : <Check height={16} width={16} color={statusUnreadColor} strokeWidth={3} />)}
-                <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
-                  {item.createdAt && new Date(item.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </Text>
-              </View>
-            )}
+            {lastOfStreak && renderStatusTime()}
           </Pressable>
         </Swipeable>
       );
@@ -431,7 +480,11 @@ export default function ConversationScreen() {
                 {item.replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? t('image') : t('file')}
+                {item.replyTo.type === 'text'
+                  ? item.replyTo.text
+                  : item.replyTo.type === 'image'
+                    ? t('image')
+                    : t('file')}
               </Text>
             </View>
           )}
@@ -440,8 +493,10 @@ export default function ConversationScreen() {
               <File height={24} width={24} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
             </View>
             <View className="flex-1 justify-center">
-              <Text numberOfLines={1} className={`${textColor}`}>{item.name}</Text>
-              <Text numberOfLines={1} className='text-[14px] font-medium text-[#979797]'>
+              <Text numberOfLines={1} className={`${textColor}`}>
+                {item.name}
+              </Text>
+              <Text numberOfLines={1} className="text-[14px] font-medium text-[#979797]">
                 {item.name?.includes('.') ? item.name.split('.').pop().toUpperCase() : t('unknown')}
               </Text>
             </View>
@@ -450,28 +505,23 @@ export default function ConversationScreen() {
       );
       return (
         <Swipeable
-          ref={ref => { swipeRefs.current[item.id] = ref; }}
+          ref={(ref) => {
+            swipeRefs.current[item.id] = ref;
+          }}
           renderLeftActions={LeftStub}
           renderRightActions={RightStub}
           friction={1.5}
           activeOffsetX={[-10, 10]}
-          onSwipeableOpen={(dir) => {
-            if (dir === 'left') {
-              swipeRefs.current[item.id]?.close();
-              setReplyTo(item);
-            }
-          }}
+          onSwipeableOpen={onSwipeOpen}
         >
-          <Pressable onLongPress={() => { setSelectedMsg(item); setTimeout(() => msgSheet.current.open(), 0); }}>
+          <Pressable
+            onLongPress={() => {
+              setSelectedMsg(item);
+              setTimeout(() => msgSheet.current.open(), 0);
+            }}
+          >
             {content}
-            {lastOfStreak && (
-              <View className={`${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'} flex-row items-center mt-0.5 mb-2`}>
-                {item.fromMe && (item.read ? <DoubleCheck height={16} width={16} color={statusReadColor} /> : <Check height={16} width={16} color={statusUnreadColor} strokeWidth={3} />)}
-                <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
-                  {item.createdAt && new Date(item.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </Text>
-              </View>
-            )}
+            {lastOfStreak && renderStatusTime()}
           </Pressable>
         </Swipeable>
       );
@@ -486,7 +536,13 @@ export default function ConversationScreen() {
                 {item.replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {item.replyTo.type === 'text' ? item.replyTo.text : item.replyTo.type === 'image' ? t('image') : item.replyTo.type === 'file' ? t('file') : ''}
+                {item.replyTo.type === 'text'
+                  ? item.replyTo.text
+                  : item.replyTo.type === 'image'
+                    ? t('image')
+                    : item.replyTo.type === 'file'
+                      ? t('file')
+                      : ''}
               </Text>
             </View>
           )}
@@ -497,34 +553,27 @@ export default function ConversationScreen() {
 
     return (
       <Swipeable
-        ref={ref => { swipeRefs.current[item.id] = ref; }}
+        ref={(ref) => {
+          swipeRefs.current[item.id] = ref;
+        }}
         renderLeftActions={LeftStub}
         renderRightActions={RightStub}
         friction={1.5}
         activeOffsetX={[-10, 10]}
-        onSwipeableOpen={(dir) => {
-          if (dir === 'left') {
-            swipeRefs.current[item.id]?.close();
-            setReplyTo(item);
-          }
-        }}
+        onSwipeableOpen={onSwipeOpen}
       >
-        <Pressable onLongPress={() => { setSelectedMsg(item); setTimeout(() => msgSheet.current.open(), 0); }}>
+        <Pressable
+          onLongPress={() => {
+            setSelectedMsg(item);
+            setTimeout(() => msgSheet.current.open(), 0);
+          }}
+        >
           {content}
-          {lastOfStreak && (
-            <View className={`flex-row items-center mt-0.5 mb-2 ${item.fromMe ? 'justify-end pr-1' : 'justify-start pl-1'}`}>
-              {item.fromMe && (item.read ? <DoubleCheck height={16} width={16} color={statusReadColor} /> : <Check height={16} width={16} color={statusUnreadColor} strokeWidth={3} />)}
-              <Text className="text-[13px] text-[#b6b5b5] dark:text-[#706f6e] ml-1">
-                {item.createdAt && new Date(item.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </Text>
-            </View>
-          )}
+          {lastOfStreak && renderStatusTime()}
         </Pressable>
       </Swipeable>
     );
   };
-
-
 
   // ---------------------------------------------------------------------------
   // • MAIN UI
@@ -535,7 +584,6 @@ export default function ConversationScreen() {
         <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
 
         {/* Header */}
-
         <View
           className="flex-row items-center px-2 pt-4 pb-8 dark:border-[#3d3d3d]"
           style={{
@@ -561,28 +609,30 @@ export default function ConversationScreen() {
         </View>
       </SafeTop>
 
-      <View className="flex-1 px-1 bg-[#f4f4f4] dark:bg-[#272626]">
-        {/* Messages list ------------------------------------------------------- */}
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          keyExtractor={(item) => item.id}
-          renderItem={renderMessage}
-          contentContainerStyle={{ padding: 16 }}
-          showsVerticalScrollIndicator={false}
-          onContentSizeChange={() =>
-            flatListRef.current?.scrollToEnd({ animated: false })
-          }
-
-        />
-      </View>
-
-      {/* Composer ------------------------------------------------------------ */}
       <KeyboardAvoidingView
+        style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={0}
-        style={{ backgroundColor: colorScheme === 'dark' ? '#272626' : '#f4f4f4', flex: 0, marginBottom: 30 }}
       >
+        {/* Messages list ------------------------------------------------------- */}
+        <View className="flex-1 px-1 bg-[#f4f4f4] dark:bg-[#272626]">
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            keyExtractor={(item) => item.id}
+            renderItem={renderMessage}
+            contentContainerStyle={{ padding: 16 }}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            onLayout={() => requestAnimationFrame(() => scrollToBottom(false))}
+            onContentSizeChange={() => requestAnimationFrame(() => scrollToBottom(true))}
+            ListFooterComponent={<View style={{ height: 4 }} />}
+            initialNumToRender={20}
+            windowSize={10}
+          />
+        </View>
+
+        {/* Composer ------------------------------------------------------------ */}
         {replyTo && (
           <View className="flex-row items-center px-4 py-2 bg-[#e0e0e0] dark:bg-[#3d3d3d] rounded-t-xl ">
             <View className="flex-1 border-l-[3px] border-[#3695FF] pl-2">
@@ -598,26 +648,21 @@ export default function ConversationScreen() {
             </TouchableOpacity>
           </View>
         )}
-        <View
-          className=" flex-row items-end px-3 py-2 bg-[#f4f4f4] dark:bg-[#272626] gap-x-2"
-        >
+
+        <View className="flex-row items-end px-3 py-2 bg-[#f4f4f4] dark:bg-[#272626] gap-x-2 mb-6">
           {/* Attachment – bolita aparte */}
           <TouchableOpacity
             onPress={() => attachSheet.current.open()}
             hitSlop={8}
-            className="h-12 w-12 rounded-full              
-                      items-center justify-center
-                      bg-[#e5e5e5] dark:bg-[#3d3d3d]"
+            disabled={isSending}
+            className={`h-12 w-12 rounded-full items-center justify-center ${isSending ? 'opacity-60' : ''
+              } bg-[#e5e5e5] dark:bg-[#3d3d3d]`}
           >
-            <PaperClipIcon height={26} width={26} color={"#979797"} strokeWidth={1.5} />
+            <PaperClipIcon height={26} width={26} color={'#979797'} strokeWidth={1.5} />
           </TouchableOpacity>
 
-          {/* Campo de texto + botón send dentro del mismo "pill" ---------------- */}
-          <View
-            className="flex-1 flex-row items-center
-                      bg-[#e0e0e0] dark:bg-[#3d3d3d]
-                      rounded-3xl pl-4 pr-2 "
-          >
+          {/* Campo de texto + botón send */}
+          <View className="flex-1 flex-row items-center bg-[#e0e0e0] dark:bg-[#3d3d3d] rounded-full pl-4 pr-2 ">
             {attachment && (
               <View className="relative mr-2">
                 {attachment.type === 'image' ? (
@@ -630,6 +675,7 @@ export default function ConversationScreen() {
                 <TouchableOpacity
                   onPress={() => setAttachment(null)}
                   hitSlop={8}
+                  disabled={isSending}
                   className="absolute -top-1 -right-1 bg-[#d4d4d3] dark:bg-[#474646] rounded-full p-[1px]"
                 >
                   <XMarkIcon height={16} width={16} color={iconColor} strokeWidth={2} />
@@ -644,6 +690,7 @@ export default function ConversationScreen() {
                 multiline={true}
                 value={text}
                 onChangeText={setText}
+                editable={!isSending}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                 style={{ paddingVertical: 0 }}
                 textAlignVertical="center"
@@ -652,31 +699,33 @@ export default function ConversationScreen() {
             <View className="self-stretch items-center justify-end">
               <TouchableOpacity
                 onPress={handleSend}
-                disabled={!text.trim() && !attachment}
-                className={`h-8 w-8 my-2 rounded-full items-center justify-center
-                            ${text.trim() || attachment
-                    ? 'bg-[#323131] dark:bg-[#fcfcfc]'
-                    : 'bg-[#d4d4d3] dark:bg-[#474646]'}`}
+                disabled={isSending || (!text.trim() && !attachment)}
+                className={`h-8 w-8 my-2 rounded-full items-center justify-center ${text.trim() || attachment ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#d4d4d3] dark:bg-[#474646]'
+                  } ${isSending ? 'opacity-70' : ''}`}
               >
-                <ArrowUpIcon
-                  height={16}
-                  width={16}
-                  strokeWidth={3}
-                  color={
-                    text.trim() || attachment
-                      ? colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'
-                      : '#ffffff'
-                  }
-                />
+                {isSending ? (
+                  <ActivityIndicator size="small" color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} />
+                ) : (
+                  <ArrowUpIcon
+                    height={16}
+                    width={16}
+                    strokeWidth={3}
+                    color={
+                      text.trim() || attachment
+                        ? colorScheme === 'dark'
+                          ? '#1f1f1f'
+                          : '#ffffff'
+                        : '#ffffff'
+                    }
+                  />
+                )}
               </TouchableOpacity>
             </View>
           </View>
-
-
         </View>
-
       </KeyboardAvoidingView>
 
+      {/* Sheets */}
       <RBSheet
         ref={attachSheet}
         height={160}
@@ -694,11 +743,15 @@ export default function ConversationScreen() {
         <View className="py-4 px-7 gap-y-4">
           <TouchableOpacity onPress={handleImagePick} className="py-2 flex-row justify-start items-center ">
             <ImageIcon height={24} width={24} color={iconColor} strokeWidth={2} />
-            <Text className=" ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_image')}</Text>
+            <Text className=" ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">
+              {t('choose_image')}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleFilePick} className="py-1 flex-row justify-start items-center">
             <Folder height={24} width={24} color={iconColor} strokeWidth={2} />
-            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('choose_file')}</Text>
+            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">
+              {t('choose_file')}
+            </Text>
           </TouchableOpacity>
         </View>
       </RBSheet>
@@ -721,12 +774,12 @@ export default function ConversationScreen() {
           {selectedMsg?.fromMe && (
             <>
               <TouchableOpacity onPress={handleDeleteMessage} className="pb-6 flex-row justify-start items-center ">
-                <Trash2 height={24} width={24} color={'#FF633E'} strokeWidth={2} />
-                <Text className="ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_message')}</Text>
+                <MoreHorizontal height={0} width={0} color={'transparent'} />{/* spacer fix on iOS ripple */}
+                <Text className="ml-0 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_message')}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleEditMessage} className="pt-1 pb-6 flex-row justify-start items-center ">
-                <Edit2 height={23} width={23} color={iconColor} strokeWidth={2} />
-                <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit')}</Text>
+                <MoreHorizontal height={0} width={0} color={'transparent'} />
+                <Text className="ml-0 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit')}</Text>
               </TouchableOpacity>
             </>
           )}
@@ -756,13 +809,19 @@ export default function ConversationScreen() {
         }}
       >
         <View className="py-4 px-7 gap-y-4">
-          <TouchableOpacity onPress={async () => { await updateDoc(doc(db, 'conversations', conversationId), { deletedFor: arrayUnion(userId) }); convSheet.current.close(); navigation.goBack(); }} className="py-2 flex-row justify-start items-center ">
-            <Trash2 height={24} width={24} color={'#FF633E'} strokeWidth={2} />
-            <Text className="ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_chat')}</Text>
+          <TouchableOpacity
+            onPress={async () => {
+              await updateDoc(doc(db, 'conversations', conversationId), { deletedFor: arrayUnion(userId) });
+              convSheet.current.close();
+              navigation.goBack();
+            }}
+            className="py-2 flex-row justify-start items-center "
+          >
+            <MoreHorizontal height={0} width={0} color={'transparent'} />
+            <Text className="ml-0 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_chat')}</Text>
           </TouchableOpacity>
         </View>
       </RBSheet>
-
     </View>
   );
 }
