@@ -11,7 +11,7 @@ import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage.js';
 import {XMarkIcon} from 'react-native-heroicons/outline';
 import NotificationAskWhite from '../../assets/NotificationAskWhite.svg';
 import NotificationAskDark from '../../assets/NotificationAskDark.svg';
-import api from '../../utils/api.js';
+import api, { setTokens } from '../../utils/api.js';
 
 
 
@@ -88,7 +88,11 @@ export default function NotificationAllowScreen() {
           profile_picture: null
         });
         console.log('User created:', response.data);
-        return { id: response.data.userId, token: response.data.token };
+        return { 
+          id: response.data.userId, 
+          access: response.data.access_token || response.data.token, // compat 
+          refresh: response.data.refresh_token || null 
+        };
         
 
       } catch (error) {
@@ -123,7 +127,7 @@ export default function NotificationAllowScreen() {
         if (!result) return;
     
         user.id = result.id;
-        user.token = result.token;
+        user.token = result.access; // compat
         user.email = email;
         user.first_name = firstName;
         user.surname = surname;
@@ -133,7 +137,9 @@ export default function NotificationAllowScreen() {
         user.allow_notis = false;
         user.profile_picture = null;
     
-        await storeDataLocally('user', JSON.stringify(user));
+        // Guarda tokens primero (para que /api/upload-image ya vaya autenticado) 
+        await setTokens({ access: result.access, refresh: result.refresh }); 
+        await storeDataLocally('user', JSON.stringify(user))
     
         const imageURL = await uploadImage();
         if (imageURL) {
@@ -155,7 +161,7 @@ export default function NotificationAllowScreen() {
       if (!result) return;
 
       user.id = result.id;
-      user.token = result.token;
+      user.token = result.access; // compat
       user.email = email;
       user.first_name = firstName;
       user.surname = surname;
@@ -165,6 +171,7 @@ export default function NotificationAllowScreen() {
       user.allow_notis = granted;
       user.profile_picture = null;
 
+      await setTokens({ access: result.access, refresh: result.refresh }); 
       await storeDataLocally('user', JSON.stringify(user));
 
       const imageURL = await uploadImage();

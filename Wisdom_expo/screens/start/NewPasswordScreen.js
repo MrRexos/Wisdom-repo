@@ -9,7 +9,7 @@ import EyeIcon from 'react-native-bootstrap-icons/icons/eye';
 import EyeSlashIcon from 'react-native-bootstrap-icons/icons/eye-slash';
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import api from '../../utils/api';
+import api, { setTokens } from '../../utils/api';
 import { storeDataLocally } from '../../utils/asyncStorage';
 
 
@@ -75,7 +75,10 @@ export default function NewPasswordScreen({ route }) {
       const response = await api.post('/api/reset-password', { emailOrUsername, code, newPassword: password });
       if (response.data && response.data.token) {
         let user = response.data.user;
-        user.token = response.data.token;
+        const access = response.data.access_token || response.data.token; // compat 
+        const refresh = response.data.refresh_token || null; 
+        await setTokens({ access, refresh }); 
+        user.token = access; // compat 
         await storeDataLocally('user', JSON.stringify(user));
         navigation.navigate('HomeScreen');
       }

@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import api from '../../utils/api.js';
+import { getTokens, clearTokens } from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import eventEmitter from '../../utils/eventEmitter';
 import * as Notifications from 'expo-notifications';
@@ -84,7 +84,16 @@ export default function SettingsScreen() {
 
   const logOut = async () => {
     try {
-      await AsyncStorage.clear();
+
+     // 1) Revocar refresh en servidor (si existe) 
+     const { refresh } = await getTokens(); 
+     if (refresh) { 
+       try { await api.post('/api/logout', { refresh_token: refresh }); } catch (e) {} 
+     } 
+     // 2) Limpiar tokens dedicados 
+     await clearTokens(); 
+     // 3) (Opcional) Limpiar resto de storage si así lo quieres 
+     await AsyncStorage.clear(); 
     } catch (error) {
       console.error('Error al limpiar el almacenamiento:', error);
     } finally {
