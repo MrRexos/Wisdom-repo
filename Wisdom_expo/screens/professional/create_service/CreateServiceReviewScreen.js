@@ -483,26 +483,28 @@ export default function CreateServiceReviewScreen() {
         </View>
       </View>
 
-      <View className="mt-8 justify-center items-start pb-7 ">
-        <View className="mr-2 py-5 px-4 w-full bg-[#e0e0e0] dark:bg-[#323131] rounded-2xl">
-          <Text className="mb-4 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Consult a professional</Text>
-          {consultPrice && (
-            <Text className=" font-inter-semibold text-[13px] text-[#706F6E] dark:text-[#b6b5b5]">{parseFloat(consultPrice).toFixed(0)} € for a 15 min call</Text>
-          )}
-          <View className="mt-8 flex-row justify-center items-center">
-            {allowAsk && (
-              <TouchableOpacity disabled style={{ opacity: 1 }} className={`mr-2 bg-[#E0E0E0] dark:bg-[#3d3d3d] ${!allowConsults ? 'w-full' : 'w-1/3'} h-[40] rounded-full items-center justify-center`}>
-                <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('write')}</Text>
-              </TouchableOpacity>
+      {(allowAsk || allowConsults) && (
+        <View className="mt-8 justify-center items-start pb-7 ">
+          <View className="mr-2 py-5 px-4 w-full bg-[#e0e0e0] dark:bg-[#323131] rounded-2xl">
+            <Text className="mb-4 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Consult a professional</Text>
+            {consultPrice && (
+              <Text className=" font-inter-semibold text-[13px] text-[#706F6E] dark:text-[#b6b5b5]">{parseFloat(consultPrice).toFixed(0)} € for a 15 min call</Text>
             )}
-            {allowConsults && (
-              <TouchableOpacity disabled style={{ opacity: 1 }} className={`bg-[#444343] dark:bg-[#f2f2f2] ${!allowAsk ? 'w-full' : 'w-2/3'} h-[40] rounded-full items-center justify-center`}>
-                <Text className="font-inter-semibold text-[13px] text-[#f2f2f2] dark:text-[#272626]">{t('book_a_consult')}</Text>
-              </TouchableOpacity>
-            )}
+            <View className="mt-8 flex-row justify-center items-center">
+              {allowAsk && (
+                <TouchableOpacity disabled style={{ opacity: 1 }} className={`mr-2 bg-[#E0E0E0] dark:bg-[#3d3d3d] ${!allowConsults ? 'w-full' : 'w-1/3'} h-[40] rounded-full items-center justify-center`}>
+                  <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('write')}</Text>
+                </TouchableOpacity>
+              )}
+              {allowConsults && (
+                <TouchableOpacity disabled style={{ opacity: 1 }} className={`bg-[#444343] dark:bg-[#f2f2f2] ${!allowAsk ? 'w-full' : 'w-2/3'} h-[40] rounded-full items-center justify-center`}>
+                  <Text className="font-inter-semibold text-[13px] text-[#f2f2f2] dark:text-[#272626]">{t('book_a_consult')}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </View>
-      </View>
+      )}
 
     </View>
   );

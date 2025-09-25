@@ -35,15 +35,13 @@ export default function LogInScreen() {
 
   
 
-  const inputPasswordChanged = (event) => {
-    const newPassword = event.nativeEvent.text;
-    setPassword (newPassword);
+  const inputPasswordChanged = (newPassword) => {
+    setPassword(newPassword);
     setShowError(false);
   }
 
-  const inputuserChanged = (event) => {
-    const newuser = event.nativeEvent.text;
-    setuser (newuser);
+  const inputuserChanged = (newuser) => {
+    setuser(newuser);
     setShowError(false);
   }
 
@@ -135,7 +133,7 @@ export default function LogInScreen() {
             autoFocus={true} 
             selectionColor={cursorColorChange} 
             placeholderTextColor={placeHolderTextColorChange} 
-            onChange = {inputuserChanged} 
+            onChangeText={inputuserChanged}
             value={userEmail}
             onSubmitEditing={nextPressed}
             keyboardType="email-address"
@@ -152,7 +150,7 @@ export default function LogInScreen() {
             selectionColor={cursorColorChange}
             placeholderTextColor={placeHolderTextColorChange}
             secureTextEntry={isSecure} // Controla la visibilidad del texto
-            onChange = {inputPasswordChanged} 
+            onChangeText={inputPasswordChanged}
             value={password}
             onSubmitEditing={nextPressed}
             keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
