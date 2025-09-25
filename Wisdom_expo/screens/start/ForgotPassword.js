@@ -1,7 +1,7 @@
 
 
 import React, {useState } from 'react';
-import {View, StatusBar,SafeAreaView, Platform,Text, TouchableOpacity, TextInput, KeyboardAvoidingView, Animated} from 'react-native';
+import {View, StatusBar, SafeAreaView, Platform,Text, TouchableOpacity, TextInput, KeyboardAvoidingView, Animated} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -80,7 +80,7 @@ export default function ForgotPasswordScreen() {
                 value={email}
                 onSubmitEditing={nextPressed}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                className="px-4 h-[55px] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
+                className="px-4 h-[55px] w-full flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
             </View>
             {
             showError? (

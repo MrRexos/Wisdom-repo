@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { getTokens, clearTokens } from '../../utils/api.js';
+import api, { getTokens, clearTokens } from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import eventEmitter from '../../utils/eventEmitter';
 import Message from '../../components/Message';

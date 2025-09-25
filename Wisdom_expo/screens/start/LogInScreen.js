@@ -138,7 +138,7 @@ export default function LogInScreen() {
             onSubmitEditing={nextPressed}
             keyboardType="email-address"
             keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-            className="px-4 h-11 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
+            className="px-4 h-11  w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
         </View>
         <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">
           {t('password')}
@@ -154,7 +154,7 @@ export default function LogInScreen() {
             value={password}
             onSubmitEditing={nextPressed}
             keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-            className="h-11 text-[15px] flex-1 text-[#444343] dark:text-[#f2f2f2]"
+            className="h-11  w-full text-[15px] flex-1 text-[#444343] dark:text-[#f2f2f2]"
           />
           <TouchableOpacity onPress={() => setIsSecure(!isSecure)}>
             {isSecure ? (

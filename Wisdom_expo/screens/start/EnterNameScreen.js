@@ -73,7 +73,7 @@ export default function EnterNameScreen() {
                 value={name}
                 onSubmitEditing={nextPressed}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-                className="px-4 h-[55px] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
+                className="px-4  w-full h-[55px] flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
             </View>
             {
             showError? (

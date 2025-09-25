@@ -434,7 +434,7 @@ export default function CreateServiceReviewScreen() {
         )}
       </View>
 
-      <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
+      <View className={`mt-8 justify-center items-start pb-7 ${ (allowAsk || allowConsults) ? 'border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]' : '' }`}>
         <Text className="mb-8 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Rating and reviews</Text>
         <View className="flex-row w-full justify-between items-center">
           <Text className="font-inter-bold text-[55px] text-[#444343] dark:text-[#f2f2f2]">4.8</Text>
@@ -596,7 +596,7 @@ export default function CreateServiceReviewScreen() {
 
             
 
-            <View className="flex-1">
+            <View className="flex-1 mb-12">
               <ScrollView showsVerticalScrollIndicator={false}>
                 <View className="px-5 justify-center items-start ml-2 ">
                   <Text className="mt-[50px] font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2] ">{t('check_your_service')}</Text>

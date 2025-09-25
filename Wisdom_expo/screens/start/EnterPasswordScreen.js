@@ -62,7 +62,7 @@ export default function EnterPasswordScreen() {
             value={password}
             onSubmitEditing={nextPressed}
             keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-            className=" text-[15px] h-[55px] flex-1 text-[#444343] dark:text-[#f2f2f2]"
+            className=" text-[15px w-full h-[55px] flex-1 text-[#444343] dark:text-[#f2f2f2]"
           />
           <TouchableOpacity onPress={() => setIsSecure(!isSecure)}>
             {isSecure ? (
