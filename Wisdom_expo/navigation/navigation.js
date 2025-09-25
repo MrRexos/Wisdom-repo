@@ -1,4 +1,5 @@
-import { NavigationContainer, useFocusEffect, useNavigation } from '@react-navigation/native';
+import { NavigationContainer, useFocusEffect, useNavigation, createNavigationContainerRef  } from '@react-navigation/native';
+export const navigationRef = createNavigationContainerRef();
 import * as Linking from 'expo-linking';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -132,7 +133,7 @@ const linking = {
 
 export default function Navigation() {
   return (
-    <NavigationContainer linking={linking}>
+    <NavigationContainer ref={navigationRef} linking={linking}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="WelcomeVideo" component={WelcomeVideoScreen} options={{ gestureEnabled: false }} />
         <Stack.Screen name="Loading" component={LoadingScreen} options={{ animation: 'none', gestureEnabled: false }} />

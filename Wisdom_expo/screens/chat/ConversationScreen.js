@@ -62,7 +62,7 @@ export default function ConversationScreen() {
   const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
-  const statusUnreadColor = '#9ca3af'; // gris para "enviado/no leído"
+  const statusUnreadColor = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'; 
   const statusReadColorStrong = colorScheme === 'dark' ? '#fcfcfc' : '#323131';
   const flatListRef = useRef(null);
   const attachSheet = useRef(null);
@@ -92,7 +92,7 @@ export default function ConversationScreen() {
   const swipeRefs = useRef({});
   const imageMessages = useMemo(() => messages.filter((m) => m.type === 'image'), [messages]);
 
-  const scrollToBottom = useCallback((animated = true) => {
+  const scrollToBottom = useCallback((animated = false) => {
     flatListRef.current?.scrollToEnd({ animated });
   }, []);
 
@@ -625,7 +625,7 @@ export default function ConversationScreen() {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             onLayout={() => requestAnimationFrame(() => scrollToBottom(false))}
-            onContentSizeChange={() => requestAnimationFrame(() => scrollToBottom(true))}
+            onContentSizeChange={() => requestAnimationFrame(() => scrollToBottom(false))}
             ListFooterComponent={<View style={{ height: 4 }} />}
             initialNumToRender={20}
             windowSize={10}

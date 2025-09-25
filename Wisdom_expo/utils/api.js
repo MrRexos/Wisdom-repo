@@ -5,6 +5,12 @@ const BASE_URL = 'https://wisdom-app-34b3fb420f18.herokuapp.com';
 const ACCESS_KEY = 'auth.access_token';
 const REFRESH_KEY = 'auth.refresh_token';
 
+// Callback global para reaccionar a expiración de sesión
+let onAuthExpired = null;
+export function setOnAuthExpired(cb) {
+  onAuthExpired = typeof cb === 'function' ? cb : null;
+}
+
 export const api = axios.create({
   baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
@@ -30,23 +36,27 @@ export async function clearTokens() {
   await AsyncStorage.multiRemove([ACCESS_KEY, REFRESH_KEY]);
 }
 
-// ---------- Interceptor de REQUEST ----------
-// Añade Authorization con el access token si existe.
-// (Compatibilidad: si no hay access guardado, usa user.token si existe)
+// ---------- REQUEST: añade Authorization ----------
 api.interceptors.request.use(async (config) => {
+    // --- Anti-304 en API autenticada --- 
+  // Evita revalidación condicional que podría devolver 304 en lugar de 401 
+  if (config && config.headers) { 
+    delete config.headers['If-None-Match']; 
+    delete config.headers['If-Modified-Since']; 
+    config.headers['Cache-Control'] = 'no-cache'; 
+  } 
+
   try {
     const access = await AsyncStorage.getItem(ACCESS_KEY);
     if (access) {
       config.headers.Authorization = `Bearer ${access}`;
       return config;
     }
-    // Fallback compat (hasta que todos migren)
+    // Fallback compat: user.token
     const data = await AsyncStorage.getItem('user');
     if (data) {
       const user = JSON.parse(data);
-      if (user?.token) {
-        config.headers.Authorization = `Bearer ${user.token}`;
-      }
+      if (user?.token) config.headers.Authorization = `Bearer ${user.token}`;
     }
   } catch (e) {
     console.log('Auth token error', e);
@@ -54,22 +64,28 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
-// ---------- Interceptor de RESPONSE con auto-refresh ----------
+// ---------- RESPONSE: auto-refresh + redirección si refresh caduca ----------
 let isRefreshing = false;
 let subscribers = [];
 const subscribe = (cb) => subscribers.push(cb);
-const notifyAll = (newAccess) => {
-  subscribers.forEach((cb) => cb(newAccess));
-  subscribers = [];
-};
+const notifyAll = (newAccess) => { subscribers.forEach((cb) => cb(newAccess)); subscribers = []; };
 
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const original = error.config;
-    if (error.response?.status === 401 && !original.__isRetryRequest) {
-      // Si ya hay un refresh en curso, esperamos y reintentamos
+    const status = error.response?.status; 
+    const errStr = error.response?.data?.error; 
+    const www = error.response?.headers?.['www-authenticate'] || ''; 
+    const rfcExpired = /error="invalid_token".*expired/i.test(www); 
+    // Dispara refresh si: 401, o 403 con token_expired, o cabecera RFC indicando token expirado 
+    const isAuthError = status === 401 || rfcExpired || (status === 403 && errStr === 'token_expired'); 
+
+    
+    if (isAuthError && !original.__isRetryRequest) {
+      console.log('[auth] intentando refresh…', { status, errStr, www });
       if (isRefreshing) {
+        // espera a que termine otro refresh y reintenta
         return new Promise((resolve) => {
           subscribe((newAccess) => {
             original.headers.Authorization = `Bearer ${newAccess}`;
@@ -83,18 +99,18 @@ api.interceptors.response.use(
 
       try {
         const refresh = await AsyncStorage.getItem(REFRESH_KEY);
-        if (!refresh) throw new Error('No refresh token');
+        if (!refresh) throw { response: { status: 401 } }; // fuerza flujo de expiración
 
-        // Usamos axios "crudo" para no disparar recursivamente interceptores
         const resp = await axios.post(
           `${BASE_URL}/api/token/refresh`,
           { refresh_token: refresh },
           { timeout: 20000, headers: { 'Content-Type': 'application/json' } }
         );
 
+
         const newAccess = resp.data?.access_token;
         const newRefresh = resp.data?.refresh_token;
-        if (!newAccess || !newRefresh) throw new Error('Respuesta de refresh inválida');
+        if (!newAccess || !newRefresh) throw { response: { status: 401 } };
 
         await setTokens({ access: newAccess, refresh: newRefresh });
 
@@ -102,8 +118,20 @@ api.interceptors.response.use(
         original.headers.Authorization = `Bearer ${newAccess}`;
         return api(original);
       } catch (e) {
-        await clearTokens();
-        // Deja que el flujo actual maneje el 401 (redirigir a login, etc.)
+        // Solo redirigimos si es 401 (caducado/invalid). Si es red/timeout no expulsamos.
+        const st = e?.response?.status; 
+        const errStr2 = e?.response?.data?.error; 
+        const www2 = e?.response?.headers?.['www-authenticate'] || ''; 
+        const rfcExpired2 = /error="invalid_token".*expired/i.test(www2); 
+        const isExpired = st === 401 || rfcExpired2 || (st === 403 && errStr2 === 'token_expired'); 
+        if (isExpired) {
+          try {
+            await clearTokens();
+            await AsyncStorage.setItem('user', JSON.stringify({ token: false }));
+          } finally {
+            if (onAuthExpired) onAuthExpired(); // dispara redirección global
+          }
+        }
         return Promise.reject(error);
       } finally {
         isRefreshing = false;

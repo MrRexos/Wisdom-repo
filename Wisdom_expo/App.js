@@ -4,6 +4,9 @@ import './polyfills';
 import React, { useEffect, useState } from 'react';
 import Navigation from './navigation/navigation';
 import { StripeProvider } from '@stripe/stripe-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setOnAuthExpired, clearTokens } from './utils/api';
+import { navigationRef } from './navigation/navigation';
 import { useTranslation } from 'react-i18next';
 import './languages/i18n';
 import * as Font from 'expo-font';
@@ -46,9 +49,32 @@ export default function App() {
     }
   }, [fontsLoaded]);
 
+  useEffect(() => {
+    // Se llamará automáticamente cuando el refresh retorne 401 
+    setOnAuthExpired(async () => {
+      try {
+        // asegúrate de limpiar cualquier resto (por si algo quedó) 
+        await clearTokens();
+        await AsyncStorage.setItem('user', JSON.stringify({ token: false }));
+      } catch { }
+      // Resetea a GetStarted 
+      if (navigationRef.isReady()) {
+        navigationRef.reset({ index: 0, routes: [{ name: 'GetStarted' }] });
+      } else {
+        // Si aún no está listo, reintenta en próximo tick 
+        setTimeout(() => {
+          if (navigationRef.isReady()) {
+            navigationRef.reset({ index: 0, routes: [{ name: 'GetStarted' }] });
+          }
+        }, 0);
+      }
+    });
+  }, []);
+
   if (!fontsLoaded) {
     return null; // Puedes mostrar un componente de carga aquí si lo deseas
   }
+
 
   return (
     <GestureHandlerRootView
@@ -58,7 +84,7 @@ export default function App() {
       <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
         <BottomSheetModalProvider>
           <Navigation />
-         </BottomSheetModalProvider>
+        </BottomSheetModalProvider>
       </StripeProvider>
     </GestureHandlerRootView>
   );

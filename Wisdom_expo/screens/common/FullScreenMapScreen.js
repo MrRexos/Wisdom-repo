@@ -1,11 +1,17 @@
 import React from 'react';
-import { View, TouchableOpacity, StatusBar } from 'react-native';
+import { View, TouchableOpacity, StatusBar, Image } from 'react-native';
 import MapView, { Marker, Circle } from 'react-native-maps';
 import { Minimize2 } from 'react-native-feather';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getRegionForRadius } from '../../utils/mapUtils';
+import {
+  mapMarkerAnchor,
+  mapMarkerCenterOffset,
+  mapMarkerImage,
+  mapMarkerStyle,
+} from '../../utils/mapMarkerAssets';
 
 export default function FullScreenMapScreen() {
   const navigation = useNavigation();
@@ -32,10 +38,15 @@ export default function FullScreenMapScreen() {
             <>
               <Marker
                 coordinate={{ latitude, longitude }}
-                image={require('../../assets/MapMarker.png')}
-                anchor={{ x: 0.5, y: 1 }}
-                centerOffset={{ x: 0.5, y: -20 }}
-              />
+                anchor={mapMarkerAnchor}
+                centerOffset={mapMarkerCenterOffset}
+              >
+                <Image
+                  source={mapMarkerImage}
+                  style={mapMarkerStyle}
+                  resizeMode="contain"
+                />
+              </Marker>
               {actionRate < 100 && (
                 <Circle
                   center={{ latitude, longitude }}

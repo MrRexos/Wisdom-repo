@@ -12,6 +12,12 @@ import { getRegionForRadius } from '../../../utils/mapUtils';
 import api from '../../../utils/api.js';
 import { getDataLocally } from '../../../utils/asyncStorage';
 import axios from 'axios';
+import {
+  mapMarkerAnchor,
+  mapMarkerCenterOffset,
+  mapMarkerImage,
+  mapMarkerStyle,
+} from '../../../utils/mapMarkerAssets';
 
 
 
@@ -390,10 +396,15 @@ export default function CreateServiceReviewScreen() {
                       <View>
                         <Marker
                           coordinate={{ latitude: location.lat, longitude: location.lng }}
-                          image={require('../../../assets/MapMarker.png')}
-                          anchor={{ x: 0.5, y: 1 }}
-                          centerOffset={{ x: 0.5, y: -20 }}
-                        />
+                          anchor={mapMarkerAnchor}
+                          centerOffset={mapMarkerCenterOffset}
+                        >
+                          <Image
+                            source={mapMarkerImage}
+                            style={mapMarkerStyle}
+                            resizeMode="contain"
+                          />
+                        </Marker>
                         {actionRate < 100 && (
                           <Circle
                             center={{ latitude: location.lat, longitude: location.lng }}

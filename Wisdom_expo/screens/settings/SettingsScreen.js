@@ -271,8 +271,8 @@ export default function SettingsScreen() {
       <Message
         type="modal"
         visible={showModalMessage}
-        title="Missatge X"
-        description="Description"
+        title="Can't share your profile"
+        description="We're not sure how to do this yet. You can share your profile manually."
         onConfirm={() => {
           console.log('Missatge confirmat');
         }}

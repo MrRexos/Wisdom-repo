@@ -13,6 +13,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Slider from '@react-native-community/slider';
 import SliderThumbDark from '../../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../../assets/SliderThumbLight.png';
+import {
+  mapMarkerAnchor,
+  mapMarkerCenterOffset,
+  mapMarkerImage,
+  mapMarkerStyle,
+} from '../../../utils/mapMarkerAssets';
 
 
 
@@ -170,10 +176,15 @@ export default function CreateServiceLocationScreen() {
                   <View>
                     <Marker
                       coordinate={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}
-                      image={require('../../../assets/MapMarker.png')}
-                      anchor={{ x: 0.5, y: 1 }}
-                      centerOffset={{ x: 0.5, y: -20 }}
-                    />
+                      anchor={mapMarkerAnchor}
+                      centerOffset={mapMarkerCenterOffset}
+                    >
+                      <Image
+                        source={mapMarkerImage}
+                        style={mapMarkerStyle}
+                        resizeMode="contain"
+                      />
+                    </Marker>
                     {actionRate < 100 && (
                       <Circle
                         center={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}

@@ -29,6 +29,12 @@ import Slider from '@react-native-community/slider';
 import SliderThumbDark from '../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../assets/SliderThumbLight.png';
 import { format } from 'date-fns';
+import {
+  mapMarkerAnchor,
+  mapMarkerCenterOffset,
+  mapMarkerImage,
+  mapMarkerStyle,
+} from '../../utils/mapMarkerAssets';
 
 
 
@@ -289,7 +295,7 @@ export default function ServiceProfileScreen() {
             )}
           </ScrollView>
           <TouchableOpacity
-            onPress={() => { setReportSheetHeight(200); setReportStep(2);}}
+            onPress={() => { setReportSheetHeight(200); setReportStep(2); }}
             disabled={!reportReason || (reportReason.code === 'other' && !reportOther.trim())}
             className={`mt-3 mb-5 h-12 rounded-full items-center justify-center ${!reportReason || (reportReason.code === 'other' && !reportOther.trim()) ? 'bg-[#d4d4d3] dark:bg-[#474646]' : 'bg-[#323131] dark:bg-[#fcfcfc]'}`}
           >
@@ -1418,10 +1424,15 @@ export default function ServiceProfileScreen() {
                       <View>
                         <Marker
                           coordinate={{ latitude: serviceData.latitude, longitude: serviceData.longitude }}
-                          image={require('../../assets/MapMarker.png')}
-                          anchor={{ x: 0.5, y: 1 }}
-                          centerOffset={{ x: 0.5, y: -20 }}
-                        />
+                          anchor={mapMarkerAnchor}
+                          centerOffset={mapMarkerCenterOffset}
+                        >
+                          <Image
+                            source={mapMarkerImage}
+                            style={mapMarkerStyle}
+                            resizeMode="contain"
+                          />
+                        </Marker>
                         {serviceData.action_rate < 100 && (
                           <Circle
                             center={{ latitude: serviceData.latitude, longitude: serviceData.longitude }}
