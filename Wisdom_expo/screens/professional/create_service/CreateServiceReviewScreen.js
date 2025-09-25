@@ -573,7 +573,10 @@ export default function CreateServiceReviewScreen() {
         imageURLS = await uploadImages(serviceImages);       
       }
       await createService(imageURLS);
-      navigation.navigate('Professional', { screen: 'Listings' });
+      navigation.navigate('Professional', {
+        screen: 'Listings',
+        params: { showPaymentReminder: true },
+      });
     } catch (error) {
       console.error('Error publishing service:', error);
     }

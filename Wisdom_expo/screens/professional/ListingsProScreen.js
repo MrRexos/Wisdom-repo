@@ -7,20 +7,23 @@ import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/nativ
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon } from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
 import { Plus } from "react-native-feather";
-import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
+import { getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
+import Message from '../../components/Message';
 
 
 export default function ListingsProScreen() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
+  const route = useRoute();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const [listings, setListings] = useState();
   const [userId, setUserId] = useState();
   const [refreshing, setRefreshing] = useState(false);
+  const [showPaymentReminder, setShowPaymentReminder] = useState(false);
   const currencySymbols = {
     EUR: '€',
     USD: '$',
@@ -51,6 +54,29 @@ export default function ListingsProScreen() {
     await fetchListings();
     setRefreshing(false);
   };
+
+  const checkPaymentMethod = useCallback(async () => {
+    try {
+      const userData = await getDataLocally('user');
+      if (!userData) return;
+      const user = JSON.parse(userData);
+      const response = await api.get(`/api/user/${user.id}`);
+      if (!response.data?.stripe_customer_id) {
+        setShowPaymentReminder(true);
+      } else {
+        setShowPaymentReminder(false);
+      }
+    } catch (error) {
+      console.error('Error checking payment method:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (route.params?.showPaymentReminder) {
+      checkPaymentMethod();
+      navigation.setParams({ showPaymentReminder: undefined });
+    }
+  }, [route.params?.showPaymentReminder, checkPaymentMethod, navigation]);
 
   const renderItem = ({ item, index }) => {
 
@@ -150,6 +176,21 @@ export default function ListingsProScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
+      <Message
+        type="modal"
+        visible={showPaymentReminder}
+        title={t('payment_method_reminder_title')}
+        description={t('payment_method_reminder_description')}
+        confirmText={t('payment_method_reminder_confirm')}
+        cancelText={t('payment_method_reminder_cancel')}
+        dismissOnBackdropPress={true}
+        onConfirm={() => {
+          setShowPaymentReminder(false);
+          navigation.navigate('CollectionMethodName');
+        }}
+        onCancel={() => setShowPaymentReminder(false)}
+        onDismiss={() => setShowPaymentReminder(false)}
+      />
       <View className="flex-1 justify-start items-center pt-[55px]">
 
         <View className="px-6 pb-2 w-full flex-row justify-between items-center">
