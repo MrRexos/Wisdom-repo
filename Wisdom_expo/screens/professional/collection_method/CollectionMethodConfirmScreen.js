@@ -61,7 +61,7 @@ export default function CollectionMethodConfirmScreen() {
       }
       navigation.navigate('WalletPro');
     } catch (error) {
-      console.error('Error creating collection method:', error);
+      console.error('Error creating payout method:', error);
     } finally {
       setLoading(false);
     }
