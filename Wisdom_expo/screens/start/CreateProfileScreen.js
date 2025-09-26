@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, Linking, TextInput, KeyboardAvoidingView, TouchableOpacity, Image, Platform, StatusBar,  Alert, ActivityIndicator, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, Linking, TextInput, KeyboardAvoidingView, TouchableOpacity, Image, Platform, StatusBar,  Alert, ActivityIndicator, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,7 @@ import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api';
 import { CheckCircleIcon, XCircleIcon } from 'react-native-heroicons/solid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CreateProfileScreen() {
     const { colorScheme } = useColorScheme();

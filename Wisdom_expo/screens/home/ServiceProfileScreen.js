@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { View, StatusBar, SafeAreaView, Platform, TouchableWithoutFeedback, TouchableOpacity, Keyboard, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Alert, RefreshControl, Linking } from 'react-native';
+import { View, StatusBar, Platform, TouchableWithoutFeedback, TouchableOpacity, Keyboard, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Alert, RefreshControl, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -34,6 +34,7 @@ import {
   mapMarkerCenterOffset,
   mapMarkerImage,
   mapMarkerStyle,
+import { SafeAreaView } from 'react-native-safe-area-context';
 } from '../../utils/mapMarkerAssets';
 
 

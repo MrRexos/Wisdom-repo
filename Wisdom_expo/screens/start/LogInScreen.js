@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Keyboard, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
+import { View, Keyboard, StatusBar, Platform, Text, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
@@ -11,6 +11,7 @@ import WisdomLogo from '../../assets/wisdomLogo.tsx';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage.js';
 import api, { setTokens } from '../../utils/api.js';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 

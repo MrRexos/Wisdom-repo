@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image, RefreshControl } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -11,6 +11,7 @@ import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
 
 

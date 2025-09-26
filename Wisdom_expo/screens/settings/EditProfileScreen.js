@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Keyboard, Linking, ActivityIndicator, Alert, RefreshControl } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Keyboard, Linking, ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -12,6 +12,7 @@ import api from '../../utils/api.js';
 import { CheckCircleIcon, XCircleIcon } from 'react-native-heroicons/solid';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import * as ImagePicker from 'expo-image-picker';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import eventEmitter from '../../utils/eventEmitter';
 
 

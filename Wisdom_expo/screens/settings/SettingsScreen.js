@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Text, View, AppState, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Image, Linking, RefreshControl, Alert } from 'react-native';
+import { Text, View, AppState, Button, Switch, Platform, StatusBar, ScrollView, TouchableOpacity, Image, Linking, RefreshControl, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,6 +19,7 @@ import { KeyIcon, ChevronRightIcon, ArrowsRightLeftIcon } from 'react-native-her
 import GiftCardIcon from '../../assets/GiftCard';
 import ExpertIcon from '../../assets/Expert';
 import CashStackIcon from '../../assets/CashStack';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import SuticasePlusIcon from '../../assets/SuitcasePlus';
 
 

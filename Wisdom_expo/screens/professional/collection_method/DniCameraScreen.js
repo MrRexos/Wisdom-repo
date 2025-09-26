@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from 'react';
-import { View, Text, TouchableOpacity, Dimensions, Platform, StatusBar, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, Platform, StatusBar} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,7 @@ import '../../../languages/i18n';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import Svg, { Rect, Defs, Mask } from 'react-native-svg';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import eventEmitter from '../../../utils/eventEmitter';
 
 export default function DniCameraScreen() {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert, StyleSheet, RefreshControl } from 'react-native';
+import { View, StatusBar, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert, StyleSheet, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -11,6 +11,7 @@ import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import BookMarksFillIcon from 'react-native-bootstrap-icons/icons/bookmarks-fill';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ListScreen() {
   const { colorScheme } = useColorScheme();

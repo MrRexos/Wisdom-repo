@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Alert, Linking } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -12,6 +12,7 @@ import * as Location from 'expo-location';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 

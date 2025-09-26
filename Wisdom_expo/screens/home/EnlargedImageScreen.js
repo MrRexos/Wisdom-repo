@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, FlatList, Image, Dimensions, Animated } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text, FlatList, Image, Dimensions, Animated } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function EnlargedImageScreen() {
   const { colorScheme } = useColorScheme();

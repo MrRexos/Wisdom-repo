@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, StatusBar, Platform, Text, TouchableOpacity, TextInput, Keyboard, Alert } from 'react-native';
+import { View, StatusBar, Platform, Text, TouchableOpacity, TextInput, Keyboard, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
@@ -9,6 +9,7 @@ import EyeIcon from 'react-native-bootstrap-icons/icons/eye';
 import EyeSlashIcon from 'react-native-bootstrap-icons/icons/eye-slash';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getDataLocally } from '../../utils/asyncStorage';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import api from '../../utils/api';
 
 export default function ChangePasswordScreen() {

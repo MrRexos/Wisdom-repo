@@ -1,6 +1,6 @@
 
 import React, {useState} from 'react';
-import {View, StatusBar,SafeAreaView, Platform, Text, Alert, TouchableOpacity, ScrollView} from 'react-native';
+import {View, StatusBar, Platform, Text, Alert, TouchableOpacity, ScrollView} from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
@@ -12,6 +12,7 @@ import {XMarkIcon} from 'react-native-heroicons/outline';
 import NotificationAskWhite from '../../assets/NotificationAskWhite.svg';
 import NotificationAskDark from '../../assets/NotificationAskDark.svg';
 import api, { setTokens } from '../../utils/api.js';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 

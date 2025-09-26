@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, Dimensions, Image} from 'react-native';
+import {View, StatusBar, Platform, TouchableOpacity, Text, Dimensions, Image} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -10,6 +10,7 @@ import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import GoogleLogo from '../../assets/GoogleLogo.svg'
 import AppleLogo from '../../assets/AppleLogo.svg'
 import FacebookLogo from '../../assets/FacebookLogo.svg';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
 // import * as Google from 'expo-auth-session/providers/google';
 // import * as WebBrowser from "expo-web-browser";

@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback } from 'react';
-import { Text, View, Button, Switch, Platform, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { Text, View, Button, Switch, Platform, StatusBar, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { storeDataLocally } from '../../utils/asyncStorage';
 import { useColorScheme } from 'nativewind'
@@ -8,6 +8,7 @@ import '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import {ChevronRightIcon, ChevronLeftIcon} from 'react-native-heroicons/outline';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 

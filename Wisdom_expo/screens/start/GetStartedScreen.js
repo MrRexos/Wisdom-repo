@@ -1,11 +1,12 @@
 
 import React from 'react';
-import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, StatusBar, Platform, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'react-native'
 import '../../languages/i18n';
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { XMarkIcon } from 'react-native-heroicons/outline';
 
 

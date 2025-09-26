@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   View,
   StatusBar,
-  SafeAreaView,
   Platform,
   TouchableOpacity,
   Text,
@@ -26,6 +25,7 @@ import { collection, query, where, orderBy, onSnapshot, doc, updateDoc, arrayUni
 import { SwipeListView } from 'react-native-swipe-list-view';
 import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 import { db } from '../../utils/firebase';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 

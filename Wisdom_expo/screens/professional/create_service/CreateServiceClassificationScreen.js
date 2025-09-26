@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   StatusBar,
-  SafeAreaView,
   Platform,
   TouchableOpacity,
   Text,
@@ -18,6 +17,7 @@ import {
   ChevronUpIcon,
 } from 'react-native-heroicons/outline';
 import Triangle from '../../../assets/triangle';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import api from '../../../utils/api.js';
 
 

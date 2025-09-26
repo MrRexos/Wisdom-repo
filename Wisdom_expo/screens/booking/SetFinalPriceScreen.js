@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { SafeAreaView, StatusBar, Platform, View, Text, TouchableOpacity, TextInput, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
+import { StatusBar, Platform, View, Text, TouchableOpacity, TextInput, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,7 @@ import '../../languages/i18n';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
 import { Edit3 } from 'react-native-feather';
 import api from '../../utils/api';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SetFinalPriceScreen() {
   const { colorScheme } = useColorScheme();

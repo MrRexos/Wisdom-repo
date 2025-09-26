@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, Image, Keyboard, TouchableWithoutFeedback, Alert, Linking } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, Image, Keyboard, TouchableWithoutFeedback, Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../../languages/i18n';
@@ -7,6 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import PersonFill from "react-native-bootstrap-icons/icons/person-fill";
 import eventEmitter from '../../../utils/eventEmitter';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function CollectionMethodDniScreen() {

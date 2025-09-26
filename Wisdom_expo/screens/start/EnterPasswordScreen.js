@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, TextInput, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, StatusBar, Platform, Text, TouchableOpacity, TextInput, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
@@ -7,6 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import EyeIcon from 'react-native-bootstrap-icons/icons/eye';
 import EyeSlashIcon from 'react-native-bootstrap-icons/icons/eye-slash';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 
 export default function EnterPasswordScreen() {

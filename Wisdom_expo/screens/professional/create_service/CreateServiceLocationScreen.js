@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, Image } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../../languages/i18n';
@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Slider from '@react-native-community/slider';
 import SliderThumbDark from '../../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../../assets/SliderThumbLight.png';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   mapMarkerAnchor,
   mapMarkerCenterOffset,
