@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { SafeAreaView as SafeTop } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   View,
   StatusBar,
@@ -580,7 +580,7 @@ export default function ConversationScreen() {
   // ---------------------------------------------------------------------------
   return (
     <View className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]">
-      <SafeTop edges={['top']} className="bg-[#fcfcfc] dark:bg-[#202020] rounded-b-[30px]">
+      <SafeAreaView edges={['top']} className="bg-[#fcfcfc] dark:bg-[#202020] rounded-b-[30px]">
         <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
 
         {/* Header */}
@@ -607,7 +607,7 @@ export default function ConversationScreen() {
             <MoreHorizontal height={24} width={24} color={iconColor} strokeWidth={2} />
           </TouchableOpacity>
         </View>
-      </SafeTop>
+      </SafeAreaView>
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}

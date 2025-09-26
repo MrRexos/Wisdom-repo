@@ -37,7 +37,7 @@ import EnterEmailScreen from '../screens/start/EnterEmailScreen';
 import EnterPasswordScreen from '../screens/start/EnterPasswordScreen';
 import EnterNameScreen from '../screens/start/EnterNameScreen';
 import CreateProfileScreen from '../screens/start/CreateProfileScreen';
-import ForgotPasswordScreen from '../screens/start/ForgotPassword';
+import ForgotPasswordScreen from '../screens/start/ForgotPasswordScreen';
 import HomeScreen from '../screens/home/HomeScreen';
 import NotificationAllowScreen from '../screens/start/NotificationAllowScreen';
 import EmailSendedScreen from '../screens/start/EmailSendedScreen';

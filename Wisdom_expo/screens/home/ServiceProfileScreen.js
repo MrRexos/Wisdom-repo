@@ -34,8 +34,8 @@ import {
   mapMarkerCenterOffset,
   mapMarkerImage,
   mapMarkerStyle,
-import { SafeAreaView } from 'react-native-safe-area-context';
 } from '../../utils/mapMarkerAssets';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 

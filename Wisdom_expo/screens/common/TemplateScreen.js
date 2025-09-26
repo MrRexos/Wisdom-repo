@@ -8,7 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
 
-export default function ConfirmDirectionScreen() {
+export default function TemplateScreen() {
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();

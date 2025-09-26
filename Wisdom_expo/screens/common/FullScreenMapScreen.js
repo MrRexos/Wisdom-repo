@@ -12,6 +12,7 @@ import {
   mapMarkerImage,
   mapMarkerStyle,
 } from '../../utils/mapMarkerAssets';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function FullScreenMapScreen() {
   const navigation = useNavigation();
