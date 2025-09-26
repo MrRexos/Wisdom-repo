@@ -62,7 +62,7 @@ export default function ConversationScreen() {
   const { t } = useTranslation();
   const { colorScheme } = useColorScheme();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
-  const statusUnreadColor = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'; 
+  const statusUnreadColor = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
   const statusReadColorStrong = colorScheme === 'dark' ? '#fcfcfc' : '#323131';
   const flatListRef = useRef(null);
   const attachSheet = useRef(null);
@@ -92,28 +92,11 @@ export default function ConversationScreen() {
   const swipeRefs = useRef({});
   const imageMessages = useMemo(() => messages.filter((m) => m.type === 'image'), [messages]);
 
-  const scrollToBottom = useCallback((animated = false) => {
-    flatListRef.current?.scrollToEnd({ animated });
-  }, []);
-
-  // Escucha teclado para empujar lista y mantener bottom visible
-  useEffect(() => {
-    const show = Keyboard.addListener('keyboardDidShow', () => {
-      setTimeout(() => scrollToBottom(true), 50);
-    });
-    const hide = Keyboard.addListener('keyboardDidHide', () => {
-      // opcional: nada
-    });
-    return () => {
-      show.remove();
-      hide.remove();
-    };
-  }, [scrollToBottom]);
+  const scrollToBottom = useCallback(() => { }, []);
 
   // Autoscroll al enfocar pantalla
   useEffect(() => {
     const unsub = navigation.addListener('focus', () => {
-      requestAnimationFrame(() => scrollToBottom(false));
     });
     return unsub;
   }, [navigation, scrollToBottom]);
@@ -128,7 +111,7 @@ export default function ConversationScreen() {
       setCurrentUser(user);
       const q = query(
         collection(db, 'conversations', conversationId, 'messages'),
-        orderBy('createdAt')
+        orderBy('createdAt', 'desc')
       );
       unsub = onSnapshot(q, async (snap) => {
         const raw = snap.docs.map((d) => {
@@ -139,17 +122,32 @@ export default function ConversationScreen() {
             ...msg,
           };
         });
-        const processed = [];
-        let lastDate = null;
-        raw.forEach((m) => {
-          const dateStr = m.createdAt?.seconds ? new Date(m.createdAt.seconds * 1000).toDateString() : null;
-          if (dateStr && dateStr !== lastDate) {
-            processed.push({ id: `label-${m.id}`, type: 'label', text: dateStr });
-            lastDate = dateStr;
-          }
-          processed.push(m);
-        });
+        const processed = []; 
+        for (let i = 0; i < raw.length; i++) { 
+          const m = raw[i]; 
+          const prev = raw[i - 1]; // más nuevo (visual abajo) 
+          const next = raw[i + 1]; // más antiguo (visual arriba) 
+ 
+          // Extremo inferior visual de la racha (donde debe ir hora y check) 
+          const tail = !prev || prev.senderId !== m.senderId; 
+          processed.push({ ...m, _isTail: tail }); 
+ 
+          // Insertar la etiqueta de FECHA al terminar el bloque de ese día. 
+          const currDate = m.createdAt?.seconds 
+            ? new Date(m.createdAt.seconds * 1000).toDateString() 
+            : null; 
+          const nextDate = next?.createdAt?.seconds 
+            ? new Date(next.createdAt.seconds * 1000).toDateString() 
+            : null; 
+          if (currDate && currDate !== nextDate) { 
+            // Al ir después en el array (desc) y la lista estar invertida, 
+            // esta etiqueta se verá ARRIBA del bloque del día. 
+            processed.push({ id: `label-${m.id}`, type: 'label', text: currDate }); 
+          } 
+        } 
         setMessages(processed);
+
+        console.log(processed);
 
         // Marca como leído lo que no es tuyo
         raw.forEach(async (m) => {
@@ -159,8 +157,6 @@ export default function ConversationScreen() {
         });
         await updateDoc(doc(db, 'conversations', conversationId), { readBy: arrayUnion(user.id) });
 
-        // Tras pintar, lleva al final sin animación para evitar glitches
-        requestAnimationFrame(() => scrollToBottom(false));
       });
     };
     init();
@@ -292,7 +288,6 @@ export default function ConversationScreen() {
       }
       setText('');
       setReplyTo(null);
-      requestAnimationFrame(() => scrollToBottom(true));
     } catch (err) {
       console.error('Error enviando mensaje', err);
     } finally {
@@ -322,7 +317,6 @@ export default function ConversationScreen() {
       const asset = result.assets[0];
       setAttachment({ type: 'image', uri: asset.uri, name: asset.fileName || 'image.jpg' });
       attachSheet.current.close();
-      setTimeout(() => scrollToBottom(true), 0);
     }
   };
 
@@ -332,7 +326,6 @@ export default function ConversationScreen() {
       const asset = result.assets?.[0] || result;
       setAttachment({ type: 'file', uri: asset.uri, name: asset.name });
       attachSheet.current.close();
-      setTimeout(() => scrollToBottom(true), 0);
     }
   };
 
@@ -348,7 +341,6 @@ export default function ConversationScreen() {
     setText(selectedMsg.text);
     setEditingId(selectedMsg.id);
     msgSheet.current.close();
-    setTimeout(() => scrollToBottom(true), 0);
   };
 
   const handleCopyMessage = async () => {
@@ -379,14 +371,14 @@ export default function ConversationScreen() {
       );
     }
 
-    const lastOfStreak = isLastOfStreak(messages, index);
+    const tail = item._isTail;
     const LeftStub = () => <View style={{ width: 64 }} />;
     const RightStub = () => <View style={{ width: 64 }} />; // ▶️ ahora también muestra zona a la derecha
 
     const common = item.fromMe
       ? 'self-end bg-[#FCFCFC] dark:bg-[#706f6e]'
       : 'self-start bg-[#D4D4D3] dark:bg-[#474646]';
-    const corner = item.fromMe ? (lastOfStreak ? ' rounded-br' : '') : lastOfStreak ? ' rounded-bl' : '';
+    const corner = item.fromMe ? (tail ? ' rounded-br' : '') : tail ? ' rounded-bl' : '';
     const fromMeStyles = common + corner;
     const textColor = 'text-[15px] font-medium text-[#515150] dark:text-[#d4d4d3]';
 
@@ -465,7 +457,7 @@ export default function ConversationScreen() {
             }}
           >
             {content}
-            {lastOfStreak && renderStatusTime()}
+            {tail && renderStatusTime()}
           </Pressable>
         </Swipeable>
       );
@@ -521,7 +513,7 @@ export default function ConversationScreen() {
             }}
           >
             {content}
-            {lastOfStreak && renderStatusTime()}
+            {tail && renderStatusTime()}
           </Pressable>
         </Swipeable>
       );
@@ -569,7 +561,7 @@ export default function ConversationScreen() {
           }}
         >
           {content}
-          {lastOfStreak && renderStatusTime()}
+          {tail && renderStatusTime()}
         </Pressable>
       </Swipeable>
     );
@@ -622,10 +614,12 @@ export default function ConversationScreen() {
             keyExtractor={(item) => item.id}
             renderItem={renderMessage}
             contentContainerStyle={{ padding: 16 }}
+            inverted
+            maintainVisibleContentPosition={{ minIndexForVisible: 0, autoscrollToTopThreshold: 20 }}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
-            onLayout={() => requestAnimationFrame(() => scrollToBottom(false))}
-            onContentSizeChange={() => requestAnimationFrame(() => scrollToBottom(false))}
+            onLayout={undefined}
+            onContentSizeChange={undefined}
             ListFooterComponent={<View style={{ height: 4 }} />}
             initialNumToRender={20}
             windowSize={10}

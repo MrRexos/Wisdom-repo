@@ -38,7 +38,7 @@ export default function ChatImageViewerScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      
+
       <View className="px-6 pt-3 pb-3 justify-center items-center">
 
         <View className="mb-6 w-full flex-row justify-between items-center">
@@ -49,7 +49,7 @@ export default function ChatImageViewerScreen() {
 
           <View className="flex-[2px] justify-center items-center  ">
             <Text className='font-inter-bold text-[17px] text-[#444343] dark:text-[#f2f2f2]'>
-                {t('images')}
+              {t('images')}
             </Text>
           </View>
 
