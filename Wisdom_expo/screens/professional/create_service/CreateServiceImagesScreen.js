@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, ScrollView, Image, StyleSheet, Alert, Linking } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text, ScrollView, Image, StyleSheet, Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../../languages/i18n';
 import { useColorScheme } from 'nativewind';
@@ -7,6 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { XMarkIcon } from 'react-native-heroicons/outline'; // Asegúrate de importar PlusIcon o el ícono que prefieras
 import AddMainImage from '../../../assets/AddMainImage';
 import AddServiceImages from '../../../assets/AddServiceImages';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 
 const patternImages = (images, colorScheme, onRemoveImage) => {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, StatusBar, SafeAreaView, ScrollView, TouchableOpacity, Platform, RefreshControl } from 'react-native';
+import { Text, View, StatusBar, ScrollView, TouchableOpacity, Platform, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
@@ -9,6 +9,7 @@ import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Check } from "react-native-feather";
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 

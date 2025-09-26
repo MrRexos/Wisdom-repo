@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, ScrollView, Image} from 'react-native';
+import {View, StatusBar, Platform, TouchableOpacity, Text, ScrollView, Image} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../../languages/i18n';
@@ -17,6 +17,7 @@ import {
   mapMarkerCenterOffset,
   mapMarkerImage,
   mapMarkerStyle,
+import { SafeAreaView } from 'react-native-safe-area-context';
 } from '../../../utils/mapMarkerAssets';
 
 

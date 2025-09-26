@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, ScrollView, FlatList, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, ScrollView, FlatList, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../../languages/i18n';
@@ -7,6 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon, ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
 import Triangle from '../../../assets/triangle';
 import { formatE164IfMissing } from '../../../utils/phone';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CollectionMethodDirectionScreen() {
   const { colorScheme } = useColorScheme();

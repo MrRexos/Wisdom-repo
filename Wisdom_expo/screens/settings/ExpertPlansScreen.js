@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef} from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image} from 'react-native';
+import {View, StatusBar, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -10,6 +10,7 @@ import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRigh
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import api from '../../utils/api.js';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function ExpertPlansScreen() {

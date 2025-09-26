@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, SafeAreaView, Platform, StatusBar, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, Platform, StatusBar, TouchableOpacity, TextInput, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -7,6 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
 import api from '../../utils/api.js';
 import { getDataLocally } from '../../utils/asyncStorage';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function AddReviewScreen() {
   const { colorScheme } = useColorScheme();

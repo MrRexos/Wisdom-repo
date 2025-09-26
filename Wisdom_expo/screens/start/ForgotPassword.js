@@ -1,7 +1,7 @@
 
 
 import React, {useState } from 'react';
-import {View, StatusBar, SafeAreaView, Platform,Text, TouchableOpacity, TextInput, KeyboardAvoidingView, Animated} from 'react-native';
+import {View, StatusBar, Platform,Text, TouchableOpacity, TextInput, KeyboardAvoidingView, Animated} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
 import WisdomLogo from '../../assets/wisdomLogo.tsx';
 import api from '../../utils/api';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function ForgotPasswordScreen() {

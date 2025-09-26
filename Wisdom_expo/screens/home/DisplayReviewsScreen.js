@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, FlatList, Image } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text, FlatList, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
 
 export default function DisplayReviewsScreen() {

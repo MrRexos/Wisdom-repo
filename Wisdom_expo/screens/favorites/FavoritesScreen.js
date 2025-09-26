@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, ScrollView, FlatList, Alert, Image, RefreshControl } from 'react-native';
+import { View, StatusBar, Platform, Text, TouchableOpacity, ScrollView, FlatList, Alert, Image, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -9,6 +9,7 @@ import { BookmarkIcon } from 'react-native-heroicons/solid';
 import { getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { formatDistanceToNowStrict } from 'date-fns';
 
 export default function FavoritesScreen() {

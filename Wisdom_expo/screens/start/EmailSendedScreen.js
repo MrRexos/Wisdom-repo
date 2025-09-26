@@ -1,12 +1,13 @@
 
 
 import React from 'react';
-import {View, StatusBar, SafeAreaView, Platform, Text, TouchableOpacity, Linking} from 'react-native';
+import {View, StatusBar, Platform, Text, TouchableOpacity, Linking} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 
 

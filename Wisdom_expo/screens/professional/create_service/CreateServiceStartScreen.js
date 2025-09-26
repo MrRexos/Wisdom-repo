@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react'
-import {View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text} from 'react-native';
+import {View, StatusBar, Platform, TouchableOpacity, Text} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../../languages/i18n';
@@ -7,6 +7,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { storeDataLocally, getDataLocally } from '../../../utils/asyncStorage';
 
 import {XMarkIcon} from 'react-native-heroicons/outline';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 

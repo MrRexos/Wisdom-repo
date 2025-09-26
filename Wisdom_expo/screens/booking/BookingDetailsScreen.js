@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import * as Localization from 'expo-localization';
-import { View, Text, SafeAreaView, Platform, StatusBar, TouchableOpacity, TextInput, ScrollView, Alert, Image, RefreshControl } from 'react-native';
+import { View, Text, Platform, StatusBar, TouchableOpacity, TextInput, ScrollView, Alert, Image, RefreshControl } from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
@@ -19,6 +19,7 @@ import { setDoc, doc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import ModalMessage from '../../components/ModalMessage';
 
 export default function BookingDetailsScreen() {

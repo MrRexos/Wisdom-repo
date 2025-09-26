@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -9,6 +9,7 @@ import api from '../../utils/api.js';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { Buffer } from 'buffer';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function ConfirmPaymentScreen() {

@@ -1,6 +1,6 @@
 
 import React, {useState } from 'react';
-import {View, StatusBar,SafeAreaView, Platform,Text, TouchableOpacity, TextInput, KeyboardAvoidingView, Animated, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import {View, StatusBar, Platform,Text, TouchableOpacity, TextInput, KeyboardAvoidingView, Animated, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -8,6 +8,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 

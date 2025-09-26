@@ -1,9 +1,10 @@
 
 import React, { useEffect } from 'react'
-import {View, StatusBar, SafeAreaView, Platform} from 'react-native';
+import {View, StatusBar, Platform} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
 

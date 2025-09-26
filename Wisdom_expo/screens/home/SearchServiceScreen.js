@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StatusBar, SafeAreaView, Platform, TouchableOpacity, Text, TextInput, FlatList, StyleSheet } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, FlatList, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -9,6 +9,7 @@ import { Search, Clock, MapPin } from "react-native-feather";
 import * as Location from 'expo-location';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SearchServiceScreen() {
 
