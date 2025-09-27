@@ -15,8 +15,8 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useColorScheme, TailwindProvider } from 'nativewind';
 import "./global.css"
 
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_51Rg2dQP10ZOJm6Hd0zRenwmVfliHq3DqcvM8axw3tK1N2M5zIKuoOcwDLgsely52VYPsl51QHaxsS0n2Y66GCknJ00Y0xoUNXS';
-
+const STRIPE_PUBLISHABLE_KEY = 'pk_live_51Q6eHSP5JxrowksKBSbTF99MTGHyTaFq1WNsDMakQCmTlJgetqqycyGnDLaaI2ASO7U6WqucQJQpW87JAie0XpXn00u1jtdcEW';
+//change to .env in future
 
 
 export default function App() {
