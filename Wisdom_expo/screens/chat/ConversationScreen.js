@@ -15,8 +15,9 @@ import {
   Alert,
   ActivityIndicator,
   Keyboard,
-  FlashList 
 } from 'react-native';
+import { Image as ExpoImage } from 'expo-image';
+import { FlashList } from '@shopify/flash-list';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import RBSheet from 'react-native-raw-bottom-sheet';
@@ -32,7 +33,7 @@ import {
   XMarkIcon,
   DocumentDuplicateIcon,
 } from 'react-native-heroicons/outline';
-import { MoreHorizontal, Image as ImageIcon, Folder, File, CornerUpLeft } from 'react-native-feather';
+import { MoreHorizontal, Image as ImageIcon, Folder, Check, Edit2, Trash2, File, CornerUpLeft } from "react-native-feather";
 import { useTranslation } from 'react-i18next';
 import {
   collection,
@@ -84,6 +85,7 @@ export default function ConversationScreen() {
   const [editingId, setEditingId] = useState(null);
   const [replyTo, setReplyTo] = useState(null);
   const [isSending, setIsSending] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const otherUserId = participants?.find((id) => id !== userId);
   const msgSheet = useRef(null);
   const convSheet = useRef(null);
@@ -135,29 +137,29 @@ export default function ConversationScreen() {
             ...msg,
           };
         });
-        const processed = []; 
-        for (let i = 0; i < raw.length; i++) { 
-          const m = raw[i]; 
+        const processed = [];
+        for (let i = 0; i < raw.length; i++) {
+          const m = raw[i];
           const prev = raw[i - 1]; // más nuevo (visual abajo) 
           const next = raw[i + 1]; // más antiguo (visual arriba) 
- 
+
           // Extremo inferior visual de la racha (donde debe ir hora y check) 
-          const tail = !prev || prev.senderId !== m.senderId; 
-          processed.push({ ...m, _isTail: tail }); 
- 
+          const tail = !prev || prev.senderId !== m.senderId;
+          processed.push({ ...m, _isTail: tail });
+
           // Insertar la etiqueta de FECHA al terminar el bloque de ese día. 
-          const currDate = m.createdAt?.seconds 
-            ? new Date(m.createdAt.seconds * 1000).toDateString() 
-            : null; 
-          const nextDate = next?.createdAt?.seconds 
-            ? new Date(next.createdAt.seconds * 1000).toDateString() 
-            : null; 
-          if (currDate && currDate !== nextDate) { 
+          const currDate = m.createdAt?.seconds
+            ? new Date(m.createdAt.seconds * 1000).toDateString()
+            : null;
+          const nextDate = next?.createdAt?.seconds
+            ? new Date(next.createdAt.seconds * 1000).toDateString()
+            : null;
+          if (currDate && currDate !== nextDate) {
             // Al ir después en el array (desc) y la lista estar invertida, 
             // esta etiqueta se verá ARRIBA del bloque del día. 
-            processed.push({ id: `label-${m.id}`, type: 'label', text: currDate }); 
-          } 
-        } 
+            processed.push({ id: `label-${m.id}`, type: 'label', text: currDate });
+          }
+        }
         setMessages(processed);
 
         if (initialLoadRef.current) {
@@ -225,7 +227,7 @@ export default function ConversationScreen() {
   // • ACTIONS
   // ---------------------------------------------------------------------------
   const handleSend = async () => {
-    if (isSending) return; // 🔒 evita taps repetidos
+    if (isSending) return; 
 
     const trimmed = text.trim();
 
@@ -249,69 +251,72 @@ export default function ConversationScreen() {
       })()
       : null;
 
-    try {
-      // Si hay adjunto, bloqueamos el botón hasta terminar la subida
-      if (attachment) {
-        setIsSending(true);
-        const filePath = `chat/${conversationId}/${Date.now()}_${attachment.name}`;
-        const url = await uploadFile(attachment.uri, filePath, attachment.type);
-
-        await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
-          senderId: userId,
-          type: attachment.type.startsWith('image') ? 'image' : 'file',
-          uri: url,
-          name: attachment.name,
-          createdAt: serverTimestamp(),
-          replyTo: replyData,
-          read: false,
-        });
-
-        await updateDoc(doc(db, 'conversations', conversationId), {
-          participants,
-          name,
-          lastMessage: attachment.type.startsWith('image') ? t('image') : t('file'),
-          updatedAt: serverTimestamp(),
-          lastMessageSenderId: userId,
-          readBy: arrayUnion(userId),
-        });
-
-        setAttachment(null);
-      } else if (trimmed) {
-        setIsSending(true); // también bloquea para evitar spam de textos seguidos por error
-        const newMsg = {
-          senderId: userId,
-          type: 'text',
-          text: trimmed,
-          createdAt: serverTimestamp(),
-          replyTo: replyData,
-          read: false,
-        };
-        await addDoc(collection(db, 'conversations', conversationId, 'messages'), newMsg);
-        await setDoc(
-          doc(db, 'conversations', conversationId),
-          {
+      try {
+        if (attachment) {
+          setIsSending(true);
+          setIsUploading(true); // 🔹 spinner solo para adjuntos
+    
+          const filePath = `chat/${conversationId}/${Date.now()}_${attachment.name}`;
+          const url = await uploadFile(attachment.uri, filePath, attachment.type);
+    
+          await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
+            senderId: userId,
+            type: attachment.type.startsWith('image') ? 'image' : 'file',
+            uri: url,
+            name: attachment.name,
+            createdAt: serverTimestamp(),
+            replyTo: replyData,
+            read: false,
+          });
+    
+          await updateDoc(doc(db, 'conversations', conversationId), {
             participants,
             name,
-            lastMessage: trimmed,
+            lastMessage: attachment.type.startsWith('image') ? t('image') : t('file'),
             updatedAt: serverTimestamp(),
             lastMessageSenderId: userId,
-            readBy: [userId],
-            deletedFor: arrayRemove(userId),
-          },
-          { merge: true }
-        );
-      } else {
-        return;
+            readBy: arrayUnion(userId),
+          });
+    
+          setAttachment(null);
+        } else if (trimmed) {
+          setIsSending(true); // 🔒 evita spam de taps en texto, pero sin spinner
+          const newMsg = {
+            senderId: userId,
+            type: 'text',
+            text: trimmed,
+            createdAt: serverTimestamp(),
+            replyTo: replyData,
+            read: false,
+          };
+          await addDoc(collection(db, 'conversations', conversationId, 'messages'), newMsg);
+          await setDoc(
+            doc(db, 'conversations', conversationId),
+            {
+              participants,
+              name,
+              lastMessage: trimmed,
+              updatedAt: serverTimestamp(),
+              lastMessageSenderId: userId,
+              readBy: [userId],
+              deletedFor: arrayRemove(userId),
+            },
+            { merge: true }
+          );
+        } else {
+          return;
+        }
+    
+        setText('');
+        setReplyTo(null);
+        requestAnimationFrame(() => scrollToBottom({ animated: true }));
+      } catch (err) {
+        console.error('Error enviando mensaje', err);
+      } finally {
+        setIsUploading(false); // 🔹 apaga spinner de adjuntos
+        setIsSending(false);   // 🔒 libera el bloqueo de envío
       }
-      setText('');
-      setReplyTo(null);
-      requestAnimationFrame(() => scrollToBottom({ animated: true }));
-    } catch (err) {
-      console.error('Error enviando mensaje', err);
-    } finally {
-      setIsSending(false);
-    }
-  };
+    };
 
   const handleImagePick = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -715,10 +720,9 @@ export default function ConversationScreen() {
               <TouchableOpacity
                 onPress={handleSend}
                 disabled={isSending || (!text.trim() && !attachment)}
-                className={`h-8 w-8 my-2 rounded-full items-center justify-center ${text.trim() || attachment ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#d4d4d3] dark:bg-[#474646]'
-                  } ${isSending ? 'opacity-70' : ''}`}
+                className={`h-8 w-8 my-2 rounded-full items-center justify-center ${text.trim() || attachment ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#d4d4d3] dark:bg-[#474646]'} ${isSending ? 'opacity-70' : ''}`}
               >
-                {isSending ? (
+                {isUploading ? (
                   <ActivityIndicator size="small" color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} />
                 ) : (
                   <ArrowUpIcon
@@ -727,9 +731,7 @@ export default function ConversationScreen() {
                     strokeWidth={3}
                     color={
                       text.trim() || attachment
-                        ? colorScheme === 'dark'
-                          ? '#1f1f1f'
-                          : '#ffffff'
+                        ? colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'
                         : '#ffffff'
                     }
                   />
@@ -789,12 +791,12 @@ export default function ConversationScreen() {
           {selectedMsg?.fromMe && (
             <>
               <TouchableOpacity onPress={handleDeleteMessage} className="pb-6 flex-row justify-start items-center ">
-                <MoreHorizontal height={0} width={0} color={'transparent'} />{/* spacer fix on iOS ripple */}
-                <Text className="ml-0 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_message')}</Text>
+                <Trash2 height={23} width={23} color={"#FF633E"} strokeWidth={2} />
+                <Text className="ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_message')}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={handleEditMessage} className="pt-1 pb-6 flex-row justify-start items-center ">
-                <MoreHorizontal height={0} width={0} color={'transparent'} />
-                <Text className="ml-0 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit')}</Text>
+                <Edit2 height={23} width={23} color={iconColor} strokeWidth={2} />
+                <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit')}</Text>
               </TouchableOpacity>
             </>
           )}
@@ -833,7 +835,8 @@ export default function ConversationScreen() {
             className="py-2 flex-row justify-start items-center "
           >
             <MoreHorizontal height={0} width={0} color={'transparent'} />
-            <Text className="ml-0 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_chat')}</Text>
+            <Trash2 height={23} width={23} color={"#FF633E"} strokeWidth={2} />
+            <Text className="ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_chat')}</Text>
           </TouchableOpacity>
         </View>
       </RBSheet>
