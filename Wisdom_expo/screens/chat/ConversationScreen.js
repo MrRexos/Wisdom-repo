@@ -15,6 +15,7 @@ import {
   Alert,
   ActivityIndicator,
   Keyboard,
+  FlashList 
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -91,12 +92,24 @@ export default function ConversationScreen() {
     idx === msgs.length - 1 || msgs[idx].fromMe !== msgs[idx + 1].fromMe;
   const swipeRefs = useRef({});
   const imageMessages = useMemo(() => messages.filter((m) => m.type === 'image'), [messages]);
+  const initialLoadRef = useRef(true);
+  const [shouldMaintainPosition, setShouldMaintainPosition] = useState(false);
 
-  const scrollToBottom = useCallback(() => { }, []);
+  useEffect(() => {
+    initialLoadRef.current = true;
+    setShouldMaintainPosition(false);
+  }, [conversationId]);
+
+  const scrollToBottom = useCallback((options = {}) => {
+    if (!flatListRef.current) return;
+    const { animated = false } = options;
+    flatListRef.current.scrollToOffset({ offset: 0, animated });
+  }, []);
 
   // Autoscroll al enfocar pantalla
   useEffect(() => {
     const unsub = navigation.addListener('focus', () => {
+      scrollToBottom({ animated: false });
     });
     return unsub;
   }, [navigation, scrollToBottom]);
@@ -147,7 +160,11 @@ export default function ConversationScreen() {
         } 
         setMessages(processed);
 
-        console.log(processed);
+        if (initialLoadRef.current) {
+          initialLoadRef.current = false;
+          setShouldMaintainPosition(true);
+          requestAnimationFrame(() => scrollToBottom({ animated: false }));
+        }
 
         // Marca como leído lo que no es tuyo
         raw.forEach(async (m) => {
@@ -288,6 +305,7 @@ export default function ConversationScreen() {
       }
       setText('');
       setReplyTo(null);
+      requestAnimationFrame(() => scrollToBottom({ animated: true }));
     } catch (err) {
       console.error('Error enviando mensaje', err);
     } finally {
@@ -348,6 +366,7 @@ export default function ConversationScreen() {
     await Clipboard.setStringAsync(selectedMsg.text);
     msgSheet.current.close();
   };
+
 
   const handleReplyMessage = () => {
     if (!selectedMsg) return;
@@ -615,7 +634,9 @@ export default function ConversationScreen() {
             renderItem={renderMessage}
             contentContainerStyle={{ padding: 16 }}
             inverted
-            maintainVisibleContentPosition={{ minIndexForVisible: 0, autoscrollToTopThreshold: 20 }}
+            maintainVisibleContentPosition={
+              shouldMaintainPosition ? { minIndexForVisible: 0, autoscrollToTopThreshold: 20 } : undefined
+            }
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             onLayout={undefined}
