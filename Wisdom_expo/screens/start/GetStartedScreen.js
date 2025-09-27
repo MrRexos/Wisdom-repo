@@ -18,7 +18,7 @@ export default function GetStartedScreen() {
     const windowHeight = Dimensions.get('window').height;
 
     return (
-        <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-neutral-700 justify-between'>
+        <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-neutral-700 justify-between'>
             <Image source={require('../../assets/LoadChair.png')} style={{ height: windowHeight, width: windowWidth, position: 'absolute' }} />
             <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
             <View>
