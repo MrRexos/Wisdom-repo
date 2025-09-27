@@ -596,7 +596,7 @@ export default function ConversationScreen() {
   // ---------------------------------------------------------------------------
   return (
     <View className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]">
-      <SafeAreaView edges={['top', 'left', 'right']} className="bg-[#fcfcfc] dark:bg-[#202020] rounded-b-[30px]">
+      <SafeAreaView className="bg-[#fcfcfc] dark:bg-[#202020] rounded-b-[30px]">
         <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
 
         {/* Header */}

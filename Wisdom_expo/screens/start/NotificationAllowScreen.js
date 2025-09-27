@@ -187,7 +187,7 @@ export default function NotificationAllowScreen() {
   }
   
     return (
-      <SafeAreaView edges={['top', 'left', 'right']} style={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+      <SafeAreaView style={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         <View className="px-5 py-3 w-full flex-1 justify-between">
           <View className="flex-row justify-between">

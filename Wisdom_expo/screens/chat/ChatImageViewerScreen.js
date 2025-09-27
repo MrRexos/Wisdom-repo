@@ -36,7 +36,7 @@ export default function ChatImageViewerScreen() {
   const getScale = (idx) => (idx === currentIndex ? 1 : 0.85);
 
   return (
-    <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
+    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
       <View className="px-6 pt-3 pb-3 justify-center items-center">
