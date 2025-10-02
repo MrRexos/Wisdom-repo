@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { View, StatusBar, Platform, TouchableWithoutFeedback, TouchableOpacity, Keyboard, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Alert, RefreshControl, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -114,14 +113,45 @@ export default function ServiceProfileScreen() {
     { code: 'other', textKey: 'report_reason_other' },
   ];
 
+
   const openReportSheet = () => {
     setReportStep(1);
     setReportReason(null);
     setReportOther('');
     setReportDescription('');
     setReportAttachments([]);
+    setReportSheetHeight(520);
+    setShowAttachOptions(false);
     reportSheet.current.open();
   };
+
+  useEffect(() => {
+    if (showAttachOptions) {
+      setReportSheetHeight(260);
+      return;
+    }
+
+    if (reportStep === 1) {
+      setReportSheetHeight(520);
+      return;
+    }
+
+    if (reportStep === 2) {
+      const baseHeight = 420;
+      const attachmentsPerRow = 3;
+      const attachmentRows = Math.ceil(reportAttachments.length / attachmentsPerRow);
+      const extraHeight = attachmentRows > 0 ? attachmentRows * 90 : 0;
+      setReportSheetHeight(baseHeight + extraHeight);
+      return;
+    }
+
+    if (reportStep === 3) {
+      setReportSheetHeight(360);
+      return;
+    }
+
+    setReportSheetHeight(320);
+  }, [reportStep, showAttachOptions, reportAttachments.length]);
 
   const handleImagePick = async () => {
     if (reportAttachments.length >= 3) return;
@@ -296,7 +326,7 @@ export default function ServiceProfileScreen() {
             )}
           </ScrollView>
           <TouchableOpacity
-            onPress={() => { setReportSheetHeight(200); setReportStep(2); }}
+            onPress={() => setReportStep(2)}
             disabled={!reportReason || (reportReason.code === 'other' && !reportOther.trim())}
             className={`mt-3 mb-10 h-[52px] w-full rounded-full items-center justify-center ${!reportReason || (reportReason.code === 'other' && !reportOther.trim()) ? 'bg-[#d4d4d3] dark:bg-[#474646]' : 'bg-[#323131] dark:bg-[#fcfcfc]'}`}
           >
