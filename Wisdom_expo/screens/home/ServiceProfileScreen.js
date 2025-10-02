@@ -7,7 +7,7 @@ import '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon, GlobeAltIcon, GlobeEuropeAfricaIcon, XCircleIcon } from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import { Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X, Check, Maximize2, File, Image as ImageIcon, Folder } from "react-native-feather";
+import { Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X, Check, Maximize2, File, Image as ImageIcon, Folder, AlertTriangle } from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import HeartFill from "../../assets/HeartFill.tsx"
@@ -286,7 +286,7 @@ export default function ServiceProfileScreen() {
             ))}
             {reportReason?.code === 'other' && (
               <TextInput
-                className="mt-2 mb-4 border border-[#e0e0e0] dark:border-[#3d3d3d] rounded-lg p-2 text-[#444343] dark:text-[#f2f2f2]"
+                className="mt-2 mb-4 font-inter-medium border border-[#e0e0e0] dark:border-[#3d3d3d] rounded-lg p-2 text-[#444343] dark:text-[#f2f2f2] bg-[#f2f2f2] dark:bg-[#3d3d3d]"
                 placeholder={t('report_other_placeholder')}
                 placeholderTextColor={placeHolderTextColorChange}
                 value={reportOther}
@@ -298,7 +298,7 @@ export default function ServiceProfileScreen() {
           <TouchableOpacity
             onPress={() => { setReportSheetHeight(200); setReportStep(2); }}
             disabled={!reportReason || (reportReason.code === 'other' && !reportOther.trim())}
-            className={`mt-3 mb-5 h-12 rounded-full items-center justify-center ${!reportReason || (reportReason.code === 'other' && !reportOther.trim()) ? 'bg-[#d4d4d3] dark:bg-[#474646]' : 'bg-[#323131] dark:bg-[#fcfcfc]'}`}
+            className={`mt-3 mb-10 h-[52px] w-full rounded-full items-center justify-center ${!reportReason || (reportReason.code === 'other' && !reportOther.trim()) ? 'bg-[#d4d4d3] dark:bg-[#474646]' : 'bg-[#323131] dark:bg-[#fcfcfc]'}`}
           >
             <Text className={`font-inter-semibold text-[15px] ${!reportReason || (reportReason.code === 'other' && !reportOther.trim()) ? 'text-[#fcfcfc] dark:text-[#323131]' : 'text-[#fcfcfc] dark:text-[#323131]'}`}>{t('report_next')}</Text>
           </TouchableOpacity>
@@ -363,7 +363,7 @@ export default function ServiceProfileScreen() {
           <TouchableOpacity
             onPress={() => setReportStep(3)}
             disabled={reportDescription.trim().length < 20}
-            className={`mt-auto mb-5 h-12 rounded-full items-center justify-center ${reportDescription.trim().length < 20 ? 'bg-[#d4d4d3] dark:bg-[#474646]' : 'bg-[#323131] dark:bg-[#fcfcfc]'}`}
+            className={`mt-auto mb-10 h-[52px] w-full rounded-full items-center justify-center ${reportDescription.trim().length < 20 ? 'bg-[#d4d4d3] dark:bg-[#474646]' : 'bg-[#323131] dark:bg-[#fcfcfc]'}`}
           >
             <Text className={`font-inter-semibold text-[15px] ${reportDescription.trim().length < 20 ? 'text-[#fcfcfc] dark:text-[#323131]' : 'text-[#fcfcfc] dark:text-[#323131]'}`}>{t('report_next')}</Text>
           </TouchableOpacity>
@@ -381,10 +381,13 @@ export default function ServiceProfileScreen() {
             </View>
             <View className="flex-1" />
           </View>
-          <Text className="text-center font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2] mt-10 mb-6">{t('report_warning')}</Text>
+          <View className="mt-3 flex-row justify-center items-center">
+            <AlertTriangle height={70} width={70} color={'#979797'} strokeWidth={1.3} />
+          </View>
+          <Text className="text-center font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2] mt-6 mb-6">{t('report_warning')}</Text>
           <TouchableOpacity
             onPress={submitReport}
-            className="mt-auto mb-5 h-12 rounded-full items-center justify-center bg-[#323131] dark:bg-[#fcfcfc]"
+            className="mt-auto w-full mb-10 h-[52px] rounded-full items-center justify-center bg-[#323131] dark:bg-[#fcfcfc]"
           >
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('report_send')}</Text>
           </TouchableOpacity>
@@ -393,10 +396,12 @@ export default function ServiceProfileScreen() {
     }
     return (
       <View className="flex-1 justify-center items-center px-7">
-        <Text className="font-inter-medium text-[16px] text-center text-[#444343] dark:text-[#f2f2f2] mb-6">{t('report_success')}</Text>
+        <View className="flex-1 justify-center items-center">
+          <Text className=" font-inter-bold text-[22px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('report_success')}</Text>
+        </View>
         <TouchableOpacity
           onPress={() => reportSheet.current.close()}
-          className="h-12 w-40 rounded-full items-center justify-center bg-[#323131] dark:bg-[#fcfcfc]"
+          className="mb-10 h-[52px] w-full rounded-full items-center justify-center bg-[#323131] dark:bg-[#fcfcfc]"
         >
           <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('ok')}</Text>
         </TouchableOpacity>

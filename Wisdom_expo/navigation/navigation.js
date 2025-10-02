@@ -299,6 +299,7 @@ function TabNavigator({ route }) {
       {showTabs ? (
         <Tab.Navigator initialRouteName="Home" screenOptions={({ route }) => ({
           headerShown: false,
+          tabBarLabelPosition: 'below-icon',
           tabBarIcon: ({ focused, color, size }) => {
             let IconName;
             switch (route.name) {
@@ -352,20 +353,35 @@ function TabNavigator({ route }) {
           tabBarLabelStyle: {
             paddingTop: 10,
             fontSize: 10,
-            fontFamily: 'inter-medium'
+            fontFamily: 'inter-medium',
+            textAlign: 'center',
           },
         })}
         >
           <Tab.Screen
             name="Home"
             component={HomeStackNavigator}
+            options={{ tabBarLabel: t('home') }}
           />
-          <Tab.Screen name="Favorites" component={FavoritesStackNavigator} />
-          <Tab.Screen name="Services" component={ServicesStackNavigator} />
-          <Tab.Screen name="Chat" component={ChatStackNavigator} />
+          <Tab.Screen
+            name="Favorites"
+            component={FavoritesStackNavigator}
+            options={{ tabBarLabel: t('favorites') }}
+          />
+          <Tab.Screen
+            name="Services"
+            component={ServicesStackNavigator}
+            options={{ tabBarLabel: t('services') }}
+          />
+          <Tab.Screen
+            name="Chat"
+            component={ChatStackNavigator}
+            options={{ tabBarLabel: t('chat') }}
+          />
           <Tab.Screen
             name="Settings"
             component={SettingsStackNavigator}
+            options={{ tabBarLabel: t('settings') }}
             listeners={{
               tabPress: (e) => {
                 const now = Date.now();
@@ -505,14 +521,30 @@ function ProTabNavigator({ route }) {
       },
     })}
     >
-      <Tab.Screen name="Today" component={TodayProScreen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Tab.Screen name="Calendar" component={CalendarProScreen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Tab.Screen name="Listings" component={ListingsProScreen} options={{ animation: 'none', gestureEnabled: false }} />
-      <Tab.Screen name="Chat" component={ChatStackNavigator} options={{ animation: 'none', gestureEnabled: false }} />
+      <Tab.Screen
+        name="Today"
+        component={TodayProScreen}
+        options={{ animation: 'none', gestureEnabled: false, tabBarLabel: t('today') }}
+      />
+      <Tab.Screen
+        name="Calendar"
+        component={CalendarProScreen}
+        options={{ animation: 'none', gestureEnabled: false, tabBarLabel: t('calendar') }}
+      />
+      <Tab.Screen
+        name="Listings"
+        component={ListingsProScreen}
+        options={{ animation: 'none', gestureEnabled: false, tabBarLabel: t('listings') }}
+      />
+      <Tab.Screen
+        name="Chat"
+        component={ChatStackNavigator}
+        options={{ animation: 'none', gestureEnabled: false, tabBarLabel: t('chat') }}
+      />
       <Tab.Screen
         name="Settings"
         component={SettingsProScreen}
-        options={{ animation: 'none', gestureEnabled: false }}
+        options={{ animation: 'none', gestureEnabled: false, tabBarLabel: t('settings') }}
         listeners={{
           tabPress: (e) => {
             const now = Date.now();
