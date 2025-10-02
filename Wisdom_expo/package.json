@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^5.2.6",
@@ -86,6 +87,7 @@
     "@react-native/typescript-config": "^0.75.2",
     "autoprefixer": "^10.4.21",
     "metro-react-native-babel-transformer": "^0.77.0",
+    "patch-package": "^8.0.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17"
   },

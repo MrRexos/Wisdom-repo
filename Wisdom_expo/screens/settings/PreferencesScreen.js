@@ -96,15 +96,22 @@ export default function PreferencesScreen() {
                       <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{label}</Text>
                       <View className="flex-1"/>
                       
-                      {type==='toggle' && ( 
-                        <Switch 
-                          style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
-                          value={form[id]} 
-                          onValueChange={(value) => {
-                            setForm({...form, [id]:value});
-                            handleToggleColorScheme();              
-                          }} 
-                        />
+                      {type==='toggle' && (
+                        <View style={{ height: 45 }} className="justify-center">
+                          <Switch
+                            value={form[id]}
+                            onValueChange={(value) => {
+                              setForm({ ...form, [id]: value });
+                              handleToggleColorScheme();
+                            }}
+                            style={[
+                              { alignSelf: 'center' },
+                              Platform.OS === 'android'
+                                ? { transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }], marginVertical: -2 }
+                                : { transform: [{ scaleX: 0.85 }, { scaleY: 0.85 }], top: 1 }
+                            ]}
+                          />
+                        </View>
                       )}
 
                       {type==='select' && ( 
