@@ -1,8 +1,9 @@
-import { View, Text, TouchableOpacity, Platform, NativeModules, Animated, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Platform, NativeModules, Animated, Image, useWindowDimensions, Easing } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import React, { useEffect, useState, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { getDataLocally } from '../../utils/asyncStorage';
@@ -16,6 +17,28 @@ const WelcomeVideoScreen = () => {
   const [showSkip, setShowSkip] = useState(false);
   const [currentImages, setCurrentImages] = useState([]);
   const [currentImagesDown, setCurrentImagesDown] = useState([]);
+  const { width: winW, height: winH } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+
+  const MAIN_IMAGE_WIDTH = 240;
+  const MAIN_IMAGE_HEIGHT = 130;
+  const BLURRED_IMAGE_WIDTH = 180;
+  const BLURRED_IMAGE_HEIGHT = 100;
+  const HORIZONTAL_OFFSET = 40;
+
+  // Constantes para controlar TODO
+  const DURATION_UP = 40000;
+  const DURATION_DOWN = 60000;
+  const SPAWN_UP = [3000, 6000];     // apariciones menos frecuentes
+  const SPAWN_DOWN = [7000, 12000];  // borrosas aún menos
+
+  const MAX_UP = 6;
+  const MAX_DOWN = 5;
+
+  const timersRef = useRef({ up: null, down: null });
+  const stoppedRef = useRef(false);
+
+  const rand = (min, max) => min + Math.random() * (max - min);
 
   const categoriesArray = [
     { id: 2, category: "Plumbing", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20174847.png" },
@@ -58,17 +81,57 @@ const WelcomeVideoScreen = () => {
     { id: 175, category: "Party DJs", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20184853.png" },
     { id: 178, category: "Children's entertainers", url: "https://storage.googleapis.com/wisdom-images/1.webp" },
     { id: 181, category: "Event security", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20185110.png" },
-    { id: 225, category: "Auditing", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20185537.png" }, 
-    { id: 226, category: "IT consulting", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20185839.png" }, 
-    { id: 228, category: "Business analysis", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190143.png" }, 
+    { id: 225, category: "Auditing", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20185537.png" },
+    { id: 226, category: "IT consulting", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20185839.png" },
+    { id: 228, category: "Business analysis", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190143.png" },
   ];
-  
+
+  const getRandomY = (imgH) => {
+    const minY = Math.max(insets.top + 8, 8); // evita y=0 exacto
+    const maxY = Math.max(winH - insets.bottom - imgH - 8, minY);
+    return minY + Math.random() * (maxY - minY);
+  };
+
+  useEffect(() => {
+    stoppedRef.current = false;
+
+    const loopUp = () => {
+      if (stoppedRef.current) return;
+      // tope de simultáneas
+      setCurrentImages(prev => {
+        if (prev.length >= MAX_UP) return prev;
+        startAnimation(); // usa DURATION_UP internamente
+        return prev;
+      });
+      timersRef.current.up = setTimeout(loopUp, rand(...SPAWN_UP));
+    };
+
+    const loopDown = () => {
+      if (stoppedRef.current) return;
+      setCurrentImagesDown(prev => {
+        if (prev.length >= MAX_DOWN) return prev;
+        startAnimationDown(); // usa DURATION_DOWN internamente
+        return prev;
+      });
+      timersRef.current.down = setTimeout(loopDown, rand(...SPAWN_DOWN));
+    };
+
+    loopUp();
+    loopDown();
+
+    return () => {
+      stoppedRef.current = true;
+      if (timersRef.current.up) clearTimeout(timersRef.current.up);
+      if (timersRef.current.down) clearTimeout(timersRef.current.down);
+    };
+  }, []);
+
   useEffect(() => {
     const changeDefaultLanguage = () => {
       const deviceLanguage =
         Platform.OS === 'ios'
           ? NativeModules.SettingsManager.settings.AppleLocale ||
-            NativeModules.SettingsManager.settings.AppleLanguages[0] //iOS 13
+          NativeModules.SettingsManager.settings.AppleLanguages[0] //iOS 13
           : NativeModules.I18nManager.localeIdentifier;
 
       const language = deviceLanguage.split(/[_-]/)[0];
@@ -95,7 +158,7 @@ const WelcomeVideoScreen = () => {
     };
 
     loadUserData();
-    
+
   }, []);
 
   const startAnimation = () => {
@@ -104,8 +167,8 @@ const WelcomeVideoScreen = () => {
     const randomImage = categoriesArray[randomIndex];
 
     // Crear valores animados para la nueva imagen
-    const newTranslateX = new Animated.Value(400); // Inicializar fuera de la pantalla a la derecha
-    const newTranslateY = new Animated.Value(Math.floor(Math.random() * 801) - 800); // Valor entre -150 y 150
+    const newTranslateX = new Animated.Value(winW + MAIN_IMAGE_WIDTH + HORIZONTAL_OFFSET);
+    const newTranslateY = new Animated.Value(getRandomY(MAIN_IMAGE_HEIGHT));
 
     const newImage = {
       id: Math.random().toString(),
@@ -119,9 +182,10 @@ const WelcomeVideoScreen = () => {
 
     // Animación de desplazamiento de derecha a izquierda
     Animated.timing(newTranslateX, {
-      toValue: -500, // Mover a la izquierda fuera de la pantalla
-      duration: 20000, // Duración de la animación
+      toValue: -(MAIN_IMAGE_WIDTH + HORIZONTAL_OFFSET),
+      duration: DURATION_UP,   // o DURATION_DOWN
       useNativeDriver: true,
+      easing: Easing.linear,
     }).start(() => {
       // Eliminar la imagen una vez que termina la animación
       setCurrentImages((prevImages) => prevImages.filter((img) => img.id !== newImage.id));
@@ -129,13 +193,13 @@ const WelcomeVideoScreen = () => {
   };
 
   useEffect(() => {
-    
+
     const startAnimationLoop = () => {
 
       startAnimation();
 
       // Generar un intervalo aleatorio entre 500ms y 2000ms
-      const randomInterval = Math.random() * (5000 - 2000) + 2000;
+      const randomInterval = Math.random() * (5000 - 2000) + 7000;
 
       // Establecer el siguiente intervalo
       const intervalId = setTimeout(startAnimationLoop, randomInterval);
@@ -154,8 +218,8 @@ const WelcomeVideoScreen = () => {
     const randomImage = categoriesArray[randomIndex];
 
     // Crear valores animados para la nueva imagen
-    const newTranslateX = new Animated.Value(400); // Inicializar fuera de la pantalla a la derecha
-    const newTranslateY = new Animated.Value(Math.floor(Math.random() * 801) - 800); // Valor entre -150 y 150
+    const newTranslateX = new Animated.Value(winW + BLURRED_IMAGE_WIDTH + HORIZONTAL_OFFSET);
+    const newTranslateY = new Animated.Value(getRandomY(BLURRED_IMAGE_HEIGHT));
 
     const newImage = {
       id: Math.random().toString(),
@@ -169,9 +233,10 @@ const WelcomeVideoScreen = () => {
 
     // Animación de desplazamiento de derecha a izquierda
     Animated.timing(newTranslateX, {
-      toValue: -500, // Mover a la izquierda fuera de la pantalla
-      duration: 40000, // Duración de la animación
+      toValue: -(BLURRED_IMAGE_WIDTH + HORIZONTAL_OFFSET), // Mover a la izquierda fuera de la pantalla
+      duration: DURATION_DOWN, // Duración de la animación
       useNativeDriver: true,
+      easing: Easing.linear,
     }).start(() => {
       // Eliminar la imagen una vez que termina la animación
       setCurrentImagesDown((prevImages) => prevImages.filter((img) => img.id !== newImage.id));
@@ -184,7 +249,7 @@ const WelcomeVideoScreen = () => {
       startAnimationDown();
 
       // Generar un intervalo aleatorio entre 500ms y 2000ms
-      const randomInterval = Math.random() * (10000 - 5000) + 5000;
+      const randomInterval = Math.random() * (10000 - 5000) + 9000;
 
       // Establecer el siguiente intervalo
       const intervalId = setTimeout(startAnimationLoop, randomInterval);
@@ -209,6 +274,8 @@ const WelcomeVideoScreen = () => {
           key={imgObj.id}
           style={{
             position: 'absolute',
+            top: 0,
+            left: 0,
             transform: [
               { translateX: imgObj.translateX }, // Movimiento horizontal
               { translateY: imgObj.translateY }, // Movimiento vertical
@@ -217,8 +284,8 @@ const WelcomeVideoScreen = () => {
         >
           <Image
             source={{ uri: imgObj.image.url }}
-            style={{ width: 180, height: 100, opacity:0.4 }}
-            blurRadius={5} 
+            style={{ width: 180, height: 100, opacity: 0.4 }}
+            blurRadius={5}
             className="rounded-xl z-0"
           />
         </Animated.View>
@@ -230,6 +297,8 @@ const WelcomeVideoScreen = () => {
           key={imgObj.id}
           style={{
             position: 'absolute',
+            top: 0,
+            left: 0,
             transform: [
               { translateX: imgObj.translateX }, // Movimiento horizontal
               { translateY: imgObj.translateY }, // Movimiento vertical
@@ -243,13 +312,13 @@ const WelcomeVideoScreen = () => {
           />
         </Animated.View>
       ))}
-      {showSkip? 
-      <TouchableOpacity onPress={() => navigation.navigate('Loading')}>
-        <Text className='text-[#f2f2f2] font-inter-semibold m-[75px]'>{t('skip_intro')}</Text>
-      </TouchableOpacity>
-      : null}
-      
-    </View> 
+      {showSkip ?
+        <TouchableOpacity onPress={() => navigation.navigate('Loading')}>
+          <Text className='text-[#f2f2f2] font-inter-semibold m-[75px]'>{t('skip_intro')}</Text>
+        </TouchableOpacity>
+        : null}
+
+    </View>
   );
 };
 
