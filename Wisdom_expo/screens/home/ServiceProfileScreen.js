@@ -106,6 +106,7 @@ export default function ServiceProfileScreen() {
   const [sendingReport, setSendingReport] = useState(false);
   const reportDescInputRef = useRef(null);
   const [showAttachOptions, setShowAttachOptions] = useState(false);
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
   const reasonOptions = [
     { code: 'fraud', textKey: 'report_reason_fraud' },
     { code: 'incorrect_info', textKey: 'report_reason_incorrect_info' },
@@ -187,8 +188,8 @@ export default function ServiceProfileScreen() {
     if (showAttachOptions) return 220;
     if (reportStep === 1) return 520;
     if (reportStep === 2) {
-      const rows = Math.ceil(reportAttachments.length / 3);
-      return 420 + rows * 90; // igual que hacías en la versión 2
+      const rows = Math.ceil((reportAttachments.length-1) / 3);
+      return 480; // igual que hacías en la versión 2
     }
     if (reportStep === 3) return 380;
     return 320; // step 4 (éxito)
