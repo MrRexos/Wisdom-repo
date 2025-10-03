@@ -18,7 +18,8 @@ import {
   BottomSheetView,
   BottomSheetBackdrop,
   BottomSheetModalProvider,
-  useBottomSheetDynamicSnapPoints,
+  BottomSheetScrollView,
+  BottomSheetTextInput,
 } from '@gorhom/bottom-sheet';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import MapView, { Marker, Circle } from 'react-native-maps';
@@ -97,13 +98,6 @@ export default function ServiceProfileScreen() {
   const [showPicker, setShowPicker] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const reportSheetModalRef = useRef(null);
-  const initialReportSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
-  const {
-    animatedHandleHeight: reportHandleHeight,
-    animatedSnapPoints: reportSnapPoints,
-    animatedContentHeight: reportContentHeight,
-    handleContentLayout: handleReportContentLayout,
-  } = useBottomSheetDynamicSnapPoints(initialReportSnapPoints);
   const [reportStep, setReportStep] = useState(1);
   const [reportReason, setReportReason] = useState(null);
   const [reportOther, setReportOther] = useState('');
@@ -188,6 +182,17 @@ export default function ServiceProfileScreen() {
     }
     setShowAttachOptions(false);
   };
+
+  const sheetMinHeight = useMemo(() => {
+    if (showAttachOptions) return 220;
+    if (reportStep === 1) return 520;
+    if (reportStep === 2) {
+      const rows = Math.ceil(reportAttachments.length / 3);
+      return 420 + rows * 90; // igual que hacías en la versión 2
+    }
+    if (reportStep === 3) return 380;
+    return 320; // step 4 (éxito)
+  }, [reportStep, showAttachOptions, reportAttachments.length]);
 
   const handleFilePick = async () => {
     const result = await DocumentPicker.getDocumentAsync({});
@@ -355,8 +360,8 @@ export default function ServiceProfileScreen() {
           </View>
 
           <TouchableWithoutFeedback onPress={() => reportDescInputRef.current?.focus()}>
-            <View className="h-[150px] bg-[#f2f2f2] dark:bg-[#3d3d3d] rounded-2xl py-4 px-5 ">
-              <TextInput
+            <View className="h-[150px] bg-[#f2f2f2] dark:bg-[#3d3d3d] rounded-2xl py-4 px-5">
+              <BottomSheetTextInput
                 ref={reportDescInputRef}
                 placeholder={t('report_description_placeholder')}
                 selectionColor={cursorColorChange}
@@ -366,7 +371,7 @@ export default function ServiceProfileScreen() {
                 onChangeText={setReportDescription}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                 className="w-full font-inter-medium text-[15px] text-[#515150] dark:text-[#d4d4d3]"
-                style={{ textAlignVertical: 'top' }}
+                style={{ textAlignVertical: 'top', height: 120 }}
               />
             </View>
           </TouchableWithoutFeedback>
@@ -1132,24 +1137,25 @@ export default function ServiceProfileScreen() {
 
       <BottomSheetModal
         ref={reportSheetModalRef}
-        snapPoints={reportSnapPoints}
-        handleHeight={reportHandleHeight}
-        contentHeight={reportContentHeight}
-        backdropComponent={renderReportSheetBackdrop}
+        enableDynamicSizing
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="close" />
+        )}
+        keyboardBehavior="extend"
+        keyboardBlurBehavior="restore"
+        enablePanDownToClose
+        onDismiss={handleReportSheetDismiss}
         backgroundStyle={{
-          borderTopRightRadius: 25,
           borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
           backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
         }}
         handleIndicatorStyle={{ backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' }}
-        enablePanDownToClose
-        onDismiss={handleReportSheetDismiss}
-        keyboardBehavior="interactive"
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <BottomSheetView onLayout={handleReportContentLayout}>
+          <BottomSheetScrollView contentContainerStyle={{ minHeight: sheetMinHeight }} keyboardShouldPersistTaps="handled">
             {renderReportSheetContent()}
-          </BottomSheetView>
+          </BottomSheetScrollView>
         </TouchableWithoutFeedback>
       </BottomSheetModal>
 
