@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { View, StatusBar, Platform, TouchableWithoutFeedback, TouchableOpacity, Keyboard, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, Alert, RefreshControl, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
@@ -13,6 +13,13 @@ import HeartFill from "../../assets/HeartFill.tsx"
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetBackdrop,
+  BottomSheetModalProvider,
+  useBottomSheetDynamicSnapPoints,
+} from '@gorhom/bottom-sheet';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import MapView, { Marker, Circle } from 'react-native-maps';
 import { getRegionForRadius } from '../../utils/mapUtils';
@@ -89,8 +96,14 @@ export default function ServiceProfileScreen() {
   const [timeUndefined, setTimeUndefined] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const reportSheet = useRef(null);
-  const reportAttachSheet = useRef(null);
+  const reportSheetModalRef = useRef(null);
+  const initialReportSnapPoints = useMemo(() => ['CONTENT_HEIGHT'], []);
+  const {
+    animatedHandleHeight: reportHandleHeight,
+    animatedSnapPoints: reportSnapPoints,
+    animatedContentHeight: reportContentHeight,
+    handleContentLayout: handleReportContentLayout,
+  } = useBottomSheetDynamicSnapPoints(initialReportSnapPoints);
   const [reportStep, setReportStep] = useState(1);
   const [reportReason, setReportReason] = useState(null);
   const [reportOther, setReportOther] = useState('');
@@ -99,7 +112,6 @@ export default function ServiceProfileScreen() {
   const [sendingReport, setSendingReport] = useState(false);
   const reportDescInputRef = useRef(null);
   const [showAttachOptions, setShowAttachOptions] = useState(false);
-  const [reportSheetHeight, setReportSheetHeight] = useState(520);
   const reasonOptions = [
     { code: 'fraud', textKey: 'report_reason_fraud' },
     { code: 'incorrect_info', textKey: 'report_reason_incorrect_info' },
@@ -120,38 +132,30 @@ export default function ServiceProfileScreen() {
     setReportOther('');
     setReportDescription('');
     setReportAttachments([]);
-    setReportSheetHeight(520);
     setShowAttachOptions(false);
-    reportSheet.current.open();
+    reportSheetModalRef.current?.present();
   };
 
-  useEffect(() => {
-    if (showAttachOptions) {
-      setReportSheetHeight(260);
-      return;
-    }
+  const handleReportSheetDismiss = useCallback(() => {
+    setShowAttachOptions(false);
+    setReportStep(1);
+    setReportReason(null);
+    setReportOther('');
+    setReportDescription('');
+    setReportAttachments([]);
+  }, []);
 
-    if (reportStep === 1) {
-      setReportSheetHeight(520);
-      return;
-    }
-
-    if (reportStep === 2) {
-      const baseHeight = 420;
-      const attachmentsPerRow = 3;
-      const attachmentRows = Math.ceil(reportAttachments.length / attachmentsPerRow);
-      const extraHeight = attachmentRows > 0 ? attachmentRows * 90 : 0;
-      setReportSheetHeight(baseHeight + extraHeight);
-      return;
-    }
-
-    if (reportStep === 3) {
-      setReportSheetHeight(360);
-      return;
-    }
-
-    setReportSheetHeight(320);
-  }, [reportStep, showAttachOptions, reportAttachments.length]);
+  const renderReportSheetBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
 
   const handleImagePick = async () => {
     if (reportAttachments.length >= 3) return;
@@ -430,7 +434,7 @@ export default function ServiceProfileScreen() {
           <Text className=" font-inter-bold text-[22px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('report_success')}</Text>
         </View>
         <TouchableOpacity
-          onPress={() => reportSheet.current.close()}
+          onPress={() => reportSheetModalRef.current?.dismiss()}
           className="mb-10 h-[52px] w-full rounded-full items-center justify-center bg-[#323131] dark:bg-[#fcfcfc]"
         >
           <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('ok')}</Text>
@@ -862,8 +866,9 @@ export default function ServiceProfileScreen() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
-      <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
+    <BottomSheetModalProvider>
+      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
+        <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
       <RBSheet
         height={sheetHeight}
@@ -1125,33 +1130,28 @@ export default function ServiceProfileScreen() {
 
       </RBSheet>
 
-      <RBSheet
-        ref={reportSheet}
-        height={reportSheetHeight}
-        openDuration={250}
-        closeDuration={250}
-        draggable
-        onClose={() => {
-          setShowAttachOptions(false);
-          setReportStep(1);
-          setReportReason(null);
-          setReportOther('');
-          setReportDescription('');
-          setReportAttachments([]);
+      <BottomSheetModal
+        ref={reportSheetModalRef}
+        snapPoints={reportSnapPoints}
+        handleHeight={reportHandleHeight}
+        contentHeight={reportContentHeight}
+        backdropComponent={renderReportSheetBackdrop}
+        backgroundStyle={{
+          borderTopRightRadius: 25,
+          borderTopLeftRadius: 25,
+          backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
         }}
-        customStyles={{
-          container: {
-            borderTopRightRadius: 25,
-            borderTopLeftRadius: 25,
-            backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
-          },
-          draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
-        }}
+        handleIndicatorStyle={{ backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' }}
+        enablePanDownToClose
+        onDismiss={handleReportSheetDismiss}
+        keyboardBehavior="interactive"
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          {renderReportSheetContent()}
+          <BottomSheetView onLayout={handleReportContentLayout}>
+            {renderReportSheetContent()}
+          </BottomSheetView>
         </TouchableWithoutFeedback>
-      </RBSheet>
+      </BottomSheetModal>
 
       <ScrollView showsVerticalScrollIndicator={false} className="px-5 pt-6 flex-1" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
@@ -1757,8 +1757,9 @@ export default function ServiceProfileScreen() {
           </Text>
         </TouchableOpacity>
       </View>
-
-    </SafeAreaView>
+    
+      </SafeAreaView>
+    </BottomSheetModalProvider>
   );
 }
 
