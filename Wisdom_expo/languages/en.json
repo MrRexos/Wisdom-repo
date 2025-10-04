@@ -267,6 +267,7 @@
     "exact_location_never_public": "The exact location will never be made public",
     "action_rate_dash": "Action rate -",
     "full": "full",
+    "fixed_site": "Fixed location",
     "unlocated_service": "Unlocated service",
     "unlocated_or_online_service": "Unlocated or online service",
     "unlocated": "Unlocated",

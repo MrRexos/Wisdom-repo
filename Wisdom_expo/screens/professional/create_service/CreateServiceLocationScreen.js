@@ -69,6 +69,7 @@ export default function CreateServiceLocationScreen() {
       setStreetNumber(searchedDirection.street_number);
       setAddress2(searchedDirection.address_2);
       setLocation(searchedDirection.location);
+      setIsUnlocated(false);
       console.log(searchedDirection.location)
       // Construir y mostrar la dirección aunque no exista location
       const parts = [];
@@ -214,13 +215,17 @@ export default function CreateServiceLocationScreen() {
           </View>
 
           {direction ? (
-            <View className="w-full px-4 flex-row items-center">
+            <View className="w-full mt-1 px-4 flex-row items-center mb-2">
               <Text className="shrink-0 mr-3">
                 <Text className="font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">
                   {t('action_rate_dash')}{" "}
                 </Text>
                 <Text className="font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">
-                  {actionRate === 100 ? t('full') : `${actionRate} km`}
+                  {actionRate === 100
+                    ? t('full')
+                    : actionRate === 0
+                      ? t('fixed_site')
+                      : `${actionRate} km`}
                 </Text>
               </Text>
 
@@ -259,7 +264,7 @@ export default function CreateServiceLocationScreen() {
             }}
             className="flex-row w-full justify-start pl-4 items-center mt-1"
           >
-            <Text className="mr-6 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">{t('unlocated_service')}</Text>
+            <Text className="mr-5 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">{t('unlocated_service')}</Text>
             <View
               style={[
                 styles.checkbox,

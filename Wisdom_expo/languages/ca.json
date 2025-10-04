@@ -267,6 +267,7 @@
     "exact_location_never_public": "La ubicació exacta mai es farà pública",
     "action_rate_dash": "Radi d'acció -",
     "full": "complet",
+    "fixed_site": "Lloc fix",
     "unlocated_service": "Servei sense ubicació",
     "unlocated_or_online_service": "Servei sense ubicació o en línia",
     "unlocated": "Sense ubicació",

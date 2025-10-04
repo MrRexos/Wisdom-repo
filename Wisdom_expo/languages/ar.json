@@ -267,6 +267,7 @@
     "exact_location_never_public": "لن يتم نشر الموقع الدقيق أبدًا",
     "action_rate_dash": "نطاق العمل -",
     "full": "كامل",
+    "fixed_site": "موقع ثابت",
     "unlocated_service": "خدمة بدون موقع",
     "unlocated_or_online_service": "خدمة بدون موقع أو عبر الإنترنت",
     "unlocated": "بدون موقع",

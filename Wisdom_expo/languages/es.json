@@ -267,6 +267,7 @@
     "exact_location_never_public": "La ubicación exacta nunca se hará pública",
     "action_rate_dash": "Radio de acción -",
     "full": "completo",
+    "fixed_site": "Sitio fijo",
     "unlocated_service": "Servicio sin ubicación",
     "unlocated_or_online_service": "Servicio sin ubicación o en línea",
     "unlocated": "Sin ubicación",

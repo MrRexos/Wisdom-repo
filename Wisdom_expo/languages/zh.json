@@ -267,6 +267,7 @@
     "exact_location_never_public": "确切位置永远不会公开",
     "action_rate_dash": "服务范围 -",
     "full": "全部",
+    "fixed_site": "固定地点",
     "unlocated_service": "未定位的服务",
     "unlocated_or_online_service": "未定位或在线服务",
     "unlocated": "未定位",
