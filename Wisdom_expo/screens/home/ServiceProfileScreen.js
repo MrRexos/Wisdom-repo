@@ -1164,13 +1164,13 @@ export default function ServiceProfileScreen() {
 
         {/* Top FALTA */}
 
-        <View className="flex-row justify-between items-center">
+        <View className="flex-row justify-between items-start">
 
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
           </TouchableOpacity>
 
-          <View className="flex-row justify-end items-center">
+          <View className="flex-row justify-end items-start">
 
             <TouchableOpacity onPress={() => null} className="items-center justify-center mr-6">
               <Share height={24} strokeWidth={1.7} color={iconColor} />
@@ -1178,9 +1178,15 @@ export default function ServiceProfileScreen() {
 
             <TouchableOpacity onPress={() => heartClicked(serviceId)} className="mr-2">
               {isServiceLiked ? (
-                <HeartFill height={24} width={24} strokeWidth={1.7} color={'#ff633e'} />
+                <View className="justify-center items-center">
+                  <HeartFill height={24} width={24} strokeWidth={1.7} color={'#ff633e'} />
+                  <Text className="mt-1 font-inter-semibold text-center text-[10px] text-[#ff633e]">{serviceData.likes_count}</Text>
+                </View>
               ) : (
-                <Heart height={24} width={24} strokeWidth={1.7} color={iconColor} />
+                <View className="justify-center items-center">
+                  <Heart height={24} width={24} strokeWidth={1.7} color={iconColor} />
+                  <Text className="mt-[2px] font-inter-semibold text-center text-[10px] text-[#b6b5b5] dark:text-[#706F6E]">{serviceData.likes_count}</Text>
+                </View>
               )}
             </TouchableOpacity>
 
@@ -1190,7 +1196,7 @@ export default function ServiceProfileScreen() {
 
         {/* Service and User info */}
 
-        <View className="justify-start items-center mt-10">
+        <View className="justify-start items-center mt-7">
 
           <Image source={serviceData.profile_picture ? { uri: serviceData.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[100px] w-[100px] bg-[#d4d4d3] dark:bg-[#474646] rounded-full" />
 
@@ -1207,8 +1213,8 @@ export default function ServiceProfileScreen() {
           <View className="py-3 mt-7 mx-4 flex-row justify-center items-center bg-[#f2f2f2] dark:bg-[#272626] rounded-3xl">
 
             <View className="flex-1 justify-center items-center border-r-[1px] border-[#d4d4d3] dark:border-[#474646]">
-              <Text className="font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">0</Text>
-              <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Services</Text>
+              <Text className="font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">{serviceData.confirmed_booking_count}</Text>
+              <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Bookings</Text>
             </View>
             {!!serviceData.average_rating && (
               <View className="flex-1 justify-center items-center ">
@@ -1221,8 +1227,8 @@ export default function ServiceProfileScreen() {
             )}
 
             <View className="flex-1 justify-center items-center border-l-[1px] border-[#d4d4d3] dark:border-[#474646]">
-              <Text className="font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">0</Text>
-              <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Repites</Text>
+              <Text className="font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">{serviceData.repeated_bookings_count}</Text>
+              <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Repeat</Text>
             </View>
 
           </View>
@@ -1287,7 +1293,7 @@ export default function ServiceProfileScreen() {
           </View>
         )}
 
-        {/* Service data FALTA */}
+        {/* Service data */}
 
         <View className="mt-8 pl-6 justify-center items-center pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
@@ -1297,15 +1303,15 @@ export default function ServiceProfileScreen() {
 
               <View className="mb-6 justify-start items-start">
                 <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Earned money</Text>
-                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">100 €</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.total_earned_amount).toFixed(0)} €</Text>
               </View>
               <View className="mb-6 justify-start items-start">
-                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Hores totals</Text>
-                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">85 h</Text>
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Total hours</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.total_hours_completed).toFixed(0)} h</Text>
               </View>
               <View className="justify-start items-start">
-                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Repeted</Text>
-                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">6</Text>
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Repeat bookings</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{serviceData.repeated_bookings_count}</Text>
               </View>
 
             </View>
@@ -1317,8 +1323,8 @@ export default function ServiceProfileScreen() {
                 <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">100 %</Text>
               </View>
               <View className="mb-6 justify-start items-start">
-                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Total services</Text>
-                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">12</Text>
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Total bookings</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{serviceData.confirmed_booking_count}</Text>
               </View>
               <View className="justify-start items-start">
                 <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Response time</Text>
