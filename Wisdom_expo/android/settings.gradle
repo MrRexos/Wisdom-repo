@@ -3,6 +3,7 @@ pluginManagement {
     gradlePluginPortal()
     google()
     mavenCentral()
+    maven { url "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev" }
   }
   def version = providers.exec {
     commandLine("node", "-e", "console.log(require('react-native/package.json').version);")

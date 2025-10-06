@@ -15,6 +15,7 @@ buildscript {
         google()
         mavenCentral()
         maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev' }
     }
     dependencies {
         classpath('com.android.tools.build:gradle')
@@ -39,5 +40,6 @@ allprojects {
         google()
         mavenCentral()
         maven { url 'https://www.jitpack.io' }
+        maven { url 'https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev' }
     }
 }
