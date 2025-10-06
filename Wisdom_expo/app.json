@@ -46,6 +46,7 @@
       },
       "package": "com.rexos.Wisdom_expo",
       "versionCode": 1,
+      "minSdkVersion": 24,
       "newArchEnabled": true,
       "intentFilters": [
         {
