@@ -1,0 +1,32 @@
+diff --git a/node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h b/node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h
+index bb59351..f941003 100644
+--- a/node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h
++++ b/node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h
+@@ -9,6 +9,13 @@
+ 
+ #include <array>
+ #include <unordered_map>
++#include <string>
++#include <cstdio>
++#if defined(__has_include)
++#if __has_include(<format>)
++#include <format>
++#endif
++#endif
+ 
+ #include <glog/logging.h>
+ #include <react/debug/react_native_expect.h>
+@@ -77,7 +84,13 @@ inline folly::dynamic toDynamic(const YGValue& dimension) {
+     case YGUnitPoint:
+       return dimension.value;
+     case YGUnitPercent:
++#if defined(__cpp_lib_format) && __cpp_lib_format >= 201907L
+       return std::format("{}%", dimension.value);
++#else
++      char buffer[64];
++      std::snprintf(buffer, sizeof(buffer), "%g%%", dimension.value);
++      return std::string(buffer);
++#endif
+   }
+ 
+   return nullptr;
