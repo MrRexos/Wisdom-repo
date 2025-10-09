@@ -24,7 +24,7 @@ export default function App() {
   const { colorScheme } = useColorScheme();
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
-  // Prevenir que la pantalla de splash se oculte automáticamente
+  // Prevenir que la pantalla de splash se oculte automáticamente 
   useEffect(() => {
     SplashScreen.preventAutoHideAsync();
     loadFonts();
