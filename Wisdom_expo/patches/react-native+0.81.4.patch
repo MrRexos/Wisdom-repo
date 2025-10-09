@@ -1,0 +1,17 @@
+diff --git a/node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h b/node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h
+index 83798c3..046ded0 100644
+--- a/node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h
++++ b/node_modules/react-native/ReactCommon/react/renderer/core/graphicsConversions.h
+@@
+-#include <unordered_map>
++#include <unordered_map>
++#include <sstream>
+@@
+-    case YGUnitPercent:
+-      return std::format("{}%", dimension.value);
++    case YGUnitPercent: {
++      std::ostringstream stream;
++      stream << dimension.value << '%';
++      return stream.str();
++    }
+
