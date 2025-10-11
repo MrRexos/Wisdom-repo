@@ -1,0 +1,6 @@
+<resources>
+  <string name="NSPhotoLibraryUsageDescription">"我们需要访问您的照片库，以便您可以设置个人资料照片或在您的服务中显示它们。"</string>
+  <string name="NSCameraUsageDescription">"我们需要访问您的相机，以便您可以拍照并在应用的功能中使用它们。"</string>
+  <string name="NSPhotoLibraryAddUsageDescription">"我们需要权限将应用中的图像保存到您的相册。"</string>
+  <string name="NSLocationWhenInUseUsageDescription">"我们需要访问您当前的位置，以便向您显示附近的服务或保存您的路线。"</string>
+</resources>

@@ -1,0 +1,6 @@
+<resources>
+  <string name="NSPhotoLibraryUsageDescription">"Necessitem accés a la teva biblioteca de fotos perquè puguis establir una foto de perfil o mostrar-les als teus serveis."</string>
+  <string name="NSCameraUsageDescription">"Necessitem accés a la teva càmera perquè puguis fer fotos i utilitzar-les a les funcionalitats de l'aplicació."</string>
+  <string name="NSPhotoLibraryAddUsageDescription">"Necessitem permís per desar imatges de l'aplicació a la teva galeria."</string>
+  <string name="NSLocationWhenInUseUsageDescription">"Necessitem accés a la teva ubicació actual per mostrar-te serveis propers o desar les teves adreces."</string>
+</resources>
