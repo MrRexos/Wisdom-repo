@@ -117,8 +117,8 @@ export default function ListingsProScreen() {
   }, [isDeleting]);
 
   const handleConfirmDelete = useCallback(async () => {
-    if (!selectedListing || isDeleting) return;
     console.log("delete");
+    if (!selectedListing || isDeleting) return;
     setShowDeleteConfirm(false);
     setIsDeleting(true);
     try {
