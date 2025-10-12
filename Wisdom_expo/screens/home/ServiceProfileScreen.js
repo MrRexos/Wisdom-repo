@@ -500,7 +500,22 @@ export default function ServiceProfileScreen() {
 
   const getServiceInfo = async () => {
     try {
-      const response = await api.get(`/api/service/${serviceId}`, {});
+      let viewerId;
+      try {
+        const userData = await getDataLocally('user');
+        if (userData) {
+          const parsedUser = JSON.parse(userData);
+          if (parsedUser?.id) {
+            viewerId = parsedUser.id;
+            setUserId(parsedUser.id);
+          }
+        }
+      } catch (storageError) {
+        console.error('Error retrieving local user data:', storageError);
+      }
+
+      const config = viewerId ? { params: { viewerId } } : {};
+      const response = await api.get(`/api/service/${serviceId}`, config);
       let service = response.data;
       setServiceData(service);
 
