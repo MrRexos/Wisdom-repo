@@ -76,24 +76,74 @@ export default function ServicesScreen() {
   const fetchBookings = async (statusParam) => {
     const userData = await getDataLocally('user');
     const user = JSON.parse(userData);
-    setUserId(user.id);
+  
     try {
       const params = {};
-
-      if (statusParam === 'paid') {
-        params.is_paid = true;
-      } else if (statusParam === 'others' || statusParam === 'all') {
-        params.status = 'all';
-      } else if (statusParam) {
+  
+      // Solo estados "reales" del backend
+      const REAL_BACKEND_STATES = new Set(['accepted', 'requested', 'completed', 'canceled']);
+      if (typeof statusParam === 'string' && REAL_BACKEND_STATES.has(statusParam)) {
         params.status = statusParam;
       }
-
+      // No enviar status para: in_progress, paid, others, all
+  
       const response = await api.get(`/api/user/${user.id}/bookings`, { params });
-      return response.data || [];
+      if (response && response.data && Array.isArray(response.data)) {
+        return response.data;
+      }
+      return [];
     } catch (error) {
       console.error('Error fetching bookings:', error);
       return [];
     }
+  };
+
+  const toDate = (value) => {
+    if (value === null || value === undefined) return null;
+    const d = new Date(value);
+    if (Number.isNaN(d.valueOf())) return null;
+    return d;
+  };
+  
+  const getStatus = (b) => {
+    let s = '';
+    if (b && typeof b.booking_status === 'string' && b.booking_status.length > 0) {
+      s = b.booking_status;
+    } else if (b && typeof b.status === 'string' && b.status.length > 0) {
+      s = b.status;
+    }
+    s = s.toLowerCase();
+    s = s.replace(/-/g, '_');
+    return s.trim();
+  };
+  
+  const isPaid = (b) => {
+    if (!b) return false;
+    if (b.is_paid === true) return true;
+    if (b.is_paid === 1) return true;
+    if (b.is_paid === '1') return true;
+    return false;
+  };
+  
+  const getStart = (b) => toDate(b ? b.booking_start_datetime : null);
+  const getEnd   = (b) => toDate(b ? b.booking_end_datetime   : null);
+  
+  // Derivado: no existe 'in_progress' real en backend
+  const isInProgress = (b, now) => {
+    const status = getStatus(b);
+    if (status !== 'accepted') return false;
+  
+    const start = getStart(b);
+    if (start === null) return false;
+  
+    const end = getEnd(b);
+    if (end !== null) {
+      if (now >= start && now <= end) return true;
+      return false;
+    }
+    // sin fecha de fin: basta con haber empezado
+    if (now >= start) return true;
+    return false;
   };
 
   useEffect(() => {
@@ -164,44 +214,64 @@ export default function ServicesScreen() {
 
   // Si la API no filtra correctamente, filtramos localmente por estado
   const now = new Date();
+  
   const filteredBookings = Array.isArray(bookings)
-    ? bookings.filter((booking) => {
-        const status = booking?.booking_status || booking?.status;
-        if (selectedStatus === 'all') {
-          return true;
-        }
+  ? bookings.filter((b) => {
+      const status = getStatus(b);
 
-        if (selectedStatus === 'paid') {
-          return Boolean(booking?.is_paid);
-        }
+      if (selectedStatus === 'all') {
+        return true;
+      }
 
-        if (selectedStatus === 'others') {
-          const problematicStatuses = ['payment_failed', 'pending_deposit', 'rejected'];
-          if (problematicStatuses.includes(status)) {
-            return true;
-          }
+      if (selectedStatus === 'paid') {
+        return isPaid(b);
+      }
 
-          if (booking?.booking_start_datetime) {
-            const startDate = new Date(booking.booking_start_datetime);
-            if (!Number.isNaN(startDate.valueOf())) {
-              return (
-                startDate < now &&
-                !['completed', 'canceled', 'rejected'].includes(status) &&
-                !booking?.is_paid
-              );
+      if (selectedStatus === 'in_progress') {
+        return isInProgress(b, now);
+      }
+
+      if (selectedStatus === 'accepted') {
+        // upcoming aceptadas (NO en progreso)
+        if (status !== 'accepted') return false;
+        if (isInProgress(b, now)) return false;
+        const start = getStart(b);
+        if (start === null) return false;
+        if (start > now) return true;
+        return false;
+      }
+
+      if (selectedStatus === 'others') {
+        // bucket explícito
+        const problematic = new Set(['payment_failed', 'pending_deposit', 'rejected']);
+        if (problematic.has(status)) return true;
+
+        // atrasadas no pagadas ni cerradas y NO en progreso
+        const closed = new Set(['completed', 'canceled', 'rejected']);
+        const start = getStart(b);
+        const end = getEnd(b);
+
+        if (start !== null) {
+          if (!closed.has(status)) {
+            if (!isPaid(b)) {
+              if (!isInProgress(b, now)) {
+                if (end !== null) {
+                  if (now > end) return true;
+                } else {
+                  if (now > start) return true;
+                }
+              }
             }
           }
-
-          return false;
         }
+        return false;
+      }
 
-        if (selectedStatus === 'in_progress') {
-          return status === 'in_progress' || status === 'progress';
-        }
-
-        return status === selectedStatus;
-      })
-    : [];
+      // pestañas con estado real: requested, completed, canceled…
+      if (status === selectedStatus) return true;
+      return false;
+    })
+  : [];
 
   const emptyStateMessages = {
     accepted: t('no_upcoming_reservations_yet'),
