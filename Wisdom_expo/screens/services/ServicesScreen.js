@@ -49,10 +49,11 @@ export default function ServicesScreen() {
     { label: t('in_progress'), value: 'in_progress', id: 2 },
     { label: t('requested'), value: 'requested', id: 3 },
     { label: t('completed'), value: 'completed', id: 4 },
-    { label: t('paid'), value: 'paid', id: 5 },
-    { label: t('canceled'), value: 'canceled', id: 6 },
-    { label: t('others'), value: 'others', id: 7 },
-    { label: t('all'), value: 'all', id: 8 },
+    { label: t('not_paid'), value: 'not_paid', id: 5 },
+    { label: t('paid'), value: 'paid', id: 6 },
+    { label: t('canceled'), value: 'canceled', id: 7 },
+    { label: t('others'), value: 'others', id: 8 },
+    { label: t('all'), value: 'all', id: 9 },
   ];
 
   useFocusEffect(
@@ -227,6 +228,10 @@ export default function ServicesScreen() {
         return isPaid(b);
       }
 
+      if (selectedStatus === 'not_paid') {
+        return getStatus(b) === 'completed' && !isPaid(b);
+      }
+
       if (selectedStatus === 'in_progress') {
         return isInProgress(b, now);
       }
@@ -280,6 +285,7 @@ export default function ServicesScreen() {
     canceled: t('no_services_have_been_canceled'),
     in_progress: t('no_services_are_currently_in_progress'),
     paid: t('no_paid_services_yet'),
+    not_paid: t('no_not_paid_services_yet'),
     others: t('no_other_services_yet'),
     all: t('no_services_found'),
   };
