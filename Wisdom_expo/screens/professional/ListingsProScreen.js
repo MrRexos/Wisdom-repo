@@ -377,9 +377,9 @@ export default function ListingsProScreen() {
         description={t('delete_service_confirm_description')}
         confirmText={t('delete_service_confirm_confirm')}
         cancelText={t('delete_service_confirm_cancel')}
-        onConfirm={handleConfirmDelete}
-        onCancel={handleCancelDelete}
-        onDismiss={handleCancelDelete}
+        onConfirm={console.log("delete")}
+        onCancel={console.log("cancel ")}
+        onDismiss={console.log("dismiss")}
       />
 
     </SafeAreaView>
