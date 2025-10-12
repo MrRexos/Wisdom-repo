@@ -45,11 +45,14 @@ export default function ServicesScreen() {
   };
 
   const suggestions = [
-    { label: t('upcoming'), value:'accepted', id:1 },
-    { label: t('requested'), value:'requested', id:2 },
-    { label: t('completed'), value:'completed', id:3 },
-    { label: t('canceled'), value:'canceled', id:4 },
-    { label: t('in_progress'), value: 'in_progress', id: 5 },
+    { label: t('upcoming'), value: 'accepted', id: 1 },
+    { label: t('in_progress'), value: 'in_progress', id: 2 },
+    { label: t('requested'), value: 'requested', id: 3 },
+    { label: t('completed'), value: 'completed', id: 4 },
+    { label: t('paid'), value: 'paid', id: 5 },
+    { label: t('canceled'), value: 'canceled', id: 6 },
+    { label: t('others'), value: 'others', id: 7 },
+    { label: t('all'), value: 'all', id: 8 },
   ];
 
   useFocusEffect(
@@ -75,10 +78,21 @@ export default function ServicesScreen() {
     const user = JSON.parse(userData);
     setUserId(user.id);
     try {
-      const response = await api.get(`/api/user/${user.id}/bookings`, { params: { status: statusParam } });
-      return response.data;
+      const params = {};
+
+      if (statusParam === 'paid') {
+        params.is_paid = true;
+      } else if (statusParam === 'others' || statusParam === 'all') {
+        params.status = 'all';
+      } else if (statusParam) {
+        params.status = statusParam;
+      }
+
+      const response = await api.get(`/api/user/${user.id}/bookings`, { params });
+      return response.data || [];
     } catch (error) {
       console.error('Error fetching bookings:', error);
+      return [];
     }
   };
 
@@ -90,7 +104,10 @@ export default function ServicesScreen() {
     loadBookings();
   }, [selectedStatus]);
 
-  useRefreshOnFocus(() => fetchBookings(selectedStatus));
+  useRefreshOnFocus(async () => {
+    const bookingsData = await fetchBookings(selectedStatus);
+    setBookings(bookingsData);
+  });
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -146,13 +163,58 @@ export default function ServicesScreen() {
   };
 
   // Si la API no filtra correctamente, filtramos localmente por estado
+  const now = new Date();
   const filteredBookings = Array.isArray(bookings)
-    ? bookings.filter(
-        (booking) =>
-          booking.status === selectedStatus ||
-          booking.booking_status === selectedStatus
-      )
+    ? bookings.filter((booking) => {
+        const status = booking?.booking_status || booking?.status;
+        if (selectedStatus === 'all') {
+          return true;
+        }
+
+        if (selectedStatus === 'paid') {
+          return Boolean(booking?.is_paid);
+        }
+
+        if (selectedStatus === 'others') {
+          const problematicStatuses = ['payment_failed', 'pending_deposit', 'rejected'];
+          if (problematicStatuses.includes(status)) {
+            return true;
+          }
+
+          if (booking?.booking_start_datetime) {
+            const startDate = new Date(booking.booking_start_datetime);
+            if (!Number.isNaN(startDate.valueOf())) {
+              return (
+                startDate < now &&
+                !['completed', 'canceled', 'rejected'].includes(status) &&
+                !booking?.is_paid
+              );
+            }
+          }
+
+          return false;
+        }
+
+        if (selectedStatus === 'in_progress') {
+          return status === 'in_progress' || status === 'progress';
+        }
+
+        return status === selectedStatus;
+      })
     : [];
+
+  const emptyStateMessages = {
+    accepted: t('no_upcoming_reservations_yet'),
+    requested: t('no_requested_services_at_the_moment'),
+    completed: t('no_completed_services_yet'),
+    canceled: t('no_services_have_been_canceled'),
+    in_progress: t('no_services_are_currently_in_progress'),
+    paid: t('no_paid_services_yet'),
+    others: t('no_other_services_yet'),
+    all: t('no_services_found'),
+  };
+
+  const emptyStateMessage = emptyStateMessages[selectedStatus] || t('no_reservations_yet');
   
 
 
@@ -194,17 +256,7 @@ export default function ServicesScreen() {
               {selectedStatus === 'accepted' ? t('upcoming_services') : t('no_services_found')}
             </Text>
             <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[260px]">
-              {selectedStatus === 'accepted'
-                ? t('no_upcoming_reservations_yet')
-                : selectedStatus === 'requested'
-                ? t('no_requested_services_at_the_moment')
-                : selectedStatus === 'completed'
-                ? t('no_completed_services_yet')
-                : selectedStatus === 'canceled'
-                ? t('no_services_have_been_canceled')
-                : selectedStatus === 'progress'
-                ? t('no_services_are_currently_in_progress')
-                : t('no_reservations_yet')}
+              {emptyStateMessage}
             </Text>
           </View>
         ) : (
