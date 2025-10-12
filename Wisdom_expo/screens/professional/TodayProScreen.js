@@ -28,10 +28,11 @@ export default function TodayProScreen() {
     { label: t('in_progress'), value: 'in_progress', id: 2 },
     { label: t('requested'), value: 'requested', id: 3 },
     { label: t('completed'), value: 'completed', id: 4 },
-    { label: t('paid'), value: 'paid', id: 5 },
-    { label: t('canceled'), value: 'canceled', id: 6 },
-    { label: t('others'), value: 'others', id: 7 },
-    { label: t('all'), value: 'all', id: 8 },
+    { label: t('not_paid'), value: 'not_paid', id: 5 },
+    { label: t('paid'), value: 'paid', id: 6 },
+    { label: t('canceled'), value: 'canceled', id: 7 },
+    { label: t('others'), value: 'others', id: 8 },
+    { label: t('all'), value: 'all', id: 9 },
   ];
 
   const fetchBookings = async (statusParam) => {
@@ -180,6 +181,10 @@ export default function TodayProScreen() {
 
         if (selectedStatus === 'paid') {
           return isPaid(b);
+        }
+
+        if (selectedStatus === 'not_paid') {
+          return getStatus(b) === 'completed' && !isPaid(b);
         }
 
         if (selectedStatus === 'in_progress') {
