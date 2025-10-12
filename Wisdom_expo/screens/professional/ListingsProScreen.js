@@ -118,6 +118,7 @@ export default function ListingsProScreen() {
 
   const handleConfirmDelete = useCallback(async () => {
     if (!selectedListing || isDeleting) return;
+    console.log("delete");
     setShowDeleteConfirm(false);
     setIsDeleting(true);
     try {
@@ -273,69 +274,69 @@ export default function ListingsProScreen() {
   };
 
   return (
-      <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
-        <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
-        <Message
-          type="modal"
-          visible={showPaymentReminder}
-          title={t('payment_method_reminder_title')}
-          description={t('payment_method_reminder_description')}
-          confirmText={t('payment_method_reminder_confirm')}
-          cancelText={t('payment_method_reminder_cancel')}
-          dismissOnBackdropPress={true}
-          onConfirm={() => {
-            setShowPaymentReminder(false);
-            navigation.navigate('CollectionMethodName');
-          }}
-          onCancel={() => setShowPaymentReminder(false)}
-          onDismiss={() => setShowPaymentReminder(false)}
-        />
-        <View className="flex-1 justify-start items-center pt-[55px]">
+    <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+      <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
+      <Message
+        type="modal"
+        visible={showPaymentReminder}
+        title={t('payment_method_reminder_title')}
+        description={t('payment_method_reminder_description')}
+        confirmText={t('payment_method_reminder_confirm')}
+        cancelText={t('payment_method_reminder_cancel')}
+        dismissOnBackdropPress={true}
+        onConfirm={() => {
+          setShowPaymentReminder(false);
+          navigation.navigate('CollectionMethodName');
+        }}
+        onCancel={() => setShowPaymentReminder(false)}
+        onDismiss={() => setShowPaymentReminder(false)}
+      />
+      <View className="flex-1 justify-start items-center pt-[55px]">
 
-          <View className="px-6 pb-2 w-full flex-row justify-between items-center">
-            <Text className=" mb-2 font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2]">
-              {t('your_listings')}
+        <View className="px-6 pb-2 w-full flex-row justify-between items-center">
+          <Text className=" mb-2 font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2]">
+            {t('your_listings')}
+          </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('CreateServiceStart')} className="p-[8px] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+            <Plus height={23} width={23} color={iconColor} strokeWidth={1.7} />
+          </TouchableOpacity>
+        </View>
+
+        {!listings || listings.notFound ? (
+
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <SuitcaseFill height={60} width={60} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+            <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
+              {t('listings_not_found')}
             </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('CreateServiceStart')} className="p-[8px] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
-              <Plus height={23} width={23} color={iconColor} strokeWidth={1.7} />
-            </TouchableOpacity>
+            <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-4 w-[250px]">
+              {t('publish_service_to_see_them')}
+            </Text>
           </View>
 
-          {!listings || listings.notFound ? (
+        ) : (
 
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <SuitcaseFill height={60} width={60} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
-              <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
-                {t('listings_not_found')}
-              </Text>
-              <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-4 w-[250px]">
-                {t('publish_service_to_see_them')}
-              </Text>
-            </View>
+          <View style={{ zIndex: 1 }} className="flex-1 w-full">
+            <FlatList
+              data={listings}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={renderItem}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                justifyContent: 'space-between',
+                paddingBottom: 200,
+              }}
+              className="pt-6"
+            />
+          </View>
 
-          ) : (
-
-            <View style={{ zIndex: 1 }} className="flex-1 w-full">
-              <FlatList
-                data={listings}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={renderItem}
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{
-                  justifyContent: 'space-between',
-                  paddingBottom: 200,
-                }}
-                className="pt-6"
-              />
-            </View>
-
-          )}
+        )}
 
 
-        </View>
-      
+      </View>
+
 
       <BottomSheetModal
         ref={optionsSheetRef}
@@ -377,9 +378,9 @@ export default function ListingsProScreen() {
         description={t('delete_service_confirm_description')}
         confirmText={t('delete_service_confirm_confirm')}
         cancelText={t('delete_service_confirm_cancel')}
-        onConfirm={console.log("delete")}
-        onCancel={console.log("cancel ")}
-        onDismiss={console.log("dismiss")}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        onDismiss={handleCancelDelete}
       />
 
     </SafeAreaView>
