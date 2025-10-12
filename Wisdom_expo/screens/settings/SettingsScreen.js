@@ -282,8 +282,8 @@ export default function SettingsScreen() {
         onDismiss={() => setShowModalMessage(false)}
         dismissOnBackdropPress={true}
         showCancelColor={false}
-        confirmText="D'acord"
-        cancelText="Cancel·lar"
+        confirmText="Ok"
+        cancelText="Cancel"
       />
       <Message
         type="slide"

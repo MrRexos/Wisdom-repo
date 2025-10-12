@@ -216,6 +216,28 @@ export default function ServiceProfileScreen() {
     setReportAttachments(prev => prev.filter((_, i) => i !== index));
   };
 
+  const formatResponseTime = (minutes) => {
+    const n = Number(minutes);
+    if (!Number.isFinite(n) || n < 0) return '—';
+    const m = Math.round(n);
+  
+    if (m < 1) return '<1 min';
+    if (m < 5) return '<5 min';
+    if (m < 10) return '5–10 min';
+    if (m < 20) return '10–20 min';
+    if (m < 30) return '20–30 min';
+    if (m < 45) return '30–45 min';
+    if (m < 60) return '45–60 min';
+    if (m < 120) return '1–2 h';
+    if (m < 240) return '2–4 h';
+    if (m < 480) return '4–8 h';
+    if (m < 1440) return '8–24 h';
+    if (m < 2880) return `1–2 ${t('days')}`;
+    if (m < 4320) return `2–3 ${t('days')}`;
+    if (m < 10080) return `3–7 ${t('days')}`;
+    return `≥ 1 ${t('week')}`;
+  };
+
   const uploadFile = async (uri, path, mime) => {
     const blob = await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
@@ -1335,7 +1357,7 @@ export default function ServiceProfileScreen() {
 
               <View className="mb-6 justify-start items-start">
                 <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Success rate</Text>
-                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">100 %</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.success_rate).toFixed(0)} %</Text>
               </View>
               <View className="mb-6 justify-start items-start">
                 <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Total bookings</Text>
@@ -1343,7 +1365,7 @@ export default function ServiceProfileScreen() {
               </View>
               <View className="justify-start items-start">
                 <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Response time</Text>
-                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{'<'}30 min</Text>
+                <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{formatResponseTime(serviceData?.response_time_minutes)}</Text>
               </View>
 
             </View>

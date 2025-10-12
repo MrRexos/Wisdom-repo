@@ -49,6 +49,7 @@ export default function BookingDetailsScreen() {
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
   const [refreshing, setRefreshing] = useState(false);
   const [paymentErrorVisible, setPaymentErrorVisible] = useState(false);
+  const [serviceHiddenModalVisible, setServiceHiddenModalVisible] = useState(false);
   const [sheetOption, setSheetOption] = useState('date');
   const [directions, setDirections] = useState([]);
   const [userId, setUserId] = useState();
@@ -139,6 +140,15 @@ export default function BookingDetailsScreen() {
     const [Y, M, D] = p.ymd.split('-').map(Number);
     const [h, m, s] = p.hms.split(':').map(Number);
     return Date.UTC(Y, M - 1, D, h, m, s || 0);
+  };
+
+  const handleServiceCardPress = () => {
+    if (!booking) return;
+    if (service?.is_hidden) {
+      setServiceHiddenModalVisible(true);
+      return;
+    }
+    navigation.navigate('ServiceProfile', { serviceId: booking.service_id });
   };
 
   // Suma minutos “en crudo” sin husos: pasamos a UTC SOLO para hacer la suma y volvemos a strings
@@ -1174,7 +1184,7 @@ export default function BookingDetailsScreen() {
 
           <View className='mb-4'>
             <TouchableOpacity
-              onPress={() => navigation.navigate('ServiceProfile', { serviceId: booking.service_id })}
+              onPress={handleServiceCardPress}
               className='rounded-2xl bg-[#fcfcfc] dark:bg-[#323131] p-5'
             >
               <View className='flex-row justify-between items-center'>
@@ -1760,6 +1770,15 @@ export default function BookingDetailsScreen() {
         showCancel={false}
         confirmText={t('ok')}
         onConfirm={() => setPaymentErrorVisible(false)}
+      />
+      <ModalMessage
+        visible={serviceHiddenModalVisible}
+        title={t('service_profile_hidden_title')}
+        description={t('service_profile_hidden_description')}
+        showCancel={false}
+        confirmText={t('ok')}
+        onConfirm={() => setServiceHiddenModalVisible(false)}
+        onDismiss={() => setServiceHiddenModalVisible(false)}
       />
     </>
   );
