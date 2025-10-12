@@ -74,7 +74,6 @@ export default function ListingsProScreen() {
   }, []);
 
   const handleOptionsDismiss = useCallback(() => {
-    setSelectedListing(null);
     setIsUpdatingVisibility(false);
   }, []);
 
@@ -114,6 +113,7 @@ export default function ListingsProScreen() {
   const handleCancelDelete = useCallback(() => {
     if (isDeleting) return;
     setShowDeleteConfirm(false);
+    setSelectedListing(null);
   }, [isDeleting]);
 
   const handleConfirmDelete = useCallback(async () => {

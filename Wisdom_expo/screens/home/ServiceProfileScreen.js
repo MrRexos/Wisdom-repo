@@ -1909,10 +1909,14 @@ export default function ServiceProfileScreen() {
         handleIndicatorStyle={{ backgroundColor: serviceSheetIndicatorColor }}
       >
         <BottomSheetView className="py-5 px-7 ">
+          <TouchableOpacity onPress={handleServiceEdit} className="pb-6 flex-row items-center">
+            <Edit2 height={22} width={22} color={iconColor} strokeWidth={2} />
+            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit_service')}</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={handleToggleServiceVisibility}
             disabled={updatingServiceVisibility}
-            className="pb-6 flex-row items-center"
+            className="pt-1 pb-6 flex-row items-center"
           >
             {isServiceHidden ? (
               <Eye height={22} width={22} color={iconColor} strokeWidth={2} />
@@ -1922,10 +1926,6 @@ export default function ServiceProfileScreen() {
             <Text className={`ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2] ${updatingServiceVisibility ? 'opacity-60' : ''}`}>
               {isServiceHidden ? t('show_service') : t('hide_service')}
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleServiceEdit} className="pt-1 pb-6 flex-row items-center">
-            <Edit2 height={22} width={22} color={iconColor} strokeWidth={2} />
-            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit_service')}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleServiceDeletePress} className="pt-1 pb-9 flex-row items-center">
             <Trash2 height={22} width={22} color="#FF633E" strokeWidth={2} />
