@@ -7,6 +7,7 @@ import '../../languages/i18n';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
 import { Edit3 } from 'react-native-feather';
 import api from '../../utils/api';
+import { getDataLocally } from '../../utils/asyncStorage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SetFinalPriceScreen() {
@@ -38,7 +39,19 @@ export default function SetFinalPriceScreen() {
       try {
         const resp = await api.get(`/api/bookings/${bookingId}`);
         setBooking(resp.data);
-        const sresp = await api.get(`/api/services/${resp.data.service_id}`);
+        let viewerId;
+        try {
+          const storedUser = await getDataLocally('user');
+          if (storedUser) {
+            const parsedUser = JSON.parse(storedUser);
+            if (parsedUser?.id) viewerId = parsedUser.id;
+          }
+        } catch (storageError) {
+          console.error('Error retrieving local user data:', storageError);
+        }
+
+        const config = viewerId ? { params: { viewerId } } : {};
+        const sresp = await api.get(`/api/services/${resp.data.service_id}`, config);
         setService(sresp.data);
         // Inicializar duración con la que tenga la reserva si existe
         if (resp.data.service_duration) {

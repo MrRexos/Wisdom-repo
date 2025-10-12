@@ -171,7 +171,22 @@ export default function BookingDetailsScreen() {
       }
       setBooking(data);
       setEdited(prev => (editMode ? prev : data));
-      const serviceResp = await api.get(`/api/services/${data.service_id}`);
+      let viewerId;
+      try {
+        const storedUser = await getDataLocally('user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          if (parsedUser?.id) {
+            viewerId = parsedUser.id;
+            if (!userId) setUserId(parsedUser.id);
+          }
+        }
+      } catch (storageError) {
+        console.error('Error retrieving local user data:', storageError);
+      }
+
+      const config = viewerId ? { params: { viewerId } } : {};
+      const serviceResp = await api.get(`/api/services/${data.service_id}`, config);
       setService(serviceResp.data);
       if (response.data.booking_start_datetime) {
         const p = splitSql(response.data.booking_start_datetime);
