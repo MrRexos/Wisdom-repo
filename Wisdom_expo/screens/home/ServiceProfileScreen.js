@@ -13,6 +13,7 @@ import HeartFill from "../../assets/HeartFill.tsx"
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import Message from '../../components/Message';
 import {
   BottomSheetModal,
   BottomSheetView,
@@ -77,7 +78,6 @@ export default function ServiceProfileScreen() {
   const [isAddingDate, setIsAddingDate] = useState(false);
   const [selectedDate, setSelectedDate] = useState({});
   const serviceOptionsSheetRef = useRef(null);
-  const serviceOptionsSnapPoints = useMemo(() => ['30%'], []);
   const [updatingServiceVisibility, setUpdatingServiceVisibility] = useState(false);
   const [serviceDeleteConfirmVisible, setServiceDeleteConfirmVisible] = useState(false);
   const [serviceDeleteLoading, setServiceDeleteLoading] = useState(false);
@@ -277,6 +277,7 @@ export default function ServiceProfileScreen() {
     setServiceDeleteConfirmVisible(false);
     setServiceDeleteLoading(true);
     try {
+      
       await api.delete(`/api/services/${serviceId}`);
       Alert.alert(t('service_deleted_title'), t('service_deleted_message'));
       navigation.goBack();
@@ -992,7 +993,6 @@ export default function ServiceProfileScreen() {
 
 
   return (
-    <BottomSheetModalProvider>
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
         <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
@@ -1903,17 +1903,16 @@ export default function ServiceProfileScreen() {
 
       <BottomSheetModal
         ref={serviceOptionsSheetRef}
-        snapPoints={serviceOptionsSnapPoints}
         onDismiss={handleServiceOptionsDismiss}
         backdropComponent={renderServiceOptionsBackdrop}
         backgroundStyle={{ backgroundColor: serviceSheetBackgroundColor, borderRadius: 25 }}
         handleIndicatorStyle={{ backgroundColor: serviceSheetIndicatorColor }}
       >
-        <BottomSheetView className="py-5 px-7 gap-y-4">
+        <BottomSheetView className="py-5 px-7 ">
           <TouchableOpacity
             onPress={handleToggleServiceVisibility}
             disabled={updatingServiceVisibility}
-            className="flex-row items-center"
+            className="pb-6 flex-row items-center"
           >
             {isServiceHidden ? (
               <Eye height={22} width={22} color={iconColor} strokeWidth={2} />
@@ -1924,13 +1923,13 @@ export default function ServiceProfileScreen() {
               {isServiceHidden ? t('show_service') : t('hide_service')}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleServiceEdit} className="flex-row items-center">
+          <TouchableOpacity onPress={handleServiceEdit} className="pt-1 pb-6 flex-row items-center">
             <Edit2 height={22} width={22} color={iconColor} strokeWidth={2} />
             <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit_service')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleServiceDeletePress} className="flex-row items-center">
+          <TouchableOpacity onPress={handleServiceDeletePress} className="pt-1 pb-9 flex-row items-center">
             <Trash2 height={22} width={22} color="#FF633E" strokeWidth={2} />
-            <Text className="ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_service')}</Text>
+            <Text className=" ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_service')}</Text>
           </TouchableOpacity>
         </BottomSheetView>
       </BottomSheetModal>
@@ -1948,7 +1947,6 @@ export default function ServiceProfileScreen() {
       />
 
       </SafeAreaView>
-    </BottomSheetModalProvider>
   );
 }
 

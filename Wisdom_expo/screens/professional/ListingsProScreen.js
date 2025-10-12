@@ -28,7 +28,6 @@ export default function ListingsProScreen() {
   const [showPaymentReminder, setShowPaymentReminder] = useState(false);
   const optionsSheetRef = useRef(null);
   const [selectedListing, setSelectedListing] = useState(null);
-  const sheetSnapPoints = useMemo(() => ['30%'], []);
   const [isUpdatingVisibility, setIsUpdatingVisibility] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -274,7 +273,6 @@ export default function ListingsProScreen() {
   };
 
   return (
-    <BottomSheetModalProvider>
       <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
         <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
         <Message
@@ -337,21 +335,24 @@ export default function ListingsProScreen() {
 
 
         </View>
-      </SafeAreaView>
+      
 
       <BottomSheetModal
         ref={optionsSheetRef}
-        snapPoints={sheetSnapPoints}
         onDismiss={handleOptionsDismiss}
         backdropComponent={renderOptionsBackdrop}
         backgroundStyle={{ backgroundColor: sheetBackgroundColor, borderRadius: 25 }}
         handleIndicatorStyle={{ backgroundColor: sheetIndicatorColor }}
       >
-        <BottomSheetView className="py-5 px-7 gap-y-4">
+        <BottomSheetView className="py-5 px-7">
+          <TouchableOpacity onPress={handleEditService} className=" pb-6 flex-row items-center">
+            <Edit2 height={22} width={22} color={iconColor} strokeWidth={2} />
+            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit_service')}</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={handleToggleVisibility}
             disabled={isUpdatingVisibility}
-            className="flex-row items-center"
+            className="pt-1 pb-6 flex-row items-center"
           >
             {isListingHidden ? (
               <Eye height={22} width={22} color={iconColor} strokeWidth={2} />
@@ -362,13 +363,9 @@ export default function ListingsProScreen() {
               {isListingHidden ? t('show_service') : t('hide_service')}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleEditService} className="flex-row items-center">
-            <Edit2 height={22} width={22} color={iconColor} strokeWidth={2} />
-            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit_service')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleDeletePress} className="flex-row items-center">
+          <TouchableOpacity onPress={handleDeletePress} className="pt-1 pb-9 flex-row items-center">
             <Trash2 height={22} width={22} color="#FF633E" strokeWidth={2} />
-            <Text className="ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_service')}</Text>
+            <Text className=" ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_service')}</Text>
           </TouchableOpacity>
         </BottomSheetView>
       </BottomSheetModal>
@@ -385,6 +382,6 @@ export default function ListingsProScreen() {
         onDismiss={handleCancelDelete}
       />
 
-    </BottomSheetModalProvider>
+    </SafeAreaView>
   );
 }
