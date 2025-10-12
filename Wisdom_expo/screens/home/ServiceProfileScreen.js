@@ -6,7 +6,7 @@ import '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon, GlobeAltIcon, GlobeEuropeAfricaIcon, XCircleIcon } from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import { Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X, Check, Maximize2, File, Image as ImageIcon, Folder, AlertTriangle } from "react-native-feather";
+import { Search, Sliders, Heart, Plus, Share, Info, Phone, FileText, Flag, X, Check, Maximize2, File, Image as ImageIcon, Folder, AlertTriangle, Eye, EyeOff, Edit2, Trash2 } from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import HeartFill from "../../assets/HeartFill.tsx"
@@ -55,7 +55,7 @@ export default function ServiceProfileScreen() {
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const { serviceId, location } = route.params;
+  const { serviceId, location, fromListings } = route.params || {};
   const [serviceData, setServiceData] = useState([]);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [showMoreButton, setShowMoreButton] = useState(false);
@@ -76,6 +76,14 @@ export default function ServiceProfileScreen() {
   const [listName, setListName] = useState('');
   const [isAddingDate, setIsAddingDate] = useState(false);
   const [selectedDate, setSelectedDate] = useState({});
+  const serviceOptionsSheetRef = useRef(null);
+  const serviceOptionsSnapPoints = useMemo(() => ['30%'], []);
+  const [updatingServiceVisibility, setUpdatingServiceVisibility] = useState(false);
+  const [serviceDeleteConfirmVisible, setServiceDeleteConfirmVisible] = useState(false);
+  const [serviceDeleteLoading, setServiceDeleteLoading] = useState(false);
+  const cameFromListings = Boolean(fromListings);
+  const isMyService = useMemo(() => Boolean(userId && serviceData?.user_id === userId), [userId, serviceData?.user_id]);
+  const showServiceSettingsButton = isMyService && cameFromListings;
 
   const mapRegion = serviceData.latitude
     ? (serviceData.action_rate && serviceData.action_rate < 100
@@ -211,6 +219,74 @@ export default function ServiceProfileScreen() {
     }
     setShowAttachOptions(false);
   };
+
+  const renderServiceOptionsBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
+
+  const handleOpenServiceOptions = useCallback(() => {
+    if (!isMyService) return;
+    serviceOptionsSheetRef.current?.present();
+  }, [isMyService]);
+
+  const handleServiceOptionsDismiss = useCallback(() => {
+    setUpdatingServiceVisibility(false);
+  }, []);
+
+  const handleToggleServiceVisibility = useCallback(async () => {
+    if (!serviceId) return;
+    const currentlyHidden = serviceData?.is_hidden === 1 || serviceData?.is_hidden === true;
+    const newHiddenValue = !currentlyHidden;
+    const formattedHiddenValue = typeof serviceData?.is_hidden === 'number' ? (newHiddenValue ? 1 : 0) : newHiddenValue;
+    try {
+      setUpdatingServiceVisibility(true);
+      await api.patch(`/api/services/${serviceId}/visibility`, { is_hidden: newHiddenValue });
+      setServiceData(prev => prev ? { ...prev, is_hidden: formattedHiddenValue } : prev);
+    } catch (error) {
+      console.error('Error updating service visibility:', error);
+      Alert.alert(t('service_visibility_error'));
+    } finally {
+      setUpdatingServiceVisibility(false);
+    }
+  }, [serviceData?.is_hidden, serviceId, t]);
+
+  const handleServiceEdit = useCallback(() => {
+    serviceOptionsSheetRef.current?.dismiss();
+  }, []);
+
+  const handleServiceDeletePress = useCallback(() => {
+    serviceOptionsSheetRef.current?.dismiss();
+    setServiceDeleteConfirmVisible(true);
+  }, []);
+
+  const handleCancelServiceDelete = useCallback(() => {
+    if (serviceDeleteLoading) return;
+    setServiceDeleteConfirmVisible(false);
+  }, [serviceDeleteLoading]);
+
+  const handleConfirmServiceDelete = useCallback(async () => {
+    if (!serviceId || serviceDeleteLoading) return;
+    setServiceDeleteConfirmVisible(false);
+    setServiceDeleteLoading(true);
+    try {
+      await api.delete(`/api/services/${serviceId}`);
+      Alert.alert(t('service_deleted_title'), t('service_deleted_message'));
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      Alert.alert(t('service_delete_error'));
+    } finally {
+      setServiceDeleteLoading(false);
+    }
+  }, [serviceDeleteLoading, serviceId, t, navigation]);
 
   const removeAttachment = (index) => {
     setReportAttachments(prev => prev.filter((_, i) => i !== index));
@@ -496,11 +572,13 @@ export default function ServiceProfileScreen() {
   };
 
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
+  const isServiceHidden = serviceData?.is_hidden === 1 || serviceData?.is_hidden === true;
+  const serviceSheetBackgroundColor = colorScheme === 'dark' ? '#323131' : '#fcfcfc';
+  const serviceSheetIndicatorColor = colorScheme === 'dark' ? '#3d3d3d' : '#e0e0e0';
 
 
   const verifyRegistered = async () => {
     const userData = await getDataLocally('user');
-    console.log(userData);
 
     // Comprobar si userData indica que no hay usuario
     if (userData === '{"token":false}') {
@@ -511,10 +589,15 @@ export default function ServiceProfileScreen() {
     } else {
       const me = JSON.parse(userData);
       if (me.id === serviceData.user_id) {
-        Alert.alert(t('cannot_book_own_service'));
+        if (cameFromListings) {
+          handleOpenServiceOptions();
+        } else {
+          Alert.alert(t('cannot_book_own_service'));
+        }
         return;
       }
-      openSheetWithInput(700); setIsAddingDate(true)
+      openSheetWithInput(700);
+      setIsAddingDate(true);
     }
 
   }
@@ -1783,31 +1866,87 @@ export default function ServiceProfileScreen() {
         <View className="h-[50px]" />
       </ScrollView >
 
-      {/* Button book */}
+      {/* Button book / service settings */}
 
-      <View className="flex-row justify-center items-center pb-3 px-6">
+      {(!isMyService || showServiceSettingsButton) && (
+        <View className="flex-row justify-center items-center pb-3 px-6">
+          {showServiceSettingsButton ? (
+            <TouchableOpacity
+              onPress={handleOpenServiceOptions}
+              className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
+            >
+              <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('service_settings')}</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => { verifyRegistered(); }}
+              style={{ opacity: 1 }}
+              className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
+            >
+              <Text>
+                <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
+                  {serviceData?.price_type === 'hour' && (
+                    <>Book for <Text className="font-inter-semibold text-[15px] text-[#B6B5B5] dark:text-[#706f6e]">{parseFloat(serviceData?.price).toFixed(0)} €</Text>/hour</>
+                  )}
+                  {serviceData?.price_type === 'fix' && (
+                    <>Book for <Text className="font-inter-semibold text-[15px] text-[#B6B5B5] dark:text-[#706f6e]">{parseFloat(serviceData?.price).toFixed(0)} €</Text></>
+                  )}
+                  {serviceData?.price_type === 'budget' && (
+                    <>Book on budget</>
+                  )}
+                </Text>
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
 
-        <TouchableOpacity
-          onPress={() => { verifyRegistered(); }}
-          style={{ opacity: 1 }}
-          className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
-        >
-          <Text>
-            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
-              {serviceData?.price_type === 'hour' && (
-                <>Book for <Text className="font-inter-semibold text-[15px] text-[#B6B5B5] dark:text-[#706f6e]">{parseFloat(serviceData?.price).toFixed(0)} €</Text>/hour</>
-              )}
-              {serviceData?.price_type === 'fix' && (
-                <>Book for <Text className="font-inter-semibold text-[15px] text-[#B6B5B5] dark:text-[#706f6e]">{parseFloat(serviceData?.price).toFixed(0)} €</Text></>
-              )}
-              {serviceData?.price_type === 'budget' && (
-                <>Book on budget</>
-              )}
+      <BottomSheetModal
+        ref={serviceOptionsSheetRef}
+        snapPoints={serviceOptionsSnapPoints}
+        onDismiss={handleServiceOptionsDismiss}
+        backdropComponent={renderServiceOptionsBackdrop}
+        backgroundStyle={{ backgroundColor: serviceSheetBackgroundColor, borderRadius: 25 }}
+        handleIndicatorStyle={{ backgroundColor: serviceSheetIndicatorColor }}
+      >
+        <BottomSheetView className="py-5 px-7 gap-y-4">
+          <TouchableOpacity
+            onPress={handleToggleServiceVisibility}
+            disabled={updatingServiceVisibility}
+            className="flex-row items-center"
+          >
+            {isServiceHidden ? (
+              <Eye height={22} width={22} color={iconColor} strokeWidth={2} />
+            ) : (
+              <EyeOff height={22} width={22} color={iconColor} strokeWidth={2} />
+            )}
+            <Text className={`ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2] ${updatingServiceVisibility ? 'opacity-60' : ''}`}>
+              {isServiceHidden ? t('show_service') : t('hide_service')}
             </Text>
-          </Text>
-        </TouchableOpacity>
-      </View>
-    
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleServiceEdit} className="flex-row items-center">
+            <Edit2 height={22} width={22} color={iconColor} strokeWidth={2} />
+            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit_service')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleServiceDeletePress} className="flex-row items-center">
+            <Trash2 height={22} width={22} color="#FF633E" strokeWidth={2} />
+            <Text className="ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_service')}</Text>
+          </TouchableOpacity>
+        </BottomSheetView>
+      </BottomSheetModal>
+
+      <Message
+        type="modal"
+        visible={serviceDeleteConfirmVisible}
+        title={t('delete_service_confirm_title')}
+        description={t('delete_service_confirm_description')}
+        confirmText={t('delete_service_confirm_confirm')}
+        cancelText={t('delete_service_confirm_cancel')}
+        onConfirm={handleConfirmServiceDelete}
+        onCancel={handleCancelServiceDelete}
+        onDismiss={handleCancelServiceDelete}
+      />
+
       </SafeAreaView>
     </BottomSheetModalProvider>
   );

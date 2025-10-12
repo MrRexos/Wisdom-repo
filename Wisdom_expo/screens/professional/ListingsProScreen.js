@@ -1,18 +1,19 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
-import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image, RefreshControl } from 'react-native';
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
+import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image, RefreshControl, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon } from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import { Plus } from "react-native-feather";
+import { Plus, MoreHorizontal, Eye, EyeOff, Edit2, Trash2 } from "react-native-feather";
 import { getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Message from '../../components/Message';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider, BottomSheetView } from '@gorhom/bottom-sheet';
 
 
 export default function ListingsProScreen() {
@@ -25,6 +26,12 @@ export default function ListingsProScreen() {
   const [userId, setUserId] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [showPaymentReminder, setShowPaymentReminder] = useState(false);
+  const optionsSheetRef = useRef(null);
+  const [selectedListing, setSelectedListing] = useState(null);
+  const sheetSnapPoints = useMemo(() => ['30%'], []);
+  const [isUpdatingVisibility, setIsUpdatingVisibility] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const currencySymbols = {
     EUR: '€',
     USD: '$',
@@ -49,6 +56,87 @@ export default function ListingsProScreen() {
   }, []);
 
   useRefreshOnFocus(fetchListings);
+
+  const renderOptionsBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
+
+  const openOptionsSheet = useCallback((listing) => {
+    setSelectedListing(listing);
+    optionsSheetRef.current?.present();
+  }, []);
+
+  const handleOptionsDismiss = useCallback(() => {
+    setSelectedListing(null);
+    setIsUpdatingVisibility(false);
+  }, []);
+
+  const handleToggleVisibility = useCallback(async () => {
+    if (!selectedListing) return;
+    const serviceId = selectedListing.service_id;
+    const currentlyHidden = selectedListing.is_hidden === 1 || selectedListing.is_hidden === true;
+    const newHiddenValue = !currentlyHidden;
+    const formattedHiddenValue = typeof selectedListing.is_hidden === 'number' ? (newHiddenValue ? 1 : 0) : newHiddenValue;
+    try {
+      setIsUpdatingVisibility(true);
+      await api.patch(`/api/services/${serviceId}/visibility`, { is_hidden: newHiddenValue });
+      setListings(prev => prev?.map(listing =>
+        listing.service_id === serviceId
+          ? { ...listing, is_hidden: formattedHiddenValue }
+          : listing
+      ));
+      setSelectedListing(prev => prev ? { ...prev, is_hidden: formattedHiddenValue } : prev);
+    } catch (error) {
+      console.error('Error updating service visibility:', error);
+      Alert.alert(t('service_visibility_error'));
+    } finally {
+      setIsUpdatingVisibility(false);
+    }
+  }, [selectedListing, t]);
+
+  const handleEditService = useCallback(() => {
+    optionsSheetRef.current?.dismiss();
+  }, []);
+
+  const handleDeletePress = useCallback(() => {
+    if (!selectedListing) return;
+    optionsSheetRef.current?.dismiss();
+    setShowDeleteConfirm(true);
+  }, [selectedListing]);
+
+  const handleCancelDelete = useCallback(() => {
+    if (isDeleting) return;
+    setShowDeleteConfirm(false);
+  }, [isDeleting]);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (!selectedListing || isDeleting) return;
+    setShowDeleteConfirm(false);
+    setIsDeleting(true);
+    try {
+      await api.delete(`/api/services/${selectedListing.service_id}`);
+      setListings(prev => prev?.filter(listing => listing.service_id !== selectedListing.service_id));
+      setSelectedListing(null);
+      Alert.alert(t('service_deleted_title'), t('service_deleted_message'));
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      Alert.alert(t('service_delete_error'));
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [isDeleting, selectedListing, t]);
+
+  const isListingHidden = selectedListing ? selectedListing.is_hidden === 1 || selectedListing.is_hidden === true : false;
+  const sheetBackgroundColor = colorScheme === 'dark' ? '#323131' : '#fcfcfc';
+  const sheetIndicatorColor = colorScheme === 'dark' ? '#3d3d3d' : '#e0e0e0';
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -104,10 +192,21 @@ export default function ListingsProScreen() {
     };
 
     return (
-      <TouchableOpacity style={{ zIndex: 10 }} onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.service_id })} className="mt-5 mx-5 z-10 rounded-3xl bg-[#fcfcfc] dark:bg-[#323131] ">
+      <TouchableOpacity
+        style={{ zIndex: 10 }}
+        onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.service_id, fromListings: true })}
+        className="mt-5 mx-5 z-10 rounded-3xl bg-[#fcfcfc] dark:bg-[#323131] "
+      >
 
         <View className="flex-row justify-between items-center mt-5">
           <Text className="ml-5 mt-1 font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
+          <TouchableOpacity
+            onPress={(event) => { event.stopPropagation?.(); openOptionsSheet(item); }}
+            hitSlop={8}
+            className="mr-5 p-1"
+          >
+            <MoreHorizontal height={22} width={22} color={iconColor} strokeWidth={2} />
+          </TouchableOpacity>
         </View>
 
         <View className="flex-row justify-between items-center mt-4">
@@ -175,68 +274,117 @@ export default function ListingsProScreen() {
   };
 
   return (
-    <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
-      <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
+    <BottomSheetModalProvider>
+      <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+        <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
+        <Message
+          type="modal"
+          visible={showPaymentReminder}
+          title={t('payment_method_reminder_title')}
+          description={t('payment_method_reminder_description')}
+          confirmText={t('payment_method_reminder_confirm')}
+          cancelText={t('payment_method_reminder_cancel')}
+          dismissOnBackdropPress={true}
+          onConfirm={() => {
+            setShowPaymentReminder(false);
+            navigation.navigate('CollectionMethodName');
+          }}
+          onCancel={() => setShowPaymentReminder(false)}
+          onDismiss={() => setShowPaymentReminder(false)}
+        />
+        <View className="flex-1 justify-start items-center pt-[55px]">
+
+          <View className="px-6 pb-2 w-full flex-row justify-between items-center">
+            <Text className=" mb-2 font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2]">
+              {t('your_listings')}
+            </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('CreateServiceStart')} className="p-[8px] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
+              <Plus height={23} width={23} color={iconColor} strokeWidth={1.7} />
+            </TouchableOpacity>
+          </View>
+
+          {!listings || listings.notFound ? (
+
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <SuitcaseFill height={60} width={60} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
+              <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
+                {t('listings_not_found')}
+              </Text>
+              <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-4 w-[250px]">
+                {t('publish_service_to_see_them')}
+              </Text>
+            </View>
+
+          ) : (
+
+            <View style={{ zIndex: 1 }} className="flex-1 w-full">
+              <FlatList
+                data={listings}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderItem}
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                  justifyContent: 'space-between',
+                  paddingBottom: 200,
+                }}
+                className="pt-6"
+              />
+            </View>
+
+          )}
+
+
+        </View>
+      </SafeAreaView>
+
+      <BottomSheetModal
+        ref={optionsSheetRef}
+        snapPoints={sheetSnapPoints}
+        onDismiss={handleOptionsDismiss}
+        backdropComponent={renderOptionsBackdrop}
+        backgroundStyle={{ backgroundColor: sheetBackgroundColor, borderRadius: 25 }}
+        handleIndicatorStyle={{ backgroundColor: sheetIndicatorColor }}
+      >
+        <BottomSheetView className="py-5 px-7 gap-y-4">
+          <TouchableOpacity
+            onPress={handleToggleVisibility}
+            disabled={isUpdatingVisibility}
+            className="flex-row items-center"
+          >
+            {isListingHidden ? (
+              <Eye height={22} width={22} color={iconColor} strokeWidth={2} />
+            ) : (
+              <EyeOff height={22} width={22} color={iconColor} strokeWidth={2} />
+            )}
+            <Text className={`ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2] ${isUpdatingVisibility ? 'opacity-60' : ''}`}>
+              {isListingHidden ? t('show_service') : t('hide_service')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleEditService} className="flex-row items-center">
+            <Edit2 height={22} width={22} color={iconColor} strokeWidth={2} />
+            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit_service')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleDeletePress} className="flex-row items-center">
+            <Trash2 height={22} width={22} color="#FF633E" strokeWidth={2} />
+            <Text className="ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_service')}</Text>
+          </TouchableOpacity>
+        </BottomSheetView>
+      </BottomSheetModal>
+
       <Message
         type="modal"
-        visible={showPaymentReminder}
-        title={t('payment_method_reminder_title')}
-        description={t('payment_method_reminder_description')}
-        confirmText={t('payment_method_reminder_confirm')}
-        cancelText={t('payment_method_reminder_cancel')}
-        dismissOnBackdropPress={true}
-        onConfirm={() => {
-          setShowPaymentReminder(false);
-          navigation.navigate('CollectionMethodName');
-        }}
-        onCancel={() => setShowPaymentReminder(false)}
-        onDismiss={() => setShowPaymentReminder(false)}
+        visible={showDeleteConfirm}
+        title={t('delete_service_confirm_title')}
+        description={t('delete_service_confirm_description')}
+        confirmText={t('delete_service_confirm_confirm')}
+        cancelText={t('delete_service_confirm_cancel')}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        onDismiss={handleCancelDelete}
       />
-      <View className="flex-1 justify-start items-center pt-[55px]">
 
-        <View className="px-6 pb-2 w-full flex-row justify-between items-center">
-          <Text className=" mb-2 font-inter-bold text-[28px] text-[#444343] dark:text-[#f2f2f2]">
-            {t('your_listings')}
-          </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('CreateServiceStart')} className="p-[8px] bg-[#fcfcfc] dark:bg-[#323131] rounded-full">
-            <Plus height={23} width={23} color={iconColor} strokeWidth={1.7} />
-          </TouchableOpacity>
-        </View>
-
-        {!listings || listings.notFound ? (
-
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <SuitcaseFill height={60} width={60} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
-            <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
-              {t('listings_not_found')}
-            </Text>
-            <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-4 w-[250px]">
-              {t('publish_service_to_see_them')}
-            </Text>
-          </View>
-
-        ) : (
-
-          <View style={{ zIndex: 1 }} className="flex-1 w-full">
-            <FlatList
-              data={listings}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={renderItem}
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={{
-                justifyContent: 'space-between',
-                paddingBottom: 200,
-              }}
-              className="pt-6"
-            />
-          </View>
-
-        )}
-
-
-      </View>
-    </SafeAreaView>
+    </BottomSheetModalProvider>
   );
 }
