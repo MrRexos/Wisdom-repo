@@ -26,10 +26,13 @@ export default function TodayProScreen() {
 
   const suggestions = [
     { label: t('upcoming'), value: 'accepted', id: 1 },
-    { label: t('requested'), value: 'requested', id: 2 },
-    { label: t('completed'), value: 'completed', id: 3 },
-    { label: t('canceled'), value: 'canceled', id: 4 },
-    { label: t('in_progress'), value: 'progress', id: 5 },
+    { label: t('in_progress'), value: 'progress', id: 2 },
+    { label: t('requested'), value: 'requested', id: 3 },
+    { label: t('completed'), value: 'completed', id: 4 },
+    { label: t('paid'), value: 'paid', id: 5 },
+    { label: t('canceled'), value: 'canceled', id: 6 },
+    { label: t('others'), value: 'others', id: 7 },
+    { label: t('all'), value: 'all', id: 8 },
   ];
 
   const fetchBookings = async (statusParam) => {
@@ -37,10 +40,21 @@ export default function TodayProScreen() {
     const user = JSON.parse(userData);
     setUserId(user.id);
     try {
-      const response = await api.get(`/api/service-user/${user.id}/bookings`, { params: { status: statusParam } });
-      return response.data;
+      const params = {};
+
+      if (statusParam === 'paid') {
+        params.is_paid = true;
+      } else if (statusParam === 'others' || statusParam === 'all') {
+        params.status = 'all';
+      } else if (statusParam) {
+        params.status = statusParam;
+      }
+
+      const response = await api.get(`/api/service-user/${user.id}/bookings`, { params });
+      return response.data || [];
     } catch (error) {
       console.error('Error fetching bookings:', error);
+      return [];
     }
   };
 
@@ -62,7 +76,10 @@ export default function TodayProScreen() {
     loadUserData();
   }, [selectedStatus]);
 
-  useRefreshOnFocus(() => fetchBookings(selectedStatus));
+  useRefreshOnFocus(async () => {
+    const bookingsData = await fetchBookings(selectedStatus);
+    setBookings(bookingsData);
+  });
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -107,12 +124,45 @@ export default function TodayProScreen() {
   };
 
   // Si la API no filtra correctamente, filtramos localmente por estado
+  const now = new Date();
   const filteredBookings = Array.isArray(bookings)
-    ? bookings.filter(
-      (booking) =>
-        booking.status === selectedStatus ||
-        booking.booking_status === selectedStatus
-    )
+    ? bookings.filter((booking) => {
+        const status = booking?.booking_status || booking?.status;
+
+        if (selectedStatus === 'all') {
+          return true;
+        }
+
+        if (selectedStatus === 'paid') {
+          return Boolean(booking?.is_paid);
+        }
+
+        if (selectedStatus === 'others') {
+          const problematicStatuses = ['payment_failed', 'pending_deposit', 'rejected'];
+          if (problematicStatuses.includes(status)) {
+            return true;
+          }
+
+          if (booking?.booking_start_datetime) {
+            const startDate = new Date(booking.booking_start_datetime);
+            if (!Number.isNaN(startDate.valueOf())) {
+              return (
+                startDate < now &&
+                !['completed', 'canceled', 'rejected'].includes(status) &&
+                !booking?.is_paid
+              );
+            }
+          }
+
+          return false;
+        }
+
+        if (selectedStatus === 'progress') {
+          return status === 'progress' || status === 'in_progress';
+        }
+
+        return status === selectedStatus;
+      })
     : [];
 
   return (
