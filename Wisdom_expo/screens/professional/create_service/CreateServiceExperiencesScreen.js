@@ -4,9 +4,12 @@ import { useTranslation } from 'react-i18next';
 import '../../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { XMarkIcon } from 'react-native-heroicons/outline';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { XMarkIcon } from 'react-native-heroicons/outline';
+import ServiceFormHeader from '../../../components/ServiceFormHeader';
+import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
+import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 
 
 export default function CreateServiceExperiencesScreen() {
@@ -31,6 +34,18 @@ export default function CreateServiceExperiencesScreen() {
   const [tempDate, setTempDate] = useState(new Date());
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
+
+  const {
+    isEditing,
+    hasChanges,
+    saving,
+    requestBack,
+    handleSave: handleFormSave,
+    confirmVisible,
+    handleConfirmSave,
+    handleDiscardChanges,
+    handleDismissConfirm,
+  } = useServiceFormEditing({ prevParams, currentValues: { experiences }, t });
 
   const inputPositionChanged = (text) => {
     setPosition(text);
@@ -144,11 +159,12 @@ export default function CreateServiceExperiencesScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
 
         <View className="flex-1 px-6 pt-5 pb-10">
-          <TouchableOpacity onPress={() => navigation.pop(7)}>
-            <View className="flex-row justify-start">
-              <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
-            </View>
-          </TouchableOpacity>
+          <ServiceFormHeader
+            onBack={requestBack}
+            onSave={handleFormSave}
+            showSave={isEditing && hasChanges}
+            saving={saving}
+          />
 
           <View className="justify-center items-center">
             <Text className="mt-[55px] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('your_experience')}</Text>
@@ -347,6 +363,12 @@ onPress={() => navigation.navigate('CreateServiceImages', { prevParams: { ...pre
         </TouchableOpacity>
       </View>
 
+      <ServiceFormUnsavedModal
+        visible={confirmVisible}
+        onSave={handleConfirmSave}
+        onDiscard={handleDiscardChanges}
+        onDismiss={handleDismissConfirm}
+      />
     </SafeAreaView>
   );
 }

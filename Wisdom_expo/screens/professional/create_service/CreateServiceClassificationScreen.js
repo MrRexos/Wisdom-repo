@@ -11,14 +11,13 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import {
-  XMarkIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from 'react-native-heroicons/outline';
+import { ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
 import Triangle from '../../../assets/triangle';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import api from '../../../utils/api.js';
+import ServiceFormHeader from '../../../components/ServiceFormHeader';
+import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
+import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 
 
 export default function CreateServiceClassificationScreen() {
@@ -28,8 +27,6 @@ export default function CreateServiceClassificationScreen() {
   const route = useRoute();
   const prevParams = route.params?.prevParams || {};
   const { title } = prevParams;
-
-  const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
 
   // ---------- state general ----------
   const [family, setFamily] = useState(prevParams.family || null);
@@ -72,6 +69,46 @@ export default function CreateServiceClassificationScreen() {
   useEffect(() => {
     getFamilies();
   }, []);
+
+  useEffect(() => {
+    if (!family && families.length > 0 && prevParams.familyId) {
+      const defaultFamily = families.find((item) => item.id === prevParams.familyId);
+      if (defaultFamily) {
+        setFamily(defaultFamily);
+        getCategories(defaultFamily.id);
+      }
+    }
+  }, [families, family, prevParams.familyId]);
+
+  useEffect(() => {
+    if (!category && categories.length > 0 && prevParams.categoryId) {
+      const defaultCategory = categories.find((item) => item.service_category_id === prevParams.categoryId);
+      if (defaultCategory) {
+        setCategory(defaultCategory);
+      }
+    }
+  }, [categories, category, prevParams.categoryId]);
+
+  const {
+    isEditing,
+    hasChanges,
+    saving,
+    requestBack,
+    handleSave,
+    confirmVisible,
+    handleConfirmSave,
+    handleDiscardChanges,
+    handleDismissConfirm,
+  } = useServiceFormEditing({
+    prevParams,
+    currentValues: {
+      family,
+      category,
+      familyId: family?.id ?? prevParams.familyId ?? null,
+      categoryId: category?.service_category_id ?? prevParams.categoryId ?? null,
+    },
+    t,
+  });
 
   // ---------- handlers ----------
   const handleFamilyPress = (item) => {
@@ -138,12 +175,12 @@ export default function CreateServiceClassificationScreen() {
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
       <View className="flex-1 px-6 pt-5 pb-6">
-        {/* ---------- Header ---------- */}
-        <TouchableOpacity onPress={() => navigation.pop(3)}>
-          <View className="flex-row justify-start">
-            <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
-          </View>
-        </TouchableOpacity>
+        <ServiceFormHeader
+          onBack={requestBack}
+          onSave={handleSave}
+          showSave={isEditing && hasChanges}
+          saving={saving}
+        />
 
         <View className="justify-center items-center">
           <Text className="mt-[55px] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">
@@ -241,7 +278,17 @@ export default function CreateServiceClassificationScreen() {
         {/* ---------- Footer ---------- */}
         <View className="flex-row justify-center items-center">
           <TouchableOpacity
-            onPress={() => navigation.navigate('CreateServiceTitle', { prevParams: { ...prevParams, family, category } })}
+            onPress={() =>
+              navigation.navigate('CreateServiceTitle', {
+                prevParams: {
+                  ...prevParams,
+                  family,
+                  familyId: family?.id ?? null,
+                  category,
+                  categoryId: category?.service_category_id ?? null,
+                },
+              })
+            }
             className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-1/4 h-[55px] rounded-full items-center justify-center"
           >
             <Text className="font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]">
@@ -251,7 +298,17 @@ export default function CreateServiceClassificationScreen() {
 
           <TouchableOpacity
             disabled={!family || !category}
-onPress={() => navigation.navigate('CreateServiceDescription', { prevParams: { ...prevParams, family, category } })}
+            onPress={() =>
+              navigation.navigate('CreateServiceDescription', {
+                prevParams: {
+                  ...prevParams,
+                  family,
+                  familyId: family?.id ?? null,
+                  category,
+                  categoryId: category?.service_category_id ?? null,
+                },
+              })
+            }
             style={{ opacity: family && category ? 1 : 0.5 }}
             className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center"
           >
@@ -261,6 +318,12 @@ onPress={() => navigation.navigate('CreateServiceDescription', { prevParams: { .
           </TouchableOpacity>
         </View>
       </View>
+      <ServiceFormUnsavedModal
+        visible={confirmVisible}
+        onSave={handleConfirmSave}
+        onDiscard={handleDiscardChanges}
+        onDismiss={handleDismissConfirm}
+      />
     </SafeAreaView>
   );
 }

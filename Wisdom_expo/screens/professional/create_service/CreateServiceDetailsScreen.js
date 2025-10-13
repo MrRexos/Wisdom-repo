@@ -4,9 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import {XMarkIcon, ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/outline';
+import { XMarkIcon, ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Check } from "react-native-feather";
+import ServiceFormHeader from '../../../components/ServiceFormHeader';
+import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
+import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 
 
 
@@ -31,6 +34,22 @@ export default function CreateServiceDetailsScreen() {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const inputRef = useRef(null);
   const input2Ref = useRef(null);
+
+  const {
+    isEditing,
+    hasChanges,
+    saving,
+    requestBack,
+    handleSave,
+    confirmVisible,
+    handleConfirmSave,
+    handleDiscardChanges,
+    handleDismissConfirm,
+  } = useServiceFormEditing({
+    prevParams,
+    currentValues: { selectedLanguages, isIndividual, hobbies, tags },
+    t,
+  });
 
   const languages = [
     { id: 1, label: 'Catalan', abbreviation: 'ca' },
@@ -130,11 +149,12 @@ export default function CreateServiceDetailsScreen() {
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         <ScrollView className="flex-1 px-6 pt-5 pb-6">
 
-            <TouchableOpacity onPress={() => navigation.pop(5)}>
-                <View className="flex-row justify-start">
-                    <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
-                </View> 
-            </TouchableOpacity>
+            <ServiceFormHeader
+              onBack={requestBack}
+              onSave={handleSave}
+              showSave={isEditing && hasChanges}
+              saving={saving}
+            />
 
             <View className=" justify-center items-start ">
               <Text className="pl-2 mt-[55px] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('give_some_information')}</Text>
@@ -305,7 +325,7 @@ export default function CreateServiceDetailsScreen() {
         {/* Buttons */}
 
         <View className="flex-row justify-center items-center pt-4 pb-6 px-6">
-              
+
           <TouchableOpacity
           disabled={false}
           onPress={() => navigation.navigate('CreateServiceDescription', { prevParams: { ...prevParams, selectedLanguages, isIndividual, hobbies, tags } })}
@@ -323,8 +343,14 @@ onPress={() => navigation.navigate('CreateServiceLocation', { prevParams: { ...p
           </TouchableOpacity>
 
         </View>
+        <ServiceFormUnsavedModal
+          visible={confirmVisible}
+          onSave={handleConfirmSave}
+          onDiscard={handleDiscardChanges}
+          onDismiss={handleDismissConfirm}
+        />
     </SafeAreaView>
-  ); 
+  );
 }
 
 const styles = StyleSheet.create({
