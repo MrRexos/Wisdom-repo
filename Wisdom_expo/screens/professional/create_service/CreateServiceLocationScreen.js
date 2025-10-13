@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect, useIsFocused } from '@react-navigation/native';
-import { XMarkIcon, ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
+import { ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
 import { Search, Check, Maximize2 } from "react-native-feather";
 import MapView, { Marker, Circle } from 'react-native-maps';
 import { getRegionForRadius } from '../../../utils/mapUtils';
@@ -14,6 +14,9 @@ import Slider from '@react-native-community/slider';
 import SliderThumbDark from '../../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../../assets/SliderThumbLight.png';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ServiceFormHeader from '../../../components/ServiceFormHeader';
+import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
+import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 import {
   mapMarkerAnchor,
   mapMarkerCenterOffset,
@@ -28,7 +31,6 @@ import {
 export default function CreateServiceLocationScreen() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
-  const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const navigation = useNavigation();
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
@@ -54,6 +56,34 @@ export default function CreateServiceLocationScreen() {
   const [actionRate, setActionRate] = useState(prevParams.actionRate ?? 1);
 
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
+
+  const {
+    isEditing,
+    hasChanges,
+    saving,
+    requestBack,
+    handleSave,
+    confirmVisible,
+    handleConfirmSave,
+    handleDiscardChanges,
+    handleDismissConfirm,
+  } = useServiceFormEditing({
+    prevParams,
+    currentValues: {
+      isUnlocated,
+      direction,
+      country,
+      street,
+      city,
+      state,
+      postalCode,
+      streetNumber,
+      address2,
+      location,
+      actionRate,
+    },
+    t,
+  });
 
   const loadSearchedDirection = async () => {
 
@@ -141,11 +171,12 @@ export default function CreateServiceLocationScreen() {
 
       <View className="flex-1 px-6 pt-5 pb-6">
 
-        <TouchableOpacity onPress={() => navigation.pop(6)}>
-          <View className="flex-row justify-start">
-            <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
-          </View>
-        </TouchableOpacity>
+        <ServiceFormHeader
+          onBack={requestBack}
+          onSave={handleSave}
+          showSave={isEditing && hasChanges}
+          saving={saving}
+        />
 
         <View className=" justify-center items-center ">
           <Text className="mt-[55px] font-inter-bold text-[25px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('locate_your_service')}</Text>
@@ -305,6 +336,12 @@ export default function CreateServiceLocationScreen() {
 
         </View>
       </View>
+      <ServiceFormUnsavedModal
+        visible={confirmVisible}
+        onSave={handleConfirmSave}
+        onDiscard={handleDiscardChanges}
+        onDismiss={handleDismissConfirm}
+      />
     </SafeAreaView>
   );
 }

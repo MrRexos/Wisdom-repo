@@ -8,6 +8,9 @@ import { XMarkIcon } from 'react-native-heroicons/outline'; // Asegúrate de imp
 import AddMainImage from '../../../assets/AddMainImage';
 import AddServiceImages from '../../../assets/AddServiceImages';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ServiceFormHeader from '../../../components/ServiceFormHeader';
+import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
+import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 import * as ImagePicker from 'expo-image-picker';
 
 const patternImages = (images, colorScheme, onRemoveImage) => {
@@ -94,9 +97,25 @@ export default function CreateServiceImagesScreen() {
   const route = useRoute();
   const prevParams = route.params?.prevParams || {};
   const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences } = prevParams;
-  const [serviceImages, setServiceImages] = useState(prevParams.serviceImages || []);
+  const [serviceImages, setServiceImages] = useState(() => (
+    Array.isArray(prevParams.serviceImages)
+      ? prevParams.serviceImages.map((img) => ({ ...img }))
+      : []
+  ));
   const patternHeight = Math.ceil(serviceImages.length / 6) * 3 * 160;
   const patternWidth = 315;
+
+  const {
+    isEditing,
+    hasChanges,
+    saving,
+    requestBack,
+    handleSave,
+    confirmVisible,
+    handleConfirmSave,
+    handleDiscardChanges,
+    handleDismissConfirm,
+  } = useServiceFormEditing({ prevParams, currentValues: { serviceImages }, t });
 
   const handlePickMainImage = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -163,11 +182,12 @@ export default function CreateServiceImagesScreen() {
 
         <View className="flex-1 px-6 pt-5 pb-6">
 
-          <TouchableOpacity onPress={() => navigation.pop(8)}>
-            <View className="flex-row justify-start">
-              <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
-            </View>
-          </TouchableOpacity>
+          <ServiceFormHeader
+            onBack={requestBack}
+            onSave={handleSave}
+            showSave={isEditing && hasChanges}
+            saving={saving}
+          />
 
           <View className="justify-center items-center">
             <Text className="mt-[55px] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('upload_some_photos')}</Text>
@@ -244,6 +264,12 @@ onPress={() => navigation.navigate('CreateServicePriceType', { prevParams: { ...
         </TouchableOpacity>
 
       </View>
+      <ServiceFormUnsavedModal
+        visible={confirmVisible}
+        onSave={handleConfirmSave}
+        onDiscard={handleDiscardChanges}
+        onDismiss={handleDismissConfirm}
+      />
     </SafeAreaView>
   );
 }

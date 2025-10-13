@@ -14,6 +14,7 @@ import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import Message from '../../components/Message';
+import { buildEditPrevParams } from '../../utils/serviceFormEditing';
 import {
   BottomSheetModal,
   BottomSheetView,
@@ -259,8 +260,25 @@ export default function ServiceProfileScreen() {
   }, [serviceData?.is_hidden, serviceId, t]);
 
   const handleServiceEdit = useCallback(() => {
+    if (!serviceId || !serviceData) {
+      Alert.alert(t('service_edit_load_error'));
+      return;
+    }
+
     serviceOptionsSheetRef.current?.dismiss();
-  }, []);
+
+    try {
+      const prevParams = buildEditPrevParams(serviceData, {
+        serviceId,
+        originScreen: 'ServiceProfile',
+        originParams: { ...(route.params || {}), serviceId, fromListings: cameFromListings },
+      });
+      navigation.navigate('CreateServiceTitle', { prevParams });
+    } catch (error) {
+      console.error('Error preparing service edit:', error);
+      Alert.alert(t('service_edit_load_error'));
+    }
+  }, [serviceId, serviceData, t, navigation, route.params, cameFromListings]);
 
   const handleServiceDeletePress = useCallback(() => {
     serviceOptionsSheetRef.current?.dismiss();

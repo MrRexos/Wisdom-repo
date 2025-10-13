@@ -11,6 +11,7 @@ import { getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
+import { buildEditPrevParams } from '../../utils/serviceFormEditing';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Message from '../../components/Message';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider, BottomSheetView } from '@gorhom/bottom-sheet';
@@ -29,6 +30,7 @@ export default function ListingsProScreen() {
   const optionsSheetRef = useRef(null);
   const [selectedListing, setSelectedListing] = useState(null);
   const [isUpdatingVisibility, setIsUpdatingVisibility] = useState(false);
+  const [isLoadingEdit, setIsLoadingEdit] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const currencySymbols = {
@@ -100,9 +102,31 @@ export default function ListingsProScreen() {
     }
   }, [selectedListing, t]);
 
-  const handleEditService = useCallback(() => {
+  const handleEditService = useCallback(async () => {
+    if (!selectedListing || isLoadingEdit) return;
+
     optionsSheetRef.current?.dismiss();
-  }, []);
+
+    const serviceId = selectedListing.service_id;
+    if (!serviceId) return;
+
+    try {
+      setIsLoadingEdit(true);
+      const config = userId ? { params: { viewerId: userId } } : {};
+      const { data } = await api.get(`/api/service/${serviceId}`, config);
+      const prevParams = buildEditPrevParams(data, {
+        serviceId,
+        originScreen: 'ListingsPro',
+        originParams: route.params || {},
+      });
+      navigation.navigate('CreateServiceTitle', { prevParams });
+    } catch (error) {
+      console.error('Error loading service for edit:', error);
+      Alert.alert(t('service_edit_load_error'));
+    } finally {
+      setIsLoadingEdit(false);
+    }
+  }, [selectedListing, isLoadingEdit, userId, navigation, t, route.params]);
 
   const handleDeletePress = useCallback(() => {
     if (!selectedListing) return;
@@ -346,9 +370,15 @@ export default function ListingsProScreen() {
         handleIndicatorStyle={{ backgroundColor: sheetIndicatorColor }}
       >
         <BottomSheetView className="py-5 px-7">
-          <TouchableOpacity onPress={handleEditService} className=" pb-6 flex-row items-center">
+          <TouchableOpacity onPress={handleEditService} disabled={isLoadingEdit} className=" pb-6 flex-row items-center">
             <Edit2 height={22} width={22} color={iconColor} strokeWidth={2} />
-            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit_service')}</Text>
+            <Text
+              className={`ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2] ${
+                isLoadingEdit ? 'opacity-60' : ''
+              }`}
+            >
+              {t('edit_service')}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleToggleVisibility}
