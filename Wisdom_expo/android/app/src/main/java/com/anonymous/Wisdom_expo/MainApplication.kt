@@ -1,4 +1,4 @@
-package com.rexos.Wisdom_expo
+package com.anonymous.Wisdom_expo
 
 import android.app.Application
 import android.content.res.Configuration

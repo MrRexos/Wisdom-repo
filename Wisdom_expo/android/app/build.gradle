@@ -87,13 +87,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.rexos.Wisdom_expo'
+    namespace 'com.anonymous.Wisdom_expo'
     defaultConfig {
-        applicationId 'com.rexos.Wisdom_expo'
+        applicationId 'com.anonymous.Wisdom_expo'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.1.3"
+        versionCode 4
+        versionName "1.1.5"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
     }

@@ -1,4 +1,4 @@
-package com.rexos.Wisdom_expo
+package com.anonymous.Wisdom_expo
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
