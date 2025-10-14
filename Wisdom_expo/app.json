@@ -3,7 +3,7 @@
     "name": "Wisdom",
     "slug": "Wisdom_expo",
     "scheme": "wisdomexpo",
-    "version": "1.1.3",
+    "version": "1.1.4",
     "orientation": "portrait",
     "icon": "./assets/WisdomIcon.png",
     "userInterfaceStyle": "automatic",
@@ -44,8 +44,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.rexos.Wisdom_expo",
-      "versionCode": 1,
+      "package": "com.anonymous.Wisdom_expo",
+      "versionCode": 3,
       "minSdkVersion": 24,
       "newArchEnabled": false,
       "intentFilters": [
