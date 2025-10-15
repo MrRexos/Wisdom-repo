@@ -116,8 +116,11 @@ export default function ListingsProScreen() {
       const { data } = await api.get(`/api/service/${serviceId}`, config);
       const prevParams = buildEditPrevParams(data, {
         serviceId,
-        originScreen: 'ListingsPro',
-        originParams: route.params || {},
+        originScreen: 'Professional',
+        originParams: {
+          screen: 'Listings',
+          params: route.params || {},
+        },
       });
       navigation.navigate('CreateServiceTitle', { prevParams });
     } catch (error) {

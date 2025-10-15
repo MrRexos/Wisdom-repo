@@ -381,7 +381,7 @@ export default function SettingsScreen() {
               className="bg-[#e0e0e0] dark:bg-[#3d3d3d] w-full h-[55px] rounded-full items-center justify-center" >
               <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('log_out')}</Text>
             </TouchableOpacity>
-            <Text className="pt-4 pb-[85px] text-[#e0e0e0] dark:text-[#3d3d3d]">{t('version_1_0_3')}</Text>
+            <Text className="pt-4 pb-[85px] text-[#e0e0e0] dark:text-[#3d3d3d]">{t('version')}</Text>
           </View>
         </View>
       </ScrollView>
