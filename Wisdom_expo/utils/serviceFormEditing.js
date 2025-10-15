@@ -49,8 +49,16 @@ const normalizeArrayOfStrings = (array = []) => {
 };
 
 export const normalizeFormValues = (values = {}) => {
-  const categoryId = values.category?.service_category_id ?? values.categoryId ?? null;
-  const familyId = values.family?.id ?? values.familyId ?? null;
+  const categoryId =
+    values.category?.service_category_id ??
+    values.category?.id ??
+    values.categoryId ??
+    null;
+  const familyId =
+    values.family?.id ??
+    values.family?.service_family_id ??
+    values.familyId ??
+    null;
   const priceType = values.priceType || 'hour';
 
   const location = values.location && typeof values.location === 'object'
@@ -158,10 +166,34 @@ const mapImageFromService = (image, index) => {
 
 export const mapServiceToFormValues = (service = {}) => {
   const serviceId = service.service_id ?? service.id ?? null;
-  const familyId = service.service_family_id ?? service.family_id ?? null;
-  const familyName = service.service_family || service.family_name;
-  const categoryId = service.service_category_id ?? null;
-  const categoryName = service.service_category_name || service.category_name;
+  const categoryData = service.category || service.service_category || null;
+  const familyData = service.family || categoryData?.family || null;
+
+  const categoryId =
+    service.service_category_id ??
+    service.category_id ??
+    categoryData?.service_category_id ??
+    categoryData?.id ??
+    null;
+  const categoryName =
+    service.service_category_name ||
+    service.category_name ||
+    categoryData?.service_category_name ||
+    categoryData?.name ||
+    '';
+
+  const familyId =
+    service.service_family_id ??
+    service.family_id ??
+    familyData?.service_family_id ??
+    familyData?.id ??
+    null;
+  const familyName =
+    service.service_family ||
+    service.family_name ||
+    familyData?.service_family ||
+    familyData?.name ||
+    '';
   const priceType = service.price_type || service.current_price_type || 'hour';
   const priceValue = priceType === 'budget' ? null : toNumberOrNull(service.price ?? service.current_price);
   const latitude = toNumberOrNull(service.latitude);
@@ -179,15 +211,36 @@ export const mapServiceToFormValues = (service = {}) => {
         .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     : [];
 
+    const familyValue =
+    familyId !== null
+      ? {
+          ...(isObject(familyData) ? familyData : {}),
+          id: familyId,
+          service_family: familyName || familyData?.service_family || familyData?.name || '',
+          name: familyName || familyData?.name || familyData?.service_family || '',
+        }
+      : null;
+
+  const categoryValue =
+    categoryId !== null
+      ? {
+          ...(isObject(categoryData) ? categoryData : {}),
+          id: categoryId,
+          service_category_id: categoryId,
+          service_category_name:
+            categoryName || categoryData?.service_category_name || categoryData?.name || '',
+          name: categoryName || categoryData?.name || categoryData?.service_category_name || '',
+          family: categoryData?.family ?? familyValue ?? null,
+        }
+      : null;
+
   const formValues = {
     serviceId,
     title: service.service_title || '',
     familyId,
-    family: familyId !== null && familyName ? { id: familyId, service_family: familyName } : null,
+    family: familyValue,
     categoryId,
-    category: categoryId !== null && categoryName
-      ? { service_category_id: categoryId, service_category_name: categoryName }
-      : null,
+    category: categoryValue,
     description: service.description || '',
     selectedLanguages: Array.isArray(service.languages) ? service.languages : [],
     isIndividual: toBoolean(service.is_individual, true),
@@ -242,6 +295,7 @@ const uploadLocalImages = async (images) => {
   const response = await api.post('/api/upload-images', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
+  console.log(response.data);
   return Array.isArray(response.data) ? response.data : [];
 };
 
@@ -304,7 +358,7 @@ export const saveServiceEdits = async (serviceId, values = {}) => {
       }))
     : [];
 
-  const categoryId = values.category?.service_category_id ?? values.categoryId ?? null;
+  const categoryId = normalized.categoryId;
 
   const payload = {
     service_title: normalized.title,

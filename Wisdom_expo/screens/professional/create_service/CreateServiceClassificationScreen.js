@@ -20,6 +20,11 @@ import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal
 import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 
 
+const matchById = (first, second) => {
+  if (first == null || second == null) return false;
+  return String(first) === String(second);
+};
+
 export default function CreateServiceClassificationScreen() {
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
@@ -28,9 +33,12 @@ export default function CreateServiceClassificationScreen() {
   const prevParams = route.params?.prevParams || {};
   const { title } = prevParams;
 
+  const initialFamily = prevParams.family || prevParams.category?.family || null;
+  const initialCategory = prevParams.category || null;
+
   // ---------- state general ----------
-  const [family, setFamily] = useState(prevParams.family || null);
-  const [category, setCategory] = useState(prevParams.category || null);
+  const [family, setFamily] = useState(initialFamily);
+  const [category, setCategory] = useState(initialCategory);
 
   const [showFamilyDropdown, setShowFamilyDropdown] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
@@ -70,24 +78,37 @@ export default function CreateServiceClassificationScreen() {
     getFamilies();
   }, []);
 
+  const selectedFamilyId = family?.id ?? family?.service_family_id ?? null;
+  const selectedCategoryId = category?.service_category_id ?? category?.id ?? null;
+
   useEffect(() => {
-    if (!family && families.length > 0 && prevParams.familyId) {
-      const defaultFamily = families.find((item) => item.id === prevParams.familyId);
-      if (defaultFamily) {
-        setFamily(defaultFamily);
-        getCategories(defaultFamily.id);
-      }
+    if (family || families.length === 0 || prevParams.familyId == null) return;
+    const defaultFamily = families.find((item) => {
+      const itemId = item?.id ?? item?.service_family_id;
+      return matchById(itemId, prevParams.familyId);
+    });
+    if (defaultFamily) {
+      setFamily(defaultFamily);
     }
   }, [families, family, prevParams.familyId]);
 
   useEffect(() => {
-    if (!category && categories.length > 0 && prevParams.categoryId) {
-      const defaultCategory = categories.find((item) => item.service_category_id === prevParams.categoryId);
-      if (defaultCategory) {
-        setCategory(defaultCategory);
-      }
+    if (!selectedFamilyId) return;
+    getCategories(selectedFamilyId);
+  }, [selectedFamilyId]);
+
+  useEffect(() => {
+    if (prevParams.categoryId == null) return;
+    if (selectedCategoryId && !matchById(selectedCategoryId, prevParams.categoryId)) return;
+    if (categories.length === 0) return;
+    const defaultCategory = categories.find((item) => {
+      const itemId = item?.service_category_id ?? item?.id;
+      return matchById(itemId, prevParams.categoryId);
+    });
+    if (defaultCategory && category !== defaultCategory) {
+      setCategory(defaultCategory);
     }
-  }, [categories, category, prevParams.categoryId]);
+  }, [categories, category, prevParams.categoryId, selectedCategoryId]);
 
   const {
     isEditing,
@@ -104,8 +125,8 @@ export default function CreateServiceClassificationScreen() {
     currentValues: {
       family,
       category,
-      familyId: family?.id ?? prevParams.familyId ?? null,
-      categoryId: category?.service_category_id ?? prevParams.categoryId ?? null,
+      familyId: selectedFamilyId ?? prevParams.familyId ?? null,
+      categoryId: selectedCategoryId ?? prevParams.categoryId ?? null,
     },
     t,
   });
@@ -115,7 +136,6 @@ export default function CreateServiceClassificationScreen() {
     setFamily(item);
     setShowFamilyDropdown(false);
     setCategory(null);
-    getCategories(item.id);
   };
 
   const handleCategoryPress = (item) => {
@@ -151,7 +171,7 @@ export default function CreateServiceClassificationScreen() {
   const renderFamilyItem = ({ item }) => (
     <TouchableOpacity className="py-3" onPress={() => handleFamilyPress(item)}>
       <Text className="ml-6 text-[15px] text-[#444343] dark:text-[#f2f2f2]">
-        {item.service_family}
+        {item.service_family || item.name || item.family_name || ''}
       </Text>
     </TouchableOpacity>
   );
@@ -159,7 +179,7 @@ export default function CreateServiceClassificationScreen() {
   const renderCategoryItem = ({ item }) => (
     <TouchableOpacity className="py-3" onPress={() => handleCategoryPress(item)}>
       <Text className="ml-6 text-[15px] text-[#444343] dark:text-[#f2f2f2]">
-        {item.service_category_name}
+        {item.service_category_name || item.name || ''}
       </Text>
     </TouchableOpacity>
   );
@@ -197,7 +217,7 @@ export default function CreateServiceClassificationScreen() {
             className="w-full px-6 py-4 bg-[#fcfcfc] dark:bg-[#323131] rounded-xl flex-row justify-between items-center"
           >
             <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">
-              {family ? family.service_family : t('choose_family')}
+              {family ? family.service_family || family.name || family.family_name || '' : t('choose_family')}
             </Text>
             {showFamilyDropdown ? (
               <ChevronUpIcon size={20} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} strokeWidth={2} />
@@ -240,7 +260,9 @@ export default function CreateServiceClassificationScreen() {
             className="mt-8 w-full px-6 py-4 bg-[#fcfcfc] dark:bg-[#323131] rounded-xl flex-row justify-between items-center"
           >
             <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">
-              {category ? category.service_category_name : t('choose_category')}
+              {category
+                ? category.service_category_name || category.name || ''
+                : t('choose_category')}
             </Text>
             {showCategoryDropdown ? (
               <ChevronUpIcon size={20} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} strokeWidth={2} />
@@ -283,9 +305,9 @@ export default function CreateServiceClassificationScreen() {
                 prevParams: {
                   ...prevParams,
                   family,
-                  familyId: family?.id ?? null,
+                  familyId: selectedFamilyId,
                   category,
-                  categoryId: category?.service_category_id ?? null,
+                  categoryId: selectedCategoryId,
                 },
               })
             }
@@ -303,9 +325,9 @@ export default function CreateServiceClassificationScreen() {
                 prevParams: {
                   ...prevParams,
                   family,
-                  familyId: family?.id ?? null,
+                  familyId: selectedFamilyId,
                   category,
-                  categoryId: category?.service_category_id ?? null,
+                  categoryId: selectedCategoryId,
                 },
               })
             }
