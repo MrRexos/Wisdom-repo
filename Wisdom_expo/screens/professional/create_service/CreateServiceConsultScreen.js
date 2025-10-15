@@ -45,7 +45,14 @@ export default function CreateServiceConsultScreen() {
 
   const [consultPriceText, setConsultPriceText] = useState(defaultConsultPriceText);
   const [consultPrice, setConsultPrice] = useState(defaultConsultPrice);
-  const [consultVia, setConsultVia] = useState(prevConsultVia || '');
+  const [consultVia, setConsultVia] = useState(() => {
+    if (typeof prevConsultVia === 'string') return prevConsultVia;
+    if (prevConsultVia && typeof prevConsultVia === 'object') {
+      const { provider, username, url } = prevConsultVia;
+      return [provider, username, url].find((value) => typeof value === 'string' && value.trim().length > 0) || '';
+    }
+    return '';
+  });
   const inputRef = useRef(null);
 
   const {
@@ -68,8 +75,10 @@ export default function CreateServiceConsultScreen() {
     t,
   });
 
+  const consultViaValue = typeof consultVia === 'string' ? consultVia : '';
+
   const canContinue = !allowConsults || (
-    consultVia.trim().length > 0 &&
+    consultViaValue.trim().length > 0 &&
     consultPrice != null &&
     !Number.isNaN(consultPrice) &&
     consultPrice > 0

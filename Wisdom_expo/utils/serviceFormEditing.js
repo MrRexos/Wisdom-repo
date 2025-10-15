@@ -234,49 +234,77 @@ export const mapServiceToFormValues = (service = {}) => {
         }
       : null;
 
-  const formValues = {
-    serviceId,
-    title: service.service_title || '',
-    familyId,
-    family: familyValue,
-    categoryId,
-    category: categoryValue,
-    description: service.description || '',
-    selectedLanguages: Array.isArray(service.languages) ? service.languages : [],
-    isIndividual: toBoolean(service.is_individual, true),
-    hobbies: service.hobbies || '',
-    tags: Array.isArray(service.tags) ? service.tags : [],
-    location,
-    actionRate: toNumberOrNull(service.action_rate) ?? 1,
-    direction: service.direction || service.formatted_address || '',
-    country: service.country || '',
-    street: service.street || '',
-    city: service.city || '',
-    state: service.state || '',
-    postalCode: service.postal_code || '',
-    streetNumber: service.street_number || '',
-    address2: service.address_2 || '',
-    isUnlocated: !(latitude !== null && longitude !== null),
-    serviceImages: images,
-    priceType,
-    priceValue,
-    allowDiscounts: toBoolean(service.allow_discounts, true),
-    discountRate: toNumberOrNull(service.discount_rate),
-    allowAsk: toBoolean(service.user_can_ask, true),
-    allowConsults: toBoolean(service.user_can_consult, true),
-    consultPrice: toNumberOrNull(service.price_consult),
-    consultVia:
-      service.consult_provider || service.consult_username || service.consult_url || service.consult_via || '',
-    consultProvider: service.consult_provider || '',
-    consultUsername: service.consult_username || '',
-    consultUrl: service.consult_url || '',
-    experiences,
-  };
-
-  const normalized = normalizeFormValues(formValues);
-
-  return { formValues, normalized };
-};
+      const consultViaData = isObject(service.consult_via) ? service.consult_via : null;
+      const consultProvider = typeof service.consult_provider === 'string'
+        ? service.consult_provider
+        : typeof consultViaData?.provider === 'string'
+          ? consultViaData.provider
+          : '';
+      const consultUsername = typeof service.consult_username === 'string'
+        ? service.consult_username
+        : typeof consultViaData?.username === 'string'
+          ? consultViaData.username
+          : '';
+      const consultUrl = typeof service.consult_url === 'string'
+        ? service.consult_url
+        : typeof consultViaData?.url === 'string'
+          ? consultViaData.url
+          : '';
+    
+      const consultViaProvide = typeof service.consult_via_provide === 'string'
+        ? service.consult_via_provide
+        : '';
+      const consultViaFallback = typeof service.consult_via === 'string' ? service.consult_via : '';
+      const consultViaValue = [
+        consultViaProvide,
+        consultProvider,
+        consultUsername,
+        consultUrl,
+        consultViaFallback,
+      ].find((value) => typeof value === 'string' && value.trim().length > 0) || '';
+    
+      const formValues = {
+        serviceId,
+        title: service.service_title || '',
+        familyId,
+        family: familyValue,
+        categoryId,
+        category: categoryValue,
+        description: service.description || '',
+        selectedLanguages: Array.isArray(service.languages) ? service.languages : [],
+        isIndividual: toBoolean(service.is_individual, true),
+        hobbies: service.hobbies || '',
+        tags: Array.isArray(service.tags) ? service.tags : [],
+        location,
+        actionRate: toNumberOrNull(service.action_rate) ?? 1,
+        direction: service.direction || service.formatted_address || '',
+        country: service.country || '',
+        street: service.street || '',
+        city: service.city || '',
+        state: service.state || '',
+        postalCode: service.postal_code || '',
+        streetNumber: service.street_number || '',
+        address2: service.address_2 || '',
+        isUnlocated: !(latitude !== null && longitude !== null),
+        serviceImages: images,
+        priceType,
+        priceValue,
+        allowDiscounts: toBoolean(service.allow_discounts, true),
+        discountRate: toNumberOrNull(service.discount_rate),
+        allowAsk: toBoolean(service.user_can_ask, true),
+        allowConsults: toBoolean(service.user_can_consult, true),
+        consultPrice: toNumberOrNull(service.price_consult),
+        consultVia: consultViaValue,
+        consultProvider,
+        consultUsername,
+        consultUrl,
+        experiences,
+      };
+    
+      const normalized = normalizeFormValues(formValues);
+    
+      return { formValues, normalized };
+    };
 
 const uploadLocalImages = async (images) => {
   if (!images.length) return [];
