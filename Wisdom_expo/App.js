@@ -14,6 +14,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useColorScheme, TailwindProvider } from 'nativewind';
 import "./global.css"
+import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar'
 
 const STRIPE_PUBLISHABLE_KEY = 'pk_live_51Q6eHSP5JxrowksKBSbTF99MTGHyTaFq1WNsDMakQCmTlJgetqqycyGnDLaaI2ASO7U6WqucQJQpW87JAie0XpXn00u1jtdcEW';
 //change to .env in future
@@ -77,16 +79,19 @@ export default function App() {
 
 
   return (
-    <GestureHandlerRootView
-      style={{ flex: 1 }}
-      className={`${colorScheme} color-scheme-${colorScheme}`}
-    >
-      <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
-        <BottomSheetModalProvider>
-          <Navigation />
-        </BottomSheetModalProvider>
-      </StripeProvider>
-    </GestureHandlerRootView>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+      <StatusBar translucent={false} />
+      <GestureHandlerRootView
+        style={{ flex: 1 }}
+        className={`${colorScheme} color-scheme-${colorScheme}`}
+      >
+        <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
+          <BottomSheetModalProvider>
+            <Navigation />
+          </BottomSheetModalProvider>
+        </StripeProvider>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
 
