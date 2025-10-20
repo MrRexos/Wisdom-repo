@@ -3,19 +3,19 @@
     "name": "Wisdom",
     "slug": "Wisdom_expo",
     "scheme": "wisdomexpo",
-    "version": "1.1.7",
+    "version": "1.1.8",
     "orientation": "portrait",
     "icon": "./assets/WisdomIcon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/1x1.png",
       "resizeMode": "contain",
-      "backgroundColor": "#111111"
+      "backgroundColor": "#262626"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.rexos.Wisdom",
-      "buildNumber": "10",
+      "buildNumber": "11",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "We need access to your photo library so you can set a profile picture or display them in your services.",
         "NSCameraUsageDescription": "We need access to your camera so you can take photos and use them in the app’s features.",
@@ -41,11 +41,11 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/WisdomIcon.png",
+        "backgroundColor": "#262626"
       },
       "package": "com.anonymous.Wisdom_expo",
-      "versionCode": 10,
+      "versionCode": 11,
       "minSdkVersion": 24,
       "newArchEnabled": false,
       "intentFilters": [
@@ -64,7 +64,7 @@
       ]
     },
     "web": {
-      "favicon": "./assets/favicon.png",
+      "favicon": "./assets/WisdomIcon.png",
       "bundler": "metro"
     },
     "extra": {

@@ -1,7 +1,7 @@
 import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import './polyfills';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Navigation from './navigation/navigation';
 import { StripeProvider } from '@stripe/stripe-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,6 +15,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useColorScheme, TailwindProvider } from 'nativewind';
 import "./global.css"
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
+import { Dimensions, Platform, StatusBar as RNStatusBar } from 'react-native';
 import { StatusBar } from 'expo-status-bar'
 
 const STRIPE_PUBLISHABLE_KEY = 'pk_live_51Q6eHSP5JxrowksKBSbTF99MTGHyTaFq1WNsDMakQCmTlJgetqqycyGnDLaaI2ASO7U6WqucQJQpW87JAie0XpXn00u1jtdcEW';
