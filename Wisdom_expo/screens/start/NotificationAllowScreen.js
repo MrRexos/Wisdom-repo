@@ -8,6 +8,7 @@ import '../../languages/i18n';
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage.js';
+import { ensureSupportedLanguage } from '../../utils/language';
 import {XMarkIcon} from 'react-native-heroicons/outline';
 import NotificationAskWhite from '../../assets/NotificationAskWhite.svg';
 import NotificationAskDark from '../../assets/NotificationAskDark.svg';
@@ -33,10 +34,11 @@ export default function NotificationAllowScreen() {
         first_name: "",
         surname: "",
         profile_picture: null,
-        joined_datetime: "", 
+        joined_datetime: "",
         is_professional: false,
-        language: "", 
-        allow_notis: true, 
+        language: "",
+        selectedLanguage: "",
+        allow_notis: true,
         money_in_wallet: "0.00",
         professional_started_datetime: null,
         is_expert: false,
@@ -133,7 +135,9 @@ export default function NotificationAllowScreen() {
         user.first_name = firstName;
         user.surname = surname;
         user.username = username;
-        user.language = i18n.language;
+        const resolvedLanguage = ensureSupportedLanguage(i18n.language);
+        user.language = resolvedLanguage;
+        user.selectedLanguage = resolvedLanguage;
         user.joined_datetime = new Date().toISOString();
         user.allow_notis = false;
         user.profile_picture = null;
@@ -167,7 +171,9 @@ export default function NotificationAllowScreen() {
       user.first_name = firstName;
       user.surname = surname;
       user.username = username;
-      user.language =  i18n.language;
+      const resolvedLanguage = ensureSupportedLanguage(i18n.language);
+      user.language =  resolvedLanguage;
+      user.selectedLanguage = resolvedLanguage;
       user.joined_datetime = new Date().toISOString();
       user.allow_notis = granted;
       user.profile_picture = null;

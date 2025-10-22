@@ -1,5 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n from '../languages/i18n';
 
 const BASE_URL = 'https://wisdom-app-34b3fb420f18.herokuapp.com';
 const ACCESS_KEY = 'auth.access_token';
@@ -127,7 +128,11 @@ api.interceptors.response.use(
         if (isExpired) {
           try {
             await clearTokens();
-            await AsyncStorage.setItem('user', JSON.stringify({ token: false }));
+            const currentLanguage = i18n.language;
+            await AsyncStorage.setItem(
+              'user',
+              JSON.stringify({ token: false, language: currentLanguage, selectedLanguage: currentLanguage })
+            );
           } finally {
             if (onAuthExpired) onAuthExpired(); // dispara redirección global
           }

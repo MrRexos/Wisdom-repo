@@ -10,6 +10,7 @@ import EyeSlashIcon from 'react-native-bootstrap-icons/icons/eye-slash';
 import WisdomLogo from '../../assets/wisdomLogo.tsx';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage.js';
+import { ensureSupportedLanguage } from '../../utils/language';
 import api, { setTokens } from '../../utils/api.js';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -61,15 +62,21 @@ export default function LogInScreen() {
         });
   
         if (response.data.success) {
-          const user = { ...response.data.user }; 
-          // Guardar tokens nuevos 
-          const access = response.data.access_token || response.data.token; // compat 
-          const refresh = response.data.refresh_token || null; 
-          await setTokens({ access, refresh }); 
-          // Mantener compatibilidad con posibles usos de user.token en tu app 
-          user.token = access; 
+          const user = { ...response.data.user };
+          // Guardar tokens nuevos
+          const access = response.data.access_token || response.data.token; // compat
+          const refresh = response.data.refresh_token || null;
+          await setTokens({ access, refresh });
+          // Mantener compatibilidad con posibles usos de user.token en tu app
+          user.token = access;
+          const resolvedLanguage = ensureSupportedLanguage(user.selectedLanguage || user.language || i18n.language);
+          user.language = resolvedLanguage;
+          user.selectedLanguage = resolvedLanguage;
+          if (resolvedLanguage !== i18n.language) {
+            await i18n.changeLanguage(resolvedLanguage);
+          }
           await storeDataLocally('user', JSON.stringify(user));
-  
+
           // Navega a la pantalla de inicio
           navigation.navigate('HomeScreen');
         } else if (response.data.success===false) {

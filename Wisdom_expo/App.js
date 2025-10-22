@@ -58,7 +58,11 @@ export default function App() {
       try {
         // asegúrate de limpiar cualquier resto (por si algo quedó) 
         await clearTokens();
-        await AsyncStorage.setItem('user', JSON.stringify({ token: false }));
+        const currentLanguage = i18n.language;
+        await AsyncStorage.setItem(
+          'user',
+          JSON.stringify({ token: false, language: currentLanguage, selectedLanguage: currentLanguage })
+        );
       } catch { }
       // Resetea a GetStarted 
       if (navigationRef.isReady()) {

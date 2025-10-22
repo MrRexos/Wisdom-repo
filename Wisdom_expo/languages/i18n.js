@@ -8,21 +8,23 @@ import fr from './fr.json';
 import zh from './zh.json';
 
 const resources = {
-  en: en,
-  es: es,
-  ca: ca,
-  ar: ar,
-  fr: fr,
-  zh: zh,
+  en,
+  es,
+  ca,
+  ar,
+  fr,
+  zh,
 };
 
-i18n
-  .use(initReactI18next)
-  .init({
-    compatibilityJSON: 'v3',
-    resources,
-    lng: 'es',// default language to use.
-    fallbackLng: 'en',
-  });
+export const SUPPORTED_LANGUAGES = Object.keys(resources);
+export const DEFAULT_LANGUAGE = 'en';
 
-export default {i18n};
+i18n.use(initReactI18next).init({
+  compatibilityJSON: 'v3',
+  resources,
+  lng: DEFAULT_LANGUAGE,
+  fallbackLng: DEFAULT_LANGUAGE,
+});
+
+export { i18n };
+export default i18n;

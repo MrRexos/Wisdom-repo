@@ -599,14 +599,24 @@ export default function ServiceProfileScreen() {
   const verifyRegistered = async () => {
     const userData = await getDataLocally('user');
 
-    // Comprobar si userData indica que no hay usuario
-    if (userData === '{"token":false}') {
+    if (!userData) {
       navigation.reset({
         index: 0,
         routes: [{ name: 'GetStarted' }],
       });
-    } else {
+      return;
+    }
+
+    try {
       const me = JSON.parse(userData);
+      if (!me?.token) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'GetStarted' }],
+        });
+        return;
+      }
+
       if (me.id === serviceData.user_id) {
         if (cameFromListings) {
           handleOpenServiceOptions();
@@ -615,9 +625,17 @@ export default function ServiceProfileScreen() {
         }
         return;
       }
-      openSheetWithInput(700);
-      setIsAddingDate(true);
+    } catch (error) {
+      console.error('Failed to parse user data', error);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'GetStarted' }],
+      });
+      return;
     }
+
+    openSheetWithInput(700);
+    setIsAddingDate(true);
 
   }
 
