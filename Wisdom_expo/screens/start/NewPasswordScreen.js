@@ -11,6 +11,7 @@ import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import api, { setTokens } from '../../utils/api';
 import { storeDataLocally } from '../../utils/asyncStorage';
+import { ensureSupportedLanguage } from '../../utils/language';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -76,10 +77,16 @@ export default function NewPasswordScreen({ route }) {
       const response = await api.post('/api/reset-password', { emailOrUsername, code, newPassword: password });
       if (response.data && response.data.token) {
         let user = response.data.user;
-        const access = response.data.access_token || response.data.token; // compat 
-        const refresh = response.data.refresh_token || null; 
-        await setTokens({ access, refresh }); 
-        user.token = access; // compat 
+        const access = response.data.access_token || response.data.token; // compat
+        const refresh = response.data.refresh_token || null;
+        await setTokens({ access, refresh });
+        user.token = access; // compat
+        const resolvedLanguage = ensureSupportedLanguage(user.selectedLanguage || user.language || i18n.language);
+        user.language = resolvedLanguage;
+        user.selectedLanguage = resolvedLanguage;
+        if (resolvedLanguage !== i18n.language) {
+          await i18n.changeLanguage(resolvedLanguage);
+        }
         await storeDataLocally('user', JSON.stringify(user));
         navigation.navigate('HomeScreen');
       }

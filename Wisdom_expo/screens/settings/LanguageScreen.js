@@ -3,6 +3,7 @@ import { Text, View, StatusBar, ScrollView, TouchableOpacity, Platform, RefreshC
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
+import { ensureSupportedLanguage } from '../../utils/language';
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
@@ -35,15 +36,21 @@ export default function LanguageScreen() {
   ];
 
   const changeLanguage = async (language) => {
-    setSelectedLanguage(language);  // Cambiar el estado localmente
-    await i18n.changeLanguage(language);
-    const userData = await getDataLocally('user')
+    const resolvedLanguage = ensureSupportedLanguage(language);
+    setSelectedLanguage(resolvedLanguage);  // Cambiar el estado localmente
+    await i18n.changeLanguage(resolvedLanguage);
+    const userData = await getDataLocally('user');
     if (userData) {
-      user = JSON.parse(userData);
-      user.language = language; 
-      await storeDataLocally('user', JSON.stringify(user));
+      try {
+        const user = JSON.parse(userData);
+        user.language = resolvedLanguage;
+        user.selectedLanguage = resolvedLanguage;
+        await storeDataLocally('user', JSON.stringify(user));
+      } catch (error) {
+        console.error('Failed to update language in AsyncStorage', error);
+      }
     } else {
-      console.log('Not user found in Asyncstorage')
+      console.log('Not user found in Asyncstorage');
     }
   };
 

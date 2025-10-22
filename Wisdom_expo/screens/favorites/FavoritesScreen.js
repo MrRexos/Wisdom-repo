@@ -30,11 +30,20 @@ export default function FavoritesScreen() {
         console.log(userData);
 
         // Comprobar si userData indica que no hay usuario
-        if (userData === '{"token":false}') {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'GetStarted' }],
-          });
+        if (!userData) {
+          return;
+        }
+
+        try {
+          const user = JSON.parse(userData);
+          if (!user?.token) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'GetStarted' }],
+            });
+          }
+        } catch (error) {
+          console.error('Failed to parse user data', error);
         }
       };
 

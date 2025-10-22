@@ -6,7 +6,8 @@ import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import { useNavigation } from '@react-navigation/native';
-import { getDataLocally } from '../../utils/asyncStorage';
+import { getDataLocally, storeDataLocally } from '../../utils/asyncStorage';
+import { applyLanguagePreference, detectDeviceLanguage } from '../../utils/language';
 
 
 
@@ -26,26 +27,40 @@ export default function SettingsScreen() {
     };
     const loadUserData = async () => {
       const userData = await getDataLocally('user');
-      
+
       if (userData) {
-        const user = JSON.parse(userData);
-        setToken(user.token);
-        let language = user.selectedLanguage;
-        if (language) {
-          i18n.changeLanguage(language);
-        };
-        setTimeout(() => {
-          if (user.token) {
-            navigation.navigate('HomeScreen');
-          } else {
-            navigation.navigate('GetStarted');
-          }
-        }, 1000);
-      } else {
-        setTimeout(() => {
-            navigation.navigate('GetStarted');
-        }, 1000);
-      };
+        let user = null;
+        try {
+          user = JSON.parse(userData);
+        } catch (error) {
+          console.error('Failed to parse user data', error);
+        }
+
+        if (user) {
+          setToken(user.token);
+          await applyLanguagePreference(user, async (updatedUser) => {
+            await storeDataLocally('user', JSON.stringify(updatedUser));
+          });
+
+          setTimeout(() => {
+            if (user.token) {
+              navigation.navigate('HomeScreen');
+            } else {
+              navigation.navigate('GetStarted');
+            }
+          }, 1000);
+          return;
+        }
+      }
+
+      const language = detectDeviceLanguage();
+      if (language !== i18n.language) {
+        await i18n.changeLanguage(language);
+      }
+
+      setTimeout(() => {
+        navigation.navigate('GetStarted');
+      }, 1000);
     };
     loadColorScheme();
     loadUserData();

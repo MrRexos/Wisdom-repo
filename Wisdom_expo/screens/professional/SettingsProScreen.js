@@ -70,12 +70,20 @@ export default function SettingsScreen() {
         const userData = await getDataLocally('user');
         console.log(userData);
 
-        // Comprobar si userData indica que no hay usuario
-        if (userData === '{"token":false}') {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'GetStarted' }],
-          });
+        if (!userData) {
+          return;
+        }
+
+        try {
+          const user = JSON.parse(userData);
+          if (!user?.token) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'GetStarted' }],
+            });
+          }
+        } catch (error) {
+          console.error('Failed to parse user data', error);
         }
       };
 
@@ -98,7 +106,11 @@ export default function SettingsScreen() {
     } catch (error) {
       console.error('Error al limpiar el almacenamiento:', error);
     } finally {
-      await storeDataLocally('user', JSON.stringify({ token: false }));
+      const currentLanguage = i18n.language;
+      await storeDataLocally(
+        'user',
+        JSON.stringify({ token: false, language: currentLanguage, selectedLanguage: currentLanguage })
+      );
       setTimeout(() => {
         eventEmitter.emit('profileUpdated');
       }, 0);

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Platform, NativeModules, Animated, Image, useWindowDimensions, Easing } from 'react-native';
+import { View, Text, TouchableOpacity, Animated, Image, useWindowDimensions, Easing } from 'react-native';
 import { useColorScheme } from 'nativewind';
 import React, { useEffect, useState, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
@@ -6,7 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
-import { getDataLocally } from '../../utils/asyncStorage';
+import { getDataLocally, storeDataLocally } from '../../utils/asyncStorage';
+import { applyLanguagePreference, detectDeviceLanguage } from '../../utils/language';
 
 const WelcomeVideoScreen = () => {
   const { colorScheme } = useColorScheme();
@@ -127,38 +128,43 @@ const WelcomeVideoScreen = () => {
   }, []);
 
   useEffect(() => {
-    const changeDefaultLanguage = () => {
-      const deviceLanguage =
-        Platform.OS === 'ios'
-          ? NativeModules.SettingsManager.settings.AppleLocale ||
-          NativeModules.SettingsManager.settings.AppleLanguages[0] //iOS 13
-          : NativeModules.I18nManager.localeIdentifier;
-
-      const language = deviceLanguage.split(/[_-]/)[0];
-      i18n.changeLanguage(language);
-    };
-
     const loadUserData = async () => {
       const userData = await getDataLocally('user');
-      console.log(userData)
       if (userData) {
-        const user = JSON.parse(userData);
-        setToken(user.token);
-        if (user.token) {
-          navigation.navigate('Loading');
-        } else {
-          setShowSkip(true);
-          changeDefaultLanguage();
-          setIsLoading(false);
+        let user = null;
+        try {
+          user = JSON.parse(userData);
+        } catch (error) {
+          console.error('Failed to parse user data', error);
         }
-      } else {
-        setShowSkip(true);
-        setIsLoading(false);
+
+        if (user) {
+          setToken(user.token);
+          await applyLanguagePreference(user, async (updatedUser) => {
+            await storeDataLocally('user', JSON.stringify(updatedUser));
+          });
+
+          if (user.token) {
+            navigation.navigate('Loading');
+            return;
+          }
+
+          setShowSkip(true);
+          setIsLoading(false);
+          return;
+        }
       }
+
+      const language = detectDeviceLanguage();
+      if (language !== i18n.language) {
+        await i18n.changeLanguage(language);
+      }
+
+      setShowSkip(true);
+      setIsLoading(false);
     };
 
     loadUserData();
-
   }, []);
 
   const startAnimation = () => {
