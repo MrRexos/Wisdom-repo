@@ -177,7 +177,7 @@ export default function CreateServiceConsultScreen() {
                             className={isActive ? `font-inter-bold text-[16px] text-[#323131] dark:text-[#fcfcfc]` : `font-inter-bold text-[16px]  text-[#b6b5b5] dark:text-[#706f6e]`}
                           />
 
-                          <Text className={isActive ? `font-inter-bold text-[16px] text-[#323131] dark:text-[#fcfcfc]` : `font-inter-bold text-[16px]  text-[#b6b5b5] dark:text-[#706f6e]`}> €/15 mins</Text>
+                          <Text className={isActive ? `font-inter-bold text-[16px] text-[#323131] dark:text-[#fcfcfc]` : `font-inter-bold text-[16px]  text-[#b6b5b5] dark:text-[#706f6e]`}> €{t('per_15_minutes')}</Text>
 
                           {typeSelected === 1 && (
                             <TouchableOpacity onPress={() => inputRef.current?.focus()} className="ml-1">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useMemo } from 'react'
 import {View, StatusBar, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Keyboard, TouchableWithoutFeedback} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
@@ -51,24 +51,24 @@ export default function CreateServiceDetailsScreen() {
     t,
   });
 
-  const languages = [
-    { id: 1, label: 'Catalan', abbreviation: 'ca' },
-    { id: 2, label: 'Spanish', abbreviation: 'es' },
-    { id: 3, label: 'English', abbreviation: 'en' },
-    { id: 4, label: 'French', abbreviation: 'fr' },
-    { id: 5, label: 'Arabic', abbreviation: 'ar' },
-    { id: 6, label: 'German', abbreviation: 'de' },
-    { id: 7, label: 'Chinese', abbreviation: 'zh' },
-    { id: 8, label: 'Japanese', abbreviation: 'ja' },
-    { id: 9, label: 'Korean', abbreviation: 'ko' },
-    { id: 10, label: 'Portuguese', abbreviation: 'pt' },
-    { id: 11, label: 'Russian', abbreviation: 'ru' },
-    { id: 12, label: 'Italian', abbreviation: 'it' },
-    { id: 13, label: 'Dutch', abbreviation: 'nl' },
-    { id: 14, label: 'Turkish', abbreviation: 'tr' },
-    { id: 15, label: 'Swedish', abbreviation: 'sv' }
-    
-  ];
+  const languages = useMemo(() => ([
+    { id: 1, label: t('language_name_catalan'), abbreviation: 'ca' },
+    { id: 2, label: t('language_name_spanish'), abbreviation: 'es' },
+    { id: 3, label: t('language_name_english'), abbreviation: 'en' },
+    { id: 4, label: t('language_name_french'), abbreviation: 'fr' },
+    { id: 5, label: t('language_name_arabic'), abbreviation: 'ar' },
+    { id: 6, label: t('language_name_german'), abbreviation: 'de' },
+    { id: 7, label: t('language_name_chinese'), abbreviation: 'zh' },
+    { id: 8, label: t('language_name_japanese'), abbreviation: 'ja' },
+    { id: 9, label: t('language_name_korean'), abbreviation: 'ko' },
+    { id: 10, label: t('language_name_portuguese'), abbreviation: 'pt' },
+    { id: 11, label: t('language_name_russian'), abbreviation: 'ru' },
+    { id: 12, label: t('language_name_italian'), abbreviation: 'it' },
+    { id: 13, label: t('language_name_dutch'), abbreviation: 'nl' },
+    { id: 14, label: t('language_name_turkish'), abbreviation: 'tr' },
+    { id: 15, label: t('language_name_swedish'), abbreviation: 'sv' }
+
+  ]), [t]);
 
   const inputHobbiesChanged = (text) => {
     setHobbies(text);
@@ -206,7 +206,7 @@ export default function CreateServiceDetailsScreen() {
               <View className="mt-8 justify-start items-start w-full">
                 
                 <TouchableOpacity onPress={() => handleAboutYouPress()} className="flex-row w-full justify-between items-center ">
-                  <Text className="font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">About you</Text>                 
+                  <Text className="font-inter-bold text-[24px] text-[#706f6e] dark:text-[#b6b5b5]">{t('about_you')}</Text>
                   {showAboutYou? (
                     <ChevronUpIcon size={20} color={colorScheme=='dark'? '#b6b5b5': '#706f6e'} strokeWidth={2} />
                   ): null }

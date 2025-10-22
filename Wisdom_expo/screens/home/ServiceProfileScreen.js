@@ -38,6 +38,15 @@ import Slider from '@react-native-community/slider';
 import SliderThumbDark from '../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../assets/SliderThumbLight.png';
 import { format } from 'date-fns';
+
+const DATE_LOCALE_MAP = {
+  en: 'en-GB',
+  es: 'es-ES',
+  ca: 'ca-ES',
+  ar: 'ar',
+  fr: 'fr-FR',
+  zh: 'zh-CN',
+};
 import {
   mapMarkerAnchor,
   mapMarkerCenterOffset,
@@ -969,13 +978,14 @@ export default function ServiceProfileScreen() {
     const [hours, minutes] = selectedTime.split(':'); // Dividimos la hora "HH:mm"
 
     const startTime = new Date(year, month - 1, day, hours, minutes); // Crear el objeto Date
-    const formattedDay = startTime.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }); // Ej: "Friday 25 Oct"
-    const formattedTime = startTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }); // Ej: "12:58"
+    const locale = DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en;
+    const formattedDay = startTime.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'short' }); // Ej: "Friday 25 Oct"
+    const formattedTime = startTime.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false }); // Ej: "12:58"
 
     // 2. Calcular la hora de finalización añadiendo la duración
     const endTime = new Date(startTime);
     endTime.setMinutes(endTime.getMinutes() + duration); // Añadir la duración en minutos
-    const formattedEndTime = endTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }); // Ej: "14:28"
+    const formattedEndTime = endTime.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false }); // Ej: "14:28"
 
     // 3. Calcular el precio basado en el tipo de precio
     let totalPrice = parseFloat(serviceData.price);
@@ -985,8 +995,8 @@ export default function ServiceProfileScreen() {
     }
 
     // 4. Construir el mensaje de reserva final
-    const priceLabel = `${round2(totalPrice)}€`; // Asegurarnos de que el precio tenga dos decimales si es necesario
-    return `Book for ${formattedDay} \n ${formattedTime} - ${formattedEndTime} for ${serviceData.price_type === "budget" ? "budget" : priceLabel}`;
+    const priceLabel = serviceData.price_type === 'budget' ? t('budget') : `${round2(totalPrice)}€`; // Asegurarnos de que el precio tenga dos decimales si es necesario
+    return t('book_for_summary', { day: formattedDay, startTime: formattedTime, endTime: formattedEndTime, price: priceLabel });
   };
 
   const startChat = async () => {
@@ -1145,7 +1155,7 @@ export default function ServiceProfileScreen() {
                   )}
                 </TouchableOpacity>
 
-                <Text className="ml-3 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Undefined time</Text>
+                <Text className="ml-3 font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">{t('undefined_time')}</Text>
 
               </View>
 
@@ -1797,7 +1807,7 @@ export default function ServiceProfileScreen() {
             <View className="mr-2 py-5 px-4 w-full bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
               <Text className="mb-4 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Consult a professional</Text>
               {serviceData.price_consult && (
-                <Text className=" font-inter-semibold text-[13px] text-[#706F6E] dark:text-[#b6b5b5]">{parseFloat(serviceData.price_consult).toFixed(0)} € for a 15 min call</Text>
+                <Text className=" font-inter-semibold text-[13px] text-[#706F6E] dark:text-[#b6b5b5]">{t('consult_price_description', { price: parseFloat(serviceData.price_consult).toFixed(0) })}</Text>
               )}
 
               <View className="mt-8 flex-row justify-center items-center">
@@ -1919,19 +1929,24 @@ export default function ServiceProfileScreen() {
               style={{ opacity: 1 }}
               className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
             >
-              <Text>
-                <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
-                  {serviceData?.price_type === 'hour' && (
-                    <>Book for <Text className="font-inter-semibold text-[15px] text-[#B6B5B5] dark:text-[#706f6e]">{parseFloat(serviceData?.price).toFixed(0)} €</Text>/hour</>
-                  )}
-                  {serviceData?.price_type === 'fix' && (
-                    <>Book for <Text className="font-inter-semibold text-[15px] text-[#B6B5B5] dark:text-[#706f6e]">{parseFloat(serviceData?.price).toFixed(0)} €</Text></>
-                  )}
-                  {serviceData?.price_type === 'budget' && (
-                    <>Book on budget</>
-                  )}
+                <Text>
+                  <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
+                    {serviceData?.price_type === 'hour' && (
+                      <>
+                        {t('book_for')}{' '}
+                        <Text className="font-inter-semibold text-[15px] text-[#B6B5B5] dark:text-[#706f6e]">{parseFloat(serviceData?.price).toFixed(0)} €</Text>
+                        {t('per_hour')}
+                      </>
+                    )}
+                    {serviceData?.price_type === 'fix' && (
+                      <>
+                        {t('book_for')}{' '}
+                        <Text className="font-inter-semibold text-[15px] text-[#B6B5B5] dark:text-[#706f6e]">{parseFloat(serviceData?.price).toFixed(0)} €</Text>
+                      </>
+                    )}
+                    {serviceData?.price_type === 'budget' && t('book_on_budget')}
+                  </Text>
                 </Text>
-              </Text>
             </TouchableOpacity>
           )}
         </View>

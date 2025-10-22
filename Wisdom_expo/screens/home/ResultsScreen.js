@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useCallback, useRef } from 'react'
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
@@ -17,6 +17,15 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
+
+const DATE_LOCALE_MAP = {
+  en: 'en-US',
+  es: 'es-ES',
+  ca: 'ca-ES',
+  ar: 'ar',
+  fr: 'fr-FR',
+  zh: 'zh-CN',
+};
 
 export default function ResultsScreen() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
@@ -62,14 +71,14 @@ export default function ResultsScreen() {
     }
   }, [route.params?.category, route.params?.searchedService]);
 
-  const orderByOptions = [
-    { label: 'Recommend', type: 'recommend' },
-    { label: 'Cheapest', type: 'cheapest' },
-    { label: 'Best rated', type: 'bestRated' },
-    { label: 'Most expensive', type: 'mostExpensive' },
-    { label: 'Nearest', type: 'nearest' },
-    { label: 'Availability', type: 'availability' },
-  ];
+  const orderByOptions = useMemo(() => ([
+    { label: t('order_option_recommend'), type: 'recommend' },
+    { label: t('order_option_cheapest'), type: 'cheapest' },
+    { label: t('order_option_best_rated'), type: 'bestRated' },
+    { label: t('order_option_most_expensive'), type: 'mostExpensive' },
+    { label: t('order_option_nearest'), type: 'nearest' },
+    { label: t('order_option_availability'), type: 'availability' },
+  ]), [t]);
 
   const currencySymbols = {
     EUR: '€',
@@ -210,18 +219,18 @@ export default function ResultsScreen() {
         return (
           <>
             <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols[item.currency]} €</Text>
-            <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">/hour</Text>
+            <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">{t('per_hour')}</Text>
           </>
         );
       } else if (item.price_type === 'fix') {
         return (
           <>
-            <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">Fixed Price: </Text>
+            <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">{t('fixed_price_prefix')}</Text>
             <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols[item.currency]} €</Text>
           </>
         );
       } else {
-        return <Text className="font-inter-bold text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">Price on budget</Text>;
+        return <Text className="font-inter-bold text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">{t('price_on_budget')}</Text>;
       }
     };
 
@@ -266,7 +275,7 @@ export default function ResultsScreen() {
             <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[45px] w-[45px] bg-[#706B5B] rounded-lg" />
             <View className="ml-3 justify-center items-start">
               <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{item.first_name} {item.surname}</Text>
-              <Text className="font-inter-semibold text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">Place</Text>
+              <Text className="font-inter-semibold text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">{t('place')}</Text>
             </View>
           </View>
 
@@ -276,7 +285,7 @@ export default function ResultsScreen() {
               <Text className="ml-[3px]">
                 <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(item.average_rating).toFixed(1)}</Text>
                 <Text> </Text>
-                <Text className="font-inter-medium text-[11px] text-[#706F6E] dark:text-[#B6B5B5]">({item.review_count === 1 ? `${item.review_count} review` : `${item.review_count} reviews`})</Text>
+                <Text className="font-inter-medium text-[11px] text-[#706F6E] dark:text-[#B6B5B5]">({item.review_count} {item.review_count === 1 ? t('review') : t('reviews')})</Text>
               </Text>
             </View>
           )}
@@ -310,7 +319,8 @@ export default function ResultsScreen() {
     const formatDate = (dateString) => {
       const date = new Date(dateString);
       const options = { month: 'long', day: 'numeric' }; // Formato: "July 12"
-      return date.toLocaleDateString('en-US', options);
+      const locale = DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en;
+      return date.toLocaleDateString(locale, options);
     };
 
     // Agregar searchedDirection si no es null
@@ -378,7 +388,7 @@ export default function ResultsScreen() {
               </View>
 
               <View className="flex-row justify-center items-center">
-                <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">New list</Text>
+                <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('new_list')}</Text>
               </View>
 
               <View className="flex-1 items-end">
@@ -429,7 +439,7 @@ export default function ResultsScreen() {
               <View className="flex-1" />
 
               <View className="flex-row justify-center items-center">
-                <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">Add to a list</Text>
+                <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('add_to_list')}</Text>
               </View>
 
               <View className="flex-1 items-end">
@@ -449,7 +459,7 @@ export default function ResultsScreen() {
                       <Image source={list.services[0] ? list.services[0].image_url ? { uri: list.services[0].image_url } : null : null} className="h-[50px] w-[50px] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-lg mr-4" />
                       <View className="justify-center items-start">
                         <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{list.title}</Text>
-                        <Text className="text-center font-inter-medium text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{list.item_count === 0 ? '0 services' : list.item_count === 1 ? `${list.item_count} service` : `${list.item_count} services`}</Text>
+                        <Text className="text-center font-inter-medium text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('services_count', { count: list.item_count })}</Text>
                       </View>
                     </View>
 
@@ -466,7 +476,7 @@ export default function ResultsScreen() {
                   <Plus height={23} width={23} strokeWidth={2.5} color={colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'} />
                 </View>
                 <View className="justify-center items-start">
-                  <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">New list</Text>
+                  <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('new_list')}</Text>
                 </View>
               </TouchableOpacity>
 
@@ -511,7 +521,7 @@ export default function ResultsScreen() {
       {/* Contenedor del botón "Order by" */}
 
       <View style={{ zIndex: 10 }} className="flex-row p-5 justify-between items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-        <Text className="mb-1 font-inter-bold text-center text-[18px] text-[#444343] dark:text-[#f2f2f2]">Order by</Text>
+        <Text className="mb-1 font-inter-bold text-center text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('order_by')}</Text>
 
         {/* Botón desplegable */}
         <TouchableOpacity
@@ -520,7 +530,7 @@ export default function ResultsScreen() {
         >
           <View className="flex-row px-4 justify-center items-center">
             <Text className="mr-1 font-inter-medium text-center text-[12px] text-[#444343] dark:text-[#f2f2f2]">
-              {orderByOptions.find(option => option.type === selectedOrderBy)?.label || 'Select'}
+              {orderByOptions.find(option => option.type === selectedOrderBy)?.label || t('select_option')}
             </Text>
             {isDropdownOpen ? (
               <ChevronUpIcon size={15} strokeWidth={1.8} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
@@ -575,10 +585,10 @@ export default function ResultsScreen() {
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <SuitcaseFill height={60} width={60} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
           <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
-            Services not found
+            {t('services_not_found')}
           </Text>
           <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-4 w-[250px]">
-            Try later.
+            {t('try_later')}
           </Text>
         </View>
       ) : (

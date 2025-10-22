@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import {View, StatusBar, Platform, TouchableOpacity, Text, ScrollView, Image} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
@@ -20,6 +20,14 @@ import {
 } from '../../../utils/mapMarkerAssets';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+const DATE_LOCALE_MAP = {
+  en: 'en-US',
+  es: 'es-ES',
+  ca: 'ca-ES',
+  ar: 'ar',
+  fr: 'fr-FR',
+  zh: 'zh-CN',
+};
 
 
 
@@ -47,28 +55,28 @@ export default function CreateServiceReviewScreen() {
     RMB: '¥',
   };
 
-  const languagesMap = {
-    es: 'Spanish',
-    en: 'English',
-    ca: 'Catalan',
-    fr: 'French',
-    ar: 'Arabic',
-    de: 'German',
-    zh: 'Chinese',
-    ja: 'Japanese',
-    ko: 'Korean',
-    pt: 'Portuguese',
-    ru: 'Russian',
-    it: 'Italian',
-    nl: 'Dutch',
-    tr: 'Turkish',
-    sv: 'Swedish'
-  };
+  const languagesMap = useMemo(() => ({
+    es: t('language_name_spanish'),
+    en: t('language_name_english'),
+    ca: t('language_name_catalan'),
+    fr: t('language_name_french'),
+    ar: t('language_name_arabic'),
+    de: t('language_name_german'),
+    zh: t('language_name_chinese'),
+    ja: t('language_name_japanese'),
+    ko: t('language_name_korean'),
+    pt: t('language_name_portuguese'),
+    ru: t('language_name_russian'),
+    it: t('language_name_italian'),
+    nl: t('language_name_dutch'),
+    tr: t('language_name_turkish'),
+    sv: t('language_name_swedish')
+  }), [t]);
 
   const formatLanguages = (languagesArray) => {
     const languageNames = languagesArray.map(lang => languagesMap[lang] || lang);
     if (languageNames.length > 1) {
-      return `${languageNames.slice(0, -1).join(', ')} and ${languageNames[languageNames.length - 1]}`;
+      return `${languageNames.slice(0, -1).join(', ')} ${t('and')} ${languageNames[languageNames.length - 1]}`;
     }
     return languageNames[0];
   };
@@ -80,7 +88,8 @@ export default function CreateServiceReviewScreen() {
         month: 'long',
         day: 'numeric',
     };
-    return date.toLocaleString('en-US', options);
+    const locale = DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en;
+    return date.toLocaleString(locale, options);
   };
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
@@ -176,18 +185,18 @@ export default function CreateServiceReviewScreen() {
       return (
         <>
           <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols.EUR}</Text>
-          <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">/hour</Text>
+          <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">{t('per_hour')}</Text>
         </>
       );
     } else if (priceType === 'fix') {
       return (
         <>
-          <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">Fixed Price: </Text>
+          <Text className="font-inter-medium text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">{t('fixed_price_prefix')}</Text>
           <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{formattedPrice}{currencySymbols.EUR}</Text>
         </>
       );
     }
-    return <Text className="font-inter-bold text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">Price on budget</Text>;
+    return <Text className="font-inter-bold text-[13px] text-[#706F6E] dark:text-[#B6B5B5]">{t('price_on_budget')}</Text>;
   };
 
   const ServicePanelPreview = () => (
@@ -217,7 +226,7 @@ export default function CreateServiceReviewScreen() {
           <Image source={userInfo.profile_picture ? { uri: userInfo.profile_picture } : require('../../../assets/defaultProfilePic.jpg')} className="h-[45px] w-[45px] bg-[#706B5B] rounded-lg" />
           <View className="ml-3 justify-center items-start">
             <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{userInfo.first_name} {userInfo.surname}</Text>
-            <Text className="font-inter-semibold text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">Place</Text>
+            <Text className="font-inter-semibold text-[11px] text-[#706F6E] dark:text-[#b6b5b5]">{t('place')}</Text>
           </View>
         </View>
       </View>
@@ -245,30 +254,30 @@ export default function CreateServiceReviewScreen() {
         <View className="py-3 mt-7 mx-4 flex-row justify-center items-center bg-[#e0e0e0] dark:bg-[#323131] rounded-3xl">
           <View className="flex-1 justify-center items-center border-r-[1px] border-[#d4d4d3] dark:border-[#474646]">
             <Text className="font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">12</Text>
-            <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Services</Text>
+            <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">{t('services')}</Text>
           </View>
           <View className="flex-1 justify-center items-center">
             <View className="flex-row justify-center items-center">
               <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 1.3 }] }} />
               <Text className="ml-[6px] font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">4.8</Text>
             </View>
-            <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Rating</Text>
+            <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">{t('rating')}</Text>
           </View>
           <View className="flex-1 justify-center items-center border-l-[1px] border-[#d4d4d3] dark:border-[#474646]">
             <Text className="font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">6</Text>
-            <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Repites</Text>
+            <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">{t('repeats')}</Text>
           </View>
         </View>
       </View>
 
       <View className="mt-9 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-        <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">About the service</Text>
+        <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('about_the_service')}</Text>
         <Text className="break-all text-[14px] text-[#515150] dark:text-[#d4d4d3]">{description}</Text>
       </View>
 
       {serviceImages && serviceImages.length > 0 && (
         <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-          <Text className="mb-5 flex-1 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Galery</Text>
+          <Text className="mb-5 flex-1 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('gallery')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="w-full">
             {serviceImages.slice(0,10).map((image, index) => (
               <View key={index} className="mr-3">
@@ -283,31 +292,31 @@ export default function CreateServiceReviewScreen() {
         <View className="flex-row justify-center items-start">
           <View className="flex-1 justify-start items-start">
             <View className="mb-6 justify-start items-start">
-              <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Earned money</Text>
+              <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('earned_money')}</Text>
               <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">100 €</Text>
             </View>
             <View className="mb-6 justify-start items-start">
-              <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Hores totals</Text>
+              <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('total_hours')}</Text>
               <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">85 h</Text>
             </View>
             <View className="justify-start items-start">
-              <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Repeted</Text>
+              <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('repeats')}</Text>
               <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">6</Text>
             </View>
           </View>
 
           <View className="flex-1 justify-start items-start">
             <View className="mb-6 justify-start items-start">
-              <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Success rate</Text>
+              <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('success_rate')}</Text>
               <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">100 %</Text>
             </View>
             <View className="mb-6 justify-start items-start">
-              <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Total services</Text>
+              <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('total_services')}</Text>
               <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">12</Text>
             </View>
             <View className="justify-start items-start">
-              <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Response time</Text>
-              <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{'<'}30 min</Text>
+              <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('response_time')}</Text>
+              <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{t('less_than_minutes', { minutes: 30 })}</Text>
             </View>
           </View>
         </View>
@@ -315,7 +324,7 @@ export default function CreateServiceReviewScreen() {
 
       {tags && tags.length>0 && (
         <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-          <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Tags and habilities</Text>
+          <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('tags_and_skills')}</Text>
           <View className="flex-row justify-start items-center flex-wrap">
             {tags.map((tag, index) => (
               <View key={index} className="flex-row py-2 px-3 bg-[#e0e0e0] dark:bg-[#323131] rounded-full mr-1 mb-1">
@@ -328,18 +337,18 @@ export default function CreateServiceReviewScreen() {
 
       {selectedLanguages && selectedLanguages.length>0 && (
         <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
-          <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Personal information</Text>
-          <Text><Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Languages: </Text><Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{formatLanguages(selectedLanguages)}</Text></Text>
-          {hobbies && (<Text className="mt-4"><Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Hobbies: </Text><Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{hobbies}</Text></Text>)}
-          <Text className="mt-4"><Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Verified: </Text><Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">Identity</Text></Text>
-          <Text className="mt-4"><Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Creation date: </Text><Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{formatDate(new Date().toISOString())}</Text></Text>
+          <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('personal_information')}</Text>
+          <Text><Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('languages_label')}</Text><Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{formatLanguages(selectedLanguages)}</Text></Text>
+          {hobbies && (<Text className="mt-4"><Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('hobbies_label')}</Text><Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{hobbies}</Text></Text>)}
+          <Text className="mt-4"><Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('verified_label')}</Text><Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{t('identity')}</Text></Text>
+          <Text className="mt-4"><Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('creation_date')}</Text><Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{formatDate(new Date().toISOString())}</Text></Text>
 
           {experiences && experiences.length>0 && (
             <View>
               <View className="mt-8 mb-8 flex-row w-full justify-between items-center">
-                <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Experience</Text>
+                <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('experience_section')}</Text>
                 <Text className="mr-3 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">
-                  {experiences.length} {experiences.length === 1 ? 'experience' : 'experiences'}
+                  {t('experiences_count', { count: experiences.length })}
                 </Text>
               </View>
 
@@ -489,7 +498,7 @@ export default function CreateServiceReviewScreen() {
           <View className="mr-2 py-5 px-4 w-full bg-[#e0e0e0] dark:bg-[#323131] rounded-2xl">
             <Text className="mb-4 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Consult a professional</Text>
             {consultPrice && (
-              <Text className=" font-inter-semibold text-[13px] text-[#706F6E] dark:text-[#b6b5b5]">{parseFloat(consultPrice).toFixed(0)} € for a 15 min call</Text>
+              <Text className=" font-inter-semibold text-[13px] text-[#706F6E] dark:text-[#b6b5b5]">{t('consult_price_description', { price: parseFloat(consultPrice).toFixed(0) })}</Text>
             )}
             <View className="mt-8 flex-row justify-center items-center">
               {allowAsk && (

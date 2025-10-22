@@ -22,6 +22,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { format } from 'date-fns';
 
 
+const DATE_LOCALE_MAP = {
+  en: 'en-GB',
+  es: 'es-ES',
+  ca: 'ca-ES',
+  ar: 'ar',
+  fr: 'fr-FR',
+  zh: 'zh-CN',
+};
+
 export default function HomeScreen() {
 
   const { colorScheme, toggleColorScheme } = useColorScheme();
@@ -525,7 +534,8 @@ export default function HomeScreen() {
       const [year, month, day] = selectedDay.split('-'); // Dividir la fecha "YYYY-MM-DD"
       if (year && month && day) {
         const tempDate = new Date(year, month - 1, day);
-        formattedDay = tempDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'short' }); // Ej: "Friday 25 Oct"
+        const locale = DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en;
+        formattedDay = tempDate.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'short' }); // Ej: "Friday 25 Oct"
       }
     }
 
@@ -804,7 +814,7 @@ export default function HomeScreen() {
 
                     <TouchableOpacity onPress={() => setSearchOption('date')} className="mt-7 mb-7 w-full justify-center items-center">
                       <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">
-                        Date
+                        {t('date')}
                         {(selectedDay || selectedTime || duration) && (
                           <>
                             <Text className="font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">: </Text>
@@ -833,7 +843,7 @@ export default function HomeScreen() {
                     <Text>
                       <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
 
-                        Search
+                        {t('search')}
 
                       </Text>
                     </Text>
