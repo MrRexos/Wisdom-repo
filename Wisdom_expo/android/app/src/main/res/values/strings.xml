@@ -2,8 +2,4 @@
   <string name="app_name">Wisdom</string>
   <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
   <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
-  <string name="NSPhotoLibraryUsageDescription">We need access to your photo library so you can set a profile picture or display them in your services.</string>
-  <string name="NSCameraUsageDescription">We need access to your camera so you can take photos and use them in the app\'s features.</string>
-  <string name="NSPhotoLibraryAddUsageDescription">We need permission to save images from the app to your gallery.</string>
-  <string name="NSLocationWhenInUseUsageDescription">We need access to your current location in order to show you services near you or save your directions.</string>
 </resources>
