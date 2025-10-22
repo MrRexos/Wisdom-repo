@@ -120,174 +120,174 @@ export default function HomeScreen() {
     );
   };
 
-  const suggestions = [
+  const suggestions = useMemo(() => ([
     {
-      label: 'All',
+      label: t('all'),
       categoryID: null,
     },
     {
-      label: 'Home Cleaner',
+      label: t('home_category_home_cleaning'),
       categoryID: 1,
     },
     {
-      label: 'AI Developer',
+      label: t('home_category_ai_development'),
       categoryID: 89,
     },
     {
-      label: 'Plumber',
+      label: t('home_category_plumbing'),
       categoryID: 2,
     },
     {
-      label: 'Personal Trainer',
+      label: t('home_category_personal_training'),
       categoryID: 31,
     },
     {
-      label: 'Auditor',
+      label: t('home_category_auditing'),
       categoryID: 225,
     },
     {
-      label: '3D Designer',
+      label: t('home_category_3d_design'),
       categoryID: 100,
     },
     {
-      label: 'Wedding Planner',
+      label: t('home_category_wedding_planning'),
       categoryID: 172,
     },
     {
-      label: 'Web Developer',
+      label: t('home_category_web_development'),
       categoryID: 84,
     },
     {
-      label: 'Graphic Designer',
+      label: t('home_category_graphic_design'),
       categoryID: 330,
     },
     {
-      label: 'In-home Pet Care Provider',
+      label: t('home_category_in_home_pet_care_provider'),
       categoryID: 320,
     },
 
-  ]
+  ]), [t]);
 
   //AÑADIR MAS EN EL FUTURO
-  const serviceFamilies = [
+  const serviceFamilies = useMemo(() => ([
     {
-      family: "For You",
+      family: t('home_family_for_you'),
       categories: [
-        { id: 2, category: "Plumbing", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20174847.png" },
-        { id: 89, category: "AI development", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20201215.png" },
-        { id: 1, category: "Home cleaning", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20174733.png" },
-        { id: 31, category: "Personal trainers", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175621.png" },
-        { id: 317, category: "Dog walkers", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190223.png" },
-        { id: 318, category: "Pet care at home", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190446.png" },
-        { id: 5, category: "Masonry", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175117.png" },
-        { id: 83, category: "Mobile app development", url: "https://storage.googleapis.com/wisdom-images/451067aa-4bd3-43d8-874d-ff8b5e50ce7e.jpeg" },
-        { id: 84, category: "Web development", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20181853.png" },
-        { id: 151, category: "Architects", url: "https://storage.googleapis.com/wisdom-images/526bda5b-c0c2-4170-b552-12a17db69fa9.jpeg" },
-        { id: 8, category: "Painting and decoration", url: "https://storage.googleapis.com/wisdom-images/237ee01c-4454-4d81-8f27-f502f74ac9d3.jpeg" }
+        { id: 2, category: t('home_category_plumbing'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20174847.png" },
+        { id: 89, category: t('home_category_ai_development'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20201215.png" },
+        { id: 1, category: t('home_category_home_cleaning'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20174733.png" },
+        { id: 31, category: t('home_category_personal_training'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175621.png" },
+        { id: 317, category: t('home_category_dog_walkers'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190223.png" },
+        { id: 318, category: t('home_category_pet_care_at_home'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190446.png" },
+        { id: 5, category: t('home_category_masonry'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175117.png" },
+        { id: 83, category: t('home_category_mobile_app_development'), url: "https://storage.googleapis.com/wisdom-images/451067aa-4bd3-43d8-874d-ff8b5e50ce7e.jpeg" },
+        { id: 84, category: t('home_category_web_development'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20181853.png" },
+        { id: 151, category: t('home_category_architects'), url: "https://storage.googleapis.com/wisdom-images/526bda5b-c0c2-4170-b552-12a17db69fa9.jpeg" },
+        { id: 8, category: t('home_category_painting_and_decoration'), url: "https://storage.googleapis.com/wisdom-images/237ee01c-4454-4d81-8f27-f502f74ac9d3.jpeg" }
       ]
     },
     {
-      family: "Suggested professionals:",
+      family: t('home_family_suggested_professionals'),
       categories: [
 
       ]
     },
     {
-      family: "Home and Maintenance",
-      description: "Services to maintain and improve your home, including plumbing, electrical work, cleaning, and repairs.",
+      family: t('home_family_home_and_maintenance'),
+      description: t('home_family_home_and_maintenance_description'),
       categories: [
-        { id: 1, category: "Home cleaning", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20174733.png" },
-        { id: 2, category: "Plumbing", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20174847.png" },
-        { id: 3, category: "Electrical work", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175034.png" },
-        { id: 5, category: "Masonry", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175117.png" },
-        { id: 6, category: "Gardening", url: "https://storage.googleapis.com/wisdom-images/4a4881ba-a06f-4bb1-be9d-016d2b49eae4.jpeg" },
-        { id: 8, category: "Painting and decoration", url: "https://storage.googleapis.com/wisdom-images/237ee01c-4454-4d81-8f27-f502f74ac9d3.jpeg" }
+        { id: 1, category: t('home_category_home_cleaning'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20174733.png" },
+        { id: 2, category: t('home_category_plumbing'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20174847.png" },
+        { id: 3, category: t('home_category_electrical_work'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175034.png" },
+        { id: 5, category: t('home_category_masonry'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175117.png" },
+        { id: 6, category: t('home_category_gardening'), url: "https://storage.googleapis.com/wisdom-images/4a4881ba-a06f-4bb1-be9d-016d2b49eae4.jpeg" },
+        { id: 8, category: t('home_category_painting_and_decoration'), url: "https://storage.googleapis.com/wisdom-images/237ee01c-4454-4d81-8f27-f502f74ac9d3.jpeg" }
       ]
     },
     {
-      family: "Health and Wellbeing",
-      description: "Health and wellness services including personal trainers, nutritionists, and various types of therapy.",
+      family: t('home_family_health_and_wellbeing'),
+      description: t('home_family_health_and_wellbeing_description'),
       categories: [
-        { id: 31, category: "Personal trainers", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175621.png" },
-        { id: 32, category: "Nutritionists", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175812.png" },
-        { id: 34, category: "Psychology", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20180032.png" },
-        { id: 35, category: "Yoga", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20180113.png" },
-        { id: 36, category: "Guided meditation", url: "https://storage.googleapis.com/wisdom-images/53a50b05-32d7-4e90-86ce-62702bc97d65.jpeg" },
-        { id: 37, category: "Therapeutic massages", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20180612.png" },
-        { id: 54, category: "Couples therapy", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20180656.png" }
+        { id: 31, category: t('home_category_personal_training'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175621.png" },
+        { id: 32, category: t('home_category_nutritionists'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175812.png" },
+        { id: 34, category: t('home_category_psychology'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20180032.png" },
+        { id: 35, category: t('home_category_yoga'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20180113.png" },
+        { id: 36, category: t('home_category_guided_meditation'), url: "https://storage.googleapis.com/wisdom-images/53a50b05-32d7-4e90-86ce-62702bc97d65.jpeg" },
+        { id: 37, category: t('home_category_therapeutic_massages'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20180612.png" },
+        { id: 54, category: t('home_category_couples_therapy'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20180656.png" }
       ]
     },
     {
-      family: "Education and Training",
-      description: "Educational and training services such as private tutoring, language classes, and exam preparation.",
+      family: t('home_family_education_and_training'),
+      description: t('home_family_education_and_training_description'),
       categories: [
-        { id: 56, category: "Private tutors", url: "https://storage.googleapis.com/wisdom-images/77502ab75202d6b38aa0df57113b6746.jpg" },
-        { id: 57, category: "Math classes", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20180933.png" },
-        { id: 58, category: "Language classes", url: "https://storage.googleapis.com/wisdom-images/6f1a64adbbe28f7d572a9fef189ea542.jpg" },
-        { id: 59, category: "Science classes", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20181138.png" },
-        { id: 68, category: "Job interview preparation", url: "https://storage.googleapis.com/wisdom-images/36548671ef1476a260d9e3dbb8fe4706.jpg" },
-        { id: 65, category: "Music classe", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20181310.png" },
-        { id: 61, category: "Programming classes", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20181628.png" }
+        { id: 56, category: t('home_category_private_tutors'), url: "https://storage.googleapis.com/wisdom-images/77502ab75202d6b38aa0df57113b6746.jpg" },
+        { id: 57, category: t('home_category_math_classes'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20180933.png" },
+        { id: 58, category: t('home_category_language_classes'), url: "https://storage.googleapis.com/wisdom-images/6f1a64adbbe28f7d572a9fef189ea542.jpg" },
+        { id: 59, category: t('home_category_science_classes'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20181138.png" },
+        { id: 68, category: t('home_category_job_interview_preparation'), url: "https://storage.googleapis.com/wisdom-images/36548671ef1476a260d9e3dbb8fe4706.jpg" },
+        { id: 65, category: t('home_category_music_classes'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20181310.png" },
+        { id: 61, category: t('home_category_programming_classes'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20181628.png" }
       ]
     },
     {
-      family: "Digital and Online",
-      description: "Digital and online services such as web development, graphic design, and content creation.",
+      family: t('home_family_digital_and_online'),
+      description: t('home_family_digital_and_online_description'),
       categories: [
-        { id: 83, category: "Mobile app development", url: "https://storage.googleapis.com/wisdom-images/451067aa-4bd3-43d8-874d-ff8b5e50ce7e.jpeg" },
-        { id: 84, category: "Web development", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20181853.png" },
-        { id: 89, category: "AI development", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20201215.png" },
-        { id: 85, category: "Frontend development", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20182501.png" },
-        { id: 86, category: "Backend development", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20182034.png" },
-        { id: 90, category: "Graphic design", url: "https://storage.googleapis.com/wisdom-images/a2b2c958-2d21-4308-8b07-51a1820f6faa.jpeg" },
-        { id: 94, category: "Video editing", url: "https://storage.googleapis.com/wisdom-images/ad3a9403cb4273ff3bfb2ab24429bb62.jpg" },
-        { id: 100, category: "3D design", url: "https://storage.googleapis.com/wisdom-images/4475f6e7e9766c27834ae79e308907db2d4fe361f741e26a2e9357b0a6c63082_1920x1080.webp" },
-        { id: 101, category: "Social media content creation", url: "https://storage.googleapis.com/wisdom-images/contentcretor.png" },
+        { id: 83, category: t('home_category_mobile_app_development'), url: "https://storage.googleapis.com/wisdom-images/451067aa-4bd3-43d8-874d-ff8b5e50ce7e.jpeg" },
+        { id: 84, category: t('home_category_web_development'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20181853.png" },
+        { id: 89, category: t('home_category_ai_development'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20201215.png" },
+        { id: 85, category: t('home_category_frontend_development'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20182501.png" },
+        { id: 86, category: t('home_category_backend_development'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20182034.png" },
+        { id: 90, category: t('home_category_graphic_design'), url: "https://storage.googleapis.com/wisdom-images/a2b2c958-2d21-4308-8b07-51a1820f6faa.jpeg" },
+        { id: 94, category: t('home_category_video_editing'), url: "https://storage.googleapis.com/wisdom-images/ad3a9403cb4273ff3bfb2ab24429bb62.jpg" },
+        { id: 100, category: t('home_category_3d_design'), url: "https://storage.googleapis.com/wisdom-images/4475f6e7e9766c27834ae79e308907db2d4fe361f741e26a2e9357b0a6c63082_1920x1080.webp" },
+        { id: 101, category: t('home_category_social_media_content_creation'), url: "https://storage.googleapis.com/wisdom-images/contentcretor.png" },
       ]
     },
     {
-      family: "Construction and Renovations",
-      description: "Construction and renovation services including architecture, painting, and general contracting.",
+      family: t('home_family_construction_and_renovations'),
+      description: t('home_family_construction_and_renovations_description'),
       categories: [
-        { id: 151, category: "Architects", url: "https://storage.googleapis.com/wisdom-images/526bda5b-c0c2-4170-b552-12a17db69fa9.jpeg" },
-        { id: 152, category: "Masons", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175117.png" },
-        { id: 170, category: "Building rehabilitation", url: "https://storage.googleapis.com/wisdom-images/5964b65c-a2f6-4638-9024-6b38b2e0f42a.jpeg" }
+        { id: 151, category: t('home_category_architects'), url: "https://storage.googleapis.com/wisdom-images/526bda5b-c0c2-4170-b552-12a17db69fa9.jpeg" },
+        { id: 152, category: t('home_category_masons'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20175117.png" },
+        { id: 170, category: t('home_category_building_rehabilitation'), url: "https://storage.googleapis.com/wisdom-images/5964b65c-a2f6-4638-9024-6b38b2e0f42a.jpeg" }
       ]
     },
     {
-      family: "Events and Entertainment",
-      description: "Services for events and entertainment, including catering, photography, and event planning.",
+      family: t('home_family_events_and_entertainment'),
+      description: t('home_family_events_and_entertainment_description'),
       categories: [
-        { id: 172, category: "Wedding planners", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20184608.png" },
-        { id: 173, category: "Event Catering", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20184635.png" },
-        { id: 174, category: "Event photography", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20184808.png" },
-        { id: 175, category: "Party DJs", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20184853.png" },
-        { id: 178, category: "Children's entertainers", url: "https://storage.googleapis.com/wisdom-images/1.webp" },
-        { id: 181, category: "Event security", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20185110.png" }
+        { id: 172, category: t('home_category_wedding_planners'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20184608.png" },
+        { id: 173, category: t('home_category_event_catering'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20184635.png" },
+        { id: 174, category: t('home_category_event_photography'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20184808.png" },
+        { id: 175, category: t('home_category_party_djs'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20184853.png" },
+        { id: 178, category: t('home_category_childrens_entertainers'), url: "https://storage.googleapis.com/wisdom-images/1.webp" },
+        { id: 181, category: t('home_category_event_security'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20185110.png" }
       ]
     },
     {
-      family: "Finance and Administration",
-      description: "Finance and administration services including tax advice, payroll management, and financial consulting.",
+      family: t('home_family_finance_and_administration'),
+      description: t('home_family_finance_and_administration_description'),
       categories: [
-        { id: 225, category: "Auditing", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20185810.png" },
-        { id: 240, category: "Investment advice", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20185958.png" },
-        { id: 229, category: "Budget planning", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190223.png" },
-        { id: 224, category: "Financial consulting", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20185443.png" }
+        { id: 225, category: t('home_category_auditing'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20185810.png" },
+        { id: 240, category: t('home_category_investment_advice'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20185958.png" },
+        { id: 229, category: t('home_category_budget_planning'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190223.png" },
+        { id: 224, category: t('home_category_financial_consulting'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20185443.png" }
       ]
     },
     {
-      family: "Personal and Pet Care",
-      description: "Services related to personal care and pet care, including dog walking and pet grooming.",
+      family: t('home_family_personal_and_pet_care'),
+      description: t('home_family_personal_and_pet_care_description'),
       categories: [
-        { id: 317, category: "Dog walkers", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190223.png" },
-        { id: 318, category: "Pet care at home", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190446.png" },
-        { id: 319, category: "Dog trainers", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190602.png" },
-        { id: 320, category: "Home veterinarians", url: "https://storage.googleapis.com/wisdom-images/9974f022598c393f68479bcb39efd4e5.jpg" },
-        { id: 321, category: "Pet grooming", url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190349.png" },
+        { id: 317, category: t('home_category_dog_walkers'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190223.png" },
+        { id: 318, category: t('home_category_pet_care_at_home'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190446.png" },
+        { id: 319, category: t('home_category_dog_trainers'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190602.png" },
+        { id: 320, category: t('home_category_home_veterinarians'), url: "https://storage.googleapis.com/wisdom-images/9974f022598c393f68479bcb39efd4e5.jpg" },
+        { id: 321, category: t('home_category_pet_grooming'), url: "https://storage.googleapis.com/wisdom-images/Captura%20de%20pantalla%202024-09-27%20190349.png" },
       ]
     },
-  ];
+  ]), [t]);
 
   const renderCategory = ({ item }) => (
     <TouchableOpacity onPress={() => navigation.navigate('Results', { category: item.id, category_name: item.category })}>
@@ -548,7 +548,7 @@ export default function HomeScreen() {
     if (formattedDuration) parts.push(formattedDuration);
 
     // Unir las partes con comas y devolver el resultado
-    return parts.length > 0 ? parts.join(', ') : 'No hay información disponible';
+    return parts.length > 0 ? parts.join(', ') : t('home_no_information_available');
   };
 
   const getValue = (arr) => {
@@ -614,7 +614,7 @@ export default function HomeScreen() {
 
                     <TouchableOpacity onPress={() => setSearchOption('service')} className="mt-8 mb-7 w-full justify-center items-center">
                       <Text className="ml-2 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">
-                        Service
+                        {t('service')}
                         {searchedService && (
                           <>
                             <Text className="font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">: </Text>
@@ -700,7 +700,7 @@ export default function HomeScreen() {
                       <View className="flex-row gap-x-2">
 
                         <TouchableOpacity onPress={() => setSearchDateOptionSelected('frequency')} className={`px-4 py-[11] rounded-full ${searchDateOptionSelected === 'frequency' ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#f2f2f2] dark:bg-[#3d3d3d]'}`}>
-                          <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'frequency' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>Frequency</Text>
+                          <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'frequency' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>{t('frequency')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -713,7 +713,7 @@ export default function HomeScreen() {
                           }}
                           className={`px-4 py-[11] rounded-full ${searchDateOptionSelected === 'duration' ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#f2f2f2] dark:bg-[#3d3d3d]'}`}
                         >
-                          <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'duration' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>Duration</Text>
+                          <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'duration' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>{t('duration')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={() => {
@@ -726,7 +726,7 @@ export default function HomeScreen() {
                         }}
                           className={`px-4 py-[11] rounded-full ${searchDateOptionSelected === 'start' ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#f2f2f2] dark:bg-[#3d3d3d]'}`}
                         >
-                          <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'start' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>Start</Text>
+                          <Text className={`font-inter-semibold text-[12px] ${searchDateOptionSelected === 'start' ? 'text-[#e0e0e0] dark:text-[#3d3d3d]' : 'text-[#323131] dark:text-[#fcfcfc]'}`}>{t('start')}</Text>
                         </TouchableOpacity>
 
                       </View>
