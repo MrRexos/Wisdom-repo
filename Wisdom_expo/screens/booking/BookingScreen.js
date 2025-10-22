@@ -1149,7 +1149,7 @@ export default function BookingScreen() {
         <View className="mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
 
           <View className="w-full flex-row justify-between items-center ">
-            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Price details</Text>
+            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('price_details')}</Text>
           </View>
 
 
@@ -1161,7 +1161,7 @@ export default function BookingScreen() {
                     <>
                       <View className="flex-row">
                         <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
-                          Service price x ?h
+                          {t('service_price_times_duration', { duration: '?h' })}
                         </Text>
                         <Text numberOfLines={1} className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
                           {'.'.repeat(80)}
@@ -1171,7 +1171,7 @@ export default function BookingScreen() {
 
                       <View className="mt-3 flex-row">
                         <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
-                          Quality commission
+                          {t('quality_commission')}
                         </Text>
                         <Text numberOfLines={1} className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
                           {'.'.repeat(80)}
@@ -1184,7 +1184,7 @@ export default function BookingScreen() {
                       <View className="w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]" />
 
                       <View className="mt-4 flex-row">
-                        <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Final price</Text>
+                        <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('final_price')}</Text>
                         <Text numberOfLines={1} className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
                           {'.'.repeat(80)}
                         </Text>
@@ -1192,7 +1192,7 @@ export default function BookingScreen() {
                       </View>
 
                       <View className="mt-4 flex-row">
-                        <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Deposit</Text>
+                        <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('deposit')}</Text>
                         <Text numberOfLines={1} className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
                           {'.'.repeat(80)}
                         </Text>
@@ -1205,7 +1205,7 @@ export default function BookingScreen() {
                     <>
                       <View className="flex-row">
                         <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
-                          Service price x {formatHMh(pricing.minutes)}
+                          {t('service_price_times_duration', { duration: formatHMh(pricing.minutes) })}
                         </Text>
                         <Text numberOfLines={1} className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
                           {'.'.repeat(80)}
@@ -1217,7 +1217,7 @@ export default function BookingScreen() {
 
                       <View className="mt-3 flex-row">
                         <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
-                          Quality commission
+                          {t('quality_commission')}
                         </Text>
                         <Text numberOfLines={1} className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
                           {'.'.repeat(80)}
@@ -1230,7 +1230,7 @@ export default function BookingScreen() {
                       <View className="w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]" />
 
                       <View className="mt-4 flex-row">
-                        <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Final price</Text>
+                        <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('final_price')}</Text>
                         <Text numberOfLines={1} className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
                           {'.'.repeat(80)}
                         </Text>
@@ -1240,7 +1240,7 @@ export default function BookingScreen() {
                       </View>
 
                       <View className="mt-4 flex-row">
-                        <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Deposit</Text>
+                        <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('deposit')}</Text>
                         <Text numberOfLines={1} className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
                           {'.'.repeat(80)}
                         </Text>
@@ -1256,7 +1256,7 @@ export default function BookingScreen() {
               {serviceData.price_type === 'fix' && (
                 <>
                   <View className="flex-row">
-                    <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">Fixed price</Text>
+                    <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">{t('fixed_price')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
                       {'.'.repeat(80)}
                     </Text>
@@ -1266,7 +1266,7 @@ export default function BookingScreen() {
                   </View>
 
                   <View className="mt-3 flex-row">
-                    <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">Quality commission</Text>
+                    <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">{t('quality_commission')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
                       {'.'.repeat(80)}
                     </Text>
@@ -1278,7 +1278,7 @@ export default function BookingScreen() {
                   <View className="w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]" />
 
                   <View className="mt-4 flex-row">
-                    <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Final price</Text>
+                    <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('final_price')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
                       {'.'.repeat(80)}
                     </Text>
@@ -1288,7 +1288,7 @@ export default function BookingScreen() {
                   </View>
 
                   <View className="mt-4 flex-row">
-                    <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Deposit</Text>
+                    <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('deposit')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
                       {'.'.repeat(80)}
                     </Text>
@@ -1302,15 +1302,15 @@ export default function BookingScreen() {
               {serviceData.price_type === 'budget' && (
                 <>
                   <View className="flex-row">
-                    <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">Service price</Text>
+                    <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">{t('service_price')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
                       {'.'.repeat(80)}
                     </Text>
-                    <Text className="font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]">budget</Text>
+                    <Text className="font-inter-semibold text-[13px] text-[#979797] dark:text-[#979797]">{t('budget')}</Text>
                   </View>
 
                   <View className="mt-3 flex-row">
-                    <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">Quality commission</Text>
+                    <Text className="font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">{t('quality_commission')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-medium text-[13px] text-[#979797] dark:text-[#979797]">
                       {'.'.repeat(80)}
                     </Text>
@@ -1322,7 +1322,7 @@ export default function BookingScreen() {
                   <View className="w-full mt-4 border-b-[1px] border-[#706f6e] dark:border-[#b6b5b5]" />
 
                   <View className="mt-4 flex-row">
-                    <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Final price</Text>
+                    <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('final_price')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
                       {'.'.repeat(80)}
                     </Text>
@@ -1331,7 +1331,7 @@ export default function BookingScreen() {
                     </Text>
                   </View>
                   <View className="mt-4 flex-row">
-                    <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Deposit</Text>
+                    <Text className="font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('deposit')}</Text>
                     <Text numberOfLines={1} className="flex-1 font-inter-bold text-[13px] text-[#444343] dark:text-[#f2f2f2]">
                       {'.'.repeat(80)}
                     </Text>
