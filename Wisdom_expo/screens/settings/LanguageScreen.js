@@ -7,10 +7,10 @@ import { ensureSupportedLanguage } from '../../utils/language';
 import { useColorScheme } from 'nativewind';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
-import { MaterialIcons } from '@expo/vector-icons';
 import { Check } from "react-native-feather";
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import api from '../../utils/api';
 
 
 
@@ -46,6 +46,14 @@ export default function LanguageScreen() {
         user.language = resolvedLanguage;
         user.selectedLanguage = resolvedLanguage;
         await storeDataLocally('user', JSON.stringify(user));
+
+        if (user?.id) {
+          try {
+            await api.put(`/api/user/${user.id}/language`, { language: resolvedLanguage });
+          } catch (apiError) {
+            console.error('Failed to update language on backend', apiError);
+          }
+        }
       } catch (error) {
         console.error('Failed to update language in AsyncStorage', error);
       }
