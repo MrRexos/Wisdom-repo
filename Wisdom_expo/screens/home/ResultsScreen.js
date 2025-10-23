@@ -602,7 +602,7 @@ export default function ResultsScreen() {
             contentContainerStyle={{
               justifyContent: 'space-between',
               paddingBottom: 200,
-              zIndex: "1",
+              zIndex: 1,
             }}
           />
         </View>
