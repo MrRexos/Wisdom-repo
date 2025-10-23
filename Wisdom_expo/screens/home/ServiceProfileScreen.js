@@ -95,8 +95,10 @@ export default function ServiceProfileScreen() {
   const isMyService = useMemo(() => Boolean(userId && serviceData?.user_id === userId), [userId, serviceData?.user_id]);
   const showServiceSettingsButton = isMyService && cameFromListings;
 
+  const hasFiniteActionRate = Number.isFinite(serviceData.action_rate);
+
   const mapRegion = serviceData.latitude
-    ? (serviceData.action_rate && serviceData.action_rate < 100
+    ? (hasFiniteActionRate && serviceData.action_rate < 100
       ? getRegionForRadius(serviceData.latitude, serviceData.longitude, serviceData.action_rate)
       : {
         latitude: serviceData.latitude,
@@ -669,7 +671,23 @@ export default function ServiceProfileScreen() {
       const config = viewerId ? { params: { viewerId } } : {};
       const response = await api.get(`/api/service/${serviceId}`, config);
       let service = response.data;
-      setServiceData(service);
+      const normalizeCoordinate = (value) => {
+        if (value === null || value === undefined || value === '') {
+          return null;
+        }
+
+        const numericValue = Number(value);
+        return Number.isFinite(numericValue) ? numericValue : null;
+      };
+
+      const normalizedService = {
+        ...service,
+        latitude: normalizeCoordinate(service?.latitude),
+        longitude: normalizeCoordinate(service?.longitude),
+        action_rate: normalizeCoordinate(service?.action_rate),
+      };
+
+      setServiceData(normalizedService);
 
     } catch (error) {
       console.error('Error:', error);
@@ -1649,7 +1667,7 @@ export default function ServiceProfileScreen() {
                             resizeMode="contain"
                           />
                         </Marker>
-                        {serviceData.action_rate < 100 && (
+                        {hasFiniteActionRate && serviceData.action_rate < 100 && (
                           <Circle
                             center={{ latitude: serviceData.latitude, longitude: serviceData.longitude }}
                             radius={serviceData.action_rate * 1000}
