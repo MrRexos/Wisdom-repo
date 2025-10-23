@@ -1245,7 +1245,12 @@ export default function BookingDetailsScreen() {
                       </Text>
                       <Text> </Text>
                       <Text className='font-inter-medium text-[11px] text-[#706F6E] dark:text-[#B6B5B5]'>
-                        {service.review_count === 1 ? `(1 ${t('review')})` : `(${service.review_count} ${t('reviews')})`}
+                        {'('}
+                        {t(
+                          service.review_count === 1 ? 'review_count_single' : 'review_count_plural',
+                          { count: service.review_count }
+                        )}
+                        {')'}
                       </Text>
                     </Text>
                   </View>
@@ -1372,7 +1377,7 @@ export default function BookingDetailsScreen() {
                 <View className="mt-1 flex-1 justify-center items-center">
                   <MapPin height={40} width={40} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
                   <Text className="mt-4 font-inter-semibold text-[16px] text-[#979797]">
-                    Location not selected
+                    {t('location_not_selected')}
                   </Text>
                 </View>
               )}

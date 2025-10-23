@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
@@ -137,11 +137,31 @@ export default function TodayProScreen() {
     setRefreshing(false);
   };
 
+  const locale = useMemo(() => {
+    const language = i18n.language || 'en';
+    switch (language) {
+      case 'es':
+        return 'es-ES';
+      case 'ca':
+        return 'ca-ES';
+      case 'ar':
+        return 'ar';
+      case 'fr':
+        return 'fr-FR';
+      case 'zh':
+        return 'zh-CN';
+      default:
+        return 'en-US';
+    }
+  }, [i18n.language]);
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
+    if (Number.isNaN(date.valueOf())) {
+      return t('undefined_time');
+    }
     const options = { weekday: 'long', month: 'long', day: 'numeric' };
-    const formattedDate = date.toLocaleDateString('en-US', options);
-    return formattedDate;
+    return date.toLocaleDateString(locale, options);
   };
 
   const renderBooking = ({ item }) => {
