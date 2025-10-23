@@ -203,20 +203,22 @@ export default function ListScreen() {
     return (
       <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', {serviceId: item.service_id})} className="h-[170px]">
         <View className="flex-row">
-          <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[85px] w-[85px] bg-[#706B5B] rounded-xl ml-6" />
-          <View className="flex-1">
+          <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[85px] w-[85px] bg-[#706B5B] rounded-xl" />
+          <View className="flex-1 ">
             <View className="flex-row justify-between">
               <Text className="ml-4 mt-1 font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
-              <ChevronRightIcon size={23} strokeWidth={1.7} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'} style={{ marginRight: 20 }} />
+              <ChevronRightIcon size={23} strokeWidth={1.7} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'}  />
             </View>
             <Text className="ml-4 mt-1 font-inter-semibold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{item.first_name} {item.surname}</Text>
-            <View className="justify-center items-center flex-1">
-              <View className="flex-row items-center">
-                <Text className="mr-4">
-                  {getFormattedPrice()}
-                </Text>
+            <View className="justify-center items-center flex-1 ">
+              <View className="pl-4 pr-9 flex-row w-full items-center  justify-between ">
+                <View className=" flex-row items-start justify-start ">
+                  <Text className="mr-4">
+                    {getFormattedPrice()}
+                  </Text>
+                </View>
                 {item.review_count > 0 && (
-                  <View className="flex-row items-center">
+                  <View className="flex-row items-center justify-end ">
                     <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.85 }] }} />
                     <Text className="ml-[3px]">
                       <Text className="font-inter-bold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(item.average_rating).toFixed(1)}</Text>
@@ -230,8 +232,8 @@ export default function ListScreen() {
           </View>
         </View>
         
-        <View className="px-5">
-          <View className="px-[14px] py-4 border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{ borderBottomWidth: 1 }, index === items.length - 1 && { borderBottomWidth: 0 }]}>
+        <View className="">
+          <View className="px-[12px] py-4 border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{ borderBottomWidth: 1 }, index === items.length - 1 && { borderBottomWidth: 0 }]}>
             <View className="h-9 bg-[#D4D4D3] dark:bg-[#474646] rounded-md justify-center items-start">
             <TextInput
               placeholder={t('add_a_note')}
@@ -389,7 +391,7 @@ export default function ListScreen() {
           renderItem={renderItem}
           refreshing={refreshing}
           onRefresh={onRefresh}
-          className='pt-9'
+          className='pt-9 pr-[20px] pl-6'
           contentContainerStyle={{
             justifyContent: 'space-between',
           }}
