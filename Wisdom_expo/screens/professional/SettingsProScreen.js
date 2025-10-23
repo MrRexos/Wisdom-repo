@@ -53,7 +53,7 @@ export default function SettingsScreen() {
       items: [
         { id: 'provideService', icon: SuticasePlusIcon, label: t('provide_service'), type: 'select', link: 'CreateServiceStart' },
         { id: 'switchClientVersion', icon: ArrowsRightLeftIcon, label: t('switch_to_client_version'), type: 'select', link: 'Home' },
-        { id: 'becomeExpert', icon: ExpertIcon, label: t('become_an_expert'), type: 'select', link: 'TurnExpert' },
+        // { id: 'becomeExpert', icon: ExpertIcon, label: t('become_an_expert'), type: 'select', link: 'TurnExpert' },
       ]
     },
     {

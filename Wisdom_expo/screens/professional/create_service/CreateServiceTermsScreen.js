@@ -37,7 +37,7 @@ export default function CreateServiceTermsScreen() {
             <View className="justify-center items-center">
                 <Text className="pb-5">
                       <Text onPress={() => navigation.navigate('Terms')} className="text-[11px] font-inter-medium text-[#b6b5b5] dark:text-[#706f6e] text-center underline">{t('terms')}</Text>
-                      <Text className="text-[11px] font-inter-medium text-[#b6b5b5] dark:text-[#706f6e] text-center"> and </Text>
+                      <Text className="text-[11px] font-inter-medium text-[#b6b5b5] dark:text-[#706f6e] text-center"> {t('and')} </Text>
                       <Text onPress={() => navigation.navigate('PrivacyPolicy')} className="text-[11px] font-inter-medium text-[#b6b5b5] dark:text-[#706f6e] text-center underline">{t('policies')}</Text>
                 </Text>
                 <TouchableOpacity

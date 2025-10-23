@@ -394,7 +394,7 @@ export default function ResultsScreen() {
               <View className="flex-1 items-end">
                 {listName.length > 0 ? (
                   <TouchableOpacity onPress={handleDone}>
-                    <Text className="mr-7 text-center font-inter-medium text-[14px] text-[#979797]">Done</Text>
+                    <Text className="mr-7 text-center font-inter-medium text-[14px] text-[#979797]">{t('done')}</Text>
                   </TouchableOpacity>
                 ) : null}
               </View>
@@ -405,7 +405,7 @@ export default function ResultsScreen() {
               <View className="w-full h-[55px] px-4  bg-[#f2f2f2] dark:bg-[#272626] rounded-full flex-row justify-start items-center">
 
                 <TextInput
-                  placeholder='Name*'
+                  placeholder={t('list_name_placeholder')}
                   autoFocus={true}
                   selectionColor={cursorColorChange}
                   placeholderTextColor={placeHolderTextColorChange}
