@@ -60,7 +60,7 @@ export default function SettingsScreen() {
       items: [
         { id: 'provideService', icon: SuticasePlusIcon, label: t('provide_service'), type: 'select', link: 'CreateServiceStart' },
         { id: 'switchProfessionalVersion', icon: ArrowsRightLeftIcon, label: t('switch_to_professional_version'), type: 'select', link: 'Professional' },
-        { id: 'becomeExpert', icon: ExpertIcon, label: t('become_an_expert'), type: 'select', link: 'TurnExpert' },
+        // { id: 'becomeExpert', icon: ExpertIcon, label: t('become_an_expert'), type: 'select', link: 'TurnExpert' },
       ]
     },
     // {

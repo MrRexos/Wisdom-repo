@@ -365,9 +365,9 @@ export default function DirectionsScreen() {
         <View className="flex-1 justify-center items-center">
           <MapPin height={55} width={60} strokeWidth={1.7} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
           <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
-            No directions found
+            {t('directions_empty_title')}
           </Text>
-          <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[300px]">Search for addresses to be automatically saved for you</Text>
+          <Text className="font-inter-medium text-center text-[15px] text-[#706F6E] dark:text-[#B6B5B5] pt-5 w-[300px]">{t('directions_empty_description')}</Text>
         </View>
     
       ) : (

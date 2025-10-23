@@ -218,7 +218,7 @@ export default function NotificationAllowScreen() {
                 ) : (
                   <NotificationAskDark height={320} width={340}/>
               )}
-              <Text className="pt-[60px] absolute font-inter-bold text-[17px] text-[#444343] dark:text-[#f2f2f2] text-cente">Saturday, April 21</Text>
+              <Text className="pt-[60px] absolute font-inter-bold text-[17px] text-[#444343] dark:text-[#f2f2f2] text-center">{t('notification_sample_date')}</Text>
             </View>
             <Text className="font-inter-semibold text-[30px] text-[#444343] dark:text-[#f2f2f2] text-center w-[250px]">{t('stay_informed')}</Text>
             <Text className="font-inter-medium text-[15px] text-[#706f6e] dark:text-[#b6b5b5] text-center w-[250px] mt-4">{t('notifications_subtitle')}</Text>

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useCallback, useRef} from 'react'
+import React, { useEffect, useState, useCallback, useRef, useMemo} from 'react'
 import {View, StatusBar, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
@@ -21,10 +21,10 @@ export default function ExpertPlansScreen() {
   const [planType, setPlanType] = useState('yearly');
   const [typeSelected, setTypeSelected] = useState(0);
 
-  const options = [
-    { label: "Yearly", value: 'yearly', price: '79 €/yr' },
-    { label: 'Monthly', value: 'monthly', price: '9 €/mo' },
-  ];
+  const options = useMemo(() => ([
+    { label: t('expert_plan_option_yearly'), value: 'yearly', price: t('expert_plan_yearly_price') },
+    { label: t('expert_plan_option_monthly'), value: 'monthly', price: t('expert_plan_monthly_price') },
+  ]), [t]);
 
   const getNextBillingDate = () => {
     const currentDate = new Date();
@@ -78,7 +78,7 @@ export default function ExpertPlansScreen() {
                                 style={{ position: 'absolute', top: -15, left: '46%'}}
                                 className="bg-[#74a450] rounded-full p-[7px]"
                             >
-                                <Text className="font-inter-medium text-[11px] text-[#d4d4d3]">Save 25%</Text>
+                                <Text className="font-inter-medium text-[11px] text-[#d4d4d3]">{t('save_25_percent')}</Text>
                             </View>
                         )}
                         <View className="flex-row w-full justify-between items-center">
@@ -101,22 +101,22 @@ export default function ExpertPlansScreen() {
                 <View className="justify-center items-start w-full">
 
                     <View className="mt-8 flex-row">
-                        <Text className="font-inter-medium  text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Subtotal</Text>
+                        <Text className="font-inter-medium  text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">{t('subtotal')}</Text>
                         <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
-                        <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">108 €</Text>
+                        <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">{t('expert_plan_yearly_subtotal_amount')}</Text>
                     </View>
 
                     <View className="mt-6 flex-row">
-                        <Text className="font-inter-medium  text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Savings</Text>
+                        <Text className="font-inter-medium  text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">{t('savings')}</Text>
                         <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
-                        <Text className="text-[14px] font-inter-semibold text-[#74a450]">-29 €</Text>
+                        <Text className="text-[14px] font-inter-semibold text-[#74a450]">{t('expert_plan_yearly_savings_amount')}</Text>
                     </View>
 
 
                     <View className="mt-6 mb-6 flex-row">
-                        <Text className="font-inter-medium  text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Total</Text>
+                        <Text className="font-inter-medium  text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">{t('total')}</Text>
                         <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
-                        <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">79 €</Text>
+                        <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">{t('expert_plan_yearly_total_amount')}</Text>
                     </View>
 
                 </View>
@@ -126,15 +126,15 @@ export default function ExpertPlansScreen() {
                 <View className="justify-center items-start w-full">
 
                     <View className="mt-8 flex-row">
-                        <Text className="font-inter-medium  text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Subtotal</Text>
+                        <Text className="font-inter-medium  text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">{t('subtotal')}</Text>
                         <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
-                        <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">9 €</Text>
+                        <Text className="font-inter-semibold text-[14px] text-[#323131] dark:text-[#fcfcfc]">{t('expert_plan_monthly_subtotal_amount')}</Text>
                     </View>
 
                     <View className="mt-6 flex-row">
-                        <Text className="font-inter-medium  text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">Total</Text>
+                        <Text className="font-inter-medium  text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">{t('total')}</Text>
                         <Text numberOfLines={1} className="flex-1 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706f6e]">{'.'.repeat(80)}</Text>
-                        <Text className="text-[14px] font-inter-semibold text-[#323131] dark:text-[#fcfcfc]">9 €</Text>
+                        <Text className="text-[14px] font-inter-semibold text-[#323131] dark:text-[#fcfcfc]">{t('expert_plan_monthly_total_amount')}</Text>
                     </View>
 
                 </View>
