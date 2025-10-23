@@ -50,6 +50,7 @@ export const resolveInitialLanguage = (user) => {
   }
 
   const detected = detectDeviceLanguage();
+  console.log('[Language] Detected device language:', detected);
   return { language: detected, shouldPersist: Boolean(user) };
 };
 

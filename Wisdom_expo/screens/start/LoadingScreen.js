@@ -12,7 +12,7 @@ import { applyLanguagePreference, detectDeviceLanguage } from '../../utils/langu
 
 
 
-export default function SettingsScreen() {
+export default function LoadingScreen() {
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
@@ -54,6 +54,7 @@ export default function SettingsScreen() {
       }
 
       const language = detectDeviceLanguage();
+      console.log('[LoadingScreen] Detected device language:', language);
       if (language !== i18n.language) {
         await i18n.changeLanguage(language);
       }
