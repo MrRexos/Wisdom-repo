@@ -22,9 +22,18 @@ import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ModalMessage from '../../components/ModalMessage';
 
+const DATE_LOCALE_MAP = {
+  en: 'en-US',
+  es: 'es-ES',
+  ca: 'ca-ES',
+  ar: 'ar',
+  fr: 'fr-FR',
+  zh: 'zh-CN',
+};
+
 export default function BookingDetailsScreen() {
   const { colorScheme } = useColorScheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
   const { bookingId, role } = route.params;
@@ -443,23 +452,26 @@ export default function BookingDetailsScreen() {
     );
   };
 
-  const formatDuration = (duration) => {
-    const hours = Math.floor(duration / 60);
-    const minutes = duration % 60;
+  const formatDuration = (value) => {
+    const total = Math.max(0, Math.round(Number(value) || 0));
+    const hours = Math.floor(total / 60);
+    const minutes = total % 60;
     if (hours > 0 && minutes > 0) {
-      return `${hours} h ${minutes} min`;
-    } else if (hours > 0) {
-      return `${hours} h`;
-    } else {
-      return `${minutes} min`;
+      return t('duration_hours_minutes', { hours, minutes });
     }
+    if (hours > 0) {
+      return t('duration_hours', { hours });
+    }
+    return t('duration_minutes', { minutes });
   };
 
+  const locale = useMemo(() => DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en, [i18n.language]);
+
   const formatDate = (ymd) => {
-    // Solo para nombre de día/mes; no afecta a los números que muestras 
+    // Solo para nombre de día/mes; no afecta a los números que muestras
     const [Y, M, D] = String(ymd).split('-').map(Number);
     const d = new Date(Date.UTC(Y, (M || 1) - 1, D || 1));
-    return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' });
+    return d.toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' });
   };
 
   const getEndTime = () => addMinutesNaive('1970-01-01', selectedTime, selectedDuration).hm;
@@ -1078,51 +1090,51 @@ export default function BookingDetailsScreen() {
               </View>
               {/* Country */}
               <View className='w-full h-[55px] mx-2 mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
-                {country?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>Country/region</Text>) : null}
-                <TextInput value={country} onChangeText={setCountry} placeholder='Country/region...'
+                {country?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>{t('country_region')}</Text>) : null}
+                <TextInput value={country} onChangeText={setCountry} placeholder={`${t('country_region')}...`}
                   keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                   className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
               </View>
               {/* State */}
               <View className='w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
-                {state?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>State</Text>) : null}
-                <TextInput value={state} onChangeText={setState} placeholder='State...'
+                {state?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>{t('state')}</Text>) : null}
+                <TextInput value={state} onChangeText={setState} placeholder={`${t('state')}...`}
                   keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                   className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
               </View>
               {/* City */}
               <View className='w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
-                {city?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>City/town</Text>) : null}
-                <TextInput value={city} onChangeText={setCity} placeholder='City/town...'
+                {city?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>{t('city_town')}</Text>) : null}
+                <TextInput value={city} onChangeText={setCity} placeholder={`${t('city_town')}...`}
                   keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                   className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
               </View>
               {/* Street */}
               <View className='w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
-                {street?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>Street</Text>) : null}
-                <TextInput value={street} onChangeText={setStreet} placeholder='Street...'
+                {street?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>{t('street')}</Text>) : null}
+                <TextInput value={street} onChangeText={setStreet} placeholder={`${t('street')}...`}
                   keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                   className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
               </View>
               {/* Postal  Number */}
               <View className='flex-row w-full justify-between items-center'>
                 <View className='flex-1 h-[55px] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
-                  {postalCode?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>Postal code</Text>) : null}
-                  <TextInput value={postalCode} onChangeText={setPostalCode} placeholder='Postal code...'
+                  {postalCode?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>{t('postal_code')}</Text>) : null}
+                  <TextInput value={postalCode} onChangeText={setPostalCode} placeholder={`${t('postal_code')}...`}
                     keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                     className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
                 </View>
                 <View className='flex-1 h-[55px] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
-                  {String(streetNumber || '').length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>Street number</Text>) : null}
-                  <TextInput value={streetNumber ? String(streetNumber) : ''} onChangeText={setStreetNumber} placeholder='Street number...'
+                  {String(streetNumber || '').length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>{t('street_number')}</Text>) : null}
+                  <TextInput value={streetNumber ? String(streetNumber) : ''} onChangeText={setStreetNumber} placeholder={`${t('street_number')}...`}
                     keyboardType='number-pad' keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                     className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
                 </View>
               </View>
               {/* Address2 */}
               <View className='w-full h-[55px] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]'>
-                {address2?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>Floor, door, stair (optional)</Text>) : null}
-                <TextInput value={address2} onChangeText={setAddress2} placeholder='Floor, door, stair (optional)...'
+                {address2?.length > 0 ? (<Text className='pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]'>{t('floor_door_stair_optional')}</Text>) : null}
+                <TextInput value={address2} onChangeText={setAddress2} placeholder={`${t('floor_door_stair_optional')}...`}
                   keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                   className='font-inter-medium w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]' />
               </View>
@@ -1262,7 +1274,7 @@ export default function BookingDetailsScreen() {
           {/* Date and time */}
           <View className='mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
             <View className='w-full flex-row justify-between items-center '>
-              <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Date and time</Text>
+              <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>{t('date_and_time')}</Text>
               {editMode && (
                 <TouchableOpacity onPress={() => { setSheetOption('date'); setShowPicker(true); primeDraftsFromSelected(); openSheetWithInput(650); }}>
                   <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
@@ -1333,7 +1345,7 @@ export default function BookingDetailsScreen() {
           {/* Address */}
           <View className='mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
             <View className='w-full flex-row justify-between items-center '>
-              <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Address</Text>
+              <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>{t('direction')}</Text>
               {editMode && (
                 <TouchableOpacity onPress={() => { setSheetOption('directions'); openSheetWithInput(350); fetchDirections(); }}>
                   <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
@@ -1568,7 +1580,7 @@ export default function BookingDetailsScreen() {
           {role === 'client' && showServiceFinished && !isFinalPricePending && (
             <View className='mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl'>
               <View className='w-full flex-row justify-between items-center '>
-                <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>Payment method</Text>
+                <Text className='font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]'>{t('payment_method')}</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'BookingDetails', bookingId, role })}>
                   <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
                 </TouchableOpacity>

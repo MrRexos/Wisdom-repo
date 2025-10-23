@@ -26,6 +26,15 @@ import ModalMessage from '../../components/ModalMessage';
 
 
 
+const DATE_LOCALE_MAP = {
+  en: 'en-US',
+  es: 'es-ES',
+  ca: 'ca-ES',
+  ar: 'ar',
+  fr: 'fr-FR',
+  zh: 'zh-CN',
+};
+
 export default function BookingScreen() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
@@ -57,6 +66,8 @@ export default function BookingScreen() {
     return Math.round((x + Number.EPSILON) * 100) / 100; // máx. 2 decimales
   };
   const [paymentErrorVisible, setPaymentErrorVisible] = useState(false);
+
+  const locale = useMemo(() => DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en, [i18n.language]);
 
   useEffect(() => {
     if (route.params?.paymentError) {
@@ -196,7 +207,7 @@ export default function BookingScreen() {
     const options = { weekday: 'long', month: 'long', day: 'numeric' };
 
     // Formatear la fecha
-    const formattedDate = date.toLocaleDateString('en-US', options);
+    const formattedDate = date.toLocaleDateString(locale, options);
 
     // Reemplazar la coma con "of" para cumplir con tu formato deseado
     return formattedDate;
@@ -263,25 +274,26 @@ export default function BookingScreen() {
     return Math.max(27, Math.min(34, Math.round(26 + (total - 240) / 30)));
   };
 
-  const formatDuration = (durationTime) => {
-    const hours = Math.floor(durationTime / 60);
-    const minutes = durationTime % 60;
+  const formatDuration = useCallback((durationTime) => {
+    const total = Math.max(0, Math.round(Number(durationTime) || 0));
+    const hours = Math.floor(total / 60);
+    const minutes = total % 60;
 
     if (hours > 0 && minutes > 0) {
-      return `${hours} h ${minutes} min`;
-    } else if (hours > 0) {
-      return `${hours} h`;
-    } else {
-      return `${minutes} min`;
+      return t('duration_hours_minutes', { hours, minutes });
     }
-  };
+    if (hours > 0) {
+      return t('duration_hours', { hours });
+    }
+    return t('duration_minutes', { minutes });
+  }, [t]);
 
   const getEndTime = () => {
     const endTime = new Date(`1970-01-01T${startTime}:00`);
 
     endTime.setMinutes(endTime.getMinutes() + (Number(duration) || 0));
 
-    const formattedEndTime = endTime.toLocaleTimeString('en-GB', {
+    const formattedEndTime = endTime.toLocaleTimeString(locale, {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false
@@ -846,15 +858,15 @@ export default function BookingScreen() {
             <View className="flex-1 w-full justify-start items-center pt-3 pb-5 px-5">
 
               <View className="justify-between items-center mb-10">
-                <Text className="text-center font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Confirm your direction</Text>
+                <Text className="text-center font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('confirm_your_direction')}</Text>
               </View>
 
               <View className="w-full h-[55px] mx-2 mb-4 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {country && country.length > 0 ? (
-                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Country/region</Text>
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('country_region')}</Text>
                 ) : null}
                 <TextInput
-                  placeholder='Country/region...'
+                  placeholder={`${t('country_region')}...`}
                   selectionColor={cursorColorChange}
                   placeholderTextColor={placeHolderTextColorChange}
                   onChangeText={inputCountryChanged}
@@ -866,10 +878,10 @@ export default function BookingScreen() {
 
               <View className="w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {state && state.length > 0 ? (
-                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">State</Text>
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('state')}</Text>
                 ) : null}
                 <TextInput
-                  placeholder='State...'
+                  placeholder={`${t('state')}...`}
                   selectionColor={cursorColorChange}
                   placeholderTextColor={placeHolderTextColorChange}
                   onChangeText={inputStateChanged}
@@ -881,10 +893,10 @@ export default function BookingScreen() {
 
               <View className="w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {city && city.length > 0 ? (
-                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">City/town</Text>
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('city_town')}</Text>
                 ) : null}
                 <TextInput
-                  placeholder='City/town...'
+                  placeholder={`${t('city_town')}...`}
                   selectionColor={cursorColorChange}
                   placeholderTextColor={placeHolderTextColorChange}
                   onChangeText={inputCityChanged}
@@ -896,10 +908,10 @@ export default function BookingScreen() {
 
               <View className="w-full h-[55px] mx-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {street && street.length > 0 ? (
-                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Street</Text>
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('street')}</Text>
                 ) : null}
                 <TextInput
-                  placeholder='Street...'
+                  placeholder={`${t('street')}...`}
                   selectionColor={cursorColorChange}
                   placeholderTextColor={placeHolderTextColorChange}
                   onChangeText={inputStreetChanged}
@@ -912,10 +924,10 @@ export default function BookingScreen() {
 
                 <View className="flex-1 h-[55px] mr-2 mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                   {postalCode && postalCode.length > 0 ? (
-                    <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Postal code</Text>
+                    <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('postal_code')}</Text>
                   ) : null}
                   <TextInput
-                    placeholder='Postal code...'
+                    placeholder={`${t('postal_code')}...`}
                     selectionColor={cursorColorChange}
                     placeholderTextColor={placeHolderTextColorChange}
                     onChangeText={inputPostalCodeChanged}
@@ -927,10 +939,10 @@ export default function BookingScreen() {
 
                 <View className="flex-1 h-[55px] mb-2 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                   {streetNumber && String(streetNumber).length > 0 ? (
-                    <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Street number</Text>
+                    <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('street_number')}</Text>
                   ) : null}
                   <TextInput
-                    placeholder='Street number...'
+                    placeholder={`${t('street_number')}...`}
                     selectionColor={cursorColorChange}
                     placeholderTextColor="#ff633e"
                     onChangeText={inputStreetNumberChanged}
@@ -947,10 +959,10 @@ export default function BookingScreen() {
 
               <View className="w-full h-[55px] mx-2 mb-10 py-2 px-6 justify-center items-start rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">
                 {address2 && address2.length > 0 ? (
-                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">Floor, door, stair (optional)</Text>
+                  <Text className=" pb-1 text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('floor_door_stair_optional')}</Text>
                 ) : null}
                 <TextInput
-                  placeholder='Floor, door, stair (optional)...'
+                  placeholder={`${t('floor_door_stair_optional')}...`}
                   selectionColor={cursorColorChange}
                   placeholderTextColor={placeHolderTextColorChange}
                   onChangeText={inputAddress2Changed}
@@ -965,7 +977,7 @@ export default function BookingScreen() {
                 onPress={() => handleConfirm()}
                 style={{ opacity: streetNumber.length < 1 ? 0.5 : 1 }}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
-                <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">Confirm</Text>
+                <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('confirm')}</Text>
               </TouchableOpacity>
 
             </View>
@@ -989,7 +1001,7 @@ export default function BookingScreen() {
           </View>
 
           <View className="flex-3 justify-center items-center ">
-            <Text className="font-inter-bold text-center text-[18px] text-[#444343] dark:text-[#f2f2f2]">Confirm and Pay</Text>
+            <Text className="font-inter-bold text-center text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('confirm_and_pay')}</Text>
           </View>
 
           <View className="flex-1 h-2 "></View>
@@ -1035,7 +1047,7 @@ export default function BookingScreen() {
         <View className="mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
 
           <View className="w-full flex-row justify-between items-center ">
-            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Date and time</Text>
+            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('date_and_time')}</Text>
             <TouchableOpacity onPress={() => { openSheetWithInput(700); setSheetOption('date'); setShowPicker(true) }}>
               <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
             </TouchableOpacity>
@@ -1105,7 +1117,7 @@ export default function BookingScreen() {
         <View className="mt-4 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
 
           <View className="w-full flex-row justify-between items-center ">
-            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Address</Text>
+            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('direction')}</Text>
             <TouchableOpacity onPress={() => { openSheetWithInput(350); fetchDirections(); setSheetOption('directions') }}>
               <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />
             </TouchableOpacity>
@@ -1351,7 +1363,7 @@ export default function BookingScreen() {
         <View className="mt-8 flex-1 p-5 bg-[#fcfcfc] dark:bg-[#323131] rounded-2xl">
 
           <View className="w-full flex-row justify-between items-center ">
-            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">Payment method</Text>
+            <Text className="font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('payment_method')}</Text>
             {paymentMethod && (
               <TouchableOpacity onPress={() => navigation.navigate('PaymentMethod', { origin: 'Booking', prevParams: route.params })}>
                 <Edit3 height={17} width={17} color={iconColor} strokeWidth={2.2} />

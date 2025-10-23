@@ -73,6 +73,8 @@ export default function CreateServiceReviewScreen() {
     sv: t('language_name_swedish')
   }), [t]);
 
+  const locale = useMemo(() => DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en, [i18n.language]);
+
   const formatLanguages = (languagesArray) => {
     const languageNames = languagesArray.map(lang => languagesMap[lang] || lang);
     if (languageNames.length > 1) {
@@ -88,7 +90,6 @@ export default function CreateServiceReviewScreen() {
         month: 'long',
         day: 'numeric',
     };
-    const locale = DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en;
     return date.toLocaleString(locale, options);
   };
 
@@ -368,9 +369,9 @@ export default function CreateServiceReviewScreen() {
                     <View className="mt-3 flex-row justify-between items-center mb-[6px]">
                       <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{experience.place}</Text>
                       <Text>
-                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(experience.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</Text>
+                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(experience.startDate).toLocaleDateString(locale, { month: 'short', year: 'numeric' })}</Text>
                         <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]"> - </Text>
-                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{experience.endDate ? new Date(experience.endDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Still there'}</Text>
+                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{experience.endDate ? new Date(experience.endDate).toLocaleDateString(locale, { month: 'short', year: 'numeric' }) : t('experience_still_there')}</Text>
                       </Text>
                     </View>
                   </View>
@@ -391,11 +392,11 @@ export default function CreateServiceReviewScreen() {
           actionRate === 100 ? (
             <View className="justify-center items-center w-full">
               <GlobeEuropeAfricaIcon height={80} width={80} strokeWidth={1.2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
-              <Text className="mt-3 font-inter-semibold text-[18px] text-[#706F6E] dark:text-[#b6b5b5]">Unlimited radius of action</Text>
-            </View>
-          ) : (
-            <View className='w-full'>
-              <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Location</Text>
+            <Text className="mt-3 font-inter-semibold text-[18px] text-[#706F6E] dark:text-[#b6b5b5]">{t('unlimited_radius_of_action')}</Text>
+          </View>
+        ) : (
+          <View className='w-full'>
+              <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('location')}</Text>
               <View className="justify-center items-center w-full">
                 <View style={{ position: 'relative' }}>
                   <MapView
@@ -435,8 +436,8 @@ export default function CreateServiceReviewScreen() {
                   </TouchableOpacity>
                 </View>
                 <View className="mt-3 px-3 w-full flex-row justify-between items-center">
-                  <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{address ? address : 'Loading...'}</Text>
-                  <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">{localHour ? `${localHour} local hour` : ''}</Text>
+                  <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{address ? address : t('loading')}</Text>
+                  <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">{localHour ? t('local_hour', { hour: localHour }) : ''}</Text>
                 </View>
               </View>
             </View>
@@ -445,7 +446,7 @@ export default function CreateServiceReviewScreen() {
       </View>
 
       <View className={`mt-8 justify-center items-start pb-7 ${ (allowAsk || allowConsults) ? 'border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]' : '' }`}>
-        <Text className="mb-8 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Rating and reviews</Text>
+        <Text className="mb-8 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('rating_and_reviews')}</Text>
         <View className="flex-row w-full justify-between items-center">
           <Text className="font-inter-bold text-[55px] text-[#444343] dark:text-[#f2f2f2]">4.8</Text>
           <View className="justify-start items-end">
@@ -496,7 +497,7 @@ export default function CreateServiceReviewScreen() {
       {(allowAsk || allowConsults) && (
         <View className="mt-8 justify-center items-start pb-7 ">
           <View className="mr-2 py-5 px-4 w-full bg-[#e0e0e0] dark:bg-[#323131] rounded-2xl">
-            <Text className="mb-4 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Consult a professional</Text>
+            <Text className="mb-4 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('consult_a_professional')}</Text>
             {consultPrice && (
               <Text className=" font-inter-semibold text-[13px] text-[#706F6E] dark:text-[#b6b5b5]">{t('consult_price_description', { price: parseFloat(consultPrice).toFixed(0) })}</Text>
             )}

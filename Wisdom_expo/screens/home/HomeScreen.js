@@ -433,18 +433,19 @@ export default function HomeScreen() {
     }
   };
 
-  const formatDuration = () => {
-    const hours = Math.floor(duration / 60);
-    const minutes = duration % 60;
+  const formatDuration = useCallback(() => {
+    const total = Math.max(0, Math.round(Number(duration) || 0));
+    const hours = Math.floor(total / 60);
+    const minutes = total % 60;
 
     if (hours > 0 && minutes > 0) {
-      return `${hours} h ${minutes} min`;
-    } else if (hours > 0) {
-      return `${hours} h`;
-    } else {
-      return `${minutes} min`;
+      return t('duration_hours_minutes', { hours, minutes });
     }
-  };
+    if (hours > 0) {
+      return t('duration_hours', { hours });
+    }
+    return t('duration_minutes', { minutes });
+  }, [duration, t]);
 
   const handleHourSelected = (event, selectedDate) => {
     const currentDate = selectedDate || tempDate;
@@ -546,9 +547,16 @@ export default function HomeScreen() {
 
     // 3. Calcular la duración si `duration` está presente
     if (duration) {
-      const hoursDuration = Math.floor(duration / 60);
-      const minutesDuration = duration % 60;
-      formattedDuration = `${hoursDuration > 0 ? `${hoursDuration}h` : ''} ${minutesDuration > 0 ? `${minutesDuration}min` : ''}`.trim();
+      const total = Math.max(0, Math.round(Number(duration) || 0));
+      const hoursDuration = Math.floor(total / 60);
+      const minutesDuration = total % 60;
+      if (hoursDuration > 0 && minutesDuration > 0) {
+        formattedDuration = t('duration_hours_minutes', { hours: hoursDuration, minutes: minutesDuration });
+      } else if (hoursDuration > 0) {
+        formattedDuration = t('duration_hours', { hours: hoursDuration });
+      } else {
+        formattedDuration = t('duration_minutes', { minutes: minutesDuration });
+      }
     }
 
     // Usar un array para los valores disponibles y unir con comas

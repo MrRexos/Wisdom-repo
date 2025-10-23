@@ -115,6 +115,7 @@ export default function ServiceProfileScreen() {
   const [timeUndefined, setTimeUndefined] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const locale = useMemo(() => DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en, [i18n.language]);
   const reportSheetModalRef = useRef(null);
   const [reportStep, setReportStep] = useState(1);
   const [reportReason, setReportReason] = useState(null);
@@ -941,18 +942,19 @@ export default function ServiceProfileScreen() {
     }
   };
 
-  const formatDuration = () => {
-    const hours = Math.floor(duration / 60);
-    const minutes = duration % 60;
+  const formatDuration = useCallback((value) => {
+    const total = Math.max(0, Math.round(Number(value) || 0));
+    const hours = Math.floor(total / 60);
+    const minutes = total % 60;
 
     if (hours > 0 && minutes > 0) {
-      return `${hours} h ${minutes} min`;
-    } else if (hours > 0) {
-      return `${hours} h`;
-    } else {
-      return `${minutes} min`;
+      return t('duration_hours_minutes', { hours, minutes });
     }
-  };
+    if (hours > 0) {
+      return t('duration_hours', { hours });
+    }
+    return t('duration_minutes', { minutes });
+  }, [t]);
 
   const formatBookingMessage = () => {
     // Validaciones para mostrar mensajes cuando no hay valores seleccionados
@@ -978,7 +980,6 @@ export default function ServiceProfileScreen() {
     const [hours, minutes] = selectedTime.split(':'); // Dividimos la hora "HH:mm"
 
     const startTime = new Date(year, month - 1, day, hours, minutes); // Crear el objeto Date
-    const locale = DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en;
     const formattedDay = startTime.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'short' }); // Ej: "Friday 25 Oct"
     const formattedTime = startTime.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false }); // Ej: "12:58"
 
@@ -1065,7 +1066,7 @@ export default function ServiceProfileScreen() {
 
 
             <View className="mt-4 mb-2 flex-row justify-center items-center">
-              <Text className="text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Select a date</Text>
+              <Text className="text-center font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('select_a_date')}</Text>
             </View>
 
             <ScrollView
@@ -1105,7 +1106,7 @@ export default function ServiceProfileScreen() {
               <View className="mt-2 w-full px-6 ">
 
                 <TouchableOpacity onPress={() => setShowPicker(true)}>
-                  <Text className="ml-3 mb-2 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Start time</Text>
+                  <Text className="ml-3 mb-2 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('start_time')}</Text>
                 </TouchableOpacity>
                 {showPicker && (
                   <DateTimePicker
@@ -1120,7 +1121,7 @@ export default function ServiceProfileScreen() {
 
               <View className="mt-6 mb-10 w-full px-6 ">
 
-                <Text className="ml-3 mb-8 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Duration: {formatDuration(duration)}</Text>
+                <Text className="ml-3 mb-8 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('duration_label', { duration: formatDuration(duration) })}</Text>
 
                 <View className="flex-1 px-4 justify-center items-center">
                   <Slider
@@ -1198,13 +1199,13 @@ export default function ServiceProfileScreen() {
                   </View>
 
                   <View className="flex-row justify-center items-center">
-                    <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">New list</Text>
+                    <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('new_list')}</Text>
                   </View>
 
                   <View className="flex-1 items-end">
                     {listName.length > 0 ? (
                       <TouchableOpacity onPress={handleDone}>
-                        <Text className="mr-7 text-center font-inter-medium text-[14px] text-[#979797]">Done</Text>
+                        <Text className="mr-7 text-center font-inter-medium text-[14px] text-[#979797]">{t('done')}</Text>
                       </TouchableOpacity>
                     ) : null}
                   </View>
@@ -1215,7 +1216,7 @@ export default function ServiceProfileScreen() {
                   <View className="w-full h-[55px] px-4  bg-[#f2f2f2] dark:bg-[#272626] rounded-full flex-row justify-start items-center">
 
                     <TextInput
-                      placeholder='Name*'
+                      placeholder={t('list_name_placeholder')}
                       autoFocus={true}
                       selectionColor={cursorColorChange}
                       placeholderTextColor={placeHolderTextColorChange}
@@ -1249,7 +1250,7 @@ export default function ServiceProfileScreen() {
                   <View className="flex-1" />
 
                   <View className="flex-row justify-center items-center">
-                    <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">Add to a list</Text>
+                    <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('add_to_list')}</Text>
                   </View>
 
                   <View className="flex-1 items-end">
@@ -1269,7 +1270,7 @@ export default function ServiceProfileScreen() {
                           <Image source={list.services[0] ? list.services[0].image_url ? { uri: list.services[0].image_url } : null : null} className="h-[50px] w-[50px] bg-[#E0E0E0] dark:bg-[#3D3D3D] rounded-lg mr-4" />
                           <View className="justify-center items-start">
                             <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{list.title}</Text>
-                            <Text className="text-center font-inter-medium text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{list.item_count === 0 ? '0 services' : list.item_count === 1 ? `${list.item_count} service` : `${list.item_count} services`}</Text>
+                            <Text className="text-center font-inter-medium text-[12px] text-[#b6b5b5] dark:text-[#706f6e]">{t('services_count', { count: list.item_count })}</Text>
                           </View>
                         </View>
 
@@ -1286,7 +1287,7 @@ export default function ServiceProfileScreen() {
                       <Plus height={23} width={23} strokeWidth={2.5} color={colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'} />
                     </View>
                     <View className="justify-center items-start">
-                      <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">New list</Text>
+                      <Text className="mb-1 text-center font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('new_list')}</Text>
                     </View>
                   </TouchableOpacity>
 
@@ -1380,7 +1381,7 @@ export default function ServiceProfileScreen() {
 
             <View className="flex-1 justify-center items-center border-r-[1px] border-[#d4d4d3] dark:border-[#474646]">
               <Text className="font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">{serviceData.confirmed_booking_count}</Text>
-              <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Bookings</Text>
+              <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">{t('bookings')}</Text>
             </View>
             {!!serviceData.average_rating && (
               <View className="flex-1 justify-center items-center ">
@@ -1388,13 +1389,13 @@ export default function ServiceProfileScreen() {
                   <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 1.3 }] }} />
                   <Text className="ml-[6px] font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.average_rating).toFixed(1)}</Text>
                 </View>
-                <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Rating</Text>
+                <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">{t('rating')}</Text>
               </View>
             )}
 
             <View className="flex-1 justify-center items-center border-l-[1px] border-[#d4d4d3] dark:border-[#474646]">
               <Text className="font-inter-bold text-center text-[22px] text-[#444343] dark:text-[#f2f2f2]">{serviceData.repeated_bookings_count}</Text>
-              <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">Repeat</Text>
+              <Text className="mt-1 font-inter-semibold text-center text-[11px] text-[#b6b5b5] dark:text-[#706F6E]">{t('repeats')}</Text>
             </View>
 
           </View>
@@ -1405,7 +1406,7 @@ export default function ServiceProfileScreen() {
 
         <View className="mt-9 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
-          <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">About the service</Text>
+          <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('about_the_service')}</Text>
 
           <Text onTextLayout={onTextLayout} numberOfLines={isDescriptionExpanded ? null : 4} className="break-all text-[14px] text-[#515150] dark:text-[#d4d4d3]">{serviceData.description}</Text>
 
@@ -1414,12 +1415,12 @@ export default function ServiceProfileScreen() {
             <View>
               {!isDescriptionExpanded && (
                 <TouchableOpacity onPress={() => setIsDescriptionExpanded(true)}>
-                  <Text className="mt-2 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2] ">Read more...</Text>
+                  <Text className="mt-2 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2] ">{t('read_more')}</Text>
                 </TouchableOpacity>
               )}
               {isDescriptionExpanded && (
                 <TouchableOpacity onPress={() => setIsDescriptionExpanded(false)}>
-                  <Text className="mt-2 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">Show less</Text>
+                  <Text className="mt-2 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('show_less')}</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -1429,13 +1430,13 @@ export default function ServiceProfileScreen() {
 
         </View>
 
-        {/* Galery */}
+        {/* Gallery */}
 
         {Array.isArray(serviceData.images) && serviceData.images.length > 0 && (
           <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
             <View className="mb-5 w-full flex-row justify-between items-center">
-              <Text className=" flex-1 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Galery</Text>
+              <Text className=" flex-1 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('gallery')}</Text>
               <TouchableOpacity onPress={() => navigation.navigate('DisplayImages', { images: serviceData.images })} >
                 <ChevronRightIcon size={20} color={colorScheme === 'dark' ? '#b6b5b5' : '#706F6E'} strokeWidth={2.1} />
               </TouchableOpacity>
@@ -1468,15 +1469,15 @@ export default function ServiceProfileScreen() {
             <View className="flex-1 justify-start items-start">
 
               <View className="mb-6 justify-start items-start">
-                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Earned money</Text>
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('earned_money')}</Text>
                 <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.total_earned_amount).toFixed(0)} €</Text>
               </View>
               <View className="mb-6 justify-start items-start">
-                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Total hours</Text>
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('total_hours')}</Text>
                 <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.total_hours_completed).toFixed(0)} h</Text>
               </View>
               <View className="justify-start items-start">
-                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Repeat bookings</Text>
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('repeat_bookings')}</Text>
                 <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{serviceData.repeated_bookings_count}</Text>
               </View>
 
@@ -1485,15 +1486,15 @@ export default function ServiceProfileScreen() {
             <View className="flex-1 justify-start items-start">
 
               <View className="mb-6 justify-start items-start">
-                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Success rate</Text>
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('success_rate')}</Text>
                 <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.success_rate).toFixed(0)} %</Text>
               </View>
               <View className="mb-6 justify-start items-start">
-                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Total bookings</Text>
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('total_bookings')}</Text>
                 <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{serviceData.confirmed_booking_count}</Text>
               </View>
               <View className="justify-start items-start">
-                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">Response time</Text>
+                <Text className="font-inter-medium text-center text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('response_time')}</Text>
                 <Text className="mt-1 font-inter-bold text-center text-[17px] text-[#444343] dark:text-[#f2f2f2]">{formatResponseTime(serviceData?.response_time_minutes)}</Text>
               </View>
 
@@ -1503,13 +1504,13 @@ export default function ServiceProfileScreen() {
 
         </View>
 
-        {/* Tags and habilities */}
+        {/* Tags and skills */}
 
         {Array.isArray(serviceData.tags) && serviceData.tags.length > 0 && (
 
           <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
-            <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Tags and habilities</Text>
+            <Text className="mb-5 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('tags_and_skills')}</Text>
 
             <View className="flex-row justify-start items-center flex-wrap">
               {serviceData.tags.map((tag, index) => (
@@ -1527,30 +1528,30 @@ export default function ServiceProfileScreen() {
 
         <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
-          <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Personal information</Text>
+          <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('personal_information')}</Text>
 
 
           {Array.isArray(serviceData.languages) && serviceData.languages.length > 0 && (
             <Text>
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Languages: </Text>
+            <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('languages_label')}</Text>
               <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{formatLanguages(serviceData.languages)}</Text>
             </Text>
           )}
 
           {typeof serviceData.hobbies === 'string' && serviceData.hobbies.trim().length > 0 && (
             <Text className="mt-4">
-              <Text className="mt-2 font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Hobbies: </Text>
+            <Text className="mt-2 font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('hobbies_label')}</Text>
               <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{serviceData.hobbies}</Text>
             </Text>
           )}
 
           <Text className="mt-4">
-            <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Verified: </Text>
-            <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">Identity</Text>
+            <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('verified_label')}</Text>
+            <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{t('identity')}</Text>
           </Text>
 
           <Text className="mt-4">
-            <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">Creation date: </Text>
+            <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('creation_date')}</Text>
             <Text className="font-inter-medium text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{formatDate(serviceData.service_created_datetime)}</Text>
           </Text>
 
@@ -1561,7 +1562,7 @@ export default function ServiceProfileScreen() {
             <View >
 
               <View className="mt-8 mb-8 flex-row w-full justify-between items-center">
-                <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Experience</Text>
+                <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('experience_section')}</Text>
                 <Text className="mr-3 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">
                   {serviceData.experiences.length} {serviceData.experiences.length === 1 ? "experience" : "experiences"}
                 </Text>
@@ -1587,9 +1588,9 @@ export default function ServiceProfileScreen() {
                     <View className="mt-3 flex-row justify-between items-center mb-[6px]">
                       <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{experience.place_name}</Text>
                       <Text>
-                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(experience.experience_started_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</Text>
+                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(experience.experience_started_date).toLocaleDateString(locale, { month: 'short', year: 'numeric' })}</Text>
                         <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]"> - </Text>
-                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{experience.experience_end_date ? new Date(experience.experience_end_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Still there'}</Text>
+                        <Text className=" text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{experience.experience_end_date ? new Date(experience.experience_end_date).toLocaleDateString(locale, { month: 'short', year: 'numeric' }) : t('experience_still_there')}</Text>
                       </Text>
                     </View>
 
@@ -1622,13 +1623,13 @@ export default function ServiceProfileScreen() {
 
               <View className="justify-center items-center w-full">
                 <GlobeEuropeAfricaIcon height={80} width={80} strokeWidth={1.2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
-                <Text className="mt-3 font-inter-semibold text-[18px] text-[#706F6E] dark:text-[#b6b5b5]">Unlimited radius of action</Text>
+                <Text className="mt-3 font-inter-semibold text-[18px] text-[#706F6E] dark:text-[#b6b5b5]">{t('unlimited_radius_of_action')}</Text>
               </View>
 
             ) : (
               <View className='w-full'>
 
-                <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Location</Text>
+              <Text className="mb-7 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('location')}</Text>
 
                 <View className="justify-center items-center w-full">
                   <View style={{ position: 'relative' }}>
@@ -1668,8 +1669,8 @@ export default function ServiceProfileScreen() {
                   </View>
 
                   <View className="mt-3 px-3 w-full flex-row justify-between items-center">
-                    <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{address ? address : 'Loading...'}</Text>
-                    <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">{localHour ? `${localHour} local hour` : ''}</Text>
+                  <Text className="mt-3 font-inter-semibold text-[14px] text-[#706F6E] dark:text-[#b6b5b5]">{address ? address : t('loading')}</Text>
+                  <Text className="mt-3 font-inter-semibold text-[14px] text-[#B6B5B5] dark:text-[#706F6E]">{localHour ? t('local_hour', { hour: localHour }) : ''}</Text>
                   </View>
 
                 </View>
@@ -1687,7 +1688,7 @@ export default function ServiceProfileScreen() {
 
           <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
-            <Text className="mb-8 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Rating and reviews</Text>
+        <Text className="mb-8 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('rating_and_reviews')}</Text>
 
             <View className="flex-row w-full justify-between items-center">
               <Text className="font-inter-bold text-[55px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(serviceData.average_rating).toFixed(1)}</Text>
@@ -1760,7 +1761,7 @@ export default function ServiceProfileScreen() {
 
                           <View className="justify-center items-start">
                             <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{review.user.first_name} {review.user.surname}</Text>
-                            <Text className="mt-1 font-inter-medium text-[9px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(review.review_datetime).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</Text>
+                            <Text className="mt-1 font-inter-medium text-[9px] text-[#706F6E] dark:text-[#b6b5b5]">{new Date(review.review_datetime).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' })}</Text>
                           </View>
                         </View>
 
@@ -1786,7 +1787,7 @@ export default function ServiceProfileScreen() {
                   style={{ opacity: 1 }}
                   className="mt-6 bg-[#F2F2F2] dark:bg-[#272626] w-full h-[45px] rounded-full items-center justify-center"
                 >
-                  <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">See all reviews</Text>
+                  <Text className="font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('see_all_reviews')}</Text>
                 </TouchableOpacity>
 
               </View>
@@ -1805,7 +1806,7 @@ export default function ServiceProfileScreen() {
           <View className="mt-8 justify-center items-start pb-7 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
 
             <View className="mr-2 py-5 px-4 w-full bg-[#F2F2F2] dark:bg-[#272626] rounded-2xl">
-              <Text className="mb-4 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">Consult a professional</Text>
+            <Text className="mb-4 font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('consult_a_professional')}</Text>
               {serviceData.price_consult && (
                 <Text className=" font-inter-semibold text-[13px] text-[#706F6E] dark:text-[#b6b5b5]">{t('consult_price_description', { price: parseFloat(serviceData.price_consult).toFixed(0) })}</Text>
               )}
