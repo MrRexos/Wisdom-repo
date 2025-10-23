@@ -1,5 +1,6 @@
 import { Platform, NativeModules } from 'react-native';
 import i18n, { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from '../languages/i18n';
+import * as Localization from 'expo-localization';
 
 const SETTINGS_MANAGER = NativeModules?.SettingsManager;
 const I18N_MANAGER = NativeModules?.I18nManager;
@@ -22,6 +23,19 @@ export const ensureSupportedLanguage = (language, fallback = DEFAULT_LANGUAGE) =
 
 export const detectDeviceLanguage = (fallback = DEFAULT_LANGUAGE) => {
   try {
+    const locales =
+      typeof Localization?.getLocales === 'function' ? Localization.getLocales() : undefined;
+    if (Array.isArray(locales) && locales.length > 0) {
+      const { languageCode, languageTag } = locales[0] ?? {};
+      const expoLocale = languageCode || languageTag;
+      if (expoLocale) {
+        return ensureSupportedLanguage(expoLocale, fallback);
+      }
+    }
+
+    if (typeof Localization?.locale === 'string' && Localization.locale) {
+      return ensureSupportedLanguage(Localization.locale, fallback);
+    }
     if (Platform.OS === 'ios') {
       const locale =
         SETTINGS_MANAGER?.settings?.AppleLocale ||
