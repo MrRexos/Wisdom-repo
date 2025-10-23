@@ -11,12 +11,23 @@ import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { formatDistanceToNowStrict } from 'date-fns';
+import { enUS, es, fr, ar, ca, zhCN } from 'date-fns/locale';
 
 export default function FavoritesScreen() {
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
+  const normalizedLanguage = i18n.language?.split('-')[0];
+  const dateFnsLocaleMap = {
+    en: enUS,
+    es,
+    ca,
+    ar,
+    fr,
+    zh: zhCN,
+  };
+  const dateFnsLocale = dateFnsLocaleMap[normalizedLanguage] || enUS;
   const [lists, setLists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState();
@@ -124,7 +135,7 @@ export default function FavoritesScreen() {
         <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2] ml-2 mt-2">{item.title}</Text>
         <View className="flex-row mt-2">
           <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5] ml-2 ">{item.item_count === 0 ? t('empty') : item.item_count === 1 ? `${item.item_count} ${t('service')}` : `${item.item_count} ${t('services')}`}</Text>
-          <Text className="font-inter-medium text-[12px] text-[#B6B5B5] dark:text-[#706F6E] ml-3">{item.last_item_date ? formatDistanceToNowStrict(new Date(item.last_item_date), { addSuffix: false }) : null}</Text>
+          <Text className="font-inter-medium text-[12px] text-[#B6B5B5] dark:text-[#706F6E] ml-3">{item.last_item_date ? formatDistanceToNowStrict(new Date(item.last_item_date), { addSuffix: false, locale: dateFnsLocale }) : null}</Text>
         </View>
       </TouchableOpacity>
       {editing && (
