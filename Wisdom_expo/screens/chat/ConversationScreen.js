@@ -57,11 +57,20 @@ import { containsContactInfo } from '../../utils/moderation';
 import defaultProfilePic from '../../assets/defaultProfilePic.jpg';
 import DoubleCheck from '../../assets/DoubleCheck';
 
+const DATE_LOCALE_MAP = {
+  en: 'en-US',
+  es: 'es-ES',
+  ca: 'ca-ES',
+  ar: 'ar',
+  fr: 'fr-FR',
+  zh: 'zh-CN',
+};
+
 export default function ConversationScreen() {
   // --------------------------------------------------------------------------
   // • HOOKS & HELPERS
   // --------------------------------------------------------------------------
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colorScheme } = useColorScheme();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const statusUnreadColor = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
@@ -96,6 +105,7 @@ export default function ConversationScreen() {
   const imageMessages = useMemo(() => messages.filter((m) => m.type === 'image'), [messages]);
   const initialLoadRef = useRef(true);
   const [shouldMaintainPosition, setShouldMaintainPosition] = useState(false);
+  const locale = useMemo(() => DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en, [i18n.language]);
 
   useEffect(() => {
     initialLoadRef.current = true;
@@ -149,10 +159,10 @@ export default function ConversationScreen() {
 
           // Insertar la etiqueta de FECHA al terminar el bloque de ese día. 
           const currDate = m.createdAt?.seconds
-            ? new Date(m.createdAt.seconds * 1000).toDateString()
+            ? new Date(m.createdAt.seconds * 1000).toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' })
             : null;
           const nextDate = next?.createdAt?.seconds
-            ? new Date(next.createdAt.seconds * 1000).toDateString()
+            ? new Date(next.createdAt.seconds * 1000).toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' })
             : null;
           if (currDate && currDate !== nextDate) {
             // Al ir después en el array (desc) y la lista estar invertida, 
@@ -181,7 +191,7 @@ export default function ConversationScreen() {
     init();
 
     return () => unsub && unsub();
-  }, [conversationId, scrollToBottom]);
+  }, [conversationId, scrollToBottom, locale]);
 
   useEffect(() => {
     const loadInfo = async () => {

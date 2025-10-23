@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react'
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, FlatList, ScrollView, Image, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
@@ -13,6 +13,15 @@ import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
+
+const DATE_LOCALE_MAP = {
+  en: 'en-US',
+  es: 'es-ES',
+  ca: 'ca-ES',
+  ar: 'ar',
+  fr: 'fr-FR',
+  zh: 'zh-CN',
+};
 
 
 export default function CalendarScreen() {
@@ -33,6 +42,8 @@ export default function CalendarScreen() {
     MAD: 'د.م.',
     RMB: '¥',
   };
+
+  const locale = useMemo(() => DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en, [i18n.language]);
 
 
   const fetchBookings = async () => {
@@ -83,9 +94,8 @@ export default function CalendarScreen() {
     const options = { weekday: 'long', month: 'long', day: 'numeric' };
 
     // Formatear la fecha
-    const formattedDate = date.toLocaleDateString('en-US', options);
+    const formattedDate = date.toLocaleDateString(locale, options);
 
-    // Reemplazar la coma con "of" para cumplir con tu formato deseado
     return formattedDate;
   };
 
@@ -98,10 +108,9 @@ export default function CalendarScreen() {
     const options = { weekday: 'long', month: 'long', day: 'numeric' };
 
     // Formatear la fecha
-    const formattedDate = date.toLocaleDateString('en-US', options);
+    const formattedDate = date.toLocaleDateString(locale, options);
 
-    // Reemplazar la coma con "of" para cumplir con tu formato deseado
-    return formattedDate.replace(',', ' of');
+    return formattedDate;
   };
 
   const renderBooking = ({ item, isLast }) => {
