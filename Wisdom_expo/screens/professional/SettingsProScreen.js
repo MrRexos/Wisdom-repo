@@ -312,7 +312,14 @@ export default function SettingsScreen() {
                       if (type === 'link' && link) {
                         Linking.openURL(link); // Reemplaza 'yourpage' por tu página de Instagram
                       } else if (type === 'select' && link) {
-                        navigation.navigate(link);
+                        if (link === 'CreateServiceStart') {
+                          navigation.navigate('CreateServiceStart', {
+                            originScreen: 'Professional',
+                            originParams: { screen: 'Settings' },
+                          });
+                        } else {
+                          navigation.navigate(link);
+                        }
                       }
                     }}
                   >

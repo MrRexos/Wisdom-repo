@@ -531,18 +531,17 @@ export const useServiceFormEditing = ({ prevParams = {}, currentValues = {}, t }
   }, [isEditing, saving, hasChanges, goToOrigin, serviceId, combinedValues, t]);
 
   const requestBack = useCallback(() => {
-    if (!isEditing) {
-      navigation.goBack();
+    if (isEditing) {
+      if (!hasChanges) {
+        goToOrigin();
+      } else {
+        setConfirmVisible(true);
+      }
       return;
     }
 
-    if (!hasChanges) {
-      goToOrigin();
-      return;
-    }
-
-    setConfirmVisible(true);
-  }, [isEditing, hasChanges, navigation, goToOrigin]);
+    goToOrigin();
+  }, [isEditing, hasChanges, goToOrigin]);
 
   const handleConfirmSave = useCallback(() => {
     setConfirmVisible(false);

@@ -268,7 +268,12 @@ export default function TodayProScreen() {
 
         <View className="w-full px-8 mt-12 justify-center items-center">
           <TouchableOpacity
-            onPress={() => navigation.navigate('CreateServiceStart')}
+            onPress={() =>
+              navigation.navigate('CreateServiceStart', {
+                originScreen: 'Professional',
+                originParams: { screen: 'Today' },
+              })
+            }
             style={{ opacity: 1 }}
             className="bg-[#323131] mx-2 dark:bg-[#fcfcfc] w-full h-[50px] rounded-full items-center justify-center"
           >

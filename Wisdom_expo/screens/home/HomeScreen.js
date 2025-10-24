@@ -326,7 +326,15 @@ export default function HomeScreen() {
           <Text className="mb-1 font-inter-semibold text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('become_a_professional')}</Text>
           <Text className="mb-3 font-inter-medium text-[10px] text-[#706F6E] dark:text-[#b6b5b5]">{t('make_money_serving')}</Text>
           <View className="justify-center items-center">
-            <TouchableOpacity onPress={() => navigation.navigate('CreateServiceStart')} className="py-2 px-5 justify-center items-center bg-[#444343] dark:bg-[#f2f2f2] rounded-lg" >
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('CreateServiceStart', {
+                  originScreen: 'HomeScreen',
+                  originParams: { screen: 'Home', params: { screen: 'HomeScreen' } },
+                })
+              }
+              className="py-2 px-5 justify-center items-center bg-[#444343] dark:bg-[#f2f2f2] rounded-lg"
+            >
               <Text className="font-inter-semibold text-[13px] text-[#f2f2f2] dark:text-[#272626]">{t('create')}</Text>
             </TouchableOpacity>
           </View>
