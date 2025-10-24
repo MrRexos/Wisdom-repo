@@ -245,7 +245,7 @@ export default function CreateServiceLocationScreen() {
             </View>
           </View>
 
-          {direction ? (
+          {!isUnlocated && (direction || location) ? (
             <View className="w-full mt-1 px-4 flex-row items-center mb-2">
               <Text className="shrink-0 mr-3">
                 <Text className="font-inter-semibold text-[14px] text-[#706f6e] dark:text-[#b6b5b5]">
