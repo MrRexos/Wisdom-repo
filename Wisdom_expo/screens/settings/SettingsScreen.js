@@ -19,7 +19,7 @@ import { KeyIcon, ChevronRightIcon, ArrowsRightLeftIcon } from 'react-native-her
 import GiftCardIcon from '../../assets/GiftCard';
 import ExpertIcon from '../../assets/Expert';
 import CashStackIcon from '../../assets/CashStack';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 import SuticasePlusIcon from '../../assets/SuitcasePlus';
 
 
@@ -278,7 +278,7 @@ export default function SettingsScreen() {
 
 
   return (
-    <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+    <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
       <Message

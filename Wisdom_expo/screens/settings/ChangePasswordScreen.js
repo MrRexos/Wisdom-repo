@@ -9,7 +9,7 @@ import EyeIcon from 'react-native-bootstrap-icons/icons/eye';
 import EyeSlashIcon from 'react-native-bootstrap-icons/icons/eye-slash';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { getDataLocally } from '../../utils/asyncStorage';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 import api from '../../utils/api';
 
 export default function ChangePasswordScreen() {
@@ -95,7 +95,7 @@ export default function ChangePasswordScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[95px] w-full z-10 justify-end">
         <View className="flex-row justify-between items-center pb-4 px-2">

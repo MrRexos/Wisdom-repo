@@ -5,7 +5,7 @@ import { useColorScheme } from 'nativewind'
 import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 import { Check } from "react-native-feather";
 import ServiceFormHeader from '../../../components/ServiceFormHeader';
 import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
@@ -145,7 +145,7 @@ export default function CreateServiceDetailsScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         <ScrollView className="flex-1 px-6 pt-5 pb-6">
 

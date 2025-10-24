@@ -53,7 +53,7 @@ import {
   mapMarkerImage,
   mapMarkerStyle,
 } from '../../utils/mapMarkerAssets';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 
 
 
@@ -1058,7 +1058,7 @@ export default function ServiceProfileScreen() {
 
 
   return (
-      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
+      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
         <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
       <RBSheet

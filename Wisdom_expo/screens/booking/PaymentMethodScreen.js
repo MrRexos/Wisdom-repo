@@ -7,7 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { CreditCard } from 'react-native-feather';
 import { CardField, useStripe } from '@stripe/stripe-react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 import ModalMessage from '../../components/ModalMessage';
 
 export default function PaymentMethodScreen() {
@@ -138,7 +138,7 @@ export default function PaymentMethodScreen() {
 
   if (processing) {
     return (
-      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-center items-center'>
+      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-center items-center'>
         <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
         <CreditCard height={60} width={60} strokeWidth={1.5} color={iconColor} />
         <ActivityIndicator className='mt-4' size='large' color={colorScheme === 'dark' ? '#fcfcfc' : '#323131'} />
@@ -150,7 +150,7 @@ export default function PaymentMethodScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
       <View className='absolute bg-[#f2f2f2] dark:bg-[#272626] h-[100px] w-full z-10 justify-end'>

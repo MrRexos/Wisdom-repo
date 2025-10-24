@@ -13,7 +13,7 @@ import {XMarkIcon} from 'react-native-heroicons/outline';
 import NotificationAskWhite from '../../assets/NotificationAskWhite.svg';
 import NotificationAskDark from '../../assets/NotificationAskDark.svg';
 import api, { setTokens } from '../../utils/api.js';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 
 
 
@@ -193,7 +193,7 @@ export default function NotificationAllowScreen() {
   }
   
     return (
-      <SafeAreaView style={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+      <SafeAreaView style={{ paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         <View className="px-5 py-3 w-full flex-1 justify-between">
           <View className="flex-row justify-between">

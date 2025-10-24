@@ -5,7 +5,7 @@ import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ChatImageViewerScreen() {
   const { colorScheme } = useColorScheme();
@@ -36,7 +36,7 @@ export default function ChatImageViewerScreen() {
   const getScale = (idx) => (idx === currentIndex ? 1 : 0.85);
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
+    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
       <View className="px-6 pt-3 pb-3 justify-center items-center">

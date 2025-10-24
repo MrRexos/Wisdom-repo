@@ -7,7 +7,7 @@ import '../../../languages/i18n';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import Svg, { Rect, Defs, Mask } from 'react-native-svg';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 import eventEmitter from '../../../utils/eventEmitter';
 
 export default function DniCameraScreen() {
@@ -48,7 +48,7 @@ export default function DniCameraScreen() {
 
   if (!permission.granted) {
     return (
-      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0, backgroundColor: colorScheme === 'dark' ? '#272626' : '#f2f2f2' }}>
+      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0, backgroundColor: colorScheme === 'dark' ? '#272626' : '#f2f2f2' }}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
           <Text className="font-inter-medium text-[16px]" style={{ color: iconColor, textAlign: 'center', marginBottom: 18 }}>{t('permission_denied')}</Text>
           <TouchableOpacity onPress={requestPermission} className="rounded-full px-5 py-3" style={{ backgroundColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131' }}>
@@ -110,7 +110,7 @@ export default function DniCameraScreen() {
       </View>
 
       <SafeAreaView style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
-        <View style={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0, flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0, flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()} className="pl-6 pt-5">
             <ChevronLeftIcon size={24} color={'#ffffff'} strokeWidth={1.8}/>
           </TouchableOpacity>

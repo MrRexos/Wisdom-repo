@@ -9,7 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
 import WisdomLogo from '../../assets/wisdomLogo.tsx';
 import api from '../../utils/api';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function ForgotPasswordScreen() {
@@ -43,7 +43,7 @@ export default function ForgotPasswordScreen() {
     }
 
     return (
-      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
+      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
           <View className="px-5 py-3  w-full">
             <View className="flex-row justify-between">

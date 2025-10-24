@@ -19,7 +19,7 @@ import { setDoc, doc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 import ModalMessage from '../../components/ModalMessage';
 
 const DATE_LOCALE_MAP = {
@@ -866,7 +866,7 @@ export default function BookingDetailsScreen() {
       : null;
 
   if (!booking) {
-    return <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]' />;
+    return <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]' />;
   }
 
   return (
@@ -1152,7 +1152,7 @@ export default function BookingDetailsScreen() {
 
       </RBSheet>
 
-      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
         <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
         <View className='items-center justify-center px-2 pt-3  pb-3'>

@@ -11,7 +11,7 @@ import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api';
 import { CheckCircleIcon, XCircleIcon } from 'react-native-heroicons/solid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CreateProfileScreen() {
     const { colorScheme } = useColorScheme();
@@ -140,7 +140,7 @@ export default function CreateProfileScreen() {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
+        <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
             <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
             <View className="flex-1 w-full justify-between items-center ">

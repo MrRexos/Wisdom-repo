@@ -14,7 +14,7 @@ import HeartFill from "../../assets/HeartFill.tsx"
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 
@@ -355,7 +355,7 @@ export default function ResultsScreen() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
       <RBSheet

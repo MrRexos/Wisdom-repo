@@ -9,7 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { Check } from "react-native-feather";
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 import api from '../../utils/api';
 
 
@@ -71,7 +71,7 @@ export default function LanguageScreen() {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
+      style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0 }}
       className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]"
     >
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />

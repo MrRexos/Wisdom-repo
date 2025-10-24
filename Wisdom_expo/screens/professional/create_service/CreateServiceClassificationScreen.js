@@ -13,7 +13,7 @@ import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
 import Triangle from '../../../assets/triangle';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 import api from '../../../utils/api.js';
 import ServiceFormHeader from '../../../components/ServiceFormHeader';
 import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
@@ -189,7 +189,7 @@ export default function CreateServiceClassificationScreen() {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
+      style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0 }}
       className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]"
     >
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />

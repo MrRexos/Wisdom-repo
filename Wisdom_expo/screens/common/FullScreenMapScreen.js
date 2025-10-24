@@ -4,7 +4,7 @@ import MapView, { Marker, Circle } from 'react-native-maps';
 import { Minimize2 } from 'react-native-feather';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useColorScheme } from 'nativewind';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { initialWindowMetrics, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getRegionForRadius } from '../../utils/mapUtils';
 import {
   mapMarkerAnchor,
@@ -12,7 +12,6 @@ import {
   mapMarkerImage,
   mapMarkerStyle,
 } from '../../utils/mapMarkerAssets';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function FullScreenMapScreen() {
   const navigation = useNavigation();
@@ -30,7 +29,7 @@ export default function FullScreenMapScreen() {
     : { latitude, longitude, latitudeDelta: 0.05, longitudeDelta: 0.03 };
 
   
-  const topOffset = Math.max(insets.top, StatusBar.currentHeight || 0) + 8; //separa Xpx extra
+  const topOffset = Math.max(insets.top, StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) + 8; //separa Xpx extra
 
   return (
     <View className="flex-1">

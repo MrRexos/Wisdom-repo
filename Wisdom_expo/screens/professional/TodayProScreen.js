@@ -9,7 +9,7 @@ import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRigh
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
 import Clipboard from "../../assets/Clipboard";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaView } from 'react-native-safe-area-context';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
 export default function TodayProScreen() {
@@ -253,7 +253,7 @@ export default function TodayProScreen() {
     : [];
 
   return (
-    <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+    <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? initialWindowMetrics?.insets?.top ?? 0) : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
       <View className="flex-1 justify-start items-center pt-[55px]">
 
