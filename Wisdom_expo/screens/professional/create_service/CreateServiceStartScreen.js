@@ -3,7 +3,7 @@ import {View, StatusBar, Platform, TouchableOpacity, Text} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../../languages/i18n';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/native';
 import { storeDataLocally, getDataLocally } from '../../../utils/asyncStorage';
 
 import {XMarkIcon} from 'react-native-heroicons/outline';
@@ -16,6 +16,9 @@ export default function CreateServiceStartScreen() {
   const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const navigation = useNavigation();
+  const route = useRoute();
+  const originScreen = route.params?.originScreen;
+  const originParams = route.params?.originParams;
 
   useFocusEffect(
     useCallback(() => {
@@ -62,7 +65,16 @@ export default function CreateServiceStartScreen() {
             <View className="justify-center items-center">
                 <TouchableOpacity 
                 disabled={false}
-                onPress={() => navigation.navigate('CreateServiceTitle', { prevParams: {} })}
+                onPress={() => {
+                  const nextPrevParams = {};
+                  if (originScreen) {
+                    nextPrevParams.originScreen = originScreen;
+                  }
+                  if (originParams) {
+                    nextPrevParams.originParams = originParams;
+                  }
+                  navigation.navigate('CreateServiceTitle', { prevParams: nextPrevParams });
+                }}
                 style={{opacity: 1}}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('start')}</Text>

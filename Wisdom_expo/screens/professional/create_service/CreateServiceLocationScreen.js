@@ -165,6 +165,15 @@ export default function CreateServiceLocationScreen() {
         longitudeDelta: 0.03,
       };
 
+  const hasDirection = typeof direction === 'string' && direction.trim().length > 0;
+  const hasLocation = Boolean(
+    location &&
+    typeof location === 'object' &&
+    (location.lat !== null && location.lat !== undefined) &&
+    (location.lng !== null && location.lng !== undefined)
+  );
+  const canContinue = isUnlocated || hasDirection || hasLocation;
+
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
@@ -327,9 +336,9 @@ export default function CreateServiceLocationScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            disabled={!isUnlocated && !direction}
+            disabled={!canContinue}
             onPress={() => navigation.navigate('CreateServiceExperiences', { prevParams: { ...prevParams, isUnlocated, direction, country, street, city, state, postalCode, streetNumber, address2, location, actionRate } })}
-            style={{ opacity: isUnlocated || direction ? 1.0 : 0.5 }}
+            style={{ opacity: canContinue ? 1.0 : 0.5 }}
             className="ml-[10px] bg-[#323131] dark:bg-[#fcfcfc] w-3/4 h-[55px] rounded-full items-center justify-center" >
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('continue')}</Text>
           </TouchableOpacity>
