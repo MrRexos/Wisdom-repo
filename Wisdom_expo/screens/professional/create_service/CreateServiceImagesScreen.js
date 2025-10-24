@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StatusBar, Platform, TouchableOpacity, Text, ScrollView, Image, StyleSheet, Alert, Linking } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { View, StatusBar, Platform, TouchableOpacity, Text, Image, StyleSheet, Alert, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../../languages/i18n';
 import { useColorScheme } from 'nativewind';
@@ -12,82 +12,9 @@ import ServiceFormHeader from '../../../components/ServiceFormHeader';
 import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
 import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 import * as ImagePicker from 'expo-image-picker';
+import DraggableFlatList, { ScaleDecorator, ShadowDecorator } from 'react-native-draggable-flatlist';
 
-const patternImages = (images, colorScheme, onRemoveImage) => {
-  const patternSize = 6; // Número de imágenes en el patrón
-  const totalImages = images.length;
-  const verticalSpacing = 190; // Espacio vertical entre filas de imágenes
-  const horizontalSpacing = 165; // Espacio horizontal entre columnas de imágenes
-
-  const pattern = images.map((image, i) => {
-    const imgIndex = i % patternSize; // Usa módulo para repetir el patrón
-
-    let transformStyle = {};
-    let topPosition = 0;
-    let leftPosition = 0;
-
-    // Ajusta la posición y rotación de las imágenes
-    switch (imgIndex) {
-      case 0:
-        transformStyle = { transform: [{ rotate: '-3deg' }] };
-        topPosition = Math.floor(i / patternSize) * 3 * verticalSpacing;
-        leftPosition = 0;
-        break;
-      case 1:
-        transformStyle = { transform: [{ rotate: '4.4deg' }] };
-        topPosition = Math.floor(i / patternSize) * 3 * verticalSpacing;
-        leftPosition = horizontalSpacing;
-        break;
-      case 2:
-        transformStyle = { transform: [{ rotate: '3.7deg' }] };
-        topPosition = Math.floor(i / patternSize) * 3 * verticalSpacing + verticalSpacing;
-        leftPosition = 0;
-        break;
-      case 3:
-        transformStyle = { transform: [{ rotate: '-2.5deg' }] };
-        topPosition = Math.floor(i / patternSize) * 3 * verticalSpacing + verticalSpacing;
-        leftPosition = horizontalSpacing;
-        break;
-      case 4:
-        transformStyle = { transform: [{ rotate: '2.2deg' }] };
-        topPosition = Math.floor(i / patternSize) * 3 * verticalSpacing + 2 * verticalSpacing;
-        leftPosition = 0;
-        break;
-      case 5:
-        transformStyle = { transform: [{ rotate: '-2.4deg' }] };
-        topPosition = Math.floor(i / patternSize) * 3 * verticalSpacing + 2 * verticalSpacing;
-        leftPosition = horizontalSpacing;
-        break;
-      default:
-        break;
-    }
-
-    return (
-      <View
-        key={i}
-        style={[styles.imageContainer, { top: topPosition, left: leftPosition }]}
-      >
-        <Image
-          source={{ uri: image.uri }}
-          style={[
-            styles.image,
-            { borderColor: colorScheme === 'dark' ? '#202020' : '#fcfcfc' },
-            transformStyle,
-            { width: 130 + (imgIndex % 2) * 20, height: 160 },
-          ]}
-        />
-        <TouchableOpacity
-          style={styles.removeButton}
-          onPress={() => onRemoveImage(i + 1)}
-        >
-          <XMarkIcon size={20} color="white" />
-        </TouchableOpacity>
-      </View>
-    );
-  });
-
-  return pattern;
-};
+const DRAG_ACTIVATION_DISTANCE = 12;
 
 export default function CreateServiceImagesScreen() {
   const { colorScheme } = useColorScheme();
@@ -102,8 +29,6 @@ export default function CreateServiceImagesScreen() {
       ? prevParams.serviceImages.map((img) => ({ ...img }))
       : []
   ));
-  const patternHeight = Math.ceil(serviceImages.length / 6) * 3 * 160;
-  const patternWidth = 315;
 
   const {
     isEditing,
@@ -117,18 +42,18 @@ export default function CreateServiceImagesScreen() {
     handleDismissConfirm,
   } = useServiceFormEditing({ prevParams, currentValues: { serviceImages }, t });
 
-  const handlePickMainImage = async () => {
+  const handlePickMainImage = useCallback(async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert(
         t('allow_wisdom_to_access_gallery'),
         t('need_gallery_access_service'),
         [
-          { text: t('cancel'), style: "cancel" },
+          { text: t('cancel'), style: 'cancel' },
           { text: t('settings'), onPress: () => Linking.openSettings() }
         ],
         { cancelable: true }
-    );
+      );
       return;
     }
 
@@ -141,9 +66,9 @@ export default function CreateServiceImagesScreen() {
     if (!result.canceled) {
       setServiceImages(prevImages => [result.assets[0], ...prevImages]);
     }
-  };
+  }, [t]);
 
-  const handlePickImages = async () => {
+  const handlePickImages = useCallback(async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert(
@@ -168,83 +93,130 @@ export default function CreateServiceImagesScreen() {
     if (!result.canceled) {
       setServiceImages(prevImages => [...prevImages, ...result.assets]);
     }
-  };
+  }, [t]);
 
-  const handleRemoveImage = (index) => {
+  const handleRemoveImage = useCallback((index) => {
     setServiceImages(prevImages => prevImages.filter((_, i) => i !== index));
-  };
+  }, []);
+
+  const handleDragEnd = useCallback(({ data }) => {
+    setServiceImages(data);
+  }, []);
+
+  const keyExtractor = useCallback((item, index) => `${item.assetId ?? item.fileName ?? item.uri}-${index}`, []);
+
+  const renderImageItem = useCallback(({ item, index, drag, isActive }) => {
+    const isMain = index === 0;
+
+    return (
+      <ScaleDecorator>
+        <ShadowDecorator>
+          <View style={[styles.itemWrapper, isMain ? styles.mainItemWrapper : styles.secondaryItemWrapper]}>
+            <TouchableOpacity
+              activeOpacity={0.95}
+              delayLongPress={120}
+              onLongPress={drag}
+              onPress={isMain ? handlePickMainImage : undefined}
+              style={[
+                styles.imageTouchable,
+                isMain ? styles.mainImageTouchable : styles.secondaryImageTouchable,
+                isActive && styles.activeItem,
+              ]}
+            >
+              <Image
+                source={{ uri: item.uri }}
+                style={[
+                  styles.image,
+                  { borderColor: colorScheme === 'dark' ? '#202020' : '#fcfcfc' },
+                ]}
+              />
+              <View style={[styles.reorderHandle, isMain && styles.mainReorderHandle]}>
+                <Text style={styles.reorderHandleText}>☰</Text>
+              </View>
+              {isMain ? (
+                <View style={styles.mainBadge}>
+                  <Text style={styles.mainBadgeText}>{t('main_photo')}</Text>
+                </View>
+              ) : null}
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.removeButton} onPress={() => handleRemoveImage(index)}>
+              <XMarkIcon size={20} color="white" />
+            </TouchableOpacity>
+          </View>
+        </ShadowDecorator>
+      </ScaleDecorator>
+    );
+  }, [colorScheme, handlePickMainImage, handleRemoveImage, t]);
+
+  const listHeader = useMemo(() => (
+    <View className="justify-center items-center">
+      <Text className="mt-[55px] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('upload_some_photos')}</Text>
+      <Text className="mt-5 font-inter-bold text-[14px] text-center text-[#b6b5b5] dark:text-[#706f6e]">{t('we_recommend_you_upload_at_least_five_images')}</Text>
+      {serviceImages.length >= 2 ? (
+        <TouchableOpacity onPress={handlePickImages}>
+          <Text className="mt-10 font-inter-semibold text-[16px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('add_more')}</Text>
+        </TouchableOpacity>
+      ) : null}
+      {serviceImages.length < 2 ? <View style={{ height: 30 }} /> : null}
+    </View>
+  ), [handlePickImages, serviceImages.length, t]);
+
+  const listFooter = useMemo(() => {
+    if (!serviceImages.length) {
+      return null;
+    }
+
+    return (
+      <View className="w-full items-center mt-10">
+        <TouchableOpacity onPress={handlePickImages}>
+          <AddServiceImages stroke={iconColor} />
+        </TouchableOpacity>
+      </View>
+    );
+  }, [handlePickImages, iconColor, serviceImages.length]);
+
+  const emptyComponent = useMemo(() => (
+    <View className="w-full mt-[20px] justify-start items-center">
+      <TouchableOpacity onPress={handlePickMainImage} className="justify-center items-center relative">
+        <AddMainImage fill={iconColor} width={257} height={118} />
+        <Text className="absolute bottom-4 inset-x-0 font-inter-semibold text-[14px] text-center text-[#e0e0e0] dark:text-[#3d3d3d]">{t('main_photo')}</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={handlePickImages} className="mt-12">
+        <AddServiceImages stroke={iconColor} />
+      </TouchableOpacity>
+    </View>
+  ), [handlePickImages, handlePickMainImage, iconColor, t]);
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+      <View className="flex-1 px-6 pt-5 pb-6">
 
-        <View className="flex-1 px-6 pt-5 pb-6">
+        <ServiceFormHeader
+          onBack={requestBack}
+          onSave={handleSave}
+          showSave={isEditing && hasChanges}
+          saving={saving}
+        />
 
-          <ServiceFormHeader
-            onBack={requestBack}
-            onSave={handleSave}
-            showSave={isEditing && hasChanges}
-            saving={saving}
-          />
+        <DraggableFlatList
+          data={serviceImages}
+          keyExtractor={keyExtractor}
+          renderItem={renderImageItem}
+          onDragEnd={handleDragEnd}
+          activationDistance={DRAG_ACTIVATION_DISTANCE}
+          ListHeaderComponent={listHeader}
+          ListFooterComponent={listFooter}
+          ListEmptyComponent={emptyComponent}
+          numColumns={2}
+          columnWrapperStyle={styles.columnWrapper}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+        />
 
-          <View className="justify-center items-center">
-            <Text className="mt-[55px] font-inter-bold text-[28px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('upload_some_photos')}</Text>
-            <Text className="mt-5 font-inter-bold text-[14px] text-center text-[#b6b5b5] dark:text-[#706f6e]">{t('we_recommend_you_upload_at_least_five_images')}</Text>
-          </View>
-
-          {serviceImages.length < 2 ? null : (
-            <TouchableOpacity onPress={handlePickImages}>
-              <Text className="mt-10 font-inter-semibold text-[16px] text-center text-[#444343] dark:text-[#f2f2f2]">{t('add_more')}</Text>
-            </TouchableOpacity>
-          )}
-
-          {serviceImages.length < 2 ? (<View className="h-[30px]" />) : null}
-
-          <View className="flex-1 w-full mt-[20px] justify-start items-center">
-
-            {serviceImages.length < 1 ? (
-
-              <TouchableOpacity onPress={handlePickMainImage} className="justify-center items-center relative ">
-                <AddMainImage fill={iconColor} width={257} height={118} />
-                <Text className="absolute bottom-4 inset-x-0 font-inter-semibold text-[14px] text-center text-[#e0e0e0] dark:text-[#3d3d3d]">{t('main_photo')}</Text>
-              </TouchableOpacity>
-
-            ) : (
-
-              <View className="justify-center items-center">
-
-                <TouchableOpacity onPress={handlePickMainImage}>
-                  <Image source={{ uri: serviceImages[0].uri }} className="w-[260px] h-[148px] rounded-xl border-[3px] border-[#fcfcfc] dark:border-[#202020]" />
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.removeButton} onPress={() => handleRemoveImage(0)}>
-                  <XMarkIcon size={20} color="white" />
-                </TouchableOpacity>
-
-              </View>
-            )}
-
-            {serviceImages.length < 2 ? (
-
-              <TouchableOpacity onPress={handlePickImages} className="mt-12">
-                <AddServiceImages stroke={iconColor} />
-              </TouchableOpacity>
-
-            ) : (
-
-              <View style={[styles.patternContainer, { height: patternHeight, width:patternWidth }]} className='items-center justify-center'>
-                {patternImages(serviceImages.slice(1), colorScheme, handleRemoveImage)}
-              </View>
-
-            )}
-
-          </View>
-
-        </View>
-
-      </ScrollView>
+      </View>
 
       {/* Botones fijos abajo */}
 
@@ -275,26 +247,84 @@ onPress={() => navigation.navigate('CreateServicePriceType', { prevParams: { ...
 }
 
 const styles = StyleSheet.create({
-  patternContainer: {
-    position: 'relative',
-    width: '100%',
-    marginTop: 40,
-    alignSelf: 'center',
+  listContent: {
+    paddingBottom: 32,
+    paddingTop: 20,
   },
-  imageContainer: {
-    position: 'absolute',
+  columnWrapper: {
+    justifyContent: 'space-between',
+  },
+  itemWrapper: {
+    flex: 1,
+    marginHorizontal: 6,
+    marginBottom: 18,
+  },
+  mainItemWrapper: {
+    flexBasis: '100%',
+    maxWidth: '100%',
+  },
+  secondaryItemWrapper: {
+    flexBasis: '48%',
+    maxWidth: '48%',
+  },
+  imageTouchable: {
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  mainImageTouchable: {
+    height: 200,
+  },
+  secondaryImageTouchable: {
+    height: 150,
+  },
+  activeItem: {
+    opacity: 0.9,
   },
   image: {
-    borderRadius: 10,
+    width: '100%',
+    height: '100%',
+    borderRadius: 16,
     borderWidth: 3,
-    marginBottom: 30,
+  },
+  reorderHandle: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.35)',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  mainReorderHandle: {
+    top: 14,
+    left: 14,
+  },
+  reorderHandleText: {
+    color: '#fcfcfc',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  mainBadge: {
+    position: 'absolute',
+    bottom: 14,
+    left: 14,
+    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+  },
+  mainBadgeText: {
+    color: '#fcfcfc',
+    fontWeight: '600',
+    letterSpacing: 0.4,
+    fontSize: 13,
   },
   removeButton: {
     position: 'absolute',
-    top: 7,
-    right: 7,
+    top: 10,
+    right: 10,
     backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    borderRadius: 15,
-    padding: 3,
+    borderRadius: 16,
+    padding: 4,
   },
 });
