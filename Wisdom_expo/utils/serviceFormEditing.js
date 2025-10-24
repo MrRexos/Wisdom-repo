@@ -308,6 +308,13 @@ export const mapServiceToFormValues = (service = {}) => {
 
 const uploadLocalImages = async (images) => {
   if (!images.length) return [];
+
+  console.log('[serviceFormEditing][uploadLocalImages] uploading local images', images.map((image, index) => ({
+    index,
+    uri: image?.uri,
+    hasRemoteUrl: Boolean(image?.remoteUrl || image?.url || image?.image_url),
+    fileName: image?.fileName || image?.name,
+  })));
   const formData = new FormData();
   images.forEach((image, index) => {
     if (!image || !image.uri) return;
@@ -323,12 +330,19 @@ const uploadLocalImages = async (images) => {
   const response = await api.post('/api/upload-images', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
-  console.log(response.data);
+  console.log('[serviceFormEditing][uploadLocalImages] upload response', response.data);
   return Array.isArray(response.data) ? response.data : [];
 };
 
 const prepareImagesForUpdate = async (serviceImages = []) => {
   if (!Array.isArray(serviceImages)) return [];
+
+  console.log('[serviceFormEditing][prepareImagesForUpdate] received service images', serviceImages.map((image, index) => ({
+    index,
+    uri: image?.uri,
+    remoteUrl: image?.remoteUrl || image?.url || image?.image_url,
+    order: image?.order,
+  })));
 
   const persisted = [];
   const localImages = [];
@@ -355,8 +369,16 @@ const prepareImagesForUpdate = async (serviceImages = []) => {
     }
   });
 
+  console.log('[serviceFormEditing][prepareImagesForUpdate] persisted remote images', persisted);
+  console.log('[serviceFormEditing][prepareImagesForUpdate] local images pending upload', localImages.map((image, idx) => ({
+    index: localIndexes[idx],
+    uri: image?.uri,
+    fileName: image?.fileName || image?.name,
+  })));
+
   if (localImages.length > 0) {
     const uploadedUrls = await uploadLocalImages(localImages);
+    console.log('[serviceFormEditing][prepareImagesForUpdate] uploaded urls', uploadedUrls);
     uploadedUrls.forEach((url, idx) => {
       const order = localIndexes[idx] ?? persisted.length + idx;
       if (url) {
@@ -365,17 +387,28 @@ const prepareImagesForUpdate = async (serviceImages = []) => {
     });
   }
 
-  return persisted
+  const prepared = persisted
     .filter((img) => img && typeof img.url === 'string')
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     .map((img, idx) => ({ url: img.url, order: idx }));
+
+  console.log('[serviceFormEditing][prepareImagesForUpdate] prepared images payload', prepared);
+
+  return prepared;
 };
 
 export const saveServiceEdits = async (serviceId, values = {}) => {
   if (!serviceId) throw new Error('Missing service id');
 
   const normalized = normalizeFormValues(values);
+  console.log('[serviceFormEditing][saveServiceEdits] normalized values for service', serviceId, {
+    serviceImages: normalized.serviceImages,
+    priceType: normalized.priceType,
+    priceValue: normalized.priceValue,
+  });
   const images = await prepareImagesForUpdate(values.serviceImages);
+
+  console.log('[serviceFormEditing][saveServiceEdits] final images payload', images);
 
   const experiencesPayload = Array.isArray(values.experiences)
     ? values.experiences.map((exp) => ({
@@ -412,6 +445,8 @@ export const saveServiceEdits = async (serviceId, values = {}) => {
     experiences: experiencesPayload,
     images,
   };
+
+  console.log('[serviceFormEditing][saveServiceEdits] payload to update service', serviceId, payload);
 
   await api.put(`/api/services/${serviceId}`, payload);
 };
@@ -474,6 +509,10 @@ export const useServiceFormEditing = ({ prevParams = {}, currentValues = {}, t }
 
     try {
       setSaving(true);
+      console.log('[serviceFormEditing][useServiceFormEditing.handleSave] saving service', serviceId, {
+        hasChanges,
+        combinedValues,
+      });
       await saveServiceEdits(serviceId, combinedValues);
       goToOrigin();
     } catch (error) {
