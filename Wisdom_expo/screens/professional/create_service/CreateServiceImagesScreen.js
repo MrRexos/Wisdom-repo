@@ -118,7 +118,7 @@ export default function CreateServiceImagesScreen() {
   } = useServiceFormEditing({ prevParams, currentValues: { serviceImages }, t });
 
   const handlePickMainImage = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert(
         t('allow_wisdom_to_access_gallery'),

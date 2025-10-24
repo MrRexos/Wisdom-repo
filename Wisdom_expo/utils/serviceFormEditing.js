@@ -331,7 +331,11 @@ const uploadLocalImages = async (images) => {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   console.log('[serviceFormEditing][uploadLocalImages] upload response', response.data);
-  return Array.isArray(response.data) ? response.data : [];
+  const raw = Array.isArray(response.data) ? response.data : []; 
+  // Devuelve SIEMPRE array de strings (urls) 
+  return raw 
+    .map(item => (typeof item === 'string' ? item : item?.url)) 
+    .filter(Boolean);
 };
 
 const prepareImagesForUpdate = async (serviceImages = []) => {
@@ -377,13 +381,12 @@ const prepareImagesForUpdate = async (serviceImages = []) => {
   })));
 
   if (localImages.length > 0) {
-    const uploadedUrls = await uploadLocalImages(localImages);
-    console.log('[serviceFormEditing][prepareImagesForUpdate] uploaded urls', uploadedUrls);
-    uploadedUrls.forEach((url, idx) => {
-      const order = localIndexes[idx] ?? persisted.length + idx;
-      if (url) {
-        persisted.push({ url, order });
-      }
+    const uploaded = await uploadLocalImages(localImages); 
+    uploaded.forEach((item, idx) => { 
+      const url = typeof item === 'string' ? item : item?.url; // por si algún día vuelve a llegar objeto 
+      if (!url) return; 
+      const order = localIndexes[idx] ?? (persisted.length + idx); 
+      persisted.push({ url, order }); 
     });
   }
 
