@@ -22,9 +22,10 @@ export default function GetStartedScreen() {
             <Image source={require('../../assets/LoadChair.png')} style={{ height: windowHeight, width: windowWidth, position: 'absolute' }} />
             <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
             <View>
-                <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
+                <TouchableOpacity onPress={() => null}>
                     <View className="flex-row justify-end pt-5 pr-6 opacity-50">
-                        <XMarkIcon size={30} color="#f2f2f2" strokeWidth={1.7} />
+                        {/* <XMarkIcon size={30} color="#f2f2f2" strokeWidth={1.7} /> */}
+                        <View className="w-6 h-[30px]"></View>
                     </View>
                 </TouchableOpacity>
                 <View className="items-center pt-3 ">
