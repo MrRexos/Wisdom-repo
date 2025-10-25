@@ -117,18 +117,14 @@ export default function NewPasswordScreen({ route }) {
     
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1  bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <KeyboardAwareScrollView style={{ flex: 1, width: '100%' }} enableOnAndroid={true} scrollEnabled={keyboardOpen} > 
+      <KeyboardAwareScrollView style={{ flex: 1, width: '100%' }} enableOnAndroid={true} scrollEnabled={keyboardOpen} showsVerticalScrollIndicator={false} > 
       <View className="px-5 py-3 w-full">
-        <View className="flex-row justify-between">
-          <View className="flex-1">
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
-          </TouchableOpacity>
-          </View>
-          <View className="items-center pt-3">
-            <WisdomLogo color = {colorScheme === 'dark' ? '#f2f2f2' : '#444343'} width={55} height={30} />
-          </View>
-          <View className="flex-1"></View>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
+        </TouchableOpacity>
+
+        <View className="items-center">
+          <WisdomLogo color = {colorScheme === 'dark' ? '#f2f2f2' : '#444343'} width={55} height={30} />
         </View>
 
         <Text className="font-inter-bold text-xl pt-4 text-center text-[#444343] dark:text-[#f2f2f2]">
@@ -205,7 +201,9 @@ export default function NewPasswordScreen({ route }) {
         ) : null}
 
       </View>
-        <View className="justify-center items-center pb-5 pt-10">
+        
+      </KeyboardAwareScrollView>
+      <View className="justify-center items-center pb-5 pt-10">
           <TouchableOpacity 
           disabled={confirmPassword.length < 1 || password.length < 1}
           onPress={nextPressed}
@@ -214,7 +212,6 @@ export default function NewPasswordScreen({ route }) {
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('safe_and_login')}</Text>
           </TouchableOpacity>
         </View>
-      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

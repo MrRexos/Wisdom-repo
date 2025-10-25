@@ -46,18 +46,14 @@ export default function ForgotPasswordScreen() {
       <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
           <View className="px-5 py-3  w-full">
-            <View className="flex-row justify-between">
-              <View className="flex-1">
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                  <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
-                </TouchableOpacity>
-              </View>
-              <View className="items-center pt-3">
-                <WisdomLogo color = {colorScheme === 'dark' ? '#f2f2f2' : '#444343'} width={55} height={30} />
-              </View>
-              <View className="flex-1">
-              </View>
-            </View>
+            
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
+          </TouchableOpacity>
+
+          <View className="items-center">
+            <WisdomLogo color = {colorScheme === 'dark' ? '#f2f2f2' : '#444343'} width={55} height={30} />
+          </View>
 
             <Text className="font-inter-bold text-xl pt-4 text-center text-[#444343] dark:text-[#f2f2f2]">
                 {t('restart_password')}
@@ -67,7 +63,7 @@ export default function ForgotPasswordScreen() {
                 {t('reset_link_instruction')}
               </Text>
             </View>
-            <Text className="font-inter-semibold text-[15px] pt-10 text-[#444343] dark:text-[#f2f2f2]">
+            <Text className="font-inter-semibold text-[15px] pt-12 text-[#444343] dark:text-[#f2f2f2]">
               {t('email_or_username')}
             </Text>
             
