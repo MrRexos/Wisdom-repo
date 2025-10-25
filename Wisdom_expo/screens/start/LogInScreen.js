@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Keyboard, StatusBar, Platform, Text, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Keyboard, StatusBar, Platform, Text, TouchableOpacity, TextInput, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
@@ -8,7 +8,6 @@ import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import EyeIcon from 'react-native-bootstrap-icons/icons/eye';
 import EyeSlashIcon from 'react-native-bootstrap-icons/icons/eye-slash';
 import WisdomLogo from '../../assets/wisdomLogo.tsx';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage.js';
 import { ensureSupportedLanguage } from '../../utils/language';
 import api, { setTokens } from '../../utils/api.js';
@@ -32,11 +31,6 @@ export default function LogInScreen() {
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
-  const [keyboardOpen, setKeyboardOpen] = useState(false);
-
-
-  
-
   const inputPasswordChanged = (newPassword) => {
     setPassword(newPassword);
     setShowError(false);
@@ -94,27 +88,11 @@ export default function LogInScreen() {
   };
   
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => setKeyboardOpen(true)
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => setKeyboardOpen(false)
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
-
   return (
-    
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1  bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <KeyboardAwareScrollView style={{ flex: 1, width: '100%' }} enableOnAndroid={true} scrollEnabled={keyboardOpen} > 
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
+      <View className="flex-1 w-full justify-between">
       <View className="px-5 py-3 w-full">
         <View className="flex-row justify-between">
           <View className="flex-1">
@@ -182,8 +160,9 @@ export default function LogInScreen() {
             ):null
         }
       </View>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="w-full">
         <View className="justify-center items-center pb-6 pt-7 w-full px-8">
-          <TouchableOpacity 
+          <TouchableOpacity
           disabled={password.length < 1 || userEmail.length < 1}
           onPress={nextPressed}
           style={{opacity: password.length < 1 || userEmail.length < 1 ? 0.5 : 1.0}}
@@ -191,7 +170,9 @@ export default function LogInScreen() {
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('next')}</Text>
           </TouchableOpacity>
         </View>
-      </KeyboardAwareScrollView>
+      </KeyboardAvoidingView>
+      </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }

@@ -12,6 +12,7 @@ import api from '../../utils/api';
 import { CheckCircleIcon, XCircleIcon } from 'react-native-heroicons/solid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SafeAreaView } from 'react-native-safe-area-context';
+import OnboardingProgressDots from '../../components/OnboardingProgressDots';
 
 export default function CreateProfileScreen() {
     const { colorScheme } = useColorScheme();
@@ -131,7 +132,7 @@ export default function CreateProfileScreen() {
             setShowError(true);
         } else {
             if (!usernameExists) {
-                navigation.navigate('NotificationAllow', { email, password, firstName, surname, username, image });
+                navigation.navigate('ChooseVersion', { email, password, firstName, surname, username, image });
             } else {
                 setErrorMessage(t('username_already_taken'));
                 setShowError(true);
@@ -160,6 +161,7 @@ export default function CreateProfileScreen() {
                             {t('add_profile_picture_and_username')}
                         </Text>
                     </View>
+                    <OnboardingProgressDots currentStep={3} totalSteps={5} />
                     <View className="mt-8 mb-1 h-[55px] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
                         <Text className="pl-4 pr-2 text-[15px] text-[#444343] dark:text-[#f2f2f2]">
                             @
@@ -196,7 +198,7 @@ export default function CreateProfileScreen() {
                             onPress={nextPressed}
                             style={{ opacity: username.length < 1 ? 0.5 : 1.0 }}
                             className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
-                            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">{t('create_account')}</Text>
+                            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">{t('next')}</Text>
                         </TouchableOpacity>
                     </View>
                 </KeyboardAvoidingView>

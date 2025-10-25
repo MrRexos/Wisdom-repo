@@ -8,6 +8,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
+import OnboardingProgressDots from '../../components/OnboardingProgressDots';
 
 
 export default function EnterNameScreen() {
@@ -64,6 +65,7 @@ export default function EnterNameScreen() {
             <Text className="font-inter-bold text-xl pt-11 text-[#444343] dark:text-[#f2f2f2]">
                 {t('enter_complete_name')}
             </Text>
+            <OnboardingProgressDots currentStep={2} totalSteps={5} />
             <View className="mt-7 h-[55px] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
                 <TextInput
                 placeholder={t('name_and_surname')}

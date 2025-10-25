@@ -26,6 +26,16 @@ export default function NotificationAllowScreen() {
     const route = useRoute();
     const [apiError, setApiError] = useState('');
 
+    const {
+      email = '',
+      password = '',
+      firstName = '',
+      surname = '',
+      username = '',
+      image = null,
+      isProfessional = false,
+    } = route.params || {};
+
     let user = {
         token: null,
         id: "", //FALTAAAA
@@ -47,8 +57,6 @@ export default function NotificationAllowScreen() {
         hobbies: null
     };
   
-    const {email, password, firstName, surname, username, image} = route.params;
-
     console.log(email, password, firstName, surname, username, image);
    
     
@@ -88,7 +96,8 @@ export default function NotificationAllowScreen() {
           surname: surname,
           language: i18n.language,
           allow_notis: allowNotis,
-          profile_picture: null
+          profile_picture: null,
+          is_professional: isProfessional ? 1 : 0,
         });
         console.log('User created:', response.data);
         return { 
@@ -141,6 +150,7 @@ export default function NotificationAllowScreen() {
         user.joined_datetime = new Date().toISOString();
         user.allow_notis = false;
         user.profile_picture = null;
+        user.is_professional = isProfessional;
     
         // Guarda tokens primero (para que /api/upload-image ya vaya autenticado) 
         await setTokens({ access: result.access, refresh: result.refresh }); 
@@ -177,6 +187,7 @@ export default function NotificationAllowScreen() {
       user.joined_datetime = new Date().toISOString();
       user.allow_notis = granted;
       user.profile_picture = null;
+      user.is_professional = isProfessional;
 
       await setTokens({ access: result.access, refresh: result.refresh }); 
       await storeDataLocally('user', JSON.stringify(user));
