@@ -7,6 +7,7 @@ import '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import OnboardingProgressDots from '../../components/OnboardingProgressDots';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 
 
@@ -61,6 +62,7 @@ export default function EnterNameScreen() {
             <TouchableOpacity onPress={() => navigation.goBack()}>
                 <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6"/>
             </TouchableOpacity>
+            <OnboardingProgressDots totalSteps={5} currentStep={3} style={{ marginTop: 8 }} />
             <Text className="font-inter-bold text-xl pt-11 text-[#444343] dark:text-[#f2f2f2]">
                 {t('enter_complete_name')}
             </Text>

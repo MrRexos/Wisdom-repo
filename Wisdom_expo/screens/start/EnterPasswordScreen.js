@@ -8,6 +8,7 @@ import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import EyeIcon from 'react-native-bootstrap-icons/icons/eye';
 import EyeSlashIcon from 'react-native-bootstrap-icons/icons/eye-slash';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import OnboardingProgressDots from '../../components/OnboardingProgressDots';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 
 export default function EnterPasswordScreen() {
@@ -49,6 +50,7 @@ export default function EnterPasswordScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
         </TouchableOpacity>
+        <OnboardingProgressDots totalSteps={5} currentStep={2} style={{ marginTop: 8 }} />
         <Text className="font-inter-bold text-xl pt-11 text-[#444343] dark:text-[#f2f2f2]">
           {t('set_a_password')}
         </Text>

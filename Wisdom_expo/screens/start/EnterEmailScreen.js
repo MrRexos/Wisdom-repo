@@ -9,6 +9,7 @@ import {ChevronLeftIcon} from 'react-native-heroicons/outline';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import OnboardingProgressDots from '../../components/OnboardingProgressDots';
 
 
 
@@ -72,6 +73,7 @@ export default function EnterEmailScreen() {
             <TouchableOpacity onPress={() => navigation.goBack()}>
                 <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6"/>
             </TouchableOpacity>
+            <OnboardingProgressDots totalSteps={5} currentStep={1} style={{ marginTop: 8 }} />
             <Text className="font-inter-bold text-xl pt-11 text-[#444343] dark:text-[#f2f2f2]">
                 {t('enter_your_email')}
             </Text>

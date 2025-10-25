@@ -47,7 +47,7 @@ export default function NotificationAllowScreen() {
         hobbies: null
     };
   
-    const {email, password, firstName, surname, username, image} = route.params;
+    const {email, password, firstName, surname, username, image, isProfessional = false} = route.params;
 
     console.log(email, password, firstName, surname, username, image);
    
@@ -88,7 +88,8 @@ export default function NotificationAllowScreen() {
           surname: surname,
           language: i18n.language,
           allow_notis: allowNotis,
-          profile_picture: null
+          profile_picture: null,
+          is_professional: isProfessional ? 1 : 0,
         });
         console.log('User created:', response.data);
         return { 
@@ -135,6 +136,7 @@ export default function NotificationAllowScreen() {
         user.first_name = firstName;
         user.surname = surname;
         user.username = username;
+        user.is_professional = isProfessional;
         const resolvedLanguage = ensureSupportedLanguage(i18n.language);
         user.language = resolvedLanguage;
         user.selectedLanguage = resolvedLanguage;
@@ -171,6 +173,7 @@ export default function NotificationAllowScreen() {
       user.first_name = firstName;
       user.surname = surname;
       user.username = username;
+      user.is_professional = isProfessional;
       const resolvedLanguage = ensureSupportedLanguage(i18n.language);
       user.language =  resolvedLanguage;
       user.selectedLanguage = resolvedLanguage;

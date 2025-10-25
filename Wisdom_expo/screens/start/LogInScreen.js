@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Keyboard, StatusBar, Platform, Text, TouchableOpacity, TextInput, KeyboardAvoidingView } from 'react-native';
+import { View, Keyboard, StatusBar, Platform, Text, TouchableOpacity, TextInput, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
@@ -111,87 +111,99 @@ export default function LogInScreen() {
   }, []);
 
   return (
-    
+
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1  bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <KeyboardAwareScrollView style={{ flex: 1, width: '100%' }} enableOnAndroid={true} scrollEnabled={keyboardOpen} > 
-      <View className="px-5 py-3 w-full">
-        <View className="flex-row justify-between">
-          <View className="flex-1">
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
-            </TouchableOpacity>
-          </View>
-          <View className="items-center pt-3">
-            <WisdomLogo color = {colorScheme === 'dark' ? '#f2f2f2' : '#444343'} width={55} height={30} />
-          </View>
-          <View className="flex-1"></View>
-        </View>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
+        <View className="flex-1 w-full">
+          <KeyboardAwareScrollView
+            style={{ flex: 1, width: '100%' }}
+            contentContainerStyle={{ flexGrow: 1 }}
+            enableOnAndroid={true}
+            scrollEnabled={keyboardOpen}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View className="px-5 py-3 w-full flex-1">
+              <View className="flex-row justify-between">
+                <View className="flex-1">
+                  <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <ChevronLeftIcon size={26} color={iconColor} strokeWidth={1.7} className="p-6" />
+                  </TouchableOpacity>
+                </View>
+                <View className="items-center pt-3">
+                  <WisdomLogo color = {colorScheme === 'dark' ? '#f2f2f2' : '#444343'} width={55} height={30} />
+                </View>
+                <View className="flex-1" />
+              </View>
 
-        <Text className="font-inter-bold text-xl pt-4 text-center text-[#444343] dark:text-[#f2f2f2]">
-            {t('welcome_back')}
-        </Text>
-        <Text className="font-inter-semibold text-[15px] pt-10 text-[#444343] dark:text-[#f2f2f2]">
-          {t('email_or_username')}
-        </Text>
-        
-        <View className="mt-3 h-[55px] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
-            <TextInput
-            placeholder={t('email_or_username')}
-            autoFocus={true} 
-            selectionColor={cursorColorChange} 
-            placeholderTextColor={placeHolderTextColorChange} 
-            onChangeText={inputuserChanged}
-            value={userEmail}
-            onSubmitEditing={nextPressed}
-            keyboardType="email-address"
-            keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-            className="px-4 h-11  w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
+              <Text className="font-inter-bold text-xl pt-4 text-center text-[#444343] dark:text-[#f2f2f2]">
+                  {t('welcome_back')}
+              </Text>
+              <Text className="font-inter-semibold text-[15px] pt-10 text-[#444343] dark:text-[#f2f2f2]">
+                {t('email_or_username')}
+              </Text>
+
+              <View className="mt-3 h-[55px] flex-row justify-start items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+                  <TextInput
+                  placeholder={t('email_or_username')}
+                  autoFocus={true}
+                  selectionColor={cursorColorChange}
+                  placeholderTextColor={placeHolderTextColorChange}
+                  onChangeText={inputuserChanged}
+                  value={userEmail}
+                  onSubmitEditing={nextPressed}
+                  keyboardType="email-address"
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="px-4 h-11  w-full text-[15px] text-[#444343] dark:text-[#f2f2f2]"/>
+              </View>
+              <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">
+                {t('password')}
+              </Text>
+              <View className="mt-3 px-5 h-[55px] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
+                <TextInput
+                  placeholder={t('password')}
+                  autoFocus={false}
+                  selectionColor={cursorColorChange}
+                  placeholderTextColor={placeHolderTextColorChange}
+                  secureTextEntry={isSecure} // Controla la visibilidad del texto
+                  onChangeText={inputPasswordChanged}
+                  value={password}
+                  onSubmitEditing={nextPressed}
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="h-11  w-full text-[15px] flex-1 text-[#444343] dark:text-[#f2f2f2]"
+                />
+                <TouchableOpacity onPress={() => setIsSecure(!isSecure)}>
+                  {isSecure ? (
+                    <EyeSlashIcon size={20} color={placeHolderTextColorChange} style={{ marginLeft: 10, transform: [{ scale: 1.15 }] }} />
+                  ) : (
+                    <EyeIcon size={20} color={placeHolderTextColorChange} style={{ marginLeft: 10, transform: [{ scale: 1.15 }] }} />
+                  )}
+                </TouchableOpacity>
+
+              </View>
+              <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+                <Text style={{color:placeHolderTextColorChange}} className="text-right text-[13px] mt-2">{t('forgot_password_question')}</Text>
+              </TouchableOpacity>
+              {
+                  showError? (
+                      <Text className="text-[#ff633e] text-[13px] pt-3">{errorMessage}</Text>
+                  ):null
+              }
+            </View>
+          </KeyboardAwareScrollView>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="w-full">
+            <View className="justify-center items-center pb-6 pt-7 w-full px-8">
+              <TouchableOpacity
+              disabled={password.length < 1 || userEmail.length < 1}
+              onPress={nextPressed}
+              style={{opacity: password.length < 1 || userEmail.length < 1 ? 0.5 : 1.0}}
+              className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center">
+                <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('next')}</Text>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
         </View>
-        <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">
-          {t('password')}
-        </Text>
-        <View className="mt-3 px-5 h-[55px] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#B6B5B5]/20">
-          <TextInput
-            placeholder={t('password')}
-            autoFocus={false}
-            selectionColor={cursorColorChange}
-            placeholderTextColor={placeHolderTextColorChange}
-            secureTextEntry={isSecure} // Controla la visibilidad del texto
-            onChangeText={inputPasswordChanged}
-            value={password}
-            onSubmitEditing={nextPressed}
-            keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-            className="h-11  w-full text-[15px] flex-1 text-[#444343] dark:text-[#f2f2f2]"
-          />
-          <TouchableOpacity onPress={() => setIsSecure(!isSecure)}>
-            {isSecure ? (
-              <EyeSlashIcon size={20} color={placeHolderTextColorChange} style={{ marginLeft: 10, transform: [{ scale: 1.15 }] }} />
-            ) : (
-              <EyeIcon size={20} color={placeHolderTextColorChange} style={{ marginLeft: 10, transform: [{ scale: 1.15 }] }} />
-            )}
-          </TouchableOpacity>
-          
-        </View>
-        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-          <Text style={{color:placeHolderTextColorChange}} className="text-right text-[13px] mt-2">{t('forgot_password_question')}</Text>
-        </TouchableOpacity>
-        {
-            showError? (
-                <Text className="text-[#ff633e] text-[13px] pt-3">{errorMessage}</Text>
-            ):null
-        }
-      </View>
-        <View className="justify-center items-center pb-6 pt-7 w-full px-8">
-          <TouchableOpacity 
-          disabled={password.length < 1 || userEmail.length < 1}
-          onPress={nextPressed}
-          style={{opacity: password.length < 1 || userEmail.length < 1 ? 0.5 : 1.0}}
-          className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center">
-            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('next')}</Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAwareScrollView>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }
