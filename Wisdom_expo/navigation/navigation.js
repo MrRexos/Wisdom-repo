@@ -37,6 +37,7 @@ import EnterEmailScreen from '../screens/start/EnterEmailScreen';
 import EnterPasswordScreen from '../screens/start/EnterPasswordScreen';
 import EnterNameScreen from '../screens/start/EnterNameScreen';
 import CreateProfileScreen from '../screens/start/CreateProfileScreen';
+import ChooseVersionScreen from '../screens/start/ChooseVersionScreen';
 import ForgotPasswordScreen from '../screens/start/ForgotPasswordScreen';
 import HomeScreen from '../screens/home/HomeScreen';
 import NotificationAllowScreen from '../screens/start/NotificationAllowScreen';
@@ -147,6 +148,7 @@ export default function Navigation() {
         <Stack.Screen name="EnterPassword" component={EnterPasswordScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="EnterName" component={EnterNameScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="CreateProfile" component={CreateProfileScreen} options={{ animation: 'none', gestureEnabled: false }} />
+        <Stack.Screen name="ChooseVersion" component={ChooseVersionScreen} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         <Stack.Screen name="HomeScreen" component={TabNavigator} options={{ animation: 'none', gestureEnabled: false }} />
         <Stack.Screen name="NotificationAllow" component={NotificationAllowScreen} options={{ animation: 'none', gestureEnabled: false }} />
