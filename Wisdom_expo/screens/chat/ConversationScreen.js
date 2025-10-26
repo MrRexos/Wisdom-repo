@@ -467,51 +467,73 @@ export default function ConversationScreen() {
 
     if (item.type === 'image') {
       const imgIndex = imageMessages.findIndex((img) => img.id === item.id);
+    
+      const handleLongPress = () => {
+        setSelectedMsg(item);
+        setTimeout(() => msgSheet.current.open(), 0);
+      };
+    
       const content = (
-        <View
-          className={`${item.replyTo
-            ? `${bubbleBase} ${fromMeStyles}`
-            : `py-1 flex-row items-end ${item.fromMe ? 'self-end' : 'self-start'}`
-            }`}
+        // ⬇️ El contenedor SOLO maneja long-press (no onPress)
+        <Pressable
+          onLongPress={handleLongPress}
+          // no pongas onPress aquí
         >
-          {item.replyTo && (
-            <View className="border-l-2 border-[#3695FF] pl-2 mb-1">
-              <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]">
-                {item.replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
-              </Text>
-              <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {item.replyTo.type === 'text'
-                  ? item.replyTo.text
-                  : item.replyTo.type === 'image'
-                    ? t('image')
-                    : t('file')}
-              </Text>
-            </View>
-          )}
-          <Image source={{ uri: item.uri }} className="w-40 h-[200px] rounded-xl" />
-        </View>
+          <View
+            className={`${item.replyTo
+              ? `${bubbleBase} ${fromMeStyles}`
+              : `py-1 flex-row items-end ${item.fromMe ? 'self-end' : 'self-start'}`
+              }`}
+          >
+            {item.replyTo && (
+              <View className="border-l-2 border-[#3695FF] pl-2 mb-1">
+                <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]">
+                  {item.replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
+                </Text>
+                <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
+                  {item.replyTo.type === 'text'
+                    ? item.replyTo.text
+                    : item.replyTo.type === 'image'
+                      ? t('image')
+                      : t('file')}
+                </Text>
+              </View>
+            )}
+    
+            {/* ⬇️ ESTE es el único Pressable con onPress para abrir el visor */}
+            <Pressable
+              onPress={() =>
+                navigation.navigate('ChatImageViewer', { images: imageMessages, index: imgIndex })
+              }
+              onLongPress={handleLongPress}     // también permite long-press sobre la imagen
+              hitSlop={6}                       // toque un pelín fuera del borde
+              style={{ alignSelf: 'flex-start' }} // asegura que no se estire de ancho
+            >
+              <Image source={{ uri: item.uri }} className="w-40 h-[200px] rounded-xl" />
+            </Pressable>
+          </View>
+        </Pressable>
       );
+    
       return (
         <Swipeable
-          ref={(ref) => {
-            swipeRefs.current[item.id] = ref;
-          }}
-          renderLeftActions={LeftStub}
-          renderRightActions={RightStub}
+          ref={(ref) => { swipeRefs.current[item.id] = ref; }}
+          renderLeftActions={() => <View style={{ width: 64 }} />}
+          renderRightActions={() => <View style={{ width: 64 }} />}
           friction={1.5}
           activeOffsetX={[-10, 10]}
-          onSwipeableOpen={onSwipeOpen}
+          onSwipeableOpen={(dir) => {
+            if (dir === 'left' || dir === 'right') {
+              swipeRefs.current[item.id]?.close();
+              setReplyTo(item);
+            }
+          }}
         >
-          <Pressable
-            onPress={() => navigation.navigate('ChatImageViewer', { images: imageMessages, index: imgIndex })}
-            onLongPress={() => {
-              setSelectedMsg(item);
-              setTimeout(() => msgSheet.current.open(), 0);
-            }}
-          >
+          {/* ⬇️ El tiempo/estado queda FUERA de cualquier onPress */}
+          <View>
             {content}
-            {tail && renderStatusTime()}
-          </Pressable>
+            {item._isTail && renderStatusTime()}
+          </View>
         </Swipeable>
       );
     }
@@ -673,9 +695,8 @@ export default function ConversationScreen() {
               shouldMaintainPosition ? { minIndexForVisible: 0, autoscrollToTopThreshold: 20 } : undefined
             }
             showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            onLayout={undefined}
-            onContentSizeChange={undefined}
+            keyboardShouldPersistTaps="never"   // mantiene interacciones útiles
+            keyboardDismissMode="none"         // al arrastrar, cierra teclado
             ListFooterComponent={<View style={{ height: 4 }} />}
             initialNumToRender={20}
             windowSize={10}
@@ -712,7 +733,7 @@ export default function ConversationScreen() {
           </TouchableOpacity>
 
           {/* Campo de texto + botón send */}
-          <View className="flex-1 flex-row items-center bg-[#e0e0e0] dark:bg-[#3d3d3d] rounded-full pl-4 pr-2 ">
+          <View className="flex-1 flex-row items-center bg-[#e0e0e0] dark:bg-[#3d3d3d] rounded-[25px] pl-4 pr-2 ">
             {attachment && (
               <View className="relative mr-2">
                 {attachment.type === 'image' ? (
@@ -735,13 +756,13 @@ export default function ConversationScreen() {
             <View className="flex-1 justify-center">
               <TextInput
                 ref={inputRef}
-                className="my-2 mr-2 font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc] "
+                className="py-2 pr-2 font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]"
                 placeholder={t('your_message')}
                 placeholderTextColor="#979797"
                 multiline={true}
                 value={text}
                 onChangeText={setText}
-                editable={!isSending}
+                editable={!isUploading}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                 style={{ paddingVertical: 0 }}
                 textAlignVertical="center"
@@ -777,9 +798,10 @@ export default function ConversationScreen() {
       {/* Sheets */}
       <RBSheet
         ref={attachSheet}
-        height={160}
+        height={180}
         openDuration={200}
         closeDuration={200}
+        draggable={true}
         customStyles={{
           container: {
             borderTopRightRadius: 25,
@@ -789,16 +811,16 @@ export default function ConversationScreen() {
           draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
         }}
       >
-        <View className="py-4 px-7 gap-y-4">
+        <View className="pb-5 pt-2 px-7 gap-y-4">
           <TouchableOpacity onPress={handleImagePick} className="py-2 flex-row justify-start items-center ">
             <ImageIcon height={24} width={24} color={iconColor} strokeWidth={2} />
-            <Text className=" ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">
+            <Text className=" ml-6 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">
               {t('choose_image')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleFilePick} className="py-1 flex-row justify-start items-center">
             <Folder height={24} width={24} color={iconColor} strokeWidth={2} />
-            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">
+            <Text className="ml-6 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">
               {t('choose_file')}
             </Text>
           </TouchableOpacity>
@@ -807,9 +829,10 @@ export default function ConversationScreen() {
 
       <RBSheet
         ref={msgSheet}
-        height={selectedMsg?.fromMe ? 260 : 160}
+        height={selectedMsg?.fromMe ? 270 : 170}
         openDuration={200}
         closeDuration={200}
+        draggable={true}
         customStyles={{
           container: {
             borderTopRightRadius: 25,
@@ -819,27 +842,27 @@ export default function ConversationScreen() {
           draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
         }}
       >
-        <View className="pt-7 pb-4 px-7 ">
+        <View className="pt-3 py-5 px-7 ">      
+          <TouchableOpacity onPress={handleReplyMessage} className="pb-6 flex-row justify-start items-center ">
+            <CornerUpLeft height={23} width={23} color={iconColor} strokeWidth={2} />
+            <Text className="ml-6 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('reply')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleCopyMessage} className="pt-1 pb-6 flex-row justify-start items-center ">
+            <DocumentDuplicateIcon height={23} width={23} color={iconColor} strokeWidth={2} />
+            <Text className="ml-6 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('copy')}</Text>
+          </TouchableOpacity>
           {selectedMsg?.fromMe && (
             <>
-              <TouchableOpacity onPress={handleDeleteMessage} className="pb-6 flex-row justify-start items-center ">
-                <Trash2 height={23} width={23} color={"#FF633E"} strokeWidth={2} />
-                <Text className="ml-3 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_message')}</Text>
-              </TouchableOpacity>
               <TouchableOpacity onPress={handleEditMessage} className="pt-1 pb-6 flex-row justify-start items-center ">
                 <Edit2 height={23} width={23} color={iconColor} strokeWidth={2} />
-                <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit')}</Text>
+                <Text className="ml-6 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('edit')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleDeleteMessage} className="pt-1 pb-6 flex-row justify-start items-center ">
+                <Trash2 height={23} width={23} color={"#FF633E"} strokeWidth={2} />
+                <Text className="ml-6 text-[16px] font-inter-medium text-[#FF633E]">{t('delete_message')}</Text>
               </TouchableOpacity>
             </>
           )}
-          <TouchableOpacity onPress={handleReplyMessage} className="pt-1 pb-6 flex-row justify-start items-center ">
-            <CornerUpLeft height={23} width={23} color={iconColor} strokeWidth={2} />
-            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('reply')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleCopyMessage} className="py-1 flex-row justify-start items-center ">
-            <DocumentDuplicateIcon height={23} width={23} color={iconColor} strokeWidth={2} />
-            <Text className="ml-3 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">{t('copy')}</Text>
-          </TouchableOpacity>
         </View>
       </RBSheet>
 
