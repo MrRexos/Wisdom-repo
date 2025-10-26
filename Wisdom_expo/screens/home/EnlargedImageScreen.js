@@ -1,12 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import { View, StatusBar, Platform, TouchableOpacity, Text } from 'react-native';
+import { View, Platform, TouchableOpacity, Text, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import { StatusBar } from 'expo-status-bar';
 
 export default function EnlargedImageScreen() {
   const { colorScheme } = useColorScheme();
@@ -15,39 +16,82 @@ export default function EnlargedImageScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const { images, index } = route.params;
-  const [currentIndex, setCurrentIndex] = useState(index);
+  const insets = useSafeAreaInsets();
 
-  const viewerImages = useMemo(() => images.map((img) => ({ url: img.image_url })), [images]);
+  const [currentIndex, setCurrentIndex] = useState(index ?? 0);
+
+  const viewerImages = useMemo(
+    () => (images ?? []).map((img) => ({ url: img.image_url })),
+    [images]
+  );
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc' }}>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <View style={{ flex: 1 }}>
-        
+
+      {/* Header fuera del viewer */}
+      <View
+        style={{
+          paddingHorizontal: 24,
+          paddingTop: 24,
+          paddingBottom: 12,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+        }}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={10}>
+          <ChevronLeftIcon size={24} strokeWidth={1.9} color={iconColor} />
+        </TouchableOpacity>
+
+        <Text className="font-inter-semibold text-[16px]" style={{ color: iconColor }}>
+          {t('gallery')}
+        </Text>
+
+        <Text className="font-inter-medium text-[14px]" style={{ color: iconColor }}>
+          {currentIndex + 1}/{images?.length ?? 0}
+        </Text>
+      </View>
+
+      {/* Viewer: margen lateral + centrado vertical + bordes redondeados */}
+      <View style={{ flex: 1, paddingHorizontal: 20 }}>
         <ImageViewer
+          key={`viewer-${index}-${viewerImages.length}`} // fuerza remount si cambia el índice
           imageUrls={viewerImages}
-          index={index}
+          index={index ?? 0}
           backgroundColor={colorScheme === 'dark' ? '#323131' : '#fcfcfc'}
           saveToLocalByLongPress={false}
           enableSwipeDown={false}
-          onChange={(newIndex) => {
-            if (typeof newIndex === 'number') {
-              setCurrentIndex(newIndex);
-            }
-          }}
           renderIndicator={() => null}
-          
-          renderHeader={() => (
-            <View style={{ paddingHorizontal: 24, paddingTop: 24, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomLeftRadius: 100, borderBottomRightRadius: 28, backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc' }}>
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <ChevronLeftIcon size={24} strokeWidth={1.9} color={iconColor} />
-              </TouchableOpacity>
-              <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">
-                {t('gallery')}
-              </Text>
-              <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">
-                {currentIndex + 1}/{images.length}
-              </Text>
+          onChange={(newIndex) => {
+            if (typeof newIndex === 'number') setCurrentIndex(newIndex);
+          }}
+          renderImage={(props) => (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <View
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: 20,      // esquinas redondeadas
+                  overflow: 'hidden',    // recorte al radio
+                  backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+                }}
+              >
+                <Image
+                  {...props}
+                  style={[
+                    props.style,
+                    { width: '100%', height: '100%', resizeMode: 'contain' },
+                  ]}
+                />
+              </View>
             </View>
           )}
         />
