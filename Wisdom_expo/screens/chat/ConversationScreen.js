@@ -427,6 +427,8 @@ export default function ConversationScreen() {
     const tail = item._isTail;
     const LeftStub = () => <View style={{ width: 64 }} />;
     const RightStub = () => <View style={{ width: 64 }} />; // ▶️ ahora también muestra zona a la derecha
+    const wrapperAlignment = item.fromMe ? 'items-end' : 'items-start';
+    const swipeableAlignStyle = item.fromMe ? { alignSelf: 'flex-end' } : { alignSelf: 'flex-start' };
 
     const common = item.fromMe
       ? 'self-end bg-[#FCFCFC] dark:bg-[#706f6e]'
@@ -492,27 +494,32 @@ export default function ConversationScreen() {
         </View>
       );
       return (
-        <Swipeable
-          ref={(ref) => {
-            swipeRefs.current[item.id] = ref;
-          }}
-          renderLeftActions={LeftStub}
-          renderRightActions={RightStub}
-          friction={1.5}
-          activeOffsetX={[-10, 10]}
-          onSwipeableOpen={onSwipeOpen}
-        >
-          <Pressable
-            onPress={() => navigation.navigate('ChatImageViewer', { images: imageMessages, index: imgIndex })}
-            onLongPress={() => {
-              setSelectedMsg(item);
-              setTimeout(() => msgSheet.current.open(), 0);
+        <View pointerEvents="box-none" className={`w-full py-1 ${wrapperAlignment}`}>
+          <Swipeable
+            ref={(ref) => {
+              swipeRefs.current[item.id] = ref;
             }}
+            renderLeftActions={LeftStub}
+            renderRightActions={RightStub}
+            friction={1.5}
+            activeOffsetX={[-10, 10]}
+            onSwipeableOpen={onSwipeOpen}
+            containerStyle={[{ flex: 0 }, swipeableAlignStyle]}
+            childrenContainerStyle={{ flex: 0 }}
           >
-            {content}
-            {tail && renderStatusTime()}
-          </Pressable>
-        </Swipeable>
+            <Pressable
+              onPress={() => navigation.navigate('ChatImageViewer', { images: imageMessages, index: imgIndex })}
+              onLongPress={() => {
+                setSelectedMsg(item);
+                setTimeout(() => msgSheet.current.open(), 0);
+              }}
+              style={swipeableAlignStyle}
+            >
+              {content}
+              {tail && renderStatusTime()}
+            </Pressable>
+          </Swipeable>
+        </View>
       );
     }
 
@@ -549,26 +556,31 @@ export default function ConversationScreen() {
         </View>
       );
       return (
-        <Swipeable
-          ref={(ref) => {
-            swipeRefs.current[item.id] = ref;
-          }}
-          renderLeftActions={LeftStub}
-          renderRightActions={RightStub}
-          friction={1.5}
-          activeOffsetX={[-10, 10]}
-          onSwipeableOpen={onSwipeOpen}
-        >
-          <Pressable
-            onLongPress={() => {
-              setSelectedMsg(item);
-              setTimeout(() => msgSheet.current.open(), 0);
+        <View pointerEvents="box-none" className={`w-full py-1 ${wrapperAlignment}`}>
+          <Swipeable
+            ref={(ref) => {
+              swipeRefs.current[item.id] = ref;
             }}
+            renderLeftActions={LeftStub}
+            renderRightActions={RightStub}
+            friction={1.5}
+            activeOffsetX={[-10, 10]}
+            onSwipeableOpen={onSwipeOpen}
+            containerStyle={[{ flex: 0 }, swipeableAlignStyle]}
+            childrenContainerStyle={{ flex: 0 }}
           >
-            {content}
-            {tail && renderStatusTime()}
-          </Pressable>
-        </Swipeable>
+            <Pressable
+              onLongPress={() => {
+                setSelectedMsg(item);
+                setTimeout(() => msgSheet.current.open(), 0);
+              }}
+              style={swipeableAlignStyle}
+            >
+              {content}
+              {tail && renderStatusTime()}
+            </Pressable>
+          </Swipeable>
+        </View>
       );
     }
 
@@ -597,26 +609,31 @@ export default function ConversationScreen() {
     );
 
     return (
-      <Swipeable
-        ref={(ref) => {
-          swipeRefs.current[item.id] = ref;
-        }}
-        renderLeftActions={LeftStub}
-        renderRightActions={RightStub}
-        friction={1.5}
-        activeOffsetX={[-10, 10]}
-        onSwipeableOpen={onSwipeOpen}
-      >
-        <Pressable
-          onLongPress={() => {
-            setSelectedMsg(item);
-            setTimeout(() => msgSheet.current.open(), 0);
+      <View pointerEvents="box-none" className={`w-full py-1 ${wrapperAlignment}`}>
+        <Swipeable
+          ref={(ref) => {
+            swipeRefs.current[item.id] = ref;
           }}
+          renderLeftActions={LeftStub}
+          renderRightActions={RightStub}
+          friction={1.5}
+          activeOffsetX={[-10, 10]}
+          onSwipeableOpen={onSwipeOpen}
+          containerStyle={[{ flex: 0 }, swipeableAlignStyle]}
+          childrenContainerStyle={{ flex: 0 }}
         >
-          {content}
-          {tail && renderStatusTime()}
-        </Pressable>
-      </Swipeable>
+          <Pressable
+            onLongPress={() => {
+              setSelectedMsg(item);
+              setTimeout(() => msgSheet.current.open(), 0);
+            }}
+            style={swipeableAlignStyle}
+          >
+            {content}
+            {tail && renderStatusTime()}
+          </Pressable>
+        </Swipeable>
+      </View>
     );
   };
 
@@ -624,8 +641,8 @@ export default function ConversationScreen() {
   // • MAIN UI
   // ---------------------------------------------------------------------------
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}> 
-    <View className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]">
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]">
       <SafeAreaView className="bg-[#fcfcfc] dark:bg-[#202020] rounded-b-[30px]">
         <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
 
@@ -741,7 +758,7 @@ export default function ConversationScreen() {
                 multiline={true}
                 value={text}
                 onChangeText={setText}
-                editable={!isSending}
+                editable={!isUploading}
                 keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
                 style={{ paddingVertical: 0 }}
                 textAlignVertical="center"
@@ -872,7 +889,7 @@ export default function ConversationScreen() {
           </TouchableOpacity>
         </View>
       </RBSheet>
-    </View>
+      </View>
     </TouchableWithoutFeedback>
   );
 }
