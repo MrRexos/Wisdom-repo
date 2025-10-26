@@ -1,7 +1,6 @@
 
 import React, {useState} from 'react';
 import {View, StatusBar, Platform, Text, Alert, TouchableOpacity, ScrollView} from 'react-native';
-import * as Notifications from 'expo-notifications';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -14,6 +13,11 @@ import NotificationAskWhite from '../../assets/NotificationAskWhite.svg';
 import NotificationAskDark from '../../assets/NotificationAskDark.svg';
 import api, { setTokens } from '../../utils/api.js';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  EXPO_GO_PUSH_UNAVAILABLE_MESSAGE,
+  isPushNotificationsSupported,
+  requestPermissionsAsync as requestNotificationPermissionsAsync,
+} from '../../utils/notifications';
 
 
 
@@ -174,7 +178,11 @@ export default function NotificationAllowScreen() {
     };
 
     const allowPressed = async () =>{
-      const { status } = await Notifications.requestPermissionsAsync();
+      if (!isPushNotificationsSupported()) {
+        Alert.alert('Push notifications unavailable', EXPO_GO_PUSH_UNAVAILABLE_MESSAGE);
+      }
+
+      const { status } = await requestNotificationPermissionsAsync();
       const granted = status === 'granted';
       const result = await createUser(granted);
       if (!result) return;

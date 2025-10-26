@@ -11,7 +11,12 @@ import api, { getTokens, clearTokens } from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import eventEmitter from '../../utils/eventEmitter';
 import Message from '../../components/Message';
-import * as Notifications from 'expo-notifications';
+import {
+  EXPO_GO_PUSH_UNAVAILABLE_MESSAGE,
+  getPermissionsAsync as getNotificationPermissionsAsync,
+  isPushNotificationsSupported,
+  requestPermissionsAsync as requestNotificationPermissionsAsync,
+} from '../../utils/notifications';
 
 
 import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram, Link } from "react-native-feather";
@@ -164,7 +169,14 @@ export default function SettingsScreen() {
   // Sincroniza con el permiso real del SO (llamar al entrar en Settings o al volver a la app)
   const syncAllowNotisFromOS = async () => {
     try {
-      const { status } = await Notifications.getPermissionsAsync();
+      if (!isPushNotificationsSupported()) {
+        setAllowNotis(false);
+        setForm(prev => ({ ...prev, notifications: false }));
+        setAllowNotisReady(true);
+        return;
+      }
+
+      const { status } = await getNotificationPermissionsAsync();
       const deviceEnabled = status === 'granted';
 
       const userData = await getDataLocally('user');
@@ -212,11 +224,18 @@ export default function SettingsScreen() {
   const handleToggleAllowNotis = async (value) => {
     try {
       if (value) {
-        const { status } = await Notifications.getPermissionsAsync();
+        if (!isPushNotificationsSupported()) {
+          Alert.alert('Push notifications unavailable', EXPO_GO_PUSH_UNAVAILABLE_MESSAGE);
+          setAllowNotis(false);
+          setForm(prev => ({ ...prev, notifications: false }));
+          return;
+        }
+
+        const { status } = await getNotificationPermissionsAsync();
         let finalStatus = status;
 
         if (status !== 'granted') {
-          const req = await Notifications.requestPermissionsAsync();
+          const req = await requestNotificationPermissionsAsync();
           finalStatus = req.status;
         }
 
