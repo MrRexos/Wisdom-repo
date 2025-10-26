@@ -253,11 +253,15 @@ export default function ConversationScreen() {
   // • ACTIONS
   // ---------------------------------------------------------------------------
   const handleSend = async () => {
-    if (isSending) return; 
+    if (isSending) return;
 
     const trimmed = text.trim();
+    const hasAttachment = !!attachment;
+    const hasText = !!trimmed;
 
-    if (!attachment && trimmed && containsContactInfo(trimmed)) {
+    if (!hasAttachment && !hasText) return;
+
+    if (hasText && containsContactInfo(trimmed)) {
       Alert.alert(t('contact_not_allowed'));
       if (currentUser?.is_professional) {
         try {
@@ -271,81 +275,84 @@ export default function ConversationScreen() {
 
     const replyData = replyTo
       ? (() => {
-        const base = { id: replyTo.id, type: replyTo.type, senderId: replyTo.senderId };
-        if (replyTo.text) base.text = replyTo.text;
-        return base;
-      })()
+          const base = { id: replyTo.id, type: replyTo.type, senderId: replyTo.senderId };
+          if (replyTo.text) base.text = replyTo.text;
+          return base;
+        })()
       : null;
 
-      try {
-        if (attachment) {
-          setIsSending(true);
-          setIsUploading(true); // 🔹 spinner solo para adjuntos
-    
-          const filePath = `chat/${conversationId}/${Date.now()}_${attachment.name}`;
-          const url = await uploadFile(attachment.uri, filePath, attachment.type);
-    
-          await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
-            senderId: userId,
-            type: attachment.type.startsWith('image') ? 'image' : 'file',
-            uri: url,
-            name: attachment.name,
-            createdAt: serverTimestamp(),
-            replyTo: replyData,
-            read: false,
-          });
-    
-          await updateDoc(doc(db, 'conversations', conversationId), {
+    const currentAttachment = attachment;
+
+    try {
+      setIsSending(true);
+
+      if (hasAttachment && currentAttachment) {
+        setIsUploading(true); // 🔹 spinner solo para adjuntos
+
+        const filePath = `chat/${conversationId}/${Date.now()}_${currentAttachment.name}`;
+        const url = await uploadFile(currentAttachment.uri, filePath, currentAttachment.type);
+
+        const isImage = currentAttachment.type.startsWith('image');
+
+        await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
+          senderId: userId,
+          type: isImage ? 'image' : 'file',
+          uri: url,
+          name: currentAttachment.name,
+          createdAt: serverTimestamp(),
+          replyTo: replyData,
+          read: false,
+        });
+
+        await updateDoc(doc(db, 'conversations', conversationId), {
+          participants,
+          name,
+          lastMessage: isImage ? t('image') : t('file'),
+          updatedAt: serverTimestamp(),
+          lastMessageSenderId: userId,
+          readBy: arrayUnion(userId),
+        });
+
+        setAttachment(null);
+      }
+
+      if (hasText) {
+        const newMsg = {
+          senderId: userId,
+          type: 'text',
+          text: trimmed,
+          createdAt: serverTimestamp(),
+          replyTo: replyData,
+          read: false,
+        };
+        await addDoc(collection(db, 'conversations', conversationId, 'messages'), newMsg);
+        await setDoc(
+          doc(db, 'conversations', conversationId),
+          {
             participants,
             name,
-            lastMessage: attachment.type.startsWith('image') ? t('image') : t('file'),
+            lastMessage: trimmed,
             updatedAt: serverTimestamp(),
             lastMessageSenderId: userId,
-            readBy: arrayUnion(userId),
-          });
-    
-          setAttachment(null);
-        } else if (trimmed) {
-          setIsSending(true); // 🔒 evita spam de taps en texto, pero sin spinner
-          const newMsg = {
-            senderId: userId,
-            type: 'text',
-            text: trimmed,
-            createdAt: serverTimestamp(),
-            replyTo: replyData,
-            read: false,
-          };
-          await addDoc(collection(db, 'conversations', conversationId, 'messages'), newMsg);
-          await setDoc(
-            doc(db, 'conversations', conversationId),
-            {
-              participants,
-              name,
-              lastMessage: trimmed,
-              updatedAt: serverTimestamp(),
-              lastMessageSenderId: userId,
-              readBy: [userId],
-              deletedFor: arrayRemove(userId),
-            },
-            { merge: true }
-          );
-        } else {
-          return;
-        }
-    
-        setText('');
-        setReplyTo(null);
-        requestAnimationFrame(() => scrollToBottom({ animated: true }));
-        if (!attachment && trimmed) {
-            inputRef.current?.focus();
-          }
-      } catch (err) {
-        console.error('Error enviando mensaje', err);
-      } finally {
-        setIsUploading(false); // 🔹 apaga spinner de adjuntos
-        setIsSending(false);   // 🔒 libera el bloqueo de envío
+            readBy: [userId],
+            deletedFor: arrayRemove(userId),
+          },
+          { merge: true }
+        );
+
+        inputRef.current?.focus();
       }
-    };
+
+      setText('');
+      setReplyTo(null);
+      requestAnimationFrame(() => scrollToBottom({ animated: true }));
+    } catch (err) {
+      console.error('Error enviando mensaje', err);
+    } finally {
+      setIsUploading(false); // 🔹 apaga spinner de adjuntos
+      setIsSending(false); // 🔒 libera el bloqueo de envío
+    }
+  };
 
   const handleImagePick = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
