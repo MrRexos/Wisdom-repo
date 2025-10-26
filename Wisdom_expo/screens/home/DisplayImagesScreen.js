@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StatusBar, Platform, TouchableOpacity, Text, FlatList, Image } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, StatusBar, Platform, TouchableOpacity, Text, FlatList, Image, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
@@ -14,19 +14,51 @@ export default function DisplayImagesScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const { images } = route.params;
+  const [imageRatios, setImageRatios] = useState({});
 
-  const renderItem = ({ item, index }) => (
-    <TouchableOpacity 
-      onPress={() => navigation.navigate('EnlargedImage', { images: images, index: index })} 
-      className="items-center mt-5 w-1/2"
-    >
-      <Image
-        source={{ uri: item.image_url }}
-        style={{ width: 140, height: 160, borderRadius: 10, borderColor: colorScheme === 'dark' ? '#202020' : '#fcfcfc', borderWidth: 3 }}
-        className="bg-gray-200 dark:bg-gray-600" // Color de fondo para que se vea en caso de que no cargue la imagen
-      />
-    </TouchableOpacity>
-  );
+  const screenWidth = Dimensions.get('window').width;
+  const horizontalPadding = 24 * 2; // px-6 en los contenedores
+  const cardSpacing = 16;
+
+  const cardWidth = useMemo(() => {
+    const availableWidth = screenWidth - horizontalPadding - cardSpacing;
+    return availableWidth / 2;
+  }, [screenWidth]);
+
+  const handleImageLoad = (uri) => ({ nativeEvent }) => {
+    const { width, height } = nativeEvent?.source || {};
+    if (!width || !height) return;
+    setImageRatios((prev) => {
+      if (prev[uri]) return prev;
+      return { ...prev, [uri]: width / height };
+    });
+  };
+
+  const renderItem = ({ item, index }) => {
+    const ratio = imageRatios[item.image_url] || 1;
+
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('EnlargedImage', { images: images, index: index })}
+        style={{ width: cardWidth, marginTop: 20 }}
+        className="items-center"
+      >
+        <Image
+          source={{ uri: item.image_url }}
+          onLoad={handleImageLoad(item.image_url)}
+          resizeMode="cover"
+          style={{
+            width: '100%',
+            aspectRatio: ratio,
+            borderRadius: 10,
+            borderColor: colorScheme === 'dark' ? '#202020' : '#fcfcfc',
+            borderWidth: 3,
+            backgroundColor: colorScheme === 'dark' ? '#4a4a4a' : '#d4d4d3',
+          }}
+        />
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
@@ -49,9 +81,10 @@ export default function DisplayImagesScreen() {
           data={images}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
-          numColumns={2} // Dos columnas
+          numColumns={2}
+          columnWrapperStyle={{ justifyContent: 'space-between' }}
           showsVerticalScrollIndicator={true}
-          contentContainerStyle={{ flexGrow: 1, marginTop: 10 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 20, marginTop: 10 }}
         />
       </View>
     </SafeAreaView>

@@ -16,6 +16,7 @@ import {
   ActivityIndicator,
   Keyboard,
   TouchableWithoutFeedback,
+  Dimensions,
 } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
 import { FlashList } from '@shopify/flash-list';
@@ -106,9 +107,28 @@ export default function ConversationScreen() {
     idx === msgs.length - 1 || msgs[idx].fromMe !== msgs[idx + 1].fromMe;
   const swipeRefs = useRef({});
   const imageMessages = useMemo(() => messages.filter((m) => m.type === 'image'), [messages]);
+  const [imageRatios, setImageRatios] = useState({});
   const initialLoadRef = useRef(true);
   const [shouldMaintainPosition, setShouldMaintainPosition] = useState(false);
   const locale = useMemo(() => DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en, [i18n.language]);
+  const screenWidth = Dimensions.get('window').width;
+  const maxBubbleWidth = Math.min(screenWidth * 0.65, 280);
+  const maxBubbleHeight = 320;
+
+  const computeImageDisplaySize = useCallback((ratio) => {
+    let width = maxBubbleWidth;
+    if (!ratio) {
+      return { width, height: width };
+    }
+
+    let height = width / ratio;
+    if (height > maxBubbleHeight) {
+      height = maxBubbleHeight;
+      width = height * ratio;
+    }
+
+    return { width, height };
+  }, [maxBubbleWidth, maxBubbleHeight]);
 
   useEffect(() => {
     initialLoadRef.current = true;
@@ -467,7 +487,9 @@ export default function ConversationScreen() {
 
     if (item.type === 'image') {
       const imgIndex = imageMessages.findIndex((img) => img.id === item.id);
-    
+      const ratio = imageRatios[item.id];
+      const { width: displayWidth, height: displayHeight } = computeImageDisplaySize(ratio);
+
       const handleLongPress = () => {
         setSelectedMsg(item);
         setTimeout(() => msgSheet.current.open(), 0);
@@ -509,7 +531,24 @@ export default function ConversationScreen() {
               hitSlop={6}                       // toque un pelín fuera del borde
               style={{ alignSelf: 'flex-start' }} // asegura que no se estire de ancho
             >
-              <Image source={{ uri: item.uri }} className="w-40 h-[200px] rounded-xl" />
+              <Image
+                source={{ uri: item.uri }}
+                resizeMode="cover"
+                onLoad={({ nativeEvent }) => {
+                  const { width: imgWidth, height: imgHeight } = nativeEvent?.source || {};
+                  if (!imgWidth || !imgHeight) return;
+                  setImageRatios((prev) => {
+                    if (prev[item.id]) return prev;
+                    return { ...prev, [item.id]: imgWidth / imgHeight };
+                  });
+                }}
+                style={{
+                  width: displayWidth,
+                  height: displayHeight,
+                  borderRadius: 14,
+                  backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#e0e0e0',
+                }}
+              />
             </Pressable>
           </View>
         </Pressable>
