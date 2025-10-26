@@ -15,6 +15,7 @@ import {
   Alert,
   ActivityIndicator,
   Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
 import { FlashList } from '@shopify/flash-list';
@@ -98,6 +99,8 @@ export default function ConversationScreen() {
   const otherUserId = participants?.find((id) => id !== userId);
   const msgSheet = useRef(null);
   const convSheet = useRef(null);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const inputRef = useRef(null);
 
   const isLastOfStreak = (msgs, idx) =>
     idx === msgs.length - 1 || msgs[idx].fromMe !== msgs[idx + 1].fromMe;
@@ -111,6 +114,19 @@ export default function ConversationScreen() {
     initialLoadRef.current = true;
     setShouldMaintainPosition(false);
   }, [conversationId]);
+
+  useEffect(() => {
+    const showEvt = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvt = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+  
+    const subShow = Keyboard.addListener(showEvt, () => setKeyboardOpen(true));
+    const subHide = Keyboard.addListener(hideEvt, () => setKeyboardOpen(false));
+  
+    return () => {
+      subShow.remove();
+      subHide.remove();
+    };
+  }, []);
 
   const scrollToBottom = useCallback((options = {}) => {
     if (!flatListRef.current) return;
@@ -320,6 +336,9 @@ export default function ConversationScreen() {
         setText('');
         setReplyTo(null);
         requestAnimationFrame(() => scrollToBottom({ animated: true }));
+        if (!attachment && trimmed) {
+            inputRef.current?.focus();
+          }
       } catch (err) {
         console.error('Error enviando mensaje', err);
       } finally {
@@ -605,6 +624,7 @@ export default function ConversationScreen() {
   // • MAIN UI
   // ---------------------------------------------------------------------------
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}> 
     <View className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]">
       <SafeAreaView className="bg-[#fcfcfc] dark:bg-[#202020] rounded-b-[30px]">
         <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
@@ -679,7 +699,7 @@ export default function ConversationScreen() {
           </View>
         )}
 
-        <View className="flex-row items-end px-3 py-2 bg-[#f4f4f4] dark:bg-[#272626] gap-x-2 mb-6">
+        <View className={`flex-row items-end px-3 py-2 bg-[#f4f4f4] dark:bg-[#272626] gap-x-2 ${keyboardOpen ? 'mb-2' : 'mb-6'}`}>
           {/* Attachment – bolita aparte */}
           <TouchableOpacity
             onPress={() => attachSheet.current.open()}
@@ -714,6 +734,7 @@ export default function ConversationScreen() {
             )}
             <View className="flex-1 justify-center">
               <TextInput
+                ref={inputRef}
                 className="my-2 mr-2 font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc] "
                 placeholder={t('your_message')}
                 placeholderTextColor="#979797"
@@ -751,6 +772,7 @@ export default function ConversationScreen() {
           </View>
         </View>
       </KeyboardAvoidingView>
+      
 
       {/* Sheets */}
       <RBSheet
@@ -851,5 +873,6 @@ export default function ConversationScreen() {
         </View>
       </RBSheet>
     </View>
+    </TouchableWithoutFeedback>
   );
 }
