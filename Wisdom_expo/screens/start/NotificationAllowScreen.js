@@ -163,7 +163,11 @@ export default function NotificationAllowScreen() {
           await storeDataLocally('user', JSON.stringify(user));
         }
     
-        navigation.navigate('HomeScreen');
+        if (isProfessional) {
+          navigation.navigate('Professional', { screen: 'Today' });
+        } else {
+          navigation.navigate('HomeScreen');
+        }
       } catch (e) {
         console.error('Error en notAllowPressed:', e);
       }
@@ -199,7 +203,11 @@ export default function NotificationAllowScreen() {
           await storeDataLocally('user', JSON.stringify(user));
       }
 
-      navigation.navigate('HomeScreen');
+      if (isProfessional) {
+        navigation.navigate('Professional', { screen: 'Today' });
+      } else {
+        navigation.navigate('HomeScreen'); 
+      }
 
   }
   
