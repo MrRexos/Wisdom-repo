@@ -336,9 +336,11 @@ export default function ConversationScreen() {
         setText('');
         setReplyTo(null);
         requestAnimationFrame(() => scrollToBottom({ animated: true }));
-        if (!attachment && trimmed) {
+        if (!attachment) {
+          requestAnimationFrame(() => {
             inputRef.current?.focus();
-          }
+          });
+        }
       } catch (err) {
         console.error('Error enviando mensaje', err);
       } finally {
@@ -465,6 +467,16 @@ export default function ConversationScreen() {
       }
     };
 
+    const alignment = item.fromMe ? 'flex-end' : 'flex-start';
+    const swipeableContainerStyle = {
+      alignSelf: alignment,
+      width: 'auto',
+    };
+    const pressableStyle = ({ pressed }) => [
+      { alignSelf: alignment, maxWidth: '85%' },
+      pressed && { opacity: 0.95 },
+    ];
+
     if (item.type === 'image') {
       const imgIndex = imageMessages.findIndex((img) => img.id === item.id);
       const content = (
@@ -501,6 +513,7 @@ export default function ConversationScreen() {
           friction={1.5}
           activeOffsetX={[-10, 10]}
           onSwipeableOpen={onSwipeOpen}
+          containerStyle={swipeableContainerStyle}
         >
           <Pressable
             onPress={() => navigation.navigate('ChatImageViewer', { images: imageMessages, index: imgIndex })}
@@ -508,6 +521,7 @@ export default function ConversationScreen() {
               setSelectedMsg(item);
               setTimeout(() => msgSheet.current.open(), 0);
             }}
+            style={pressableStyle}
           >
             {content}
             {tail && renderStatusTime()}
@@ -558,12 +572,14 @@ export default function ConversationScreen() {
           friction={1.5}
           activeOffsetX={[-10, 10]}
           onSwipeableOpen={onSwipeOpen}
+          containerStyle={swipeableContainerStyle}
         >
           <Pressable
             onLongPress={() => {
               setSelectedMsg(item);
               setTimeout(() => msgSheet.current.open(), 0);
             }}
+            style={pressableStyle}
           >
             {content}
             {tail && renderStatusTime()}
@@ -606,12 +622,14 @@ export default function ConversationScreen() {
         friction={1.5}
         activeOffsetX={[-10, 10]}
         onSwipeableOpen={onSwipeOpen}
+        containerStyle={swipeableContainerStyle}
       >
         <Pressable
           onLongPress={() => {
             setSelectedMsg(item);
             setTimeout(() => msgSheet.current.open(), 0);
           }}
+          style={pressableStyle}
         >
           {content}
           {tail && renderStatusTime()}
