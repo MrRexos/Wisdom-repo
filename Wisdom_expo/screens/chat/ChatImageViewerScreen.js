@@ -1,11 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, StatusBar, Platform, TouchableOpacity, Text, FlatList, Image, Dimensions, Animated } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { View, Platform, TouchableOpacity, Text, Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import ImageViewer from 'react-native-image-zoom-viewer';
+import { StatusBar } from 'expo-status-bar';
 
 export default function ChatImageViewerScreen() {
   const { colorScheme } = useColorScheme();
@@ -14,100 +16,99 @@ export default function ChatImageViewerScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const { images, index } = route.params;
-  const { width } = Dimensions.get('screen');
+  const insets = useSafeAreaInsets();
 
-  console.log(colorScheme)
+  // 1) Invertimos el orden para que la "primera" quede al final (derecha)
+  const reversedImages = useMemo(() => [...images].reverse(), [images]);
 
-  const flatListRef = useRef(null);
-  const [currentIndex, setCurrentIndex] = useState(index);
+  // 2) Ajustamos el índice inicial para seguir abriendo en la misma imagen
+  const initialIndex = useMemo(
+    () => Math.max(0, images.length - 1 - (index ?? 0)),
+    [images.length, index]
+  );
 
-  useEffect(() => {
-    if (flatListRef.current) {
-      flatListRef.current.scrollToIndex({ index, animated: false });
-    }
-  }, [index]);
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
-  const handleScroll = (event) => {
-    const offsetX = event.nativeEvent.contentOffset.x;
-    const newIndex = Math.round(offsetX / width);
-    setCurrentIndex(newIndex);
-  };
-
-  const getScale = (idx) => (idx === currentIndex ? 1 : 0.85);
+  const viewerImages = useMemo(
+    () => reversedImages.map((img) => ({ url: img.uri })),
+    [reversedImages]
+  );
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc' }}
+    >
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
-      <View className="px-6 pt-3 pb-3 justify-center items-center">
+      {/* Barra superior FUERA del viewer */}
+      <View
+        style={{
+          paddingHorizontal: 24,
+          paddingTop: 24,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingBottom:20,
+        }}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={10}>
+          <ChevronLeftIcon size={24} strokeWidth={1.9} color={iconColor} />
+        </TouchableOpacity>
 
-        <View className="mb-6 w-full flex-row justify-between items-center">
+        <Text className="font-inter-bold text-[17px]" style={{ color: iconColor }}>
+          {t('images')}
+        </Text>
 
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <ChevronLeftIcon size={24} strokeWidth={1.9} color={iconColor} />
-          </TouchableOpacity>
-
-          <View className="flex-[2px] justify-center items-center  ">
-            <Text className='font-inter-bold text-[17px] text-[#444343] dark:text-[#f2f2f2]'>
-              {t('images')}
-            </Text>
-          </View>
-
-          <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">
-            {currentIndex + 1}/{images.length}
-          </Text>
-
-        </View>
-
+        <Text className="font-inter-medium text-[14px]" style={{ color: iconColor }}>
+          {currentIndex + 1}/{images.length}
+        </Text>
       </View>
 
-      <View className="flex-1 justify-center items-center">
-        <FlatList
-          data={images}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-          ref={flatListRef}
-          initialScrollIndex={index}
-          getItemLayout={(data, index) => ({ length: width, offset: width * index, index })}
-          renderItem={({ item, index }) => (
-            <View style={{ width }} className="justify-center items-center">
-              <Animated.View
+      {/* Viewer ocupa el resto y centra respecto a ese alto */}
+      <View style={{ flex: 1,paddingHorizontal: 20, }}>
+      <ImageViewer
+        key={`viewer-${initialIndex}-${viewerImages.length}`}  // ← fuerza remount si cambia
+        imageUrls={viewerImages}
+        index={initialIndex}                                   // ← usa el índice recalculado
+        backgroundColor={colorScheme === 'dark' ? '#323131' : '#fcfcfc'}
+        saveToLocalByLongPress={false}
+        enableSwipeDown={false}
+        renderIndicator={() => null}
+        onChange={(newIndex) => {
+          if (typeof newIndex === 'number') setCurrentIndex(newIndex);
+        }}
+        renderImage={(props) => (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',         
+              }}
+            >
+              <View
                 style={{
-                  transform: [{ scale: getScale(index) }],
-                  width: 320,
-                  height: 420,
-                  borderRadius: 10,
-                  backgroundColor: colorScheme === 'dark' ? '#4a4a4a' : '#e0e0e0',
-                  justifyContent: 'center',
-                  alignItems: 'center',
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: 20,           // ← radio de las esquinas
+                  overflow: 'hidden',         // ← necesario para que se recorte la imagen
+                  backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', // por si hay letterboxing
                 }}
               >
                 <Image
-                  source={{ uri: item.uri }}
-                  style={{ width: '100%', height: '100%', borderRadius: 10 }}
-                  className="bg-gray-200 dark:bg-gray-600"
+                  {...props}
+                  style={[
+                    props.style,
+                    {
+                      width: '100%',
+                      height: '100%',
+                      resizeMode: 'contain',   // mantiene proporción y respeta márgenes
+                    },
+                  ]}
                 />
-              </Animated.View>
+              </View>
             </View>
           )}
         />
-        <View style={{ flexDirection: 'row', marginTop: 16 }}>
-          {images.slice(0, 6).map((_, idx) => (
-            <View
-              key={idx}
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: 4,
-                backgroundColor: currentIndex === idx ? (colorScheme === 'dark' ? '#f2f2f2' : '#444343') : (colorScheme === 'dark' ? '#474646' : '#d4d4d3'),
-                marginHorizontal: 3,
-              }}
-            />
-          ))}
-        </View>
       </View>
     </SafeAreaView>
   );

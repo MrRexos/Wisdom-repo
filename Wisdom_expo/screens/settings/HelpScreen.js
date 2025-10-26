@@ -40,7 +40,7 @@ export default function HelpScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
       
-      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[90px] w-full z-10 justify-end">
+      <View className="pt-6 bg-[#f2f2f2] dark:bg-[#272626] w-full justify-center items-center">
         <View className="flex-row justify-between items-center pb-4 px-2">
             <View className="flex-1 ">
                 <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -55,7 +55,7 @@ export default function HelpScreen() {
         </View>
       </View>
       
-      <ScrollView className="flex-1 px-6 pt-[75px] space-y-9">
+      <ScrollView className="flex-1 px-6 pt-9 space-y-9">
         
         {Sections.map(({items}, sectionIndex) => (
           <View key={sectionIndex} style={{borderRadius: 12, overflow: 'hidden'}}>

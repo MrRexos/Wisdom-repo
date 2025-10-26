@@ -71,22 +71,22 @@ export default function WalletProScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
       
-      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[90px] w-full z-10 justify-end">
+      <View className="pt-6 bg-[#f2f2f2] dark:bg-[#272626] w-full justify-center items-center">
         <View className="flex-row justify-between items-center pb-4 px-2">
-            <View className="flex-1/4 ">
+            <View className="basis-1/4 ">
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <ChevronLeftIcon size={24} strokeWidth={1.7} color={iconColor}/>  
                 </TouchableOpacity>                             
             </View>
-            <View className="flex-2/4 justify-center items-center ">
+            <View className="basis-1/2 justify-center items-center ">
                 <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('payments_and_refunds')}</Text>
             </View>
             
-            <View className="flex-1/4"></View>
+            <View className="basis-1/4 h-1"></View>
         </View>
       </View>
       
-      <ScrollView className="flex-1 px-6 pt-[75px]" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      <ScrollView className="flex-1 px-6 pt-9" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
       <View className='gap-y-9'>
         <View className="p-7 justify-center items-center rounded-3xl bg-[#fcfcfc]  dark:bg-[#323131]">

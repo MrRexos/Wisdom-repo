@@ -509,7 +509,7 @@ export default function ConversationScreen() {
               hitSlop={6}                       // toque un pelín fuera del borde
               style={{ alignSelf: 'flex-start' }} // asegura que no se estire de ancho
             >
-              <Image source={{ uri: item.uri }} className="w-40 h-[200px] rounded-xl" />
+              <Image source={{ uri: item.uri }} className="w-40 h-[170px] rounded-xl" />
             </Pressable>
           </View>
         </Pressable>

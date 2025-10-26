@@ -31,7 +31,7 @@ export default function DisplayImagesScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <View className="px-6 pt-10 pb-3 justify-center items-center">
+      <View className="px-6 pt-7 pb-3 justify-center items-center">
         
         <View className="mb-6 w-full flex-row justify-center items-center">
           <View className="flex-1 justify-center items-start">

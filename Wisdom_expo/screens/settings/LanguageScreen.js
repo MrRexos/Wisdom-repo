@@ -75,7 +75,7 @@ export default function LanguageScreen() {
       className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]"
     >
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[90px] w-full z-10 justify-end">
+      <View className="pt-6 bg-[#f2f2f2] dark:bg-[#272626] w-full justify-center items-center">
         <View className="flex-row justify-between items-center pb-4 px-2">
           <View className="flex-1 ">
             <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -89,7 +89,7 @@ export default function LanguageScreen() {
         </View>
       </View>
 
-      <ScrollView className="flex-1 px-6 pt-[75px] space-y-9" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      <ScrollView className="flex-1 px-6 pt-9 space-y-9" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
         {Sections.map(({ items }, sectionIndex) => (
           <View key={sectionIndex} style={{ borderRadius: 12, overflow: 'hidden' }}>
             {items.map(({ label, id }, index) => (

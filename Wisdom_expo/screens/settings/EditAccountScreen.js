@@ -176,7 +176,7 @@ export default function EditAccountScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
-      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[95px] w-full z-10 justify-end">
+      <View className="pt-6 bg-[#f2f2f2] dark:bg-[#272626] w-full justify-center items-center">
         <View className="flex-row justify-between items-center pb-4 px-2">
           <View className="flex-1 ">
             <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -207,7 +207,7 @@ export default function EditAccountScreen() {
         </View>
       </View>
 
-      <ScrollView className="flex-1 px-6 pt-[75px]" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+      <ScrollView className="flex-1 px-6 pt-5" refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 
         <View>
           <Text className="mt-6 mb-2 font-inter-medium text-[15px] text-[#b6b5b5] dark:text-[#706f6e]">{t('email')}</Text>

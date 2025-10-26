@@ -17,6 +17,10 @@ export default function ChangePasswordScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const [user, setUser] = useState(null);
+  const [sideW, setSideW] = useState(64); // ancho mínimo seguro
+
+  const measureSide = (w) =>
+    setSideW((prev) => (w > prev ? Math.ceil(w) : prev));
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -97,35 +101,51 @@ export default function ChangePasswordScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[95px] w-full z-10 justify-end">
-        <View className="flex-row justify-between items-center pb-4 px-2">
-          <View className="flex-[1px] ">
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+      
+      <View className="pt-6 bg-[#f2f2f2] dark:bg-[#272626] w-full">
+        <View className="flex-row items-center pb-4 px-2">
+          {/* Izquierda: reserva el mismo ancho que la derecha */}
+          <View style={{ width: sideW }} className="items-start">
+            <TouchableOpacity onPress={() => navigation.goBack()} className="px-2">
               <ChevronLeftIcon size={24} strokeWidth={1.7} color={iconColor} />
             </TouchableOpacity>
           </View>
-          <View className="flex-[2px] justify-center items-center  ">
-            <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('change_password')}</Text>
-          </View>
-          <View className="flex-[1px] justify-center items-end ">
-          <TouchableOpacity
-            disabled={!formValid}
-            onPress={handleChangePassword}
-            className={`
-              mr-2 rounded-full px-3 py-2
-              bg-[#E0E0E0] dark:bg-[#3D3D3D]
-              ${formValid ? '' : 'opacity-0'}
-            `}
-          >
-            <Text className="font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]">
-              {t('done')}
+
+          {/* Centro: ocupa el resto y puede encoger */}
+          <View className="flex-1 items-center">
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              className="shrink min-w-0 text-center font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]"
+            >
+              {t('change_password')}
             </Text>
-          </TouchableOpacity>
+          </View>
+
+          {/* Derecha: medimos su ancho real */}
+          <View
+            className="items-end"
+            onLayout={(e) => measureSide(e.nativeEvent.layout.width)}
+          >
+            <TouchableOpacity
+              disabled={!formValid}
+              onPress={handleChangePassword}
+              className={`
+                mr-2 rounded-full px-3 py-2
+                bg-[#E0E0E0] dark:bg-[#3D3D3D]
+                ${formValid ? '' : 'opacity-0'}
+              `}
+            >
+              <Text className="font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]">
+                {t('done')}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
+
       <KeyboardAwareScrollView style={{ flex: 1, width: '100%' }} enableOnAndroid={true} scrollEnabled={keyboardOpen}>
-        <View className="px-5 pt-[75px] w-full">
+        <View className="px-5 pt-6 w-full">
           <Text className="font-inter-semibold text-[15px] pt-6 text-[#444343] dark:text-[#f2f2f2]">{t('current_password')}</Text>
           <View className="mt-3 px-5 h-[55px] flex-row justify-between items-center rounded-full bg-[#E0E0E0]/60 dark:bg-[#3D3D3D]/60 border-[1px] border-[#706F6E]/20 dark:border-[#706F6E]/20">
             <TextInput
