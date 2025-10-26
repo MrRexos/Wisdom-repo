@@ -313,7 +313,6 @@ export default function ConversationScreen() {
           readBy: arrayUnion(userId),
         });
 
-        setAttachment(null);
       }
 
       if (hasText) {
@@ -343,6 +342,7 @@ export default function ConversationScreen() {
         inputRef.current?.focus();
       }
 
+      setAttachment(null);
       setText('');
       setReplyTo(null);
       requestAnimationFrame(() => scrollToBottom({ animated: true }));
@@ -404,7 +404,7 @@ export default function ConversationScreen() {
     }
 
     const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: 'images',
       quality: 0.7,
     });
 
@@ -832,7 +832,7 @@ export default function ConversationScreen() {
       {/* Sheets */}
       <RBSheet
         ref={attachSheet}
-        height={180}
+        height={240}
         openDuration={200}
         closeDuration={200}
         draggable={true}
@@ -858,7 +858,7 @@ export default function ConversationScreen() {
               {t('choose_image')}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleFilePick} className="py-1 flex-row justify-start items-center">
+          <TouchableOpacity onPress={handleFilePick} className="py-2 flex-row justify-start items-center">
             <Folder height={24} width={24} color={iconColor} strokeWidth={2} />
             <Text className="ml-6 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">
               {t('choose_file')}
