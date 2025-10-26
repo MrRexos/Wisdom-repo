@@ -34,7 +34,7 @@ import {
   XMarkIcon,
   DocumentDuplicateIcon,
 } from 'react-native-heroicons/outline';
-import { MoreHorizontal, Image as ImageIcon, Folder, Check, Edit2, Trash2, File, CornerUpLeft } from "react-native-feather";
+import { MoreHorizontal, Image as ImageIcon, Folder, Check, Edit2, Trash2, File, CornerUpLeft, Camera } from "react-native-feather";
 import { useTranslation } from 'react-i18next';
 import {
   collection,
@@ -377,6 +377,33 @@ export default function ConversationScreen() {
     if (!result.canceled) {
       const asset = result.assets?.[0] || result;
       setAttachment({ type: 'file', uri: asset.uri, name: asset.name });
+      attachSheet.current.close();
+    }
+  };
+
+  const handleCameraCapture = async () => {
+    const perm = await ImagePicker.requestCameraPermissionsAsync();
+    if (perm.status !== 'granted') {
+      Alert.alert(
+        t('allow_wisdom_to_access_camera'),
+        t('need_camera_access_chat'),
+        [
+          { text: t('cancel'), style: 'cancel' },
+          { text: t('settings'), onPress: () => Linking.openSettings() },
+        ],
+        { cancelable: true }
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.7,
+    });
+
+    if (!result.canceled) {
+      const asset = result.assets[0];
+      setAttachment({ type: 'image', uri: asset.uri, name: asset.fileName || 'image.jpg' });
       attachSheet.current.close();
     }
   };
@@ -812,6 +839,12 @@ export default function ConversationScreen() {
         }}
       >
         <View className="pb-5 pt-2 px-7 gap-y-4">
+          <TouchableOpacity onPress={handleCameraCapture} className="py-2 flex-row justify-start items-center ">
+            <Camera height={24} width={24} color={iconColor} strokeWidth={2} />
+            <Text className=" ml-6 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">
+              {t('take_photo')}
+            </Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleImagePick} className="py-2 flex-row justify-start items-center ">
             <ImageIcon height={24} width={24} color={iconColor} strokeWidth={2} />
             <Text className=" ml-6 text-[16px] font-inter-medium text-[#444343] dark:text-[#f2f2f2]">
