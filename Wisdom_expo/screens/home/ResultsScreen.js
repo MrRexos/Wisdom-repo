@@ -298,7 +298,7 @@ export default function ResultsScreen() {
               {item.images.map((image, index) => (
                 <View key={index} className="pr-[6px]">
 
-                  <TouchableOpacity className='ml-1'>
+                  <TouchableOpacity activeOpacity={1} className='ml-1'>
                     <Image source={image.image_url ? { uri: image.image_url } : null} className="h-[65px] w-[55px] bg-[#706B5B] rounded-lg" />
                   </TouchableOpacity>
                 </View>

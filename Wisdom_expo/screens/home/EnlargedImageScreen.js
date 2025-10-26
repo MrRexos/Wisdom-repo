@@ -23,6 +23,7 @@ export default function EnlargedImageScreen() {
     <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <View style={{ flex: 1 }}>
+        
         <ImageViewer
           imageUrls={viewerImages}
           index={index}
@@ -35,8 +36,9 @@ export default function EnlargedImageScreen() {
             }
           }}
           renderIndicator={() => null}
+          
           renderHeader={() => (
-            <View style={{ paddingHorizontal: 24, paddingTop: 40, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View style={{ paddingHorizontal: 24, paddingTop: 24, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomLeftRadius: 100, borderBottomRightRadius: 28, backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc' }}>
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <ChevronLeftIcon size={24} strokeWidth={1.9} color={iconColor} />
               </TouchableOpacity>

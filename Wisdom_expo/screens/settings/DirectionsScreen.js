@@ -342,7 +342,7 @@ export default function DirectionsScreen() {
 
       </RBSheet>
 
-      <View className="absolute bg-[#f2f2f2] dark:bg-[#272626] h-[90px] w-full z-10 justify-end">
+      <View className="pt-6 bg-[#f2f2f2] dark:bg-[#272626] w-full justify-center items-center">
         <View className="flex-row justify-between items-center pb-4 px-2">
           <View className="flex-1 ">
             <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -354,7 +354,7 @@ export default function DirectionsScreen() {
             <Text className="font-inter-semibold text-center text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('directions')}</Text>
           </View>
 
-          <TouchableOpacity onPress={() => navigation.navigate('AddDirection', {prevScreen:'Directions'})} className="flex-1 justify-center items-end">
+          <TouchableOpacity onPress={() => navigation.navigate('AddDirection', {prevScreen:'Directions'})} className="flex-1 justify-center items-end pr-3">
             <Plus height={25} width={25} strokeWidth={1.7} color={iconColor} className="mr-3" />
           </TouchableOpacity>
         </View>
@@ -372,7 +372,7 @@ export default function DirectionsScreen() {
     
       ) : (
 
-      <ScrollView className="flex-1 px-6 mt-[75px] ">
+      <ScrollView className="flex-1 px-6 mt-9 ">
         {directions.map((direction) => (
           <View key={direction.direction_id} className="pb-5 mb-5 flex-row w-full justify-center items-center border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]">
             <View className="w-11 h-11 items-center justify-center rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D]">

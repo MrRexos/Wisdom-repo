@@ -37,7 +37,7 @@ export default function ChatImageViewerScreen() {
           }}
           renderIndicator={() => null}
           renderHeader={() => (
-            <View style={{ paddingHorizontal: 24, paddingTop: 32, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View style={{ paddingHorizontal: 24, paddingTop: 24, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <ChevronLeftIcon size={24} strokeWidth={1.9} color={iconColor} />
               </TouchableOpacity>
