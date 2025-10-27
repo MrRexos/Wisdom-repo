@@ -90,7 +90,7 @@ export default function ConversationScreen() {
   const [userId, setUserId] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [otherUserInfo, setOtherUserInfo] = useState(null);
-  const [attachment, setAttachment] = useState(null);
+  const [attachments, setAttachments] = useState([]);
   const [selectedMsg, setSelectedMsg] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [replyTo, setReplyTo] = useState(null);
@@ -105,7 +105,35 @@ export default function ConversationScreen() {
   const isLastOfStreak = (msgs, idx) =>
     idx === msgs.length - 1 || msgs[idx].fromMe !== msgs[idx + 1].fromMe;
   const swipeRefs = useRef({});
-  const imageMessages = useMemo(() => messages.filter((m) => m.type === 'image'), [messages]);
+  const imageMessages = useMemo(() => {
+    const list = [];
+    messages.forEach((m) => {
+      if (m.type === 'image') {
+        list.push({
+          id: m.id,
+          uri: m.uri,
+          messageId: m.id,
+          imageIndex: 0,
+        });
+      } else if (m.type === 'image_group' && Array.isArray(m.images)) {
+        m.images.forEach((img, idx) => {
+          if (!img?.uri) return;
+          list.push({
+            id: `${m.id}-${idx}`,
+            uri: img.uri,
+            messageId: m.id,
+            imageIndex: idx,
+          });
+        });
+      }
+    });
+    return list;
+  }, [messages]);
+
+  const imageAttachments = useMemo(
+    () => attachments.filter((att) => att.kind === 'image'),
+    [attachments]
+  );
   const initialLoadRef = useRef(true);
   const [shouldMaintainPosition, setShouldMaintainPosition] = useState(false);
   const locale = useMemo(() => DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en, [i18n.language]);
@@ -256,7 +284,7 @@ export default function ConversationScreen() {
     if (isSending) return;
 
     const trimmed = text.trim();
-    const hasAttachment = !!attachment;
+    const hasAttachment = attachments.length > 0;
     const hasText = !!trimmed;
 
     if (!hasAttachment && !hasText) return;
@@ -281,38 +309,80 @@ export default function ConversationScreen() {
         })()
       : null;
 
-    const currentAttachment = attachment;
+    const currentAttachments = attachments;
 
     try {
       setIsSending(true);
 
-      if (hasAttachment && currentAttachment) {
+      if (hasAttachment && currentAttachments.length) {
         setIsUploading(true); // 🔹 spinner solo para adjuntos
 
-        const filePath = `chat/${conversationId}/${Date.now()}_${currentAttachment.name}`;
-        const url = await uploadFile(currentAttachment.uri, filePath, currentAttachment.type);
+        const imagesToUpload = currentAttachments.filter((att) => att.kind === 'image');
+        const filesToUpload = currentAttachments.filter((att) => att.kind === 'file');
 
-        const isImage = currentAttachment.type.startsWith('image');
+        if (imagesToUpload.length) {
+          const uploadedImages = [];
+          for (let i = 0; i < imagesToUpload.length; i++) {
+            const img = imagesToUpload[i];
+            const uniqueId = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+            const filePath = `chat/${conversationId}/${uniqueId}_${img.name}`;
+            const url = await uploadFile(img.uri, filePath, img.mime || 'image/jpeg');
+            uploadedImages.push({ uri: url, name: img.name });
+          }
 
-        await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
-          senderId: userId,
-          type: isImage ? 'image' : 'file',
-          uri: url,
-          name: currentAttachment.name,
-          createdAt: serverTimestamp(),
-          replyTo: replyData,
-          read: false,
-        });
+          const isGroup = uploadedImages.length > 1;
+          const messageData = {
+            senderId: userId,
+            type: isGroup ? 'image_group' : 'image',
+            createdAt: serverTimestamp(),
+            replyTo: replyData,
+            read: false,
+          };
 
-        await updateDoc(doc(db, 'conversations', conversationId), {
-          participants,
-          name,
-          lastMessage: isImage ? t('image') : t('file'),
-          updatedAt: serverTimestamp(),
-          lastMessageSenderId: userId,
-          readBy: arrayUnion(userId),
-        });
+          if (isGroup) {
+            messageData.images = uploadedImages;
+          } else {
+            messageData.uri = uploadedImages[0].uri;
+            messageData.name = uploadedImages[0].name;
+          }
 
+          await addDoc(collection(db, 'conversations', conversationId, 'messages'), messageData);
+
+          await updateDoc(doc(db, 'conversations', conversationId), {
+            participants,
+            name,
+            lastMessage: isGroup ? t('images') : t('image'),
+            updatedAt: serverTimestamp(),
+            lastMessageSenderId: userId,
+            readBy: arrayUnion(userId),
+          });
+        }
+
+        for (let i = 0; i < filesToUpload.length; i++) {
+          const file = filesToUpload[i];
+          const uniqueId = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+          const filePath = `chat/${conversationId}/${uniqueId}_${file.name}`;
+          const url = await uploadFile(file.uri, filePath, file.mime || 'application/octet-stream');
+
+          await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
+            senderId: userId,
+            type: 'file',
+            uri: url,
+            name: file.name,
+            createdAt: serverTimestamp(),
+            replyTo: replyData,
+            read: false,
+          });
+
+          await updateDoc(doc(db, 'conversations', conversationId), {
+            participants,
+            name,
+            lastMessage: t('file'),
+            updatedAt: serverTimestamp(),
+            lastMessageSenderId: userId,
+            readBy: arrayUnion(userId),
+          });
+        }
       }
 
       if (hasText) {
@@ -342,7 +412,7 @@ export default function ConversationScreen() {
         inputRef.current?.focus();
       }
 
-      setAttachment(null);
+      setAttachments([]);
       setText('');
       setReplyTo(null);
       requestAnimationFrame(() => scrollToBottom({ animated: true }));
@@ -369,12 +439,35 @@ export default function ConversationScreen() {
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: 'images',
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.7,
+      allowsMultipleSelection: true,
+      selectionLimit: 10,
     });
     if (!result.canceled) {
-      const asset = result.assets[0];
-      setAttachment({ type: 'image', uri: asset.uri, name: asset.fileName || 'image.jpg' });
+      const newImages = result.assets
+        .filter((asset) => asset.type?.startsWith('image'))
+        .map((asset) => ({
+          kind: 'image',
+          uri: asset.uri,
+          name: asset.fileName || asset.uri.split('/').pop() || 'image.jpg',
+          mime: asset.mimeType || 'image/jpeg',
+        }));
+
+      if (newImages.length) {
+        setAttachments((prev) => {
+          const onlyImages = prev.filter((att) => att.kind === 'image');
+          const existingUris = new Set(onlyImages.map((att) => att.uri));
+          const merged = [...onlyImages];
+          newImages.forEach((img) => {
+            if (!existingUris.has(img.uri)) {
+              merged.push(img);
+              existingUris.add(img.uri);
+            }
+          });
+          return merged;
+        });
+      }
       attachSheet.current.close();
     }
   };
@@ -383,7 +476,14 @@ export default function ConversationScreen() {
     const result = await DocumentPicker.getDocumentAsync({});
     if (!result.canceled) {
       const asset = result.assets?.[0] || result;
-      setAttachment({ type: 'file', uri: asset.uri, name: asset.name });
+      setAttachments([
+        {
+          kind: 'file',
+          uri: asset.uri,
+          name: asset.name,
+          mime: asset.mimeType || 'application/octet-stream',
+        },
+      ]);
       attachSheet.current.close();
     }
   };
@@ -410,7 +510,18 @@ export default function ConversationScreen() {
 
     if (!result.canceled) {
       const asset = result.assets[0];
-      setAttachment({ type: 'image', uri: asset.uri, name: asset.fileName || 'image.jpg' });
+      setAttachments((prev) => {
+        const existingImages = prev.filter((att) => att.kind === 'image');
+        return [
+          ...existingImages,
+        {
+          kind: 'image',
+          uri: asset.uri,
+          name: asset.fileName || asset.uri.split('/').pop() || 'image.jpg',
+          mime: asset.mimeType || 'image/jpeg',
+        },
+        ];
+      });
       attachSheet.current.close();
     }
   };
@@ -499,6 +610,143 @@ export default function ConversationScreen() {
       }
     };
 
+    if (item.type === 'image_group') {
+      const images = Array.isArray(item.images) ? item.images : [];
+      if (!images.length) return null;
+
+      const handleLongPress = () => {
+        setSelectedMsg(item);
+        setTimeout(() => msgSheet.current.open(), 0);
+      };
+
+      const openImageAt = (imgIdx) => {
+        const indexInViewer = imageMessages.findIndex(
+          (img) => img.messageId === item.id && img.imageIndex === imgIdx
+        );
+        if (indexInViewer >= 0) {
+          navigation.navigate('ChatImageViewer', { images: imageMessages, index: indexInViewer });
+        }
+      };
+
+      const previewContent = images.length === 2 ? (
+        <View className="gap-y-2">
+          {images.map((img, idx) => (
+            <Pressable
+              key={`${item.id}-${idx}`}
+              onPress={() => openImageAt(idx)}
+              onLongPress={handleLongPress}
+              hitSlop={6}
+              style={{ alignSelf: 'flex-start' }}
+            >
+              <Image source={{ uri: img.uri }} className="w-40 h-[170px] rounded-xl" />
+            </Pressable>
+          ))}
+        </View>
+      ) : (
+        <Pressable
+          onPress={() => openImageAt(0)}
+          onLongPress={handleLongPress}
+          hitSlop={6}
+          style={{ alignSelf: 'flex-start' }}
+        >
+          <View style={{ width: 170, height: 170 }}>
+            {images.slice(0, 3).map((img, idx) => {
+              let style = {};
+              if (idx === 0) {
+                style = { left: 10, top: 0, transform: [{ rotate: '0deg' }], zIndex: 3 };
+              } else if (idx === 1) {
+                style = { left: -6, top: 18, transform: [{ rotate: '-12deg' }], zIndex: 2 };
+              } else {
+                style = { left: 44, top: 26, transform: [{ rotate: '12deg' }], zIndex: 1 };
+              }
+              return (
+                <Image
+                  key={`${item.id}-stack-${idx}`}
+                  source={{ uri: img.uri }}
+                  style={{
+                    position: 'absolute',
+                    width: idx === 0 ? 150 : 130,
+                    height: idx === 0 ? 170 : 150,
+                    borderRadius: 20,
+                    borderWidth: 3,
+                    borderColor: colorScheme === 'dark' ? '#272626' : '#f4f4f4',
+                    ...style,
+                  }}
+                />
+              );
+            })}
+            {images.length > 3 && (
+              <View
+                style={{
+                  position: 'absolute',
+                  left: 36,
+                  top: 64,
+                  paddingHorizontal: 16,
+                  paddingVertical: 8,
+                  borderRadius: 20,
+                  backgroundColor: 'rgba(0,0,0,0.6)',
+                }}
+              >
+                <Text className="font-inter-semibold text-[14px] text-white">
+                  +{images.length - 3} {t('images')}
+                </Text>
+              </View>
+            )}
+          </View>
+        </Pressable>
+      );
+
+      const content = (
+        <Pressable onLongPress={handleLongPress}>
+          <View
+            className={`${item.replyTo
+              ? `${bubbleBase} ${fromMeStyles}`
+              : `py-1 flex-row items-end ${item.fromMe ? 'self-end' : 'self-start'}`
+              }`}
+          >
+            {item.replyTo && (
+              <View className="border-l-2 border-[#3695FF] pl-2 mb-1">
+                <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]">
+                  {item.replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
+                </Text>
+                <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
+                  {item.replyTo.type === 'text'
+                    ? item.replyTo.text
+                    : item.replyTo.type === 'image'
+                      ? t('image')
+                      : item.replyTo.type === 'image_group'
+                        ? t('images')
+                        : t('file')}
+                </Text>
+              </View>
+            )}
+            {previewContent}
+          </View>
+        </Pressable>
+      );
+
+      return (
+        <Swipeable
+          ref={(ref) => { swipeRefs.current[item.id] = ref; }}
+          renderLeftActions={() => <View style={{ width: 64 }} />}
+          renderRightActions={() => <View style={{ width: 64 }} />}
+          friction={1.5}
+          activeOffsetX={[-10, 10]}
+          onSwipeableOpen={(dir) => {
+            if (dir === 'left' || dir === 'right') {
+              swipeRefs.current[item.id]?.close();
+              setReplyTo(item);
+            }
+          }}
+        >
+          <View>
+            {content}
+            {item._isTail && renderStatusTime()}
+          </View>
+        </Swipeable>
+      );
+    }
+
     if (item.type === 'image') {
       const imgIndex = imageMessages.findIndex((img) => img.id === item.id);
     
@@ -529,7 +777,9 @@ export default function ConversationScreen() {
                     ? item.replyTo.text
                     : item.replyTo.type === 'image'
                       ? t('image')
-                      : t('file')}
+                      : item.replyTo.type === 'image_group'
+                        ? t('images')
+                        : t('file')}
                 </Text>
               </View>
             )}
@@ -585,7 +835,9 @@ export default function ConversationScreen() {
                   ? item.replyTo.text
                   : item.replyTo.type === 'image'
                     ? t('image')
-                    : t('file')}
+                    : item.replyTo.type === 'image_group'
+                      ? t('images')
+                      : t('file')}
               </Text>
             </View>
           )}
@@ -641,9 +893,11 @@ export default function ConversationScreen() {
                   ? item.replyTo.text
                   : item.replyTo.type === 'image'
                     ? t('image')
-                    : item.replyTo.type === 'file'
-                      ? t('file')
-                      : ''}
+                    : item.replyTo.type === 'image_group'
+                      ? t('images')
+                      : item.replyTo.type === 'file'
+                        ? t('file')
+                        : ''}
               </Text>
             </View>
           )}
@@ -745,7 +999,13 @@ export default function ConversationScreen() {
                 {replyTo.senderId === userId ? t('you') : otherUserInfo?.first_name}
               </Text>
               <Text className="text-xs text-[#515150] dark:text-[#d4d4d3]" numberOfLines={1}>
-                {replyTo.type === 'text' ? replyTo.text : replyTo.type === 'image' ? t('image') : t('file')}
+                {replyTo.type === 'text'
+                  ? replyTo.text
+                  : replyTo.type === 'image'
+                    ? t('image')
+                    : replyTo.type === 'image_group'
+                      ? t('images')
+                      : t('file')}
               </Text>
             </View>
             <TouchableOpacity onPress={() => setReplyTo(null)} className="p-1 ml-2">
@@ -768,17 +1028,78 @@ export default function ConversationScreen() {
 
           {/* Campo de texto + botón send */}
           <View className="flex-1 flex-row items-center bg-[#e0e0e0] dark:bg-[#3d3d3d] rounded-[25px] pl-4 pr-2 ">
-            {attachment && (
+            {attachments.length > 0 && (
               <View className="relative mr-2">
-                {attachment.type === 'image' ? (
-                  <Image source={{ uri: attachment.uri }} className="h-10 w-10 rounded-lg" />
-                ) : (
+                {attachments[0]?.kind === 'file' ? (
                   <View className="h-10 w-10 rounded-lg bg-[#323131] dark:bg-[#fcfcfc] items-center justify-center">
                     <File height={24} width={24} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
                   </View>
+                ) : (
+                  <View style={{ width: 48, height: 48 }}>
+                    {imageAttachments
+                      .slice(0, 3)
+                      .map((att, idx, arr) => {
+                        const total = arr.length;
+                        let style = {};
+                        if (total === 1) {
+                          style = { left: 0, top: 0, transform: [{ rotate: '0deg' }], zIndex: 3 };
+                        } else if (total === 2) {
+                          if (idx === 0) {
+                            style = { left: 4, top: 0, transform: [{ rotate: '0deg' }], zIndex: 3 };
+                          } else {
+                            style = { left: -4, top: 8, transform: [{ rotate: '-10deg' }], zIndex: 2 };
+                          }
+                        } else {
+                          if (idx === 0) {
+                            style = { left: 4, top: 0, transform: [{ rotate: '0deg' }], zIndex: 4 };
+                          } else if (idx === 1) {
+                            style = { left: -6, top: 10, transform: [{ rotate: '-12deg' }], zIndex: 2 };
+                          } else {
+                            style = { left: 14, top: 12, transform: [{ rotate: '12deg' }], zIndex: 1 };
+                          }
+                        }
+
+                        const size = total === 1 ? 48 : 44;
+
+                        return (
+                          <ExpoImage
+                            key={att.uri}
+                            source={{ uri: att.uri }}
+                            style={{
+                              position: 'absolute',
+                              width: size,
+                              height: size,
+                              borderRadius: 12,
+                              borderWidth: 2,
+                              borderColor: colorScheme === 'dark' ? '#272626' : '#f4f4f4',
+                              ...style,
+                            }}
+                          />
+                        );
+                      })}
+                    {imageAttachments.length > 3 && (
+                      <View
+                        style={{
+                          position: 'absolute',
+                          left: 4,
+                          top: 0,
+                          width: 48,
+                          height: 48,
+                          borderRadius: 12,
+                          backgroundColor: 'rgba(0,0,0,0.45)',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Text className="font-inter-semibold text-[13px] text-white">
+                          +{imageAttachments.length - 3}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                 )}
                 <TouchableOpacity
-                  onPress={() => setAttachment(null)}
+                  onPress={() => setAttachments([])}
                   hitSlop={8}
                   disabled={isSending}
                   className="absolute -top-1 -right-1 bg-[#d4d4d3] dark:bg-[#474646] rounded-full p-[1px]"
@@ -805,8 +1126,11 @@ export default function ConversationScreen() {
             <View className="self-stretch items-center justify-end">
               <TouchableOpacity
                 onPress={handleSend}
-                disabled={isSending || (!text.trim() && !attachment)}
-                className={`h-8 w-8 my-2 rounded-full items-center justify-center ${text.trim() || attachment ? 'bg-[#323131] dark:bg-[#fcfcfc]' : 'bg-[#d4d4d3] dark:bg-[#474646]'} ${isSending ? 'opacity-70' : ''}`}
+                disabled={isSending || (!text.trim() && attachments.length === 0)}
+                className={`h-8 w-8 my-2 rounded-full items-center justify-center ${text.trim() || attachments.length
+                  ? 'bg-[#323131] dark:bg-[#fcfcfc]'
+                  : 'bg-[#d4d4d3] dark:bg-[#474646]'
+                } ${isSending ? 'opacity-70' : ''}`}
               >
                 {isUploading ? (
                   <ActivityIndicator size="small" color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} />
@@ -816,7 +1140,7 @@ export default function ConversationScreen() {
                     width={16}
                     strokeWidth={3}
                     color={
-                      text.trim() || attachment
+                      text.trim() || attachments.length
                         ? colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'
                         : '#ffffff'
                     }
