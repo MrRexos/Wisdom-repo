@@ -649,15 +649,15 @@ export default function ConversationScreen() {
           hitSlop={6}
           style={{ alignSelf: 'flex-start' }}
         >
-          <View style={{ width: 170, height: 170 }}>
+          <View style={{ width: 170, height: 170, marginBottom:7, marginTop:4, marginLeft: item.fromMe? 0:15, marginRight: item.fromMe? 15:0, }}>
             {images.slice(0, 3).map((img, idx) => {
               let style = {};
               if (idx === 0) {
-                style = { left: 10, top: 0, transform: [{ rotate: '0deg' }], zIndex: 3 };
+                style = { left: 10, top: 0, transform: [{ rotate: '4deg' }], zIndex: 3 };
               } else if (idx === 1) {
                 style = { left: -6, top: 18, transform: [{ rotate: '-12deg' }], zIndex: 2 };
               } else {
-                style = { left: 44, top: 26, transform: [{ rotate: '12deg' }], zIndex: 1 };
+                style = { left: 44, top: 20, transform: [{ rotate: '12deg' }], zIndex: 1 };
               }
               return (
                 <Image
@@ -679,15 +679,16 @@ export default function ConversationScreen() {
               <View
                 style={{
                   position: 'absolute',
-                  left: 36,
-                  top: 64,
-                  paddingHorizontal: 16,
-                  paddingVertical: 8,
+                  left: 33,
+                  top: 71,
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
                   borderRadius: 20,
-                  backgroundColor: 'rgba(0,0,0,0.6)',
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  zIndex: 50, 
                 }}
               >
-                <Text className="font-inter-semibold text-[14px] text-white">
+                <Text className="font-inter-semibold text-[13px] text-[#b6b5b5]">
                   +{images.length - 3} {t('images')}
                 </Text>
               </View>
@@ -941,7 +942,7 @@ export default function ConversationScreen() {
 
         {/* Header */}
         <View
-          className="flex-row items-center px-2 pt-4 pb-8 dark:border-[#3d3d3d]"
+          className="flex-row items-center px-2 pt-4 pb-4 dark:border-[#3d3d3d]"
           style={{
             borderBottomLeftRadius: 100,
             borderBottomRightRadius: 28,
@@ -1029,7 +1030,7 @@ export default function ConversationScreen() {
           {/* Campo de texto + botón send */}
           <View className="flex-1 flex-row items-center bg-[#e0e0e0] dark:bg-[#3d3d3d] rounded-[25px] pl-4 pr-2 ">
             {attachments.length > 0 && (
-              <View className="relative mr-2">
+              <View className="self-stretch items-center justify-start mr-2">
                 {attachments[0]?.kind === 'file' ? (
                   <View className="h-10 w-10 rounded-lg bg-[#323131] dark:bg-[#fcfcfc] items-center justify-center">
                     <File height={24} width={24} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
@@ -1042,24 +1043,24 @@ export default function ConversationScreen() {
                         const total = arr.length;
                         let style = {};
                         if (total === 1) {
-                          style = { left: 0, top: 0, transform: [{ rotate: '0deg' }], zIndex: 3 };
+                          style = { left: 0, top: 2, transform: [{ rotate: '0deg' }], zIndex: 3 };
                         } else if (total === 2) {
                           if (idx === 0) {
-                            style = { left: 4, top: 0, transform: [{ rotate: '0deg' }], zIndex: 3 };
+                            style = { left: 4, top: 2, transform: [{ rotate: '6deg' }], zIndex: 3 };
                           } else {
-                            style = { left: -4, top: 8, transform: [{ rotate: '-10deg' }], zIndex: 2 };
+                            style = { left: -4, top: 2, transform: [{ rotate: '-10deg' }], zIndex: 2 };
                           }
                         } else {
                           if (idx === 0) {
-                            style = { left: 4, top: 0, transform: [{ rotate: '0deg' }], zIndex: 4 };
+                            style = { left: 0, top: 0, transform: [{ rotate: '0deg' }], zIndex: 4 };
                           } else if (idx === 1) {
-                            style = { left: -6, top: 10, transform: [{ rotate: '-12deg' }], zIndex: 2 };
+                            style = { left: -6, top: 4, transform: [{ rotate: '-12deg' }], zIndex: 2 };
                           } else {
-                            style = { left: 14, top: 12, transform: [{ rotate: '12deg' }], zIndex: 1 };
+                            style = { left: 7, top: 2, transform: [{ rotate: '12deg' }], zIndex: 1 };
                           }
                         }
 
-                        const size = total === 1 ? 48 : 44;
+                        const size = total === 1 ? 44 : 44;
 
                         return (
                           <ExpoImage
@@ -1070,39 +1071,48 @@ export default function ConversationScreen() {
                               width: size,
                               height: size,
                               borderRadius: 12,
-                              borderWidth: 2,
+                              borderWidth:  2,
                               borderColor: colorScheme === 'dark' ? '#272626' : '#f4f4f4',
                               ...style,
                             }}
                           />
                         );
                       })}
-                    {imageAttachments.length > 3 && (
+                    {/* {imageAttachments.length > 3 && (
                       <View
                         style={{
                           position: 'absolute',
-                          left: 4,
-                          top: 0,
-                          width: 48,
-                          height: 48,
-                          borderRadius: 12,
-                          backgroundColor: 'rgba(0,0,0,0.45)',
+                          left: 7,
+                          top: 10,
+                          width: 28,
+                          height: 28,
+                          borderRadius: 9,
+                          backgroundColor: 'rgba(0,0,0,0.55)',
                           alignItems: 'center',
                           justifyContent: 'center',
+                          zIndex: 50,
                         }}
                       >
                         <Text className="font-inter-semibold text-[13px] text-white">
                           +{imageAttachments.length - 3}
                         </Text>
                       </View>
-                    )}
+                    )} */}
                   </View>
                 )}
                 <TouchableOpacity
                   onPress={() => setAttachments([])}
                   hitSlop={8}
                   disabled={isSending}
-                  className="absolute -top-1 -right-1 bg-[#d4d4d3] dark:bg-[#474646] rounded-full p-[1px]"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: -5,
+                    zIndex: 60,
+                    backgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3',
+                    borderRadius: 999,
+                    padding: 2,
+                  }}
                 >
                   <XMarkIcon height={16} width={16} color={iconColor} strokeWidth={2} />
                 </TouchableOpacity>
@@ -1111,7 +1121,7 @@ export default function ConversationScreen() {
             <View className="flex-1 justify-center">
               <TextInput
                 ref={inputRef}
-                className="py-2 pr-2 font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]"
+                className={`py-2 pr-2 ${attachments.length ? 'ml-1' : ''} font-inter-medium text-[15px] text-[#323131] dark:text-[#fcfcfc]`}
                 placeholder={t('your_message')}
                 placeholderTextColor="#979797"
                 multiline={true}
