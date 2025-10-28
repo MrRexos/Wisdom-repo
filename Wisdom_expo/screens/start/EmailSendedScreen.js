@@ -17,6 +17,7 @@ export default function EmailSendedScreen({ route }) {
     const navigation = useNavigation();
     const iconColor = colorScheme === 'dark' ? '#f2f2f2': '#444343';
     const emailOrUsername = route?.params?.emailOrUsername;
+    const insets = useSafeAreaInsets();
 
     const launchMailApp = () => {
       const mailtoUrl = 'mailto:';

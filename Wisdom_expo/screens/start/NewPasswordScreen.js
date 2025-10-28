@@ -34,6 +34,7 @@ export default function NewPasswordScreen({ route }) {
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const insets = useSafeAreaInsets();
 
 
   
