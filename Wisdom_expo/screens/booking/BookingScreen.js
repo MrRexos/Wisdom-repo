@@ -21,7 +21,7 @@ import SliderThumbDark from '../../assets/SliderThumbDark.png';
 import SliderThumbLight from '../../assets/SliderThumbLight.png';
 import { format } from 'date-fns';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ModalMessage from '../../components/ModalMessage';
 
 
@@ -36,6 +36,7 @@ const DATE_LOCALE_MAP = {
 };
 
 export default function BookingScreen() {
+  const insets = useSafeAreaInsets();
   const { colorScheme, toggleColorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
@@ -630,7 +631,7 @@ export default function BookingScreen() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
       <RBSheet
@@ -1563,7 +1564,7 @@ export default function BookingScreen() {
         onConfirm={() => setPaymentErrorVisible(false)}
       />
 
-    </SafeAreaView>
+    </View>
   );
 }
 

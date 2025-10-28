@@ -19,7 +19,7 @@ import { setDoc, doc, serverTimestamp, arrayRemove } from 'firebase/firestore';
 import { db } from '../../utils/firebase';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ModalMessage from '../../components/ModalMessage';
 
 const DATE_LOCALE_MAP = {
@@ -32,6 +32,7 @@ const DATE_LOCALE_MAP = {
 };
 
 export default function BookingDetailsScreen() {
+  const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
@@ -866,7 +867,7 @@ export default function BookingDetailsScreen() {
       : null;
 
   if (!booking) {
-    return <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]' />;
+    return <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]' />;
   }
 
   return (
@@ -1152,7 +1153,7 @@ export default function BookingDetailsScreen() {
 
       </RBSheet>
 
-      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+      <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
         <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
         <View className='items-center justify-center px-2 pt-3  pb-3'>
@@ -1779,7 +1780,7 @@ export default function BookingDetailsScreen() {
           </View>
 
         )}
-      </SafeAreaView>
+      </View>
       <ModalMessage
         visible={paymentErrorVisible}
         title={t('payment_error')}

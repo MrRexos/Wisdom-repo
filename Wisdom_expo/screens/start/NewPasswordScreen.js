@@ -12,7 +12,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import api, { setTokens } from '../../utils/api';
 import { storeDataLocally } from '../../utils/asyncStorage';
 import { ensureSupportedLanguage } from '../../utils/language';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 
@@ -34,6 +34,7 @@ export default function NewPasswordScreen({ route }) {
   const placeHolderTextColorChange = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const insets = useSafeAreaInsets();
 
 
   
@@ -115,7 +116,7 @@ export default function NewPasswordScreen({ route }) {
 
   return (
     
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1  bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1  bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <KeyboardAwareScrollView style={{ flex: 1, width: '100%' }} enableOnAndroid={true} scrollEnabled={keyboardOpen} showsVerticalScrollIndicator={false} > 
       <View className="px-5 py-3 w-full">
@@ -212,6 +213,6 @@ export default function NewPasswordScreen({ route }) {
             <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">{t('safe_and_login')}</Text>
           </TouchableOpacity>
         </View>
-    </SafeAreaView>
+    </View>
   );
 }

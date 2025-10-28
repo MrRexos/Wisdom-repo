@@ -9,12 +9,13 @@ import { useNavigation } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { Check } from "react-native-feather";
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '../../utils/api';
 
 
 
 export default function LanguageScreen() {
+  const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
@@ -70,8 +71,8 @@ export default function LanguageScreen() {
   };
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
+    <View
+      style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }}
       className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]"
     >
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
@@ -113,6 +114,6 @@ export default function LanguageScreen() {
         ))}
         <View className="h-10"></View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

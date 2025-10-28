@@ -13,7 +13,7 @@ import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
 import Triangle from '../../../assets/triangle';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '../../../utils/api.js';
 import ServiceFormHeader from '../../../components/ServiceFormHeader';
 import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
@@ -26,6 +26,7 @@ const matchById = (first, second) => {
 };
 
 export default function CreateServiceClassificationScreen() {
+  const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -188,8 +189,8 @@ export default function CreateServiceClassificationScreen() {
   const dropdownTop = (anchor) => (anchor ? anchor.y + anchor.height : 0);
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
+    <View
+      style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }}
       className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]"
     >
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
@@ -346,6 +347,6 @@ export default function CreateServiceClassificationScreen() {
         onDiscard={handleDiscardChanges}
         onDismiss={handleDismissConfirm}
       />
-    </SafeAreaView>
+    </View>
   );
 }

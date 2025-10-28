@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next';
 import '../../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ServiceFormHeader from '../../../components/ServiceFormHeader';
 import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
 import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 
 export default function CreateServiceDescriptionScreen() {
+  const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
@@ -69,7 +70,7 @@ export default function CreateServiceDescriptionScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View className="flex-1 px-6 pt-5 pb-6">
@@ -146,6 +147,6 @@ onPress={() => navigation.navigate('CreateServiceDetails', { prevParams: { ...pr
         onDiscard={handleDiscardChanges}
         onDismiss={handleDismissConfirm}
       />
-    </SafeAreaView>
+    </View>
   );
 }

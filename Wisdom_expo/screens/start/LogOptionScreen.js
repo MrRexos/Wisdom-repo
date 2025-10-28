@@ -10,7 +10,7 @@ import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import GoogleLogo from '../../assets/GoogleLogo.svg'
 import AppleLogo from '../../assets/AppleLogo.svg'
 import FacebookLogo from '../../assets/FacebookLogo.svg';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import axios from 'axios';
 // import * as Google from 'expo-auth-session/providers/google';
 // import * as WebBrowser from "expo-web-browser";
@@ -35,6 +35,7 @@ import axios from 'axios';
 // WebBrowser.maybeCompleteAuthSession();
 
 export default function LogOptionScreen() {
+  const insets = useSafeAreaInsets();
     const {colorScheme, toggleColorScheme} = useColorScheme();
     const { t, i18n } = useTranslation();
     const navigation = useNavigation();
@@ -73,7 +74,7 @@ export default function LogOptionScreen() {
     
     return (
         
-      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 w-full bg-neutral-700 justify-between'>
+      <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 w-full bg-neutral-700 justify-between'>
         <Image source={require('../../assets/LoadChair.png')}  style={{ height: windowHeight, width: windowWidth, position: 'absolute' }}/>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
           <View>
@@ -118,6 +119,6 @@ export default function LogOptionScreen() {
                   </TouchableOpacity> 
               </View> */}
           </View>
-      </SafeAreaView>
+      </View>
     );
 }

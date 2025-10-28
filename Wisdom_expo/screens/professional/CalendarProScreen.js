@@ -11,7 +11,7 @@ import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
 
 const DATE_LOCALE_MAP = {
@@ -25,6 +25,7 @@ const DATE_LOCALE_MAP = {
 
 
 export default function CalendarProScreen() {
+  const insets = useSafeAreaInsets();
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
@@ -168,7 +169,7 @@ export default function CalendarProScreen() {
   
 
   return (
-    <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
       
       <View className="flex-1 justify-start items-center pt-[55px] ">
@@ -241,6 +242,6 @@ export default function CalendarProScreen() {
       
 
 
-    </SafeAreaView>
+    </View>
   );
 }

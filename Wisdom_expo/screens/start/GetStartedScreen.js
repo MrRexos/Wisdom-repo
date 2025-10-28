@@ -6,11 +6,12 @@ import { useColorScheme } from 'react-native'
 import '../../languages/i18n';
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { XMarkIcon } from 'react-native-heroicons/outline';
 
 
 export default function GetStartedScreen() {
+  const insets = useSafeAreaInsets();
     const colorScheme = useColorScheme();
     const { t, i18n } = useTranslation();
     const navigation = useNavigation();
@@ -18,7 +19,7 @@ export default function GetStartedScreen() {
     const windowHeight = Dimensions.get('window').height;
 
     return (
-        <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-neutral-700 justify-between'>
+        <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-neutral-700 justify-between'>
             <Image source={require('../../assets/LoadChair.png')} style={{ height: windowHeight, width: windowWidth, position: 'absolute' }} />
             <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
             <View>
@@ -61,6 +62,6 @@ export default function GetStartedScreen() {
 
                 </View>
             </View>
-        </SafeAreaView>
+        </View>
     );
 }

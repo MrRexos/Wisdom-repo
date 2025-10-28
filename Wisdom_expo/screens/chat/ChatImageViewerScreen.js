@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import { View, Platform, TouchableOpacity, Text, Image } from 'react-native';
+import { View, Platform, TouchableOpacity, Text, Image, StatusBar as RNStatusBar } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ImageViewer from 'react-native-image-zoom-viewer';
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 
 export default function ChatImageViewerScreen() {
   const { colorScheme } = useColorScheme();
@@ -35,10 +35,10 @@ export default function ChatImageViewerScreen() {
   );
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc' }}
+    <View
+      style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc', paddingTop: Platform.OS === 'android' ? (RNStatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }}
     >
-      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+      <ExpoStatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
 
       {/* Barra superior FUERA del viewer */}
       <View
@@ -110,6 +110,6 @@ export default function ChatImageViewerScreen() {
           )}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   View,
   StatusBar,
@@ -68,6 +68,7 @@ const DATE_LOCALE_MAP = {
 };
 
 export default function ConversationScreen() {
+  const insets = useSafeAreaInsets();
   // --------------------------------------------------------------------------
   // • HOOKS & HELPERS
   // --------------------------------------------------------------------------
@@ -937,7 +938,7 @@ export default function ConversationScreen() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}> 
     <View className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]">
-      <SafeAreaView className="bg-[#fcfcfc] dark:bg-[#202020] rounded-b-[30px]">
+      <View className="bg-[#fcfcfc] dark:bg-[#202020] rounded-b-[30px]" style={{ paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }}>
         <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
 
         {/* Header */}
@@ -964,7 +965,7 @@ export default function ConversationScreen() {
             <MoreHorizontal height={24} width={24} color={iconColor} strokeWidth={2} />
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </View>
 
       <KeyboardAvoidingView
         style={{ flex: 1 }}

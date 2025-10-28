@@ -6,12 +6,13 @@ import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import OnboardingProgressDots from '../../components/OnboardingProgressDots';
 
 
 export default function EnterNameScreen() {
+  const insets = useSafeAreaInsets();
     const {colorScheme, toggleColorScheme} = useColorScheme();
     const { t, i18n } = useTranslation();
     const navigation = useNavigation();
@@ -54,7 +55,7 @@ export default function EnterNameScreen() {
     }
 
     return (
-      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
+      <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
         <View className="flex-1 w-full justify-between items-center">
@@ -101,6 +102,6 @@ export default function EnterNameScreen() {
         </View>
         </TouchableWithoutFeedback>
         
-      </SafeAreaView>
+      </View>
     );
 }

@@ -12,7 +12,7 @@ import api from '../../utils/api.js';
 import { CheckCircleIcon, XCircleIcon } from 'react-native-heroicons/solid';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import * as ImagePicker from 'expo-image-picker';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import axios from 'axios';
 
 
@@ -20,6 +20,7 @@ import axios from 'axios';
 
 export default function EditAccountScreen() {
 
+  const insets = useSafeAreaInsets();
   const { colorScheme, toggleColorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
@@ -173,7 +174,7 @@ export default function EditAccountScreen() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
       <View className="pt-6 bg-[#f2f2f2] dark:bg-[#272626] w-full justify-center items-center">
@@ -241,6 +242,6 @@ export default function EditAccountScreen() {
         <Text className="font-inter-semibold text-[15px] text-[#ff633e]/50 ">{t('delete_account')}</Text>
       </TouchableOpacity>
 
-    </SafeAreaView>
+    </View>
   );
 }

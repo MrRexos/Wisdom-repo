@@ -7,11 +7,12 @@ import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/nativ
 import { storeDataLocally, getDataLocally } from '../../../utils/asyncStorage';
 
 import {XMarkIcon} from 'react-native-heroicons/outline';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 
 export default function CreateServiceStartScreen() {
+  const insets = useSafeAreaInsets();
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
@@ -50,7 +51,7 @@ export default function CreateServiceStartScreen() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         <View className="flex-1 px-6 pt-5 pb-6">
             <TouchableOpacity onPress={() => navigation.pop(1)}>
@@ -81,6 +82,6 @@ export default function CreateServiceStartScreen() {
                 </TouchableOpacity>
             </View>
         </View>
-    </SafeAreaView>
+    </View>
   );
 }

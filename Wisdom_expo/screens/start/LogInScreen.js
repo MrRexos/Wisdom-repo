@@ -11,12 +11,13 @@ import WisdomLogo from '../../assets/wisdomLogo.tsx';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage.js';
 import { ensureSupportedLanguage } from '../../utils/language';
 import api, { setTokens } from '../../utils/api.js';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 
 
 export default function LogInScreen() {
+  const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
@@ -89,7 +90,7 @@ export default function LogInScreen() {
   
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1  bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1  bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
       <View className="flex-1 w-full justify-between">
@@ -170,6 +171,6 @@ export default function LogInScreen() {
       </KeyboardAvoidingView>
       </View>
       </TouchableWithoutFeedback>
-    </SafeAreaView>
+    </View>
   );
 }

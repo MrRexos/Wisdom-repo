@@ -7,7 +7,7 @@ import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation } from '@react-navigation/native';
 import {ChevronLeftIcon} from 'react-native-heroicons/outline';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 
 
@@ -17,6 +17,7 @@ export default function EmailSendedScreen({ route }) {
     const navigation = useNavigation();
     const iconColor = colorScheme === 'dark' ? '#f2f2f2': '#444343';
     const emailOrUsername = route?.params?.emailOrUsername;
+    const insets = useSafeAreaInsets();
 
     const launchMailApp = () => {
       const mailtoUrl = 'mailto:';
@@ -33,7 +34,7 @@ export default function EmailSendedScreen({ route }) {
     };
 
     return (
-      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
+      <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
           <View className="px-5 py-3  w-full">
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -72,6 +73,6 @@ export default function EmailSendedScreen({ route }) {
               <Text onPress={contactSupport} className="text-[#444343] dark:text-[#f2f2f2] opacity-60 text-center underline">{t('contact_support')}</Text>
             </Text>
           </View>
-      </SafeAreaView>
+      </View>
     );
 }

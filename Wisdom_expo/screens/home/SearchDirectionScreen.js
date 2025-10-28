@@ -12,12 +12,13 @@ import * as Location from 'expo-location';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 
 
 export default function SearchDirectionScreen() {
+  const insets = useSafeAreaInsets();
   const { colorScheme, toggleColorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
@@ -441,7 +442,7 @@ export default function SearchDirectionScreen() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
       <RBSheet
@@ -743,6 +744,6 @@ export default function SearchDirectionScreen() {
         />
 
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
