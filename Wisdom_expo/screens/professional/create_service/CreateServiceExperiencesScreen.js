@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import '../../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { XMarkIcon } from 'react-native-heroicons/outline';
 import ServiceFormHeader from '../../../components/ServiceFormHeader';
@@ -13,6 +13,7 @@ import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 
 
 export default function CreateServiceExperiencesScreen() {
+  const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#706F6E' : '#B6B5B5';
@@ -153,7 +154,7 @@ export default function CreateServiceExperiencesScreen() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
@@ -369,7 +370,7 @@ onPress={() => navigation.navigate('CreateServiceImages', { prevParams: { ...pre
         onDiscard={handleDiscardChanges}
         onDismiss={handleDismissConfirm}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 

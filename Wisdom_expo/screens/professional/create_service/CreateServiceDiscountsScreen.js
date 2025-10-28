@@ -5,7 +5,7 @@ import { useColorScheme } from 'nativewind'
 import '../../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ServiceFormHeader from '../../../components/ServiceFormHeader';
 import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
 import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
@@ -13,6 +13,7 @@ import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 
 export default function CreateServiceDiscountsScreen() {
 
+  const insets = useSafeAreaInsets();
   const {colorScheme, toggleColorScheme} = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
@@ -59,7 +60,7 @@ export default function CreateServiceDiscountsScreen() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         
         <View className="flex-1 px-6 pt-5 pb-6">
@@ -148,6 +149,6 @@ export default function CreateServiceDiscountsScreen() {
           onDiscard={handleDiscardChanges}
           onDismiss={handleDismissConfirm}
         />
-    </SafeAreaView>
+    </View>
   );
 }

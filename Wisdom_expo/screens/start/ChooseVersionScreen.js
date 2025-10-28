@@ -6,10 +6,11 @@ import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { UserCheck, Briefcase } from 'react-native-feather';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import OnboardingProgressDots from '../../components/OnboardingProgressDots';
 
 export default function ChooseVersionScreen() {
+  const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -49,8 +50,8 @@ export default function ChooseVersionScreen() {
   };
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
+    <View
+      style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }}
       className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]"
     >
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
@@ -140,6 +141,6 @@ export default function ChooseVersionScreen() {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

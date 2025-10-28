@@ -5,9 +5,10 @@ import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function DisplayImagesScreen() {
+  const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
@@ -29,7 +30,7 @@ export default function DisplayImagesScreen() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <View className="px-6 pt-7 pb-3 justify-center items-center">
         
@@ -54,6 +55,6 @@ export default function DisplayImagesScreen() {
           contentContainerStyle={{ flexGrow: 1, marginTop: 10 }}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

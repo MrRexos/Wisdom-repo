@@ -9,7 +9,7 @@ import { BookmarkIcon } from 'react-native-heroicons/solid';
 import { getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { enUS, es, fr, ar, ca, zhCN } from 'date-fns/locale';
 

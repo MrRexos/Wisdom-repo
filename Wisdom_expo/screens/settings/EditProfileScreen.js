@@ -12,7 +12,7 @@ import api from '../../utils/api.js';
 import { CheckCircleIcon, XCircleIcon } from 'react-native-heroicons/solid';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import * as ImagePicker from 'expo-image-picker';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import eventEmitter from '../../utils/eventEmitter';
 
 
@@ -20,6 +20,7 @@ import eventEmitter from '../../utils/eventEmitter';
 
 export default function EditProfileScreen() {
 
+  const insets = useSafeAreaInsets();
     const { colorScheme, toggleColorScheme } = useColorScheme();
     const { t, i18n } = useTranslation();
     const navigation = useNavigation();
@@ -267,7 +268,7 @@ export default function EditProfileScreen() {
 
 
     return (
-        <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+        <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
             <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
             <View className="pt-6 bg-[#f2f2f2] dark:bg-[#272626] w-full justify-center items-center">
@@ -356,6 +357,6 @@ export default function EditProfileScreen() {
 
                 <View className="h-10"></View>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }

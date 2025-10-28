@@ -53,12 +53,13 @@ import {
   mapMarkerImage,
   mapMarkerStyle,
 } from '../../utils/mapMarkerAssets';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 
 
 export default function ServiceProfileScreen() {
+  const insets = useSafeAreaInsets();
   const { colorScheme, toggleColorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
@@ -1058,7 +1059,7 @@ export default function ServiceProfileScreen() {
 
 
   return (
-      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
+      <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#fcfcfc] dark:bg-[#323131]'>
         <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
       <RBSheet
@@ -2016,7 +2017,7 @@ export default function ServiceProfileScreen() {
         onDismiss={handleCancelServiceDelete}
       />
 
-      </SafeAreaView>
+      </View>
   );
 }
 

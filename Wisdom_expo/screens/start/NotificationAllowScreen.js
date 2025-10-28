@@ -12,7 +12,7 @@ import {XMarkIcon} from 'react-native-heroicons/outline';
 import NotificationAskWhite from '../../assets/NotificationAskWhite.svg';
 import NotificationAskDark from '../../assets/NotificationAskDark.svg';
 import api, { setTokens } from '../../utils/api.js';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   EXPO_GO_PUSH_UNAVAILABLE_MESSAGE,
   isPushNotificationsSupported,
@@ -23,6 +23,7 @@ import {
 
 
 export default function NotificationAllowScreen() {
+  const insets = useSafeAreaInsets();
     const {colorScheme, toggleColorScheme} = useColorScheme();
     const { t, i18n } = useTranslation();
     const navigation = useNavigation();
@@ -220,7 +221,7 @@ export default function NotificationAllowScreen() {
   }
   
     return (
-      <SafeAreaView style={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0}} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
+      <View style={{ paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
         <StatusBar style = {colorScheme=='dark'? 'light': 'dark'}/>
         <View className="px-5 py-3 w-full flex-1 justify-between">
           <View className="flex-row justify-between">
@@ -260,6 +261,6 @@ export default function NotificationAllowScreen() {
           
           
         </View>
-      </SafeAreaView>
+      </View>
     );
 }

@@ -5,9 +5,10 @@ import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function CancellationPolicyScreen() {
+  const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -17,8 +18,8 @@ export default function CancellationPolicyScreen() {
   const textStyle = 'mb-2 font-inter-medium';
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}
+    <View
+      style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }}
       className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'
     >
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
@@ -89,7 +90,7 @@ export default function CancellationPolicyScreen() {
 
         <View className="h-8" />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

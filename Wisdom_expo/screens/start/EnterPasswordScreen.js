@@ -7,11 +7,12 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import EyeIcon from 'react-native-bootstrap-icons/icons/eye';
 import EyeSlashIcon from 'react-native-bootstrap-icons/icons/eye-slash';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import OnboardingProgressDots from '../../components/OnboardingProgressDots';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 
 export default function EnterPasswordScreen() {
+  const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
@@ -41,7 +42,7 @@ export default function EnterPasswordScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }} className='flex-1  bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1  bg-[#f2f2f2] dark:bg-[#272626] justify-between items-center'>
       
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
@@ -98,6 +99,6 @@ export default function EnterPasswordScreen() {
       </View>
 
       </TouchableWithoutFeedback>
-    </SafeAreaView>
+    </View>
   );
 }

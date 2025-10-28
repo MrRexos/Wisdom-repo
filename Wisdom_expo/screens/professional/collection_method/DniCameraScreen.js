@@ -7,10 +7,11 @@ import '../../../languages/i18n';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import Svg, { Rect, Defs, Mask } from 'react-native-svg';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import eventEmitter from '../../../utils/eventEmitter';
 
 export default function DniCameraScreen() {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const route = useRoute();
   const { colorScheme } = useColorScheme();
@@ -48,14 +49,14 @@ export default function DniCameraScreen() {
 
   if (!permission.granted) {
     return (
-      <SafeAreaView style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0, backgroundColor: colorScheme === 'dark' ? '#272626' : '#f2f2f2' }}>
+      <View style={{ flex: 1,  backgroundColor: colorScheme === 'dark' ? '#272626' : '#f2f2f2', paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
           <Text className="font-inter-medium text-[16px]" style={{ color: iconColor, textAlign: 'center', marginBottom: 18 }}>{t('permission_denied')}</Text>
           <TouchableOpacity onPress={requestPermission} className="rounded-full px-5 py-3" style={{ backgroundColor: colorScheme === 'dark' ? '#fcfcfc' : '#323131' }}>
             <Text className="font-inter-semibold text-[14px]" style={{ color: colorScheme === 'dark' ? '#323131' : '#fcfcfc' }}>{t('continue')}</Text>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -109,13 +110,13 @@ export default function DniCameraScreen() {
         </View>
       </View>
 
-      <SafeAreaView style={{ position: 'absolute', top: 0, left: 0, right: 0 }}>
+      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }}>
         <View style={{ paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0, flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.goBack()} className="pl-6 pt-5">
             <ChevronLeftIcon size={24} color={'#ffffff'} strokeWidth={1.8}/>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </View>
 
       <View style={{ position: 'absolute', left: 0, right: 0, bottom: 60, alignItems: 'center' }}>
         <TouchableOpacity onPress={takePicture} style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: '#ffffff', alignItems: 'center', justifyContent: 'center' }}>
