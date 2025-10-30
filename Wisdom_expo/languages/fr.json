@@ -201,6 +201,8 @@
     "service_edit_unsaved_title": "Supprimer les modifications ?",
     "service_edit_unsaved_message": "Des modifications ne sont pas enregistrées. Voulez-vous les enregistrer avant de quitter ?",
     "service_edit_save_error": "Nous n'avons pas pu enregistrer vos modifications. Réessayez.",
+    "invalid_price": "Prix invalide",
+    "set_a_valid_price": "Définissez un prix valide pour continuer.",
     "service_edit_load_error": "Impossible de charger le service pour modification. Réessayez.",
     "pay": "Payer",
     "add_credit_card": "Ajouter une carte de crédit",

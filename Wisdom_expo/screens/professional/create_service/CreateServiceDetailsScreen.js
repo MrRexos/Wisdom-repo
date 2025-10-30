@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Check } from "react-native-feather";
 import ServiceFormHeader from '../../../components/ServiceFormHeader';
 import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
+import ModalMessage from '../../../components/ModalMessage';
 import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 
 
@@ -46,6 +47,8 @@ export default function CreateServiceDetailsScreen() {
     handleConfirmSave,
     handleDiscardChanges,
     handleDismissConfirm,
+    invalidPriceVisible,
+    dismissInvalidPriceModal,
   } = useServiceFormEditing({
     prevParams,
     currentValues: { selectedLanguages, isIndividual, hobbies, tags },
@@ -344,6 +347,15 @@ onPress={() => navigation.navigate('CreateServiceLocation', { prevParams: { ...p
           </TouchableOpacity>
 
         </View>
+        <ModalMessage
+          visible={invalidPriceVisible}
+          title={t('invalid_price')}
+          description={t('set_a_valid_price')}
+          showCancel={false}
+          confirmText={t('ok')}
+          onConfirm={dismissInvalidPriceModal}
+          onDismiss={dismissInvalidPriceModal}
+        />
         <ServiceFormUnsavedModal
           visible={confirmVisible}
           onSave={handleConfirmSave}

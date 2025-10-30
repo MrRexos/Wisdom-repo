@@ -10,6 +10,7 @@ import AddServiceImages from '../../../assets/AddServiceImages';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ServiceFormHeader from '../../../components/ServiceFormHeader';
 import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
+import ModalMessage from '../../../components/ModalMessage';
 import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -116,6 +117,8 @@ export default function CreateServiceImagesScreen() {
     handleConfirmSave,
     handleDiscardChanges,
     handleDismissConfirm,
+    invalidPriceVisible,
+    dismissInvalidPriceModal,
   } = useServiceFormEditing({ prevParams, currentValues: { serviceImages }, t });
 
   const handlePickMainImage = async () => {
@@ -265,6 +268,15 @@ onPress={() => navigation.navigate('CreateServicePriceType', { prevParams: { ...
         </TouchableOpacity>
 
       </View>
+      <ModalMessage
+        visible={invalidPriceVisible}
+        title={t('invalid_price')}
+        description={t('set_a_valid_price')}
+        showCancel={false}
+        confirmText={t('ok')}
+        onConfirm={dismissInvalidPriceModal}
+        onDismiss={dismissInvalidPriceModal}
+      />
       <ServiceFormUnsavedModal
         visible={confirmVisible}
         onSave={handleConfirmSave}

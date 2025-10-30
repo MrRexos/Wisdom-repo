@@ -201,6 +201,8 @@
     "service_edit_unsaved_title": "¿Descartar cambios?",
     "service_edit_unsaved_message": "Tienes cambios sin guardar. ¿Quieres guardarlos antes de salir?",
     "service_edit_save_error": "No pudimos guardar tus cambios. Inténtalo de nuevo.",
+    "invalid_price": "Precio inválido",
+    "set_a_valid_price": "Introduce un precio válido para continuar.",
     "service_edit_load_error": "No pudimos cargar el servicio para editarlo. Inténtalo de nuevo.",
     "pay": "Pagar",
     "add_credit_card": "Añadir tarjeta de crédito",

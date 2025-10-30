@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '../../../utils/api.js';
 import ServiceFormHeader from '../../../components/ServiceFormHeader';
 import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
+import ModalMessage from '../../../components/ModalMessage';
 import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 
 
@@ -121,6 +122,8 @@ export default function CreateServiceClassificationScreen() {
     handleConfirmSave,
     handleDiscardChanges,
     handleDismissConfirm,
+    invalidPriceVisible,
+    dismissInvalidPriceModal,
   } = useServiceFormEditing({
     prevParams,
     currentValues: {
@@ -341,6 +344,15 @@ export default function CreateServiceClassificationScreen() {
           </TouchableOpacity>
         </View>
       </View>
+      <ModalMessage
+        visible={invalidPriceVisible}
+        title={t('invalid_price')}
+        description={t('set_a_valid_price')}
+        showCancel={false}
+        confirmText={t('ok')}
+        onConfirm={dismissInvalidPriceModal}
+        onDismiss={dismissInvalidPriceModal}
+      />
       <ServiceFormUnsavedModal
         visible={confirmVisible}
         onSave={handleConfirmSave}

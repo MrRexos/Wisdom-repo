@@ -201,6 +201,8 @@
     "service_edit_unsaved_title": "Discard changes?",
     "service_edit_unsaved_message": "You have unsaved changes. Do you want to save them before leaving?",
     "service_edit_save_error": "We couldn't save your changes. Try again.",
+    "invalid_price": "Invalid price",
+    "set_a_valid_price": "Set a valid price to continue.",
     "service_edit_load_error": "We couldn't load the service for editing. Try again.",
     "pay": "Pay",
     "add_credit_card": "Add a Credit Card",

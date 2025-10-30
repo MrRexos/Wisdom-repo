@@ -9,6 +9,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { XMarkIcon } from 'react-native-heroicons/outline';
 import ServiceFormHeader from '../../../components/ServiceFormHeader';
 import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
+import ModalMessage from '../../../components/ModalMessage';
 import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 
 
@@ -46,6 +47,8 @@ export default function CreateServiceExperiencesScreen() {
     handleConfirmSave,
     handleDiscardChanges,
     handleDismissConfirm,
+    invalidPriceVisible,
+    dismissInvalidPriceModal,
   } = useServiceFormEditing({ prevParams, currentValues: { experiences }, t });
 
   const inputPositionChanged = (text) => {
@@ -364,6 +367,15 @@ onPress={() => navigation.navigate('CreateServiceImages', { prevParams: { ...pre
         </TouchableOpacity>
       </View>
 
+      <ModalMessage
+        visible={invalidPriceVisible}
+        title={t('invalid_price')}
+        description={t('set_a_valid_price')}
+        showCancel={false}
+        confirmText={t('ok')}
+        onConfirm={dismissInvalidPriceModal}
+        onDismiss={dismissInvalidPriceModal}
+      />
       <ServiceFormUnsavedModal
         visible={confirmVisible}
         onSave={handleConfirmSave}

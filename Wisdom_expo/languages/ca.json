@@ -201,6 +201,8 @@
     "service_edit_unsaved_title": "Vols descartar els canvis?",
     "service_edit_unsaved_message": "Tens canvis sense desar. Vols desar-los abans de sortir?",
     "service_edit_save_error": "No hem pogut desar els teus canvis. Torna-ho a provar.",
+    "invalid_price": "Preu no vàlid",
+    "set_a_valid_price": "Introdueix un preu vàlid per continuar.",
     "service_edit_load_error": "No hem pogut carregar el servei per editar-lo. Torna-ho a provar.",
     "pay": "Pagar",
     "add_credit_card": "Afegir targeta de crèdit",

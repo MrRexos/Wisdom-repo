@@ -8,6 +8,7 @@ import { ChevronDownIcon, ChevronUpIcon } from 'react-native-heroicons/outline';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ServiceFormHeader from '../../../components/ServiceFormHeader';
 import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
+import ModalMessage from '../../../components/ModalMessage';
 import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 
 
@@ -35,6 +36,8 @@ export default function CreateServicePriceTypeScreen() {
     handleConfirmSave,
     handleDiscardChanges,
     handleDismissConfirm,
+    invalidPriceVisible,
+    dismissInvalidPriceModal,
   } = useServiceFormEditing({ prevParams, currentValues: { priceType }, t });
 
   const options  = [
@@ -121,6 +124,15 @@ onPress={() => {priceType==='budget'? navigation.navigate('CreateServiceDiscount
 
             </View>
         </View>
+        <ModalMessage
+          visible={invalidPriceVisible}
+          title={t('invalid_price')}
+          description={t('set_a_valid_price')}
+          showCancel={false}
+          confirmText={t('ok')}
+          onConfirm={dismissInvalidPriceModal}
+          onDismiss={dismissInvalidPriceModal}
+        />
         <ServiceFormUnsavedModal
           visible={confirmVisible}
           onSave={handleConfirmSave}
