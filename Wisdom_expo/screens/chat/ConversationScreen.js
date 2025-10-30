@@ -180,11 +180,15 @@ export default function ConversationScreen() {
     };
   }, []);
 
-  const scrollToBottom = useCallback((options = {}) => {
-    if (!flatListRef.current) return;
-    const { animated = false } = options;
-    flatListRef.current.scrollToOffset({ offset: 0, animated });
-  }, []);
+  const scrollToBottom = useCallback(({ animated = false } = {}) => { 
+    if (!flatListRef.current || !messages?.length) return; 
+    try { 
+      flatListRef.current.scrollToIndex({ index: messages.length - 1, animated }); 
+    } catch { 
+      // fallback por si el layout aún no está medido 
+      flatListRef.current.scrollToOffset({ offset: Number.MAX_SAFE_INTEGER, animated }); 
+    } 
+  }, [messages?.length]);
 
   // Autoscroll al enfocar pantalla
   useEffect(() => {
@@ -204,7 +208,7 @@ export default function ConversationScreen() {
       setCurrentUser(user);
       const q = query(
         collection(db, 'conversations', conversationId, 'messages'),
-        orderBy('createdAt', 'desc')
+        orderBy('createdAt', 'asc')
       );
       unsub = onSnapshot(q, async (snap) => {
         const raw = snap.docs.map((d) => {
@@ -215,28 +219,30 @@ export default function ConversationScreen() {
             ...msg,
           };
         });
-        const processed = [];
-        for (let i = 0; i < raw.length; i++) {
-          const m = raw[i];
-          const prev = raw[i - 1]; // más nuevo (visual abajo) 
-          const next = raw[i + 1]; // más antiguo (visual arriba) 
-
-          // Extremo inferior visual de la racha (donde debe ir hora y check) 
-          const tail = !prev || prev.senderId !== m.senderId;
-          processed.push({ ...m, _isTail: tail });
-
-          // Insertar la etiqueta de FECHA al terminar el bloque de ese día. 
-          const currDate = m.createdAt?.seconds
-            ? new Date(m.createdAt.seconds * 1000).toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' })
-            : null;
-          const nextDate = next?.createdAt?.seconds
-            ? new Date(next.createdAt.seconds * 1000).toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' })
-            : null;
-          if (currDate && currDate !== nextDate) {
-            // Al ir después en el array (desc) y la lista estar invertida, 
-            // esta etiqueta se verá ARRIBA del bloque del día. 
-            processed.push({ id: `label-${m.id}`, type: 'label', text: currDate });
-          }
+        const processed = []; 
+        for (let i = 0; i < raw.length; i++) { 
+          const m = raw[i]; 
+          const prev = raw[i - 1];   // más antiguo 
+          const next = raw[i + 1];   // más nuevo 
+        
+          //  etiqueta de fecha ANTES del primer mensaje del día 
+          const currDate = m.createdAt?.seconds 
+            ? new Date(m.createdAt.seconds * 1000).toLocaleDateString( 
+                locale, { weekday: 'long', month: 'long', day: 'numeric' } 
+              ) 
+            : null; 
+          const prevDate = prev?.createdAt?.seconds 
+            ? new Date(prev.createdAt.seconds * 1000).toLocaleDateString( 
+                locale, { weekday: 'long', month: 'long', day: 'numeric' } 
+              ) 
+            : null; 
+          if (currDate && currDate !== prevDate) { 
+            processed.push({ id: `label-${m.id}`, type: 'label', text: currDate }); 
+          } 
+        
+          //  “cola” de racha cuando el SIGUIENTE es de otro remitente (orden ascendente) 
+          const tail = !next || next.senderId !== m.senderId; 
+          processed.push({ ...m, _isTail: tail }); 
         }
         setMessages(processed);
 
@@ -1067,16 +1073,17 @@ export default function ConversationScreen() {
             keyExtractor={keyExtractor}
             renderItem={renderMessage}
             contentContainerStyle={{ padding: 16 }}
-            inverted
-            maintainVisibleContentPosition={
-              shouldMaintainPosition ? { minIndexForVisible: 0, autoscrollToTopThreshold: 20 } : undefined
-            }
             estimatedItemSize={180}
             showsVerticalScrollIndicator={true}
             keyboardShouldPersistTaps="never"   // mantiene interacciones útiles
             keyboardDismissMode="none"         // al arrastrar, cierra teclado
             ListFooterComponent={<View style={{ height: 4 }} />}
             extraData={imageMessages.length}
+            onContentSizeChange={() => { 
+              if (initialLoadRef.current) { 
+                requestAnimationFrame(() => scrollToBottom({ animated: false })); 
+              } 
+            }}
           />
         </View>
 
