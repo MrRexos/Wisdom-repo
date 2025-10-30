@@ -585,22 +585,31 @@ export default function ServiceProfileScreen() {
     return Math.round((x + Number.EPSILON) * 100) / 100;
   };
 
-  const languagesMap = {
-    es: 'Spanish',
-    en: 'English',
-    ca: 'Catalan',
-    fr: 'French',
-    ar: 'Arabic',
-    de: 'German',
-    zh: 'Chinese',
-    ja: 'Japanese',
-    ko: 'Korean',
-    pt: 'Portuguese',
-    ru: 'Russian',
-    it: 'Italian',
-    nl: 'Dutch',
-    tr: 'Turkish',
-    sv: 'Swedish'
+  const languageTranslationKeys = {
+    es: 'language_name_spanish',
+    en: 'language_name_english',
+    ca: 'language_name_catalan',
+    fr: 'language_name_french',
+    ar: 'language_name_arabic',
+    de: 'language_name_german',
+    zh: 'language_name_chinese',
+    ja: 'language_name_japanese',
+    ko: 'language_name_korean',
+    pt: 'language_name_portuguese',
+    ru: 'language_name_russian',
+    it: 'language_name_italian',
+    nl: 'language_name_dutch',
+    tr: 'language_name_turkish',
+    sv: 'language_name_swedish',
+  };
+
+  const getLanguageLabel = (code) => {
+    const translationKey = languageTranslationKeys[code];
+    if (!translationKey) {
+      return code;
+    }
+    const translated = t(translationKey);
+    return translated === translationKey ? code : translated;
   };
 
   const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
@@ -868,11 +877,17 @@ export default function ServiceProfileScreen() {
   }, [serviceData]);
 
   const formatLanguages = (languagesArray) => {
-    const languageNames = languagesArray.map(lang => languagesMap[lang] || lang);
-    if (languageNames.length > 1) {
-      return `${languageNames.slice(0, -1).join(', ')} and ${languageNames[languageNames.length - 1]}`;
+    const languageNames = languagesArray.map(getLanguageLabel).filter(Boolean);
+    if (languageNames.length === 0) {
+      return '';
     }
-    return languageNames[0];
+    if (languageNames.length === 1) {
+      return languageNames[0];
+    }
+    const conjunction = t('and') || 'and';
+    const namesExceptLast = languageNames.slice(0, -1).join(', ');
+    const lastLanguage = languageNames[languageNames.length - 1];
+    return `${namesExceptLast} ${conjunction} ${lastLanguage}`;
   };
 
   const formatDate = (isoString) => {

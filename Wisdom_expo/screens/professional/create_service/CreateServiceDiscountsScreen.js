@@ -22,11 +22,41 @@ export default function CreateServiceDiscountsScreen() {
   const route = useRoute();
   const prevParams = route.params?.prevParams || {};
   const { title, family, category, description, selectedLanguages, isIndividual, hobbies, tags, location, actionRate, experiences, serviceImages, priceType, priceValue } = prevParams;
+  const getNumericDiscountRate = (value) => {
+    if (value === null || value === undefined) {
+      return null;
+    }
+
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (trimmed.length === 0) {
+        return null;
+      }
+
+      const parsedStringNumber = Number(trimmed);
+      return Number.isFinite(parsedStringNumber) ? parsedStringNumber : null;
+    }
+
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return value;
+    }
+
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+
   const allowDiscountsDefault = prevParams.allowDiscounts ?? true;
+  const discountRateFromParams = getNumericDiscountRate(prevParams.discountRate);
+  const discountRateDefault =
+    discountRateFromParams ?? (allowDiscountsDefault ? 10 : null);
   const [allowDiscounts, setAllowDiscounts] = useState(allowDiscountsDefault);
   const [typeSelected, setTypeSelected] = useState(allowDiscountsDefault ? 1 : 0);
-  const [discountRate, setDiscountRate] = useState(prevParams.discountRate ?? 10);
-  const [discountRateText, setDiscountRateText] = useState(String(prevParams.discountRate ?? 10));
+  const [discountRate, setDiscountRate] = useState(discountRateDefault);
+  const [discountRateText, setDiscountRateText] = useState(
+    discountRateDefault === null || discountRateDefault === undefined
+      ? ''
+      : String(discountRateDefault)
+  );
 
   const {
     isEditing,
@@ -51,11 +81,43 @@ export default function CreateServiceDiscountsScreen() {
         value: true,
     },
   ]
-  
+
+
+  const priceValueString =
+    typeof priceValue === 'string'
+      ? priceValue
+      : priceValue !== null && priceValue !== undefined
+        ? String(priceValue)
+        : '';
+  const hasPriceValue =
+    priceValue !== null &&
+    priceValue !== undefined &&
+    priceValueString.trim().length > 0;
+  const numericPriceValue = hasPriceValue ? Number(priceValue) : null;
+  const hasNumericPriceValue = hasPriceValue && Number.isFinite(numericPriceValue);
+  const hasNumericDiscountRate = Number.isFinite(discountRate);
+
 
   const inputChanged = (text) => {
     setDiscountRateText(text);
-    setDiscountRate(parseInt(text));
+    setDiscountRate(getNumericDiscountRate(text));
+  };
+
+  const handleSelectOption = (index, value) => {
+    setTypeSelected(index);
+    setAllowDiscounts(value);
+
+    if (!value) {
+      setDiscountRate(null);
+      setDiscountRateText('');
+      return;
+    }
+
+    if (!Number.isFinite(discountRate)) {
+      const fallbackRate = getNumericDiscountRate(prevParams.discountRate) ?? 10;
+      setDiscountRate(fallbackRate);
+      setDiscountRateText(String(fallbackRate));
+    }
   };
 
 
@@ -83,7 +145,7 @@ export default function CreateServiceDiscountsScreen() {
                     return (
                         <TouchableOpacity
                             key={index}
-                            onPress={() => {setTypeSelected(index); setAllowDiscounts(value)}}
+                            onPress={() => handleSelectOption(index, value)}
                             className={isActive? `mb-5 p-5 pr-7 w-full   rounded-xl bg-[#e0e0e0] dark:bg-[#3d3d3d] border-[1px] border-[#b6b5b5] dark:border-[#706f6e]` : `mb-5 p-5 pr-7 justify-start items-start w-full rounded-xl border-[1px] border-[#b6b5b5] dark:border-[#706f6e]`}
                             >
                             <View className="flex-row w-full items-center">
@@ -109,7 +171,11 @@ export default function CreateServiceDiscountsScreen() {
                                 />
                                 <Text className={isActive? `font-inter-bold text-[14px] text-[#323131] dark:text-[#fcfcfc]`: `font-inter-bold text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>%</Text>
                                 <Text numberOfLines={1} className={isActive? `font-inter-medium flex-1 text-[14px] text-[#979797] `: `font-inter-medium flex-1 text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>{'.'.repeat(80)}</Text>
-                                <Text className={isActive? `font-inter-semibold text-[14px] text-[#979797] `: `font-inter-semibold text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>{priceValue? priceValue-(priceValue*0.1).toFixed(1): 'X'} €</Text>
+                                <Text className={isActive? `font-inter-semibold text-[14px] text-[#979797] `: `font-inter-semibold text-[14px]  text-[#b6b5b5] dark:text-[#706f6e]`}>
+                                  {hasNumericPriceValue && hasNumericDiscountRate
+                                    ? `${(numericPriceValue - (numericPriceValue * discountRate) / 100).toFixed(1)} €`
+                                    : `${hasNumericPriceValue ? numericPriceValue : 'X'} €`}
+                                </Text>
                               </View>
                             )}
                              

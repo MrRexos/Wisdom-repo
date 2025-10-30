@@ -483,6 +483,15 @@ export const useServiceFormEditing = ({ prevParams = {}, currentValues = {}, t }
       return;
     }
 
+    if (normalized.priceType !== 'budget' &&
+      (normalized.priceValue == null || Number(normalized.priceValue) < 0)) {
+    Alert.alert(
+      t ? t('invalid_price') : 'Precio inválido',
+      t ? t('set_a_valid_price') : 'Introduce un precio válido.'
+    );
+    return; 
+    }
+
     try {
       setSaving(true);
       await saveServiceEdits(serviceId, combinedValues);
