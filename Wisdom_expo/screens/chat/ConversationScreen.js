@@ -1096,7 +1096,7 @@ export default function ConversationScreen() {
                               height: 44,
                               borderRadius: 12,
                               borderWidth: 2,
-                              borderColor: colorScheme === 'dark' ? '#272626' : '#f4f4f4',
+                              borderColor: colorScheme === 'dark' ? '#3d3d3d' : '#e0e0e0',
                               alignItems: 'center',
                               justifyContent: 'center',
                               backgroundColor,
