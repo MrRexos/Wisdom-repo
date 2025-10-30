@@ -600,6 +600,7 @@ export default function ResultsScreen() {
             renderItem={renderItem}
             refreshing={refreshing}
             onRefresh={onRefresh}
+            showsVerticalScrollIndicator={false}
             contentContainerStyle={{
               justifyContent: 'space-between',
               paddingBottom: 200,

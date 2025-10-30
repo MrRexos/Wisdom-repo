@@ -984,7 +984,7 @@ export default function ConversationScreen() {
             maintainVisibleContentPosition={
               shouldMaintainPosition ? { minIndexForVisible: 0, autoscrollToTopThreshold: 20 } : undefined
             }
-            showsVerticalScrollIndicator={false}
+            showsVerticalScrollIndicator={true}
             keyboardShouldPersistTaps="never"   // mantiene interacciones útiles
             keyboardDismissMode="none"         // al arrastrar, cierra teclado
             ListFooterComponent={<View style={{ height: 4 }} />}
