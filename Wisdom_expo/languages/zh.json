@@ -201,6 +201,8 @@
     "service_edit_unsaved_title": "放弃更改？",
     "service_edit_unsaved_message": "你还有未保存的更改。要在离开前保存吗？",
     "service_edit_save_error": "我们未能保存你的更改。请重试。",
+    "invalid_price": "价格无效",
+    "set_a_valid_price": "请设置有效的价格以继续。",
     "service_edit_load_error": "无法加载要编辑的服务。请重试。",
     "pay": "支付",
     "add_credit_card": "添加信用卡",

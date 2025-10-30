@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Edit3 } from 'react-native-feather';
 import ServiceFormHeader from '../../../components/ServiceFormHeader';
 import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
+import ModalMessage from '../../../components/ModalMessage';
 import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 
 export default function CreateServicePriceScreen() {
@@ -38,6 +39,8 @@ export default function CreateServicePriceScreen() {
     handleConfirmSave,
     handleDiscardChanges,
     handleDismissConfirm,
+    invalidPriceVisible,
+    dismissInvalidPriceModal,
   } = useServiceFormEditing({ prevParams, currentValues: { priceValue }, t });
 
   // Helpers y pricing (mismo criterio que BookingScreen)
@@ -201,6 +204,15 @@ export default function CreateServicePriceScreen() {
             </TouchableOpacity>
           </View>
         </View>
+        <ModalMessage
+          visible={invalidPriceVisible}
+          title={t('invalid_price')}
+          description={t('set_a_valid_price')}
+          showCancel={false}
+          confirmText={t('ok')}
+          onConfirm={dismissInvalidPriceModal}
+          onDismiss={dismissInvalidPriceModal}
+        />
         <ServiceFormUnsavedModal
           visible={confirmVisible}
           onSave={handleConfirmSave}

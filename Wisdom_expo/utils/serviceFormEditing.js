@@ -444,6 +444,7 @@ export const useServiceFormEditing = ({ prevParams = {}, currentValues = {}, t }
   const navigation = useNavigation();
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [invalidPriceVisible, setInvalidPriceVisible] = useState(false);
 
   const serviceId = prevParams.serviceId;
   const originScreen = prevParams.originScreen;
@@ -483,13 +484,12 @@ export const useServiceFormEditing = ({ prevParams = {}, currentValues = {}, t }
       return;
     }
 
-    if (normalized.priceType !== 'budget' &&
-      (normalized.priceValue == null || Number(normalized.priceValue) < 0)) {
-    Alert.alert(
-      t ? t('invalid_price') : 'Precio inválido',
-      t ? t('set_a_valid_price') : 'Introduce un precio válido.'
-    );
-    return; 
+    if (
+      normalized.priceType !== 'budget' &&
+      (normalized.priceValue == null || Number(normalized.priceValue) < 0)
+    ) {
+      setInvalidPriceVisible(true);
+      return;
     }
 
     try {
@@ -535,6 +535,10 @@ export const useServiceFormEditing = ({ prevParams = {}, currentValues = {}, t }
     setConfirmVisible(false);
   }, []);
 
+  const dismissInvalidPriceModal = useCallback(() => {
+    setInvalidPriceVisible(false);
+  }, []);
+
   return {
     isEditing,
     hasChanges,
@@ -545,5 +549,7 @@ export const useServiceFormEditing = ({ prevParams = {}, currentValues = {}, t }
     handleConfirmSave,
     handleDiscardChanges,
     handleDismissConfirm,
+    invalidPriceVisible,
+    dismissInvalidPriceModal,
   };
 };

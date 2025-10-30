@@ -7,6 +7,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ServiceFormHeader from '../../../components/ServiceFormHeader';
 import ServiceFormUnsavedModal from '../../../components/ServiceFormUnsavedModal';
+import ModalMessage from '../../../components/ModalMessage';
 import { useServiceFormEditing } from '../../../utils/serviceFormEditing';
 
 export default function CreateServiceTitleScreen() {
@@ -30,6 +31,8 @@ export default function CreateServiceTitleScreen() {
     handleConfirmSave,
     handleDiscardChanges,
     handleDismissConfirm,
+    invalidPriceVisible,
+    dismissInvalidPriceModal,
   } = useServiceFormEditing({ prevParams, currentValues: { title }, t });
 
   const inputChanged = (text) => {
@@ -87,6 +90,15 @@ onPress={() => navigation.navigate('CreateServiceClassification', { prevParams: 
               </TouchableOpacity>
             </View>
         </View>
+      <ModalMessage
+        visible={invalidPriceVisible}
+        title={t('invalid_price')}
+        description={t('set_a_valid_price')}
+        showCancel={false}
+        confirmText={t('ok')}
+        onConfirm={dismissInvalidPriceModal}
+        onDismiss={dismissInvalidPriceModal}
+      />
       <ServiceFormUnsavedModal
         visible={confirmVisible}
         onSave={handleConfirmSave}
