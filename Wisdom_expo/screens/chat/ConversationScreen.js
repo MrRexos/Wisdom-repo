@@ -135,6 +135,29 @@ export default function ConversationScreen() {
     () => attachments.filter((att) => att.kind === 'image'),
     [attachments]
   );
+
+  const fileAttachments = useMemo(
+    () => attachments.filter((att) => att.kind === 'file'),
+    [attachments]
+  );
+
+  const getStackStyle = useCallback((total, idx) => {
+    if (total === 1) {
+      return { left: 0, top: 2, transform: [{ rotate: '0deg' }], zIndex: 3 };
+    }
+    if (total === 2) {
+      return idx === 0
+        ? { left: 4, top: 2, transform: [{ rotate: '6deg' }], zIndex: 3 }
+        : { left: -4, top: 2, transform: [{ rotate: '-10deg' }], zIndex: 2 };
+    }
+    if (idx === 0) {
+      return { left: 0, top: 0, transform: [{ rotate: '0deg' }], zIndex: 4 };
+    }
+    if (idx === 1) {
+      return { left: -6, top: 4, transform: [{ rotate: '-12deg' }], zIndex: 2 };
+    }
+    return { left: 7, top: 2, transform: [{ rotate: '12deg' }], zIndex: 1 };
+  }, []);
   const initialLoadRef = useRef(true);
   const [shouldMaintainPosition, setShouldMaintainPosition] = useState(false);
   const locale = useMemo(() => DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en, [i18n.language]);
@@ -457,16 +480,17 @@ export default function ConversationScreen() {
 
       if (newImages.length) {
         setAttachments((prev) => {
-          const onlyImages = prev.filter((att) => att.kind === 'image');
-          const existingUris = new Set(onlyImages.map((att) => att.uri));
-          const merged = [...onlyImages];
+          const existingImages = prev.filter((att) => att.kind === 'image');
+          const existingUris = new Set(existingImages.map((att) => att.uri));
+          const mergedImages = [...existingImages];
           newImages.forEach((img) => {
             if (!existingUris.has(img.uri)) {
-              merged.push(img);
+              mergedImages.push(img);
               existingUris.add(img.uri);
             }
           });
-          return merged;
+          const otherAttachments = prev.filter((att) => att.kind !== 'image');
+          return [...otherAttachments, ...mergedImages];
         });
       }
       attachSheet.current.close();
@@ -474,17 +498,34 @@ export default function ConversationScreen() {
   };
 
   const handleFilePick = async () => {
-    const result = await DocumentPicker.getDocumentAsync({});
+    const result = await DocumentPicker.getDocumentAsync({ multiple: true });
     if (!result.canceled) {
-      const asset = result.assets?.[0] || result;
-      setAttachments([
-        {
+      const selected = Array.isArray(result.assets) && result.assets.length
+        ? result.assets
+        : [result];
+
+      const newFiles = selected
+        .filter((asset) => asset && asset.uri)
+        .map((asset) => ({
           kind: 'file',
           uri: asset.uri,
-          name: asset.name,
+          name: asset.name || asset.uri.split('/').pop() || t('file'),
           mime: asset.mimeType || 'application/octet-stream',
-        },
-      ]);
+        }));
+
+      if (newFiles.length) {
+        setAttachments((prev) => {
+          const existingUris = new Set(prev.map((att) => att.uri));
+          const merged = [...prev];
+          newFiles.forEach((file) => {
+            if (!existingUris.has(file.uri)) {
+              merged.push(file);
+              existingUris.add(file.uri);
+            }
+          });
+          return merged;
+        });
+      }
       attachSheet.current.close();
     }
   };
@@ -513,15 +554,18 @@ export default function ConversationScreen() {
       const asset = result.assets[0];
       setAttachments((prev) => {
         const existingImages = prev.filter((att) => att.kind === 'image');
-        return [
-          ...existingImages,
-        {
-          kind: 'image',
-          uri: asset.uri,
-          name: asset.fileName || asset.uri.split('/').pop() || 'image.jpg',
-          mime: asset.mimeType || 'image/jpeg',
-        },
-        ];
+        const imageUris = new Set(existingImages.map((att) => att.uri));
+        const updatedImages = [...existingImages];
+        if (!imageUris.has(asset.uri)) {
+          updatedImages.push({
+            kind: 'image',
+            uri: asset.uri,
+            name: asset.fileName || asset.uri.split('/').pop() || 'image.jpg',
+            mime: asset.mimeType || 'image/jpeg',
+          });
+        }
+        const otherAttachments = prev.filter((att) => att.kind !== 'image');
+        return [...otherAttachments, ...updatedImages];
       });
       attachSheet.current.close();
     }
@@ -1031,37 +1075,69 @@ export default function ConversationScreen() {
           {/* Campo de texto + botón send */}
           <View className="flex-1 flex-row items-center bg-[#e0e0e0] dark:bg-[#3d3d3d] rounded-[25px] pl-4 pr-2 ">
             {attachments.length > 0 && (
-              <View className="self-stretch items-center justify-start mr-2">
-                {attachments[0]?.kind === 'file' ? (
-                  <View className="h-10 w-10 rounded-lg bg-[#323131] dark:bg-[#fcfcfc] items-center justify-center">
-                    <File height={24} width={24} color={colorScheme === 'dark' ? '#1f1f1f' : '#ffffff'} strokeWidth={2} />
-                  </View>
-                ) : (
-                  <View style={{ width: 48, height: 48 }}>
-                    {imageAttachments
-                      .slice(0, 3)
-                      .map((att, idx, arr) => {
-                        const total = arr.length;
-                        let style = {};
-                        if (total === 1) {
-                          style = { left: 0, top: 2, transform: [{ rotate: '0deg' }], zIndex: 3 };
-                        } else if (total === 2) {
-                          if (idx === 0) {
-                            style = { left: 4, top: 2, transform: [{ rotate: '6deg' }], zIndex: 3 };
-                          } else {
-                            style = { left: -4, top: 2, transform: [{ rotate: '-10deg' }], zIndex: 2 };
-                          }
-                        } else {
-                          if (idx === 0) {
-                            style = { left: 0, top: 0, transform: [{ rotate: '0deg' }], zIndex: 4 };
-                          } else if (idx === 1) {
-                            style = { left: -6, top: 4, transform: [{ rotate: '-12deg' }], zIndex: 2 };
-                          } else {
-                            style = { left: 7, top: 2, transform: [{ rotate: '12deg' }], zIndex: 1 };
-                          }
-                        }
+              <View className="self-stretch justify-start mr-2" style={{ position: 'relative' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  {fileAttachments.length > 0 && (
+                    <View style={{ width: 48, height: 48 }}>
+                      {fileAttachments.slice(0, 3).map((att, idx, arr) => {
+                        const style = getStackStyle(arr.length, idx);
+                        const backgroundPalette =
+                          colorScheme === 'dark'
+                            ? ['#fcfcfc', '#d4d3d3', '#bcbcbc']
+                            : ['#323131', '#3b3a3a', '#464545'];
+                        const backgroundColor = backgroundPalette[idx] || backgroundPalette[backgroundPalette.length - 1];
 
-                        const size = total === 1 ? 44 : 44;
+                        return (
+                          <View
+                            key={`${att.uri}-${idx}`}
+                            style={{
+                              position: 'absolute',
+                              width: 44,
+                              height: 44,
+                              borderRadius: 12,
+                              borderWidth: 2,
+                              borderColor: colorScheme === 'dark' ? '#272626' : '#f4f4f4',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              backgroundColor,
+                              ...style,
+                            }}
+                          >
+                            <File
+                              height={22}
+                              width={22}
+                              color={colorScheme === 'dark' ? '#1f1f1f' : '#f2f2f2'}
+                              strokeWidth={2}
+                            />
+                          </View>
+                        );
+                      })}
+                      {fileAttachments.length > 3 && (
+                        <View
+                          style={{
+                            position: 'absolute',
+                            left: 7,
+                            top: 10,
+                            width: 28,
+                            height: 28,
+                            borderRadius: 9,
+                            backgroundColor: 'rgba(0,0,0,0.55)',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 50,
+                          }}
+                        >
+                          <Text className="font-inter-semibold text-[13px] text-white">
+                            +{fileAttachments.length - 3}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  )}
+                  {imageAttachments.length > 0 && (
+                    <View style={{ width: 48, height: 48 }}>
+                      {imageAttachments.slice(0, 3).map((att, idx, arr) => {
+                        const style = getStackStyle(arr.length, idx);
 
                         return (
                           <ExpoImage
@@ -1069,46 +1145,47 @@ export default function ConversationScreen() {
                             source={{ uri: att.uri }}
                             style={{
                               position: 'absolute',
-                              width: size,
-                              height: size,
+                              width: 44,
+                              height: 44,
                               borderRadius: 12,
-                              borderWidth:  2,
+                              borderWidth: 2,
                               borderColor: colorScheme === 'dark' ? '#272626' : '#f4f4f4',
                               ...style,
                             }}
                           />
                         );
                       })}
-                    {/* {imageAttachments.length > 3 && (
-                      <View
-                        style={{
-                          position: 'absolute',
-                          left: 7,
-                          top: 10,
-                          width: 28,
-                          height: 28,
-                          borderRadius: 9,
-                          backgroundColor: 'rgba(0,0,0,0.55)',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          zIndex: 50,
-                        }}
-                      >
-                        <Text className="font-inter-semibold text-[13px] text-white">
-                          +{imageAttachments.length - 3}
-                        </Text>
-                      </View>
-                    )} */}
-                  </View>
-                )}
+                      {imageAttachments.length > 3 && (
+                        <View
+                          style={{
+                            position: 'absolute',
+                            left: 7,
+                            top: 10,
+                            width: 28,
+                            height: 28,
+                            borderRadius: 9,
+                            backgroundColor: 'rgba(0,0,0,0.55)',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 50,
+                          }}
+                        >
+                          <Text className="font-inter-semibold text-[13px] text-white">
+                            +{imageAttachments.length - 3}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  )}
+                </View>
                 <TouchableOpacity
                   onPress={() => setAttachments([])}
                   hitSlop={8}
                   disabled={isSending}
                   style={{
                     position: 'absolute',
-                    top: 0,
-                    right: -5,
+                    top: -6,
+                    right: -8,
                     zIndex: 60,
                     backgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3',
                     borderRadius: 999,
