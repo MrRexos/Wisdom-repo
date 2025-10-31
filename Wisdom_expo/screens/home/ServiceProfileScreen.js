@@ -699,6 +699,9 @@ export default function ServiceProfileScreen() {
 
       setServiceData(normalizedService);
 
+      const likedValue = normalizedService?.is_liked;
+      setIsServiceLiked(likedValue === true || likedValue === 1 || likedValue === '1');
+
     } catch (error) {
       console.error('Error:', error);
     }

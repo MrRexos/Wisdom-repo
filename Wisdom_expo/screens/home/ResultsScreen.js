@@ -57,6 +57,24 @@ export default function ResultsScreen() {
   const [searchedDirection, setSearchedDirection] = useState(null);
 
   useEffect(() => {
+    const loadUserId = async () => {
+      try {
+        const storedUser = await getDataLocally('user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          if (parsedUser?.id) {
+            setUserId(parsedUser.id);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    };
+
+    loadUserId();
+  }, []);
+
+  useEffect(() => {
     if (route.params?.category !== undefined) {
       setCategoryId(route.params.category);
       setCategoryName(route.params.category_name);
@@ -70,7 +88,7 @@ export default function ResultsScreen() {
       setSearchedDirection(searchedDirection);
       fetchResultsBySearch(route.params.searchedService);
     }
-  }, [route.params?.category, route.params?.searchedService]);
+  }, [route.params?.category, route.params?.searchedService, userId]);
 
   const orderByOptions = useMemo(() => ([
     { label: t('order_option_recommend'), type: 'recommend' },
@@ -96,10 +114,22 @@ export default function ResultsScreen() {
     setListName('');
   };
 
-  const fetchResultsByCategory = async (categoryId) => {
+  const fetchResultsByCategory = async (categoryId, viewerIdParam = userId) => {
     try {
-      const response = await api.get(`/api/category/${categoryId}/services`);
+      const params = {};
+      if (viewerIdParam) {
+        params.viewer_id = viewerIdParam;
+      }
+      const response = await api.get(`/api/category/${categoryId}/services`, { params });
       setResults(response.data);
+      if (Array.isArray(response.data)) {
+        const likedIds = response.data
+          .filter((service) => service?.is_liked === 1)
+          .map((service) => service.service_id);
+        setAddedServices(likedIds);
+      } else {
+        setAddedServices([]);
+      }
     } catch (error) {
       console.error('Error al obtener los items:', error);
     }
@@ -110,13 +140,25 @@ export default function ResultsScreen() {
     return arr[0][key]
   };
 
-  const fetchResultsBySearch = async (searchQuery) => {
+  const fetchResultsBySearch = async (searchQuery, viewerIdParam = userId) => {
     try {
       // Añadir el parámetro query a la URL
+      const params = { query: getValue(searchQuery) };
+      if (viewerIdParam) {
+        params.viewer_id = viewerIdParam;
+      }
       const response = await api.get(`/api/services`, {
-        params: { query: getValue(searchQuery) }, // Pasar el parámetro aquí
+        params,
       });
       setResults(response.data);
+      if (Array.isArray(response.data)) {
+        const likedIds = response.data
+          .filter((service) => service?.is_liked === 1)
+          .map((service) => service.service_id);
+        setAddedServices(likedIds);
+      } else {
+        setAddedServices([]);
+      }
     } catch (error) {
       console.error('Error al obtener los resultados:', error);
     }
@@ -134,13 +176,13 @@ export default function ResultsScreen() {
     }
   };
 
-  const loadResults = async () => {
+  const loadResults = useCallback(async () => {
     if (route.params?.category !== undefined) {
       await fetchResultsByCategory(route.params.category);
     } else if (route.params?.searchedService !== undefined) {
       await fetchResultsBySearch(route.params.searchedService);
     }
-  };
+  }, [route.params?.category, route.params?.searchedService, userId]);
 
   useRefreshOnFocus(loadResults);
 
@@ -212,7 +254,7 @@ export default function ResultsScreen() {
   };
 
   const renderItem = ({ item, index }) => {
-    const isServiceAdded = addedServices.includes(item.service_id);
+    const isServiceAdded = addedServices.includes(item.service_id) || item.is_liked === 1;
     const getFormattedPrice = () => {
       const numericPrice = parseFloat(item.price);
       const formattedPrice = numericPrice % 1 === 0 ? numericPrice.toFixed(0) : numericPrice.toFixed(1);
