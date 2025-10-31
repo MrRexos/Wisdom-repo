@@ -119,6 +119,66 @@ export default function FavoritesScreen() {
     return <View className="flex-1 bg-[#f2f2f2] dark:bg-[#272626]"></View>;
   } // ESTILIZAR
 
+  const getImageSource = (service) => (service?.image_url ? { uri: service.image_url } : null);
+
+  const renderPreviewImages = (services = []) => {
+    const previews = services.slice(0, 3);
+
+    if (previews.length === 0) {
+      return <View className="h-full w-full bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-2xl" />;
+    }
+
+    if (previews.length === 1) {
+      return (
+        <Image
+          source={getImageSource(previews[0])}
+          resizeMode="cover"
+          className="h-full w-full bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-2xl"
+        />
+      );
+    }
+
+    if (previews.length === 2) {
+      const [first, second] = previews;
+      return (
+        <View className="flex-row h-full w-full">
+          <Image
+            source={getImageSource(first)}
+            resizeMode="cover"
+            className="flex-1 bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-l-2xl"
+          />
+          <Image
+            source={getImageSource(second)}
+            resizeMode="cover"
+            className="flex-1 bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-r-2xl"
+          />
+        </View>
+      );
+    }
+
+    return (
+      <View className="flex-row h-full w-full">
+        <Image
+          source={getImageSource(previews[0])}
+          resizeMode="cover"
+          className="flex-[2px] bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-l-2xl"
+        />
+        <View className="flex-[1px] justify-between">
+          <Image
+            source={getImageSource(previews[1])}
+            resizeMode="cover"
+            className="flex-1 bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-tr-2xl"
+          />
+          <Image
+            source={getImageSource(previews[2])}
+            resizeMode="cover"
+            className="flex-1 bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-br-2xl"
+          />
+        </View>
+      </View>
+    );
+  };
+
   const renderItem = ({ item }) => (
     <View className="mb-7">
       <TouchableOpacity
@@ -126,12 +186,8 @@ export default function FavoritesScreen() {
         className="mb-7"
         onPress={() => navigation.navigate('List', { listId: item.id, listTitle: item.title, itemCount: item.item_count })}
       >
-        <View className="flex-row h-[105px] w-[150px]">
-          <Image source={item.services[0] ? item.services[0].image_url ? { uri: item.services[0].image_url } : null : null} className="flex-[2px] bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-l-2xl" />
-          <View className="flex-[1px] justify-between">
-            <Image source={item.services[1] ? item.services[1].image_url ? { uri: item.services[1].image_url } : null : null} className="flex-1 bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-tr-2xl" />
-            <Image source={item.services[2] ? item.services[2].image_url ? { uri: item.services[2].image_url } : null : null} className="flex-1 bg-[#d4d4d3] dark:bg-[#474646] m-[1px] rounded-br-2xl" />
-          </View>
+        <View className="h-[105px] w-[150px]">
+          {renderPreviewImages(item.services)}
         </View>
         <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2] ml-2 mt-2">{item.title}</Text>
         <View className="flex-row mt-2">
