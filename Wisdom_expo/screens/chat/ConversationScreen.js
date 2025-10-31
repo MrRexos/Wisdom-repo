@@ -190,6 +190,18 @@ export default function ConversationScreen() {
     } 
   }, [messages?.length]);
 
+  useEffect(() => {
+    if (!initialLoadRef.current) return;
+    if (!messages.length) return;
+
+    const frame = requestAnimationFrame(() => {
+      scrollToBottom({ animated: false });
+      initialLoadRef.current = false;
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [messages, scrollToBottom]);
+
   // Autoscroll al enfocar pantalla
   useEffect(() => {
     const unsub = navigation.addListener('focus', () => {
@@ -247,9 +259,7 @@ export default function ConversationScreen() {
         setMessages(processed);
 
         if (initialLoadRef.current) {
-          initialLoadRef.current = false;
           setShouldMaintainPosition(true);
-          requestAnimationFrame(() => scrollToBottom({ animated: false }));
         }
 
         // Marca como leído lo que no es tuyo
