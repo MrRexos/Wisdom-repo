@@ -220,7 +220,7 @@ export default function ConversationScreen() {
       setCurrentUser(user);
       const q = query(
         collection(db, 'conversations', conversationId, 'messages'),
-        orderBy('createdAt', 'desc')
+        orderBy('createdAt', 'asc')
       );
       unsub = onSnapshot(q, async (snap) => {
         const raw = snap.docs.map((d) => {
@@ -253,7 +253,7 @@ export default function ConversationScreen() {
           } 
         
           //  “cola” de racha cuando el SIGUIENTE es de otro remitente (orden ascendente) 
-          const tail = !prev || prev.senderId !== m.senderId;
+          const tail = !next || next.senderId !== m.senderId;
           processed.push({ ...m, _isTail: tail }); 
         }
         setMessages(processed);
@@ -1083,18 +1083,18 @@ export default function ConversationScreen() {
             keyExtractor={keyExtractor}
             renderItem={renderMessage}
             contentContainerStyle={{ padding: 16 }}
-            estimatedItemSize={180}
-            inverted
+            maintainVisibleContentPosition={{ 
+              startRenderingFromBottom: true,      // pinta desde abajo en el primer render 
+              autoscrollToBottomThreshold: 40,     // si estás “cerca” del fondo, baja solo 
+              // animateAutoScrollToBottom: true,  // (por defecto true) 
+            }} 
+            
             showsVerticalScrollIndicator={true}
             keyboardShouldPersistTaps="never"   // mantiene interacciones útiles
             keyboardDismissMode="none"         // al arrastrar, cierra teclado
             ListFooterComponent={<View style={{ height: 4 }} />}
             extraData={imageMessages.length}
-            onContentSizeChange={() => { 
-              if (initialLoadRef.current) { 
-                requestAnimationFrame(() => scrollToBottom({ animated: false })); 
-              } 
-            }}
+            
           />
         </View>
 
