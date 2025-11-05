@@ -220,7 +220,7 @@ export default function ConversationScreen() {
       setCurrentUser(user);
       const q = query(
         collection(db, 'conversations', conversationId, 'messages'),
-        orderBy('createdAt', 'asc')
+        orderBy('createdAt', 'desc')
       );
       unsub = onSnapshot(q, async (snap) => {
         const raw = snap.docs.map((d) => {
@@ -253,7 +253,7 @@ export default function ConversationScreen() {
           } 
         
           //  “cola” de racha cuando el SIGUIENTE es de otro remitente (orden ascendente) 
-          const tail = !next || next.senderId !== m.senderId; 
+          const tail = !prev || prev.senderId !== m.senderId;
           processed.push({ ...m, _isTail: tail }); 
         }
         setMessages(processed);
@@ -1084,6 +1084,7 @@ export default function ConversationScreen() {
             renderItem={renderMessage}
             contentContainerStyle={{ padding: 16 }}
             estimatedItemSize={180}
+            inverted
             showsVerticalScrollIndicator={true}
             keyboardShouldPersistTaps="never"   // mantiene interacciones útiles
             keyboardDismissMode="none"         // al arrastrar, cierra teclado
