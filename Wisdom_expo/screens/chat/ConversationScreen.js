@@ -226,29 +226,30 @@ export default function ConversationScreen() {
           };
         });
         const processed = []; 
-        for (let i = 0; i < raw.length; i++) { 
-          const m = raw[i]; 
-          const prev = raw[i - 1];   // más antiguo 
-          const next = raw[i + 1];   // más nuevo 
-        
-          //  etiqueta de fecha ANTES del primer mensaje del día 
-          const currDate = m.createdAt?.seconds 
-            ? new Date(m.createdAt.seconds * 1000).toLocaleDateString( 
-                locale, { weekday: 'long', month: 'long', day: 'numeric' } 
-              ) 
-            : null; 
-          const prevDate = prev?.createdAt?.seconds 
-            ? new Date(prev.createdAt.seconds * 1000).toLocaleDateString( 
-                locale, { weekday: 'long', month: 'long', day: 'numeric' } 
-              ) 
-            : null; 
-          if (currDate && currDate !== prevDate) { 
-            processed.push({ id: `label-${m.id}`, type: 'label', text: currDate }); 
-          } 
-        
-          //  “cola” de racha cuando el SIGUIENTE es de otro remitente (orden ascendente) 
-          const tail = !next || next.senderId !== m.senderId;
-          processed.push({ ...m, _isTail: tail }); 
+        for (let i = 0; i < raw.length; i++) {
+          const m = raw[i];
+          const prev = raw[i - 1];   // más antiguo
+          const next = raw[i + 1];   // más nuevo
+
+          const formatDate = (entry) =>
+            entry?.createdAt?.seconds
+              ? new Date(entry.createdAt.seconds * 1000).toLocaleDateString(
+                  locale,
+                  { weekday: 'long', month: 'long', day: 'numeric' }
+                )
+              : null;
+
+          //  etiqueta de fecha ANTES del primer mensaje del día
+          const currDate = formatDate(m);
+          const prevDate = formatDate(prev);
+          const nextDate = formatDate(next);
+          if (currDate && currDate !== prevDate) {
+            processed.push({ id: `label-${m.id}`, type: 'label', text: currDate });
+          }
+
+          //  “cola” de racha cuando el SIGUIENTE es de otro remitente (orden ascendente)
+          const tail = !next || next.senderId !== m.senderId || nextDate !== currDate;
+          processed.push({ ...m, _isTail: tail });
         }
         setMessages(processed);
 
