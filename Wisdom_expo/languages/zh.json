@@ -280,6 +280,58 @@
     "add_a_description": "添加描述",
     "faq": "常见问题",
     "write_us": "写信给我们",
+    "roadmap": {
+      "title": "路线图",
+      "sections": {
+        "focus": "即将推出",
+        "major": "重点开发功能",
+        "past": "过去发布"
+      },
+      "banners": {
+        "app_store_launch": "App Store 上线",
+        "beta_launch": "β 版发布"
+      },
+      "items": {
+        "rearranging_boards": "重排看板",
+        "compact_view": "紧凑视图",
+        "amounts_tracking": "金额追踪",
+        "board_emoji_icons": "看板表情符号图标",
+        "single_board_widget": "单板挂件",
+        "weekday_breakdown_chart": "按星期/月份拆分图表",
+        "check_in_history_overview": "签到历史概览",
+        "reminders": "提醒",
+        "weekly_goals": "周/月/年度目标",
+        "apple_health_integration": "接入 Apple Health",
+        "watch_app": "watchOS 应用",
+        "ipad_app": "iPad 应用",
+        "face_id_lock": "Face ID 锁定",
+        "multi_board_widget": "多看板挂件",
+        "board_sharing": "看板共享",
+        "mac_app": "macOS 应用",
+        "check_in_badges": "签到徽章",
+        "ios_26_design": "iOS 26 设计更新",
+        "check_in_notes": "签到笔记与日志",
+        "multilingual_support": "支持中文、法语、德语、葡萄牙语、西班牙语和乌克兰语",
+        "onboarding_tutorial": "新手引导教程",
+        "streaks": "连续记录",
+        "board_analytics": "看板分析",
+        "minimal_widget_style": "极简挂件样式",
+        "dashboard_widget_style": "仪表盘挂件样式",
+        "data_export": "数据导出"
+      },
+      "badges": {
+        "aug_2024": "2024年8月",
+        "jul_2024": "2024年7月",
+        "jun_2024": "2024年6月",
+        "sep_2025": "2025年9月",
+        "aug_2025": "2025年8月",
+        "jun_2025": "2025年6月",
+        "apr_2025": "2025年4月",
+        "mar_2025": "2025年3月",
+        "feb_2025": "2025年2月",
+        "jan_2025": "2025年1月"
+      }
+    },
     "edit_direction": "编辑地址",
     "delete_account": "删除账户",
     "are_you_sure_you_want_to_delete_this_account": "确定要删除此账户吗？",

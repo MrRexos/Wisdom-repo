@@ -280,6 +280,58 @@
     "add_a_description": "Ajouter une description",
     "faq": "FAQ",
     "write_us": "Écris-nous",
+    "roadmap": {
+      "title": "Feuille de route",
+      "sections": {
+        "focus": "À venir prochainement",
+        "major": "Fonctionnalités majeures à venir",
+        "past": "Versions précédentes"
+      },
+      "banners": {
+        "app_store_launch": "Lancement sur l'App Store",
+        "beta_launch": "β-Lancement"
+      },
+      "items": {
+        "rearranging_boards": "Réorganisation des tableaux",
+        "compact_view": "Vue compacte",
+        "amounts_tracking": "Suivi des montants",
+        "board_emoji_icons": "Icônes emoji pour tableaux",
+        "single_board_widget": "Widget tableau unique",
+        "weekday_breakdown_chart": "Graphique de répartition par jour et par mois",
+        "check_in_history_overview": "Vue d'ensemble de l'historique des check-ins",
+        "reminders": "Rappels",
+        "weekly_goals": "Objectifs hebdomadaires / mensuels / annuels",
+        "apple_health_integration": "Intégration à Apple Health",
+        "watch_app": "Application watchOS",
+        "ipad_app": "Application iPad",
+        "face_id_lock": "Verrouillage Face ID",
+        "multi_board_widget": "Widget multi-tableaux",
+        "board_sharing": "Partage de tableaux",
+        "mac_app": "Application macOS",
+        "check_in_badges": "Badges de check-in",
+        "ios_26_design": "Mise à jour du design iOS 26",
+        "check_in_notes": "Notes et journal de check-in",
+        "multilingual_support": "Localisations en chinois, français, allemand, portugais, espagnol et ukrainien",
+        "onboarding_tutorial": "Tutoriel d'onboarding",
+        "streaks": "Séries",
+        "board_analytics": "Analyses des tableaux",
+        "minimal_widget_style": "Style de widget minimaliste",
+        "dashboard_widget_style": "Style de widget tableau de bord",
+        "data_export": "Exportation de données"
+      },
+      "badges": {
+        "aug_2024": "août 2024",
+        "jul_2024": "juil. 2024",
+        "jun_2024": "juin 2024",
+        "sep_2025": "sept. 2025",
+        "aug_2025": "août 2025",
+        "jun_2025": "juin 2025",
+        "apr_2025": "avr. 2025",
+        "mar_2025": "mars 2025",
+        "feb_2025": "févr. 2025",
+        "jan_2025": "janv. 2025"
+      }
+    },
     "edit_direction": "Modifier l'adresse",
     "delete_account": "Supprimer le compte",
     "are_you_sure_you_want_to_delete_this_account": "Voulez-vous vraiment supprimer ce compte ?",

@@ -280,6 +280,58 @@
     "add_a_description": "Afegeix una descripció",
     "faq": "FAQ",
     "write_us": "Escriu-nos",
+    "roadmap": {
+      "title": "Full de ruta",
+      "sections": {
+        "focus": "Properament",
+        "major": "Funcions destacades en desenvolupament",
+        "past": "Llançaments anteriors"
+      },
+      "banners": {
+        "app_store_launch": "Llançament a l'App Store",
+        "beta_launch": "β-Llançament"
+      },
+      "items": {
+        "rearranging_boards": "Reorganització de taulers",
+        "compact_view": "Vista compacta",
+        "amounts_tracking": "Seguiment de quantitats",
+        "board_emoji_icons": "Icones emoji per als taulers",
+        "single_board_widget": "Widget d'un sol tauler",
+        "weekday_breakdown_chart": "Gràfic de distribució per dies i mesos",
+        "check_in_history_overview": "Resum de l'historial de check-ins",
+        "reminders": "Recordatoris",
+        "weekly_goals": "Objectius setmanals / mensuals / anuals",
+        "apple_health_integration": "Integració amb Apple Health",
+        "watch_app": "Aplicació per a watchOS",
+        "ipad_app": "Aplicació per a iPad",
+        "face_id_lock": "Bloqueig amb Face ID",
+        "multi_board_widget": "Widget multi-tauler",
+        "board_sharing": "Compartició de taulers",
+        "mac_app": "Aplicació per a macOS",
+        "check_in_badges": "Insígnies de check-in",
+        "ios_26_design": "Actualització de disseny iOS 26",
+        "check_in_notes": "Notes i diari de check-in",
+        "multilingual_support": "Localitzacions en xinès, francès, alemany, portuguès, espanyol i ucraïnès",
+        "onboarding_tutorial": "Tutorial d'incorporació",
+        "streaks": "Ràfegues",
+        "board_analytics": "Analítiques de taulers",
+        "minimal_widget_style": "Estil de widget minimalista",
+        "dashboard_widget_style": "Estil de widget de tauler",
+        "data_export": "Exportació de dades"
+      },
+      "badges": {
+        "aug_2024": "ag. 2024",
+        "jul_2024": "jul. 2024",
+        "jun_2024": "jun. 2024",
+        "sep_2025": "set. 2025",
+        "aug_2025": "ag. 2025",
+        "jun_2025": "jun. 2025",
+        "apr_2025": "abr. 2025",
+        "mar_2025": "març 2025",
+        "feb_2025": "febr. 2025",
+        "jan_2025": "gen. 2025"
+      }
+    },
     "edit_direction": "Edita l'adreça",
     "delete_account": "Eliminar compte",
     "are_you_sure_you_want_to_delete_this_account": "Segur que vols eliminar aquest compte?",

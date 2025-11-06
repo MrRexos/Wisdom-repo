@@ -280,6 +280,58 @@
     "add_a_description": "أضف وصفًا",
     "faq": "الأسئلة الشائعة",
     "write_us": "اكتب لنا",
+    "roadmap": {
+      "title": "خارطة الطريق",
+      "sections": {
+        "focus": "قريباً",
+        "major": "أهم المزايا القادمة",
+        "past": "الإصدارات السابقة"
+      },
+      "banners": {
+        "app_store_launch": "إطلاق متجر التطبيقات",
+        "beta_launch": "إطلاق تجريبي β"
+      },
+      "items": {
+        "rearranging_boards": "إعادة ترتيب اللوحات",
+        "compact_view": "عرض مضغوط",
+        "amounts_tracking": "تتبع المبالغ",
+        "board_emoji_icons": "أيقونات إيموجي للوحة",
+        "single_board_widget": "ودجت لوحة واحدة",
+        "weekday_breakdown_chart": "مخطط التوزيع حسب الأيام/الأشهر",
+        "check_in_history_overview": "نظرة عامة على سجل تسجيل الدخول",
+        "reminders": "تذكيرات",
+        "weekly_goals": "أهداف أسبوعية / شهرية / سنوية",
+        "apple_health_integration": "تكامل مع Apple Health",
+        "watch_app": "تطبيق watchOS",
+        "ipad_app": "تطبيق iPad",
+        "face_id_lock": "قفل Face ID",
+        "multi_board_widget": "ودجت متعدد اللوحات",
+        "board_sharing": "مشاركة اللوحات",
+        "mac_app": "تطبيق macOS",
+        "check_in_badges": "شارات تسجيل الدخول",
+        "ios_26_design": "تحديث تصميم iOS 26",
+        "check_in_notes": "ملاحظات وسجل تسجيل الدخول",
+        "multilingual_support": "ترجمات باللغات الصينية والفرنسية والألمانية والبرتغالية والإسبانية والأوكرانية",
+        "onboarding_tutorial": "دليل البدء",
+        "streaks": "سلاسل إنجاز",
+        "board_analytics": "تحليلات اللوحات",
+        "minimal_widget_style": "نمط ودجت بسيط",
+        "dashboard_widget_style": "نمط ودجت لوحة التحكم",
+        "data_export": "تصدير البيانات"
+      },
+      "badges": {
+        "aug_2024": "أغسطس 2024",
+        "jul_2024": "يوليو 2024",
+        "jun_2024": "يونيو 2024",
+        "sep_2025": "سبتمبر 2025",
+        "aug_2025": "أغسطس 2025",
+        "jun_2025": "يونيو 2025",
+        "apr_2025": "أبريل 2025",
+        "mar_2025": "مارس 2025",
+        "feb_2025": "فبراير 2025",
+        "jan_2025": "يناير 2025"
+      }
+    },
     "edit_direction": "تعديل العنوان",
     "delete_account": "حذف الحساب",
     "are_you_sure_you_want_to_delete_this_account": "هل أنت متأكد من حذف هذا الحساب؟",

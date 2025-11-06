@@ -280,6 +280,58 @@
     "add_a_description": "Añade una descripción",
     "faq": "FAQ",
     "write_us": "Escríbenos",
+    "roadmap": {
+      "title": "Hoja de ruta",
+      "sections": {
+        "focus": "Próximamente",
+        "major": "Próximas funciones destacadas",
+        "past": "Lanzamientos anteriores"
+      },
+      "banners": {
+        "app_store_launch": "Lanzamiento en App Store",
+        "beta_launch": "β-Lanzamiento"
+      },
+      "items": {
+        "rearranging_boards": "Reorganizar tableros",
+        "compact_view": "Vista compacta",
+        "amounts_tracking": "Seguimiento de cantidades",
+        "board_emoji_icons": "Iconos emoji para tableros",
+        "single_board_widget": "Widget de tablero único",
+        "weekday_breakdown_chart": "Gráfico de distribución por días y meses",
+        "check_in_history_overview": "Resumen del historial de check-in",
+        "reminders": "Recordatorios",
+        "weekly_goals": "Objetivos semanales / mensuales / anuales",
+        "apple_health_integration": "Integración con Apple Health",
+        "watch_app": "App para watchOS",
+        "ipad_app": "App para iPad",
+        "face_id_lock": "Bloqueo con Face ID",
+        "multi_board_widget": "Widget multi-tablero",
+        "board_sharing": "Compartir tableros",
+        "mac_app": "App para macOS",
+        "check_in_badges": "Insignias de check-in",
+        "ios_26_design": "Actualización de diseño iOS 26",
+        "check_in_notes": "Notas y diario de check-in",
+        "multilingual_support": "Localizaciones en chino, francés, alemán, portugués, español y ucraniano",
+        "onboarding_tutorial": "Tutorial de onboarding",
+        "streaks": "Rachas",
+        "board_analytics": "Analíticas de tableros",
+        "minimal_widget_style": "Estilo de widget minimalista",
+        "dashboard_widget_style": "Estilo de widget de panel",
+        "data_export": "Exportación de datos"
+      },
+      "badges": {
+        "aug_2024": "Ago 2024",
+        "jul_2024": "Jul 2024",
+        "jun_2024": "Jun 2024",
+        "sep_2025": "Sep 2025",
+        "aug_2025": "Ago 2025",
+        "jun_2025": "Jun 2025",
+        "apr_2025": "Abr 2025",
+        "mar_2025": "Mar 2025",
+        "feb_2025": "Feb 2025",
+        "jan_2025": "Ene 2025"
+      }
+    },
     "edit_direction": "Editar dirección",
     "delete_account": "Eliminar cuenta",
     "are_you_sure_you_want_to_delete_this_account": "¿Seguro que quieres eliminar esta cuenta?",

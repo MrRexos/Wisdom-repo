@@ -280,6 +280,58 @@
     "add_a_description": "Add a description",
     "faq": "FAQ",
     "write_us": "Write us",
+    "roadmap": {
+      "title": "Roadmap",
+      "sections": {
+        "focus": "Coming Soon",
+        "major": "Major Upcoming Features",
+        "past": "Past Releases"
+      },
+      "banners": {
+        "app_store_launch": "App Store Launch",
+        "beta_launch": "β-Launch"
+      },
+      "items": {
+        "rearranging_boards": "Rearranging Boards",
+        "compact_view": "Compact View",
+        "amounts_tracking": "Amounts Tracking",
+        "board_emoji_icons": "Board Emoji Icons",
+        "single_board_widget": "Single-Board Widget",
+        "weekday_breakdown_chart": "Weekday/Month Breakdown Chart",
+        "check_in_history_overview": "Check-In History Overview",
+        "reminders": "Reminders",
+        "weekly_goals": "Weekly / Monthly / Yearly Goals",
+        "apple_health_integration": "Apple Health Integration",
+        "watch_app": "watchOS App",
+        "ipad_app": "iPad App",
+        "face_id_lock": "Face ID Lock",
+        "multi_board_widget": "Multi-Board Widget",
+        "board_sharing": "Board Sharing",
+        "mac_app": "macOS App",
+        "check_in_badges": "Check-In Badges",
+        "ios_26_design": "iOS 26 Design Update",
+        "check_in_notes": "Check-In Notes and Journal",
+        "multilingual_support": "Chinese, French, German, Portuguese, Spanish and Ukrainian localizations",
+        "onboarding_tutorial": "Onboarding Tutorial",
+        "streaks": "Streaks",
+        "board_analytics": "Board Analytics",
+        "minimal_widget_style": "Minimal Widget Style",
+        "dashboard_widget_style": "Dashboard Widget Style",
+        "data_export": "Data Export"
+      },
+      "badges": {
+        "aug_2024": "Aug 2024",
+        "jul_2024": "Jul 2024",
+        "jun_2024": "Jun 2024",
+        "sep_2025": "Sep 2025",
+        "aug_2025": "Aug 2025",
+        "jun_2025": "Jun 2025",
+        "apr_2025": "Apr 2025",
+        "mar_2025": "Mar 2025",
+        "feb_2025": "Feb 2025",
+        "jan_2025": "Jan 2025"
+      }
+    },
     "edit_direction": "Edit direction",
     "delete_account": "Delete account",
     "are_you_sure_you_want_to_delete_this_account": "Are you sure you want to delete this account?",
