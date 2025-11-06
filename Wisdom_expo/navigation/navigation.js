@@ -89,6 +89,7 @@ import DirectionsScreen from '../screens/settings/DirectionsScreen';
 import EditAccountScreen from '../screens/settings/EditAccountScreen';
 import ChangePasswordScreen from '../screens/settings/ChangePasswordScreen';
 import HelpScreen from '../screens/settings/HelpScreen';
+import RoadmapScreen from '../screens/settings/RoadmapScreen';
 import WisdomWarrantyScreen from '../screens/settings/WisdomWarrantyScreen';
 import CancellationPolicyScreen from '../screens/settings/CancellationPolicyScreen';
 import ReservationPolicyScreen from '../screens/settings/ReservationPolicyScreen';
@@ -203,6 +204,7 @@ export default function Navigation() {
         <Stack.Screen name="Directions" component={DirectionsScreen} />
         <Stack.Screen name="EditAccount" component={EditAccountScreen} />
         <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+        <Stack.Screen name="Roadmap" component={RoadmapScreen} />
         <Stack.Screen name="Help" component={HelpScreen} />
         <Stack.Screen name="WisdomWarranty" component={WisdomWarrantyScreen} />
         <Stack.Screen name="CancellationPolicy" component={CancellationPolicyScreen} />
