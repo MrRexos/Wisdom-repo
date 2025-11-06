@@ -30,28 +30,28 @@ const RoadmapScreen = () => {
 
   
   const upcomingFeatures = useMemo(() => ([
-    { key: 'reminders', titleKey: 'roadmap_feature_reminders' },
-    { key: 'goals', titleKey: 'roadmap_feature_goals' },
-    { key: 'appleHealth', titleKey: 'roadmap_feature_apple_health' },
-    { key: 'watchOS', titleKey: 'roadmap_feature_watchos_app' },
-    { key: 'ipad', titleKey: 'roadmap_feature_ipad_app' },
-    { key: 'faceId', titleKey: 'roadmap_feature_face_id_lock' },
-    { key: 'multiBoard', titleKey: 'roadmap_feature_multi_board_widget' },
-    { key: 'boardSharing', titleKey: 'roadmap_feature_board_sharing' },
-    { key: 'macOs', titleKey: 'roadmap_feature_macos_app' },
-    { key: 'badges', titleKey: 'roadmap_feature_checkin_badges' },
+    { key: 'filterSearch', titleKey: 'roadmap_feature_filter_search' },
+    { key: 'notifications', titleKey: 'roadmap_feature_notifications' },
+    { key: 'moreLanguages', titleKey: 'roadmap_feature_more_languages' },
+    { key: 'web', titleKey: 'roadmap_feature_web' },
+    { key: 'officialLaunch', titleKey: 'roadmap_feature_official_launch' },
+    { key: 'consultations', titleKey: 'roadmap_feature_consultations' },
+    { key: 'loginOptions', titleKey: 'roadmap_feature_login_options' },
+    { key: 'profiles', titleKey: 'roadmap_feature_profile_pro_client' },
+    { key: 'servicesMap', titleKey: 'roadmap_feature_services_map' },
+    { key: 'recurringBookings', titleKey: 'roadmap_feature_recurring_bookings' },
+    { key: 'discounts', titleKey: 'roadmap_feature_discounts' },
+    { key: 'calendar', titleKey: 'roadmap_feature_calendar' },
+    { key: 'premium', titleKey: 'roadmap_feature_premium_version' },
+    { key: 'cardsBadges', titleKey: 'roadmap_feature_cards_badges' },
+    { key: 'giftCards', titleKey: 'roadmap_feature_gift_cards' },
   ]), []);
 
   const pastReleases = useMemo(() => ([
-    { key: 'iosDesign', titleKey: 'roadmap_release_ios16_design', badgeKey: 'roadmap_badge_sep_2025' },
-    { key: 'checkinNotes', titleKey: 'roadmap_release_checkin_notes', badgeKey: 'roadmap_badge_aug_2025' },
-    { key: 'localizations', titleKey: 'roadmap_release_localizations', badgeKey: 'roadmap_badge_jun_2025' },
-    { key: 'onboardingTutorial', titleKey: 'roadmap_release_onboarding_tutorial', badgeKey: 'roadmap_badge_apr_2025' },
-    { key: 'streaks', titleKey: 'roadmap_release_streaks', badgeKey: 'roadmap_badge_apr_2025' },
-    { key: 'analytics', titleKey: 'roadmap_release_board_analytics', badgeKey: 'roadmap_badge_mar_2025' },
-    { key: 'minimalWidget', titleKey: 'roadmap_release_minimal_widget', badgeKey: 'roadmap_badge_feb_2025' },
-    { key: 'dashboardWidget', titleKey: 'roadmap_release_dashboard_widget', badgeKey: 'roadmap_badge_feb_2025' },
-    { key: 'dataExport', titleKey: 'roadmap_release_data_export', badgeKey: 'roadmap_badge_jan_2025' },
+    { key: 'editService', titleKey: 'roadmap_release_edit_service', badgeKey: 'roadmap_badge_oct_2025' },
+    { key: 'bookings', titleKey: 'roadmap_release_bookings', badgeKey: 'roadmap_badge_jul_2025' },
+    { key: 'chat', titleKey: 'roadmap_release_chat', badgeKey: 'roadmap_badge_jun_2025' },
+    { key: 'translations', titleKey: 'roadmap_release_translations_multi', badgeKey: 'roadmap_badge_may_2025' },
   ]), []);
 
 
@@ -152,7 +152,9 @@ const RoadmapScreen = () => {
           <View className='px-12 mt-5'>
             <View className='rounded-full py-3 px-3 flex-row items-center justify-center dark:bg-[#323131] bg-[#d4d4d3]'>
               <LockClosedIcon size={16} color={colors.checkIcon} />
-              <Text className="font-inter-medium text-[14px] ml-2" style={{ color: colors.checkIcon }}>β Launch, Dec 2024</Text>
+              <Text className="font-inter-medium text-[14px] ml-2" style={{ color: colors.checkIcon }}>
+                {`${t('roadmap_milestone_beta_launch')} · ${t('roadmap_badge_dec_2024')}`}
+              </Text>
             </View>
           </View>
 
