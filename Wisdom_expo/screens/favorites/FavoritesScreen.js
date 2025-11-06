@@ -1,17 +1,19 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { View, StatusBar, Platform, Text, TouchableOpacity, ScrollView, FlatList, Alert, Image, RefreshControl } from 'react-native';
+import React, { useState, useCallback, useRef } from 'react'
+import { View, StatusBar, Platform, Text, TouchableOpacity, FlatList, Image, TextInput } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { Edit2, X, Check } from "react-native-feather";
+import { Plus, X } from "react-native-feather";
 import { BookmarkIcon } from 'react-native-heroicons/solid';
+import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { enUS, es, fr, ar, ca, zhCN } from 'date-fns/locale';
+import RBSheet from 'react-native-raw-bottom-sheet';
 
 export default function FavoritesScreen() {
   const { colorScheme } = useColorScheme();
@@ -32,8 +34,12 @@ export default function FavoritesScreen() {
   const [lists, setLists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState();
-  const [editing, setEditing] = useState(false);  // Nuevo estado para controlar el modo de edición
   const [refreshing, setRefreshing] = useState(false);
+  const [listName, setListName] = useState('');
+  const sheet = useRef();
+  const [sheetHeight, setSheetHeight] = useState(450);
+  const placeholderTextColor = colorScheme === 'dark' ? '#706f6e' : '#b6b5b5';
+  const cursorColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
 
   useFocusEffect(
     useCallback(() => {
@@ -63,35 +69,6 @@ export default function FavoritesScreen() {
     }, [navigation])
   );
 
-  const deleteList = async (listId) => {
-    Alert.alert(
-      t('are_you_sure_you_want_to_delete_this_list'),
-      t('list_will_disappear_for_everyone'),
-      [
-        {
-          text: t('cancel'),
-          onPress: null,
-          style: 'cancel',
-        },
-        {
-          text: t('delete'),
-          onPress: async () => {
-            try {
-              const response = await api.delete(`/api/lists/${listId}`);
-              console.log('Éxito', response.data.message);
-              setLists(lists.filter(list => list.id !== listId));  // Actualiza la lista después de eliminar
-            } catch (error) {
-              console.error('Error al eliminar la lista:', error);
-              console.log('Error', 'No se pudo eliminar la lista');
-            }
-          },
-          style: 'destructive',
-        },
-      ],
-      { cancelable: false }
-    );
-  };
-
   const fetchLists = async () => {
     const userData = await getDataLocally('user');
     const user = JSON.parse(userData);
@@ -110,6 +87,47 @@ export default function FavoritesScreen() {
     setRefreshing(true);
     await fetchLists();
     setRefreshing(false);
+  };
+
+  const createList = async () => {
+    try {
+      const response = await api.post('/api/lists', {
+        user_id: userId,
+        list_name: listName,
+      });
+      return response.data.listId;
+    } catch (error) {
+      console.error('Error creating list:', error);
+    }
+  };
+
+  const handleDone = async () => {
+    if (!listName.trim() || !userId) {
+      return;
+    }
+
+    try {
+      const listId = await createList();
+      if (listId) {
+        await fetchLists();
+      }
+    } catch (error) {
+      console.error('Error creating new list:', error);
+    } finally {
+      setListName('');
+      sheet.current?.close();
+    }
+  };
+
+  const handleClearText = () => {
+    setListName('');
+  };
+
+  const openSheetWithInput = (height) => {
+    setSheetHeight(height);
+    setTimeout(() => {
+      sheet.current?.open();
+    }, 0);
   };
 
 
@@ -182,7 +200,6 @@ export default function FavoritesScreen() {
   const renderItem = ({ item }) => (
     <View className="mb-7">
       <TouchableOpacity
-        disabled={editing}  // Desactiva el clic en el ítem si no estamos en modo de edición
         className="mb-7"
         onPress={() => navigation.navigate('List', { listId: item.id, listTitle: item.title, itemCount: item.item_count })}
       >
@@ -195,13 +212,6 @@ export default function FavoritesScreen() {
           <Text className="font-inter-medium text-[12px] text-[#B6B5B5] dark:text-[#706F6E] ml-3">{item.last_item_date ? formatDistanceToNowStrict(new Date(item.last_item_date), { addSuffix: false, locale: dateFnsLocale }) : null}</Text>
         </View>
       </TouchableOpacity>
-      {editing && (
-        <TouchableOpacity onPress={() => deleteList(item.id)} className="absolute top-2 left-2">
-          <View className="rounded-full bg-[#E0E0E0] dark:bg-[#3d3d3d] p-[2px]">
-            <X height={20} width={20} strokeWidth={1.7} color={iconColor} />
-          </View>
-        </TouchableOpacity>
-      )}
     </View>
   );
 
@@ -210,26 +220,88 @@ export default function FavoritesScreen() {
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <View className="flex-1 px-6 pt-[55px]">
 
+        <RBSheet
+          height={sheetHeight}
+          openDuration={300}
+          closeDuration={300}
+          onClose={() => setListName('')}
+          draggable={true}
+          ref={sheet}
+          customStyles={{
+            container: {
+              borderTopRightRadius: 25,
+              borderTopLeftRadius: 25,
+              backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+            },
+            draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' }
+          }}>
+
+          <View className="flex-1 justify-start items-center">
+
+            <View className="mt-3 mb-12 flex-row justify-center items-center">
+
+              <View className="flex-1 items-start">
+                <TouchableOpacity onPress={() => { setListName(''); sheet.current?.close(); }} className="ml-5">
+                  <ChevronLeftIcon height={21} width={21} strokeWidth={2} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+                </TouchableOpacity>
+              </View>
+
+              <View className="flex-row justify-center items-center">
+                <Text className="text-center font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('new_list')}</Text>
+              </View>
+
+              <View className="flex-1 items-end">
+                {listName.length > 0 ? (
+                  <TouchableOpacity onPress={handleDone}>
+                    <Text className="mr-7 text-center font-inter-medium text-[14px] text-[#979797]">{t('done')}</Text>
+                  </TouchableOpacity>
+                ) : null}
+              </View>
+            </View>
+
+            <View className="w-full px-5">
+
+              <View className="w-full h-[55px] px-4  bg-[#f2f2f2] dark:bg-[#272626] rounded-full flex-row justify-start items-center">
+
+                <TextInput
+                  placeholder={t('list_name_placeholder')}
+                  autoFocus={true}
+                  selectionColor={cursorColor}
+                  placeholderTextColor={placeholderTextColor}
+                  onChangeText={setListName}
+                  value={listName}
+                  keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                  className="font-inter-medium flex-1 text-[15px] text-[#444343] dark:text-[#f2f2f2]"
+                />
+
+                {listName.length > 0 ? (
+                  <TouchableOpacity onPress={handleClearText}>
+                    <View className='h-[23px] w-[23px] justify-center items-center rounded-full bg-[#fcfcfc] dark:bg-[#323131]'>
+                      <X height={13} color={iconColor} strokeWidth={2.6} />
+                    </View>
+                  </TouchableOpacity>
+                ) : null}
+
+              </View>
+
+            </View>
+
+          </View>
+
+        </RBSheet>
+
         <View className="flex-row justify-between mb-1">
 
           <Text className="font-inter-bold text-[30px] text-[#444343] dark:text-[#f2f2f2]">
             {t('favorites')}
           </Text>
 
-          {!(!lists || lists.length === 0) && (
-
           <TouchableOpacity
             className="px-3 items-center justify-center"
-            onPress={() => setEditing(!editing)}
+            onPress={() => openSheetWithInput(450)}
           >
-            {editing ? (
-              <Check height={22} strokeWidth={1.7} color={iconColor} />
-            ) : (
-              <Edit2 height={22} strokeWidth={1.7} color={iconColor} />
-            )}
+            <Plus height={22} strokeWidth={1.7} color={iconColor} />
           </TouchableOpacity>
-
-          )}
 
         </View>
 
