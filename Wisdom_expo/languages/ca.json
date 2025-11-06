@@ -35,6 +35,8 @@
     "favorites": "Preferits",
     "are_you_sure_you_want_to_delete_this_list": "Estàs segur que vols eliminar aquesta llista?",
     "list_will_disappear_for_everyone": "Aquesta llista no es podrà recuperar i desapareixerà per a tothom.",
+    "remove_service_from_list_title": "Vols eliminar aquest servei de la llista?",
+    "remove_service_from_list_description": "Si elimines aquest servei de la llista, deixarà d'aparèixer aquí.",
     "cancel": "Cancel·lar",
     "delete": "Eliminar",
     "delete_message": "Eliminar missatge",

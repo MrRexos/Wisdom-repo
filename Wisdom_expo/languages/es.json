@@ -35,6 +35,8 @@
     "favorites": "Favoritos",
     "are_you_sure_you_want_to_delete_this_list": "¿Estás seguro de que deseas eliminar esta lista?",
     "list_will_disappear_for_everyone": "Esta lista no se podrá recuperar y desaparecerá para todos.",
+    "remove_service_from_list_title": "¿Eliminar este servicio de la lista?",
+    "remove_service_from_list_description": "Si eliminas este servicio de la lista, dejará de aparecer aquí.",
     "cancel": "Cancelar",
     "delete": "Eliminar",
     "delete_message": "Eliminar mensaje",

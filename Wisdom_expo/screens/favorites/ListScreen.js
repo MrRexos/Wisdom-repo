@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { View, StatusBar, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert, StyleSheet, RefreshControl } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, StatusBar, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -10,8 +10,9 @@ import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import BookMarksFillIcon from 'react-native-bootstrap-icons/icons/bookmarks-fill';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import ModalMessage from '../../components/ModalMessage';
 
 export default function ListScreen() {
   const insets = useSafeAreaInsets();
@@ -22,15 +23,21 @@ export default function ListScreen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const { listId, listTitle, itemCount } = route.params;
+  const { listId, listTitle } = route.params;
   const [currentTitle, setCurrentTitle] = useState(listTitle);
   const [items, setItems] = useState([]);
   const sheet = useRef();
-  const [editing, setEditing] = useState(null); 
+  const [editing, setEditing] = useState(null);
   const [sheetHeight, setSheetHeight] = useState(350);
   const [optionsText, setOptionsText] = useState('');
   const [showDone, setShowDone] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const itemSheet = useRef();
+  const [itemToDelete, setItemToDelete] = useState(null);
+  const [showDeleteItemModal, setShowDeleteItemModal] = useState(false);
+  const [showDeleteListModal, setShowDeleteListModal] = useState(false);
+  const swipeableRefs = useRef(new Map());
+  const longPressRefs = useRef(new Map());
   const currencySymbols = {
     EUR: '€',
     USD: '$',
@@ -63,14 +70,16 @@ export default function ListScreen() {
   useRefreshOnFocus(fetchItems);
   
   useEffect(() => {
-    if (!items.empty) {
-    const initialNotes = {};
-    items.forEach(item => {
-      if (item.note) {
-        initialNotes[item.item_id] = item.note;
-      }
-    });
-    setNotes(initialNotes);
+    if (items.length > 0) {
+      const initialNotes = {};
+      items.forEach(item => {
+        if (item.note) {
+          initialNotes[item.item_id] = item.note;
+        }
+      });
+      setNotes(initialNotes);
+    } else {
+      setNotes({});
     }
   }, [items]);
 
@@ -119,8 +128,22 @@ export default function ListScreen() {
     } catch (error) {
       console.log('Error al borrar la lista:', error);
     }
-    sheet.current.close();
+    sheet.current?.close();
     navigation.navigate('FavoritesScreen');
+  };
+
+  const openDeleteListModal = () => {
+    sheet.current?.close();
+    setShowDeleteListModal(true);
+  };
+
+  const closeDeleteListModal = () => {
+    setShowDeleteListModal(false);
+  };
+
+  const handleConfirmDeleteList = async () => {
+    await deleteList(listId);
+    setShowDeleteListModal(false);
   };
 
   const updateListName = async (listId) => {
@@ -164,6 +187,58 @@ export default function ListScreen() {
     }
   };
 
+  const closeSwipeable = (itemId) => {
+    const ref = swipeableRefs.current.get(itemId);
+    if (ref && typeof ref.close === 'function') {
+      ref.close();
+    }
+  };
+
+  const openDeleteItemModal = (item) => {
+    setItemToDelete(item);
+    setShowDeleteItemModal(true);
+  };
+
+  const handleSwipeToDelete = (item) => {
+    closeSwipeable(item.item_id);
+    longPressRefs.current.delete(item.item_id);
+    openDeleteItemModal(item);
+  };
+
+  const handleConfirmDeleteItem = async () => {
+    if (!itemToDelete) return;
+    try {
+      await api.delete(`/api/lists/${listId}/items/${itemToDelete.item_id}`);
+      setItems(prevItems => prevItems.filter((listItem) => listItem.item_id !== itemToDelete.item_id));
+    } catch (error) {
+      console.log('Error al eliminar el item de la lista:', error);
+    }
+    setItemToDelete(null);
+    setShowDeleteItemModal(false);
+  };
+
+  const handleCancelDeleteItem = () => {
+    if (itemToDelete) {
+      closeSwipeable(itemToDelete.item_id);
+      longPressRefs.current.delete(itemToDelete.item_id);
+    }
+    setItemToDelete(null);
+    setShowDeleteItemModal(false);
+  };
+
+  const openItemSheet = (item) => {
+    setItemToDelete(item);
+    itemSheet.current?.open();
+  };
+
+  const handleItemSheetDelete = () => {
+    itemSheet.current?.close();
+    if (itemToDelete) {
+      longPressRefs.current.delete(itemToDelete.item_id);
+    }
+    setShowDeleteItemModal(true);
+  };
+
   const openSheetWithInput = (mode) => {
     setEditing(mode);
     if (mode===null) {
@@ -179,6 +254,45 @@ export default function ListScreen() {
   };
 
   const renderItem = ({ item, index }) => {
+    const setLongPressFlag = (value) => {
+      if (value) {
+        longPressRefs.current.set(item.item_id, true);
+      } else {
+        longPressRefs.current.delete(item.item_id);
+      }
+    };
+
+    const handleItemPress = () => {
+      if (longPressRefs.current.get(item.item_id)) {
+        longPressRefs.current.delete(item.item_id);
+        return;
+      }
+      navigation.navigate('ServiceProfile', { serviceId: item.service_id });
+    };
+
+    const handleItemLongPress = () => {
+      setLongPressFlag(true);
+      openItemSheet(item);
+    };
+
+    const handlePressOut = () => {
+      if (longPressRefs.current.get(item.item_id)) {
+        setTimeout(() => {
+          setLongPressFlag(false);
+        }, 200);
+      }
+    };
+
+    const renderRightActions = () => (
+      <TouchableOpacity
+        onPress={() => handleSwipeToDelete(item)}
+        activeOpacity={0.7}
+        className="bg-[#FF633E] w-[90px] items-center justify-center"
+      >
+        <Text className="font-inter-semibold text-[12px] text-[#f2f2f2]">{t('delete')}</Text>
+      </TouchableOpacity>
+    );
+
     const getFormattedPrice = () => {
       const numericPrice = parseFloat(item.price);
       const formattedPrice = numericPrice % 1 === 0 ? numericPrice.toFixed(0) : numericPrice.toFixed(1);
@@ -202,56 +316,84 @@ export default function ListScreen() {
     };
 
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', {serviceId: item.service_id})} className="h-[170px]">
-        <View className="flex-row">
-          <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[85px] w-[85px] bg-[#706B5B] rounded-xl" />
-          <View className="flex-1 ">
-            <View className="flex-row justify-between">
-              <Text className="ml-4 mt-1 font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
-              <ChevronRightIcon size={23} strokeWidth={1.7} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'}  />
-            </View>
-            <Text className="ml-4 mt-1 font-inter-semibold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{item.first_name} {item.surname}</Text>
-            <View className="justify-center items-center flex-1 ">
-              <View className="pl-4 pr-9 flex-row w-full items-center  justify-between ">
-                <View className=" flex-row items-start justify-start ">
-                  <Text className="mr-4">
-                    {getFormattedPrice()}
-                  </Text>
-                </View>
-                {item.review_count > 0 && (
-                  <View className="flex-row items-center justify-end ">
-                    <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.85 }] }} />
-                    <Text className="ml-[3px]">
-                      <Text className="font-inter-bold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(item.average_rating).toFixed(1)}</Text>
-                      <Text> </Text>
-                      <Text className="font-inter-medium text-[10px] text-[#706F6E] dark:text-[#B6B5B5]">({item.review_count === 1 ? `${item.review_count} ${t('review')}` : `${item.review_count} ${t('reviews')}`})</Text>
+      <ReanimatedSwipeable
+        ref={(ref) => {
+          if (ref) {
+            swipeableRefs.current.set(item.item_id, ref);
+          } else {
+            swipeableRefs.current.delete(item.item_id);
+          }
+        }}
+        friction={2}
+        overshootLeft={false}
+        overshootRight={false}
+        renderRightActions={renderRightActions}
+        onSwipeableOpen={(direction) => {
+          if (direction === 'left') {
+            handleSwipeToDelete(item);
+          }
+        }}
+      >
+        <TouchableOpacity
+          onPress={handleItemPress}
+          onLongPress={handleItemLongPress}
+          onPressOut={handlePressOut}
+          delayLongPress={250}
+          activeOpacity={0.8}
+          className="h-[170px]"
+        >
+          <View className="flex-row">
+            <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[85px] w-[85px] bg-[#706B5B] rounded-xl" />
+            <View className="flex-1 ">
+              <View className="flex-row justify-between">
+                <Text className="ml-4 mt-1 font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
+                <ChevronRightIcon size={23} strokeWidth={1.7} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'}  />
+              </View>
+              <Text className="ml-4 mt-1 font-inter-semibold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{item.first_name} {item.surname}</Text>
+              <View className="justify-center items-center flex-1 ">
+                <View className="pl-4 pr-9 flex-row w-full items-center  justify-between ">
+                  <View className=" flex-row items-start justify-start ">
+                    <Text className="mr-4">
+                      {getFormattedPrice()}
                     </Text>
                   </View>
-                )}
+                  {item.review_count > 0 && (
+                    <View className="flex-row items-center justify-end ">
+                      <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.85 }] }} />
+                      <Text className="ml-[3px]">
+                        <Text className="font-inter-bold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(item.average_rating).toFixed(1)}</Text>
+                        <Text> </Text>
+                        <Text className="font-inter-medium text-[10px] text-[#706F6E] dark:text-[#B6B5B5]">({item.review_count === 1 ? `${item.review_count} ${t('review')}` : `${item.review_count} ${t('reviews')}`})</Text>
+                      </Text>
+                    </View>
+                  )}
+                </View>
               </View>
             </View>
           </View>
-        </View>
-        
-        <View className="">
-          <View className="px-[12px] py-4 border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{ borderBottomWidth: 1 }, index === items.length - 1 && { borderBottomWidth: 0 }]}>
-            <View className="h-9 bg-[#D4D4D3] dark:bg-[#474646] rounded-md justify-center items-start">
-            <TextInput
-              placeholder={t('add_a_note')}
-              selectionColor={cursorColorChange}
-              placeholderTextColor={placeholderTextColorChange}
-              onChangeText={(text) => handleNoteChange(item.item_id, text)}
-              value={notes[item.item_id] || ''}
-              onSubmitEditing={() => updateNote(item.item_id)}
-              keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-              className="px-4 h-[32px] w-[300px] flex-1 text-[13px] text-[#515150] dark:text-[#d4d4d3]"
-            />
+
+          <View className="">
+            <View className="px-[12px] py-4 border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{ borderBottomWidth: 1 }, index === items.length - 1 && { borderBottomWidth: 0 }]}>
+              <View className="h-9 bg-[#D4D4D3] dark:bg-[#474646] rounded-md justify-center items-start">
+              <TextInput
+                placeholder={t('add_a_note')}
+                selectionColor={cursorColorChange}
+                placeholderTextColor={placeholderTextColorChange}
+                onChangeText={(text) => handleNoteChange(item.item_id, text)}
+                value={notes[item.item_id] || ''}
+                onSubmitEditing={() => updateNote(item.item_id)}
+                keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                className="px-4 h-[32px] w-[300px] flex-1 text-[13px] text-[#515150] dark:text-[#d4d4d3]"
+              />
+              </View>
             </View>
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </ReanimatedSwipeable>
     );
   };
+
+  const totalItems = items.length;
 
   return (
     <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: insets.bottom }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
@@ -323,29 +465,38 @@ export default function ListScreen() {
                 <TouchableOpacity onPress={() => openSheetWithInput('changeName')} className="w-full my-2 pl-5 py-[2px] bg-[#f2f2f2] dark:bg-[#3d3d3d] flex-1 rounded-xl justify-center items-start">
                     <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('change_the_name')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={ () => Alert.alert(
-                  t('are_you_sure_you_want_to_delete_this_list'),
-                  t('list_will_disappear_for_everyone'),
-                  [
-                    {
-                      text: t('cancel'),
-                      onPress: null,
-                      style: 'cancel',
-                    },
-                    {
-                      text: t('delete'),
-                      onPress: () => deleteList(listId),                      
-                      style: 'destructive', 
-                    },
-                  ],
-                  { cancelable: false }
-                )} 
+                <TouchableOpacity onPress={openDeleteListModal}
                 className="w-full my-2 pl-5 py-[2px] bg-[#f2f2f2] dark:bg-[#3d3d3d] flex-1 rounded-xl justify-center items-start">
                     <Text className="font-inter-medium text-[14px] text-[#ff633e]">{t('delete')}</Text>
-                </TouchableOpacity>  
+                </TouchableOpacity>
               </View>
-            )}          
-          
+            )}
+
+      </RBSheet>
+
+      <RBSheet
+        height={160}
+        openDuration={300}
+        closeDuration={300}
+        draggable={true}
+        ref={itemSheet}
+        customStyles={{
+          container: {
+            borderTopRightRadius: 25,
+            borderTopLeftRadius: 25,
+            backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+          },
+          draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' }
+        }}
+      >
+        <View className="flex-1 w-full justify-center items-center px-5 pb-6">
+          <TouchableOpacity
+            onPress={handleItemSheetDelete}
+            className="w-full pl-5 py-[2px] bg-[#f2f2f2] dark:bg-[#3d3d3d] flex-1 rounded-xl justify-center items-start"
+          >
+            <Text className="font-inter-medium text-[14px] text-[#ff633e]">{t('delete_service')}</Text>
+          </TouchableOpacity>
+        </View>
       </RBSheet>
 
       <TouchableOpacity onPress={() => navigation.goBack()} className="pl-4 pt-4">
@@ -361,14 +512,12 @@ export default function ListScreen() {
             <EllipsisHorizontalIcon size={25} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}/>
           </TouchableOpacity>
         </View>
-        {!items.empty ? (
-        <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5] pt-3">{itemCount === 0 ? t('empty') : itemCount === 1 ? `${itemCount} ${t('service')}` : `${itemCount} ${t('services')}`}</Text>
-        ):null}
+        <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5] pt-3">{totalItems === 0 ? t('empty') : totalItems === 1 ? `${totalItems} ${t('service')}` : `${totalItems} ${t('services')}`}</Text>
         <View className="pb-7"></View>
         <View className="absolute bottom-0 left-0 w-[700px] h-1 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]"/>
         </View>
         
-      {items.length<1 || items.empty ? (
+      {items.length < 1 ? (
         // Si la lista está vacía, muestra este mensaje
         <View className='flex-1 justify-center items-center'>
           
@@ -398,6 +547,28 @@ export default function ListScreen() {
           }}
         />
       )}
+
+      <ModalMessage
+        visible={showDeleteListModal}
+        title={t('are_you_sure_you_want_to_delete_this_list')}
+        description={t('list_will_disappear_for_everyone')}
+        confirmText={t('delete')}
+        cancelText={t('cancel')}
+        onConfirm={handleConfirmDeleteList}
+        onCancel={closeDeleteListModal}
+        onDismiss={closeDeleteListModal}
+      />
+
+      <ModalMessage
+        visible={showDeleteItemModal}
+        title={t('remove_service_from_list_title')}
+        description={t('remove_service_from_list_description')}
+        confirmText={t('delete')}
+        cancelText={t('cancel')}
+        onConfirm={handleConfirmDeleteItem}
+        onCancel={handleCancelDeleteItem}
+        onDismiss={handleCancelDeleteItem}
+      />
     </View>
   );
 }
