@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { View, StatusBar, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert, StyleSheet, RefreshControl } from 'react-native';
+import { View, StatusBar, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -12,6 +12,8 @@ import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import BookMarksFillIcon from 'react-native-bootstrap-icons/icons/bookmarks-fill';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import ModalMessage from '../../components/ModalMessage';
 
 export default function ListScreen() {
   const insets = useSafeAreaInsets();
@@ -31,6 +33,10 @@ export default function ListScreen() {
   const [optionsText, setOptionsText] = useState('');
   const [showDone, setShowDone] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const itemSheet = useRef();
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [showDeleteListModal, setShowDeleteListModal] = useState(false);
+  const [showDeleteItemModal, setShowDeleteItemModal] = useState(false);
   const currencySymbols = {
     EUR: '€',
     USD: '$',
@@ -123,6 +129,15 @@ export default function ListScreen() {
     navigation.navigate('FavoritesScreen');
   };
 
+  const deleteItem = async (itemId) => {
+    try {
+      await api.delete(`/api/lists/${listId}/items/${itemId}`);
+      setItems((prevItems) => prevItems.filter((listItem) => listItem.item_id !== itemId));
+    } catch (error) {
+      console.log('Error al borrar el servicio de la lista:', error);
+    }
+  };
+
   const updateListName = async (listId) => {
     try {
       await api.put(`/api/list/${listId}`,{
@@ -178,6 +193,21 @@ export default function ListScreen() {
     
   };
 
+  const openItemSheet = (item) => {
+    setSelectedItem(item);
+    setTimeout(() => {
+      itemSheet.current?.open();
+    }, 0);
+  };
+
+  const renderRightActions = () => (
+    <View className="flex-1 flex-row justify-center items-center pr-6">
+      <View className="h-full w-[80px] bg-[#ff633e] rounded-xl justify-center items-center">
+        <Text className="font-inter-semibold text-[12px] text-[#f2f2f2]">{t('delete')}</Text>
+      </View>
+    </View>
+  );
+
   const renderItem = ({ item, index }) => {
     const getFormattedPrice = () => {
       const numericPrice = parseFloat(item.price);
@@ -201,8 +231,23 @@ export default function ListScreen() {
       }
     };
 
+    const handleSwipeOpen = (direction) => {
+      if (direction === 'right') {
+        deleteItem(item.item_id);
+      }
+    };
+
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', {serviceId: item.service_id})} className="h-[170px]">
+      <ReanimatedSwipeable
+        renderRightActions={renderRightActions}
+        onSwipeableOpen={handleSwipeOpen}
+      >
+      <TouchableOpacity
+        onPress={() => navigation.navigate('ServiceProfile', {serviceId: item.service_id})}
+        onLongPress={() => openItemSheet(item)}
+        delayLongPress={250}
+        className="h-[170px]"
+      >
         <View className="flex-row">
           <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[85px] w-[85px] bg-[#706B5B] rounded-xl" />
           <View className="flex-1 ">
@@ -250,6 +295,7 @@ export default function ListScreen() {
           </View>
         </View>
       </TouchableOpacity>
+      </ReanimatedSwipeable>
     );
   };
 
@@ -323,29 +369,45 @@ export default function ListScreen() {
                 <TouchableOpacity onPress={() => openSheetWithInput('changeName')} className="w-full my-2 pl-5 py-[2px] bg-[#f2f2f2] dark:bg-[#3d3d3d] flex-1 rounded-xl justify-center items-start">
                     <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('change_the_name')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={ () => Alert.alert(
-                  t('are_you_sure_you_want_to_delete_this_list'),
-                  t('list_will_disappear_for_everyone'),
-                  [
-                    {
-                      text: t('cancel'),
-                      onPress: null,
-                      style: 'cancel',
-                    },
-                    {
-                      text: t('delete'),
-                      onPress: () => deleteList(listId),                      
-                      style: 'destructive', 
-                    },
-                  ],
-                  { cancelable: false }
-                )} 
+                <TouchableOpacity onPress={() => setShowDeleteListModal(true)}
                 className="w-full my-2 pl-5 py-[2px] bg-[#f2f2f2] dark:bg-[#3d3d3d] flex-1 rounded-xl justify-center items-start">
                     <Text className="font-inter-medium text-[14px] text-[#ff633e]">{t('delete')}</Text>
-                </TouchableOpacity>  
+                </TouchableOpacity>
               </View>
-            )}          
-          
+            )}
+
+      </RBSheet>
+
+      <RBSheet
+        height={150}
+        openDuration={300}
+        closeDuration={300}
+        onClose={() => {
+          if (!showDeleteItemModal) {
+            setSelectedItem(null);
+          }
+        }}
+        ref={itemSheet}
+        customStyles={{
+          container: {
+            borderTopRightRadius: 25,
+            borderTopLeftRadius: 25,
+            backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+          },
+          draggableIcon: {backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2'}
+        }}
+      >
+        <View className="flex-1 w-full justify-center items-center pt-3 pb-5 px-5">
+          <TouchableOpacity
+            onPress={() => {
+              itemSheet.current?.close();
+              setShowDeleteItemModal(true);
+            }}
+            className="w-full my-2 pl-5 py-[2px] bg-[#f2f2f2] dark:bg-[#3d3d3d] flex-1 rounded-xl justify-center items-start"
+          >
+            <Text className="font-inter-medium text-[14px] text-[#ff633e]">{t('delete_service')}</Text>
+          </TouchableOpacity>
+        </View>
       </RBSheet>
 
       <TouchableOpacity onPress={() => navigation.goBack()} className="pl-4 pt-4">
@@ -398,6 +460,42 @@ export default function ListScreen() {
           }}
         />
       )}
+
+      <ModalMessage
+        visible={showDeleteListModal}
+        title={t('delete_list_title')}
+        description={t('delete_list_description')}
+        confirmText={t('delete')}
+        cancelText={t('cancel')}
+        onConfirm={() => {
+          setShowDeleteListModal(false);
+          deleteList(listId);
+        }}
+        onCancel={() => {
+          setShowDeleteListModal(false);
+        }}
+      />
+
+      <ModalMessage
+        visible={showDeleteItemModal}
+        title={t('delete_service_title')}
+        description={t('delete_service_description')}
+        confirmText={t('delete')}
+        cancelText={t('cancel')}
+        onConfirm={() => {
+          setShowDeleteItemModal(false);
+          if (selectedItem) {
+            deleteItem(selectedItem.item_id);
+            setSelectedItem(null);
+          }
+        }}
+        onCancel={() => {
+          setShowDeleteItemModal(false);
+        }}
+        onDismiss={() => {
+          setSelectedItem(null);
+        }}
+      />
     </View>
   );
 }
