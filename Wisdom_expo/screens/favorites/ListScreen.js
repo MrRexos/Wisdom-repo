@@ -289,10 +289,11 @@ export default function ListScreen() {
         friction={2}
         onSwipeableOpen={handleSwipeableOpen}
       >
-        <TouchableWithoutFeedback
+        <TouchableOpacity
           onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.service_id })}
           onLongPress={() => openItemSheet(item)}
           delayLongPress={250}
+          activeOpacity={1}
           className="h-[170px] bg-[#f2f2f2] dark:bg-[#272626]"
         >
           <>
@@ -343,7 +344,7 @@ export default function ListScreen() {
             </View>
           </View>
           </>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
       </ReanimatedSwipeable>
     );
   };
