@@ -235,11 +235,11 @@ export default function ListScreen() {
         
         <View className="">
           <View className="px-[12px] py-4 border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{ borderBottomWidth: 1 }, index === items.length - 1 && { borderBottomWidth: 0 }]}>
-            <View className="h-9 bg-[#D4D4D3] dark:bg-[#474646] rounded-md justify-center items-start">
+            <View className="h-9 bg-[#fcfcfc] dark:bg-[#323131] rounded-md justify-center items-start">
             <TextInput
               placeholder={t('add_a_note')}
               selectionColor={cursorColorChange}
-              placeholderTextColor={placeholderTextColorChange}
+              placeholderTextColor={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'}
               onChangeText={(text) => handleNoteChange(item.item_id, text)}
               value={notes[item.item_id] || ''}
               onSubmitEditing={() => updateNote(item.item_id)}
