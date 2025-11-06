@@ -76,6 +76,8 @@
     "show_service": "Mostrar servei",
     "edit_service": "Editar servei",
     "delete_service": "Eliminar servei",
+    "delete_service_from_list_title": "Vols eliminar aquest servei de la llista?",
+    "delete_service_from_list_description": "Aquest servei s'eliminarà de la llista i no el podràs recuperar aquí.",
     "service_settings": "Ajustos del servei",
     "delete_service_confirm_title": "Eliminar el servei?",
     "delete_service_confirm_description": "Si elimines aquest servei, no es podrà recuperar i deixarà de ser visible per als clients.",

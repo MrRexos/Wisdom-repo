@@ -76,6 +76,8 @@
     "show_service": "Show service",
     "edit_service": "Edit service",
     "delete_service": "Delete service",
+    "delete_service_from_list_title": "Remove this service from the list?",
+    "delete_service_from_list_description": "This service will be removed from the list and you won't be able to recover it here.",
     "service_settings": "Service settings",
     "delete_service_confirm_title": "Delete service?",
     "delete_service_confirm_description": "If you delete this service, it cannot be recovered and will no longer be visible to clients.",

@@ -76,6 +76,8 @@
     "show_service": "显示服务",
     "edit_service": "编辑服务",
     "delete_service": "删除服务",
+    "delete_service_from_list_title": "从列表中删除此服务？",
+    "delete_service_from_list_description": "此服务将从列表中移除，您将无法在此恢复它。",
     "service_settings": "服务设置",
     "delete_service_confirm_title": "删除服务？",
     "delete_service_confirm_description": "如果删除此服务，将无法恢复，并且客户将不再能看到它。",

@@ -76,6 +76,8 @@
     "show_service": "إظهار الخدمة",
     "edit_service": "تعديل الخدمة",
     "delete_service": "حذف الخدمة",
+    "delete_service_from_list_title": "هل تريد إزالة هذه الخدمة من القائمة؟",
+    "delete_service_from_list_description": "سيتم إزالة هذه الخدمة من القائمة ولن تتمكن من استعادتها هنا.",
     "service_settings": "إعدادات الخدمة",
     "delete_service_confirm_title": "هل تريد حذف الخدمة؟",
     "delete_service_confirm_description": "إذا حذفت هذه الخدمة فلن تتمكن من استعادتها ولن تكون مرئية للعملاء بعد الآن.",

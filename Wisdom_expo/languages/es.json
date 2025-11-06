@@ -76,6 +76,8 @@
     "show_service": "Mostrar servicio",
     "edit_service": "Editar servicio",
     "delete_service": "Eliminar servicio",
+    "delete_service_from_list_title": "¿Eliminar este servicio de la lista?",
+    "delete_service_from_list_description": "Este servicio se eliminará de la lista y no podrás recuperarlo aquí.",
     "service_settings": "Ajustes del servicio",
     "delete_service_confirm_title": "¿Eliminar el servicio?",
     "delete_service_confirm_description": "Si eliminas este servicio, no podrás recuperarlo y dejará de estar visible para los clientes.",
