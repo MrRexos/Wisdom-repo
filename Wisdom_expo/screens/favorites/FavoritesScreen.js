@@ -6,7 +6,7 @@ import '../../languages/i18n';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Plus } from "react-native-feather";
 import { BookmarkIcon } from 'react-native-heroicons/solid';
-import { ChevronLeftIcon, XMarkIcon } from 'react-native-heroicons/outline';
+import { ChevronLeftIcon, XMarkIcon, PlusIcon } from 'react-native-heroicons/outline';
 import { getDataLocally } from '../../utils/asyncStorage';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
@@ -39,7 +39,7 @@ export default function FavoritesScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [listName, setListName] = useState('');
   const sheetRef = useRef(null);
-  const sheetHeight = 450;
+  const sheetHeight = 300;
 
   useFocusEffect(
     useCallback(() => {
@@ -285,10 +285,10 @@ export default function FavoritesScreen() {
           </Text>
 
           <TouchableOpacity
-            className="px-3 items-center justify-center"
+            className="items-center p-[10px] justify-center bg-[#fcfcfc] dark:bg-[#323131] rounded-full"
             onPress={openSheet}
           >
-            <Plus height={22} strokeWidth={1.7} color={iconColor} />
+            <PlusIcon height={21} width={21} strokeWidth={1.9} color={iconColor} />
           </TouchableOpacity>
 
         </View>
@@ -311,6 +311,7 @@ export default function FavoritesScreen() {
             data={lists}
             keyExtractor={(item) => String(item.id)}
             numColumns={2} // Define el número de columnas
+            showsVerticalScrollIndicator={false}
             renderItem={renderItem}
             refreshing={refreshing}
             onRefresh={onRefresh}
