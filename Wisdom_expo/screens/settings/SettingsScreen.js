@@ -20,7 +20,7 @@ import {
 
 
 import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram, Link } from "react-native-feather";
-import { KeyIcon, ChevronRightIcon, ArrowsRightLeftIcon } from 'react-native-heroicons/outline';
+import { KeyIcon, ChevronRightIcon, ArrowsRightLeftIcon, CheckCircleIcon } from 'react-native-heroicons/outline';
 import GiftCardIcon from '../../assets/GiftCard';
 import ExpertIcon from '../../assets/Expert';
 import CashStackIcon from '../../assets/CashStack';
@@ -77,6 +77,7 @@ export default function SettingsScreen() {
     // },
     {
       items: [
+        { id: 'roadmap', icon: CheckCircleIcon, label: t('roadmap'), type: 'select', link: 'Roadmap' },
         { id: 'help', icon: Info, label: t('help'), type: 'select', link: 'Help' },
         // {id: 'rateUs', icon: Star, label:'Rate us', type: 'select'},
         // {id: 'shareApp', icon: Share, label:'Share app', type: 'select'},
