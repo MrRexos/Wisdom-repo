@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { View, StatusBar, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert } from 'react-native';
+import { View, StatusBar, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert, TouchableWithoutFeedback } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -268,10 +268,9 @@ export default function ListScreen() {
     };
 
     const renderRightActions = () => (
-      <View className="flex-row h-full">
+      <View className="flex-row h-full bg-[#ff633e]">
         <View className="w-[110px] bg-[#ff633e] h-full justify-center items-center rounded-l-2xl">
           <TrashIcon size={22} color="#fcfcfc" />
-          <Text className="mt-1 font-inter-semibold text-[12px] text-[#fcfcfc] text-center">{t('delete_service')}</Text>
         </View>
       </View>
     );
@@ -290,12 +289,13 @@ export default function ListScreen() {
         friction={2}
         onSwipeableOpen={handleSwipeableOpen}
       >
-        <TouchableOpacity
+        <TouchableWithoutFeedback
           onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.service_id })}
           onLongPress={() => openItemSheet(item)}
           delayLongPress={250}
-          className="h-[170px]"
+          className="h-[170px] bg-[#f2f2f2] dark:bg-[#272626]"
         >
+          <>
           <View className="flex-row">
             <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[85px] w-[85px] bg-[#706B5B] rounded-xl" />
             <View className="flex-1 ">
@@ -342,7 +342,8 @@ export default function ListScreen() {
               </View>
             </View>
           </View>
-        </TouchableOpacity>
+          </>
+        </TouchableWithoutFeedback>
       </ReanimatedSwipeable>
     );
   };

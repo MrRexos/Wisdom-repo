@@ -180,7 +180,7 @@ export default function FavoritesScreen() {
   };
 
   const renderItem = ({ item }) => (
-    <View className="mb-7">
+    <View className="mb-7 ">
       <TouchableOpacity
         disabled={editing}  // Desactiva el clic en el ítem si no estamos en modo de edición
         className="mb-7"
