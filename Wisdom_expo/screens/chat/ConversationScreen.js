@@ -7,7 +7,6 @@ import {
   Text,
   TextInput,
   Pressable,
-  FlatList,
   KeyboardAvoidingView,
   Image,
   Linking,
@@ -49,6 +48,7 @@ import {
   arrayUnion,
   arrayRemove,
   deleteDoc,
+  writeBatch,
 } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../utils/firebase';
@@ -159,12 +159,13 @@ export default function ConversationScreen() {
     return { left: 7, top: 2, transform: [{ rotate: '12deg' }], zIndex: 1 };
   }, []);
   const initialLoadRef = useRef(true);
-  const [shouldMaintainPosition, setShouldMaintainPosition] = useState(false);
+  const [shouldMaintainPosition, setShouldMaintainPosition] = useState(true);
   const locale = useMemo(() => DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en, [i18n.language]);
 
   useEffect(() => {
     initialLoadRef.current = true;
     setShouldMaintainPosition(false);
+    setShouldMaintainPosition(true);
   }, [conversationId]);
 
   useEffect(() => {
@@ -180,19 +181,28 @@ export default function ConversationScreen() {
     };
   }, []);
 
-  const scrollToBottom = useCallback((options = {}) => {
-    if (!flatListRef.current) return;
-    const { animated = false } = options;
-    flatListRef.current.scrollToOffset({ offset: 0, animated });
-  }, []);
+  const scrollToBottom = useCallback(({ animated = false } = {}) => { 
+    if (!flatListRef.current || !messages?.length) return; 
+    try { 
+      flatListRef.current.scrollToIndex({ index: messages.length - 1, animated }); 
+    } catch { 
+      // fallback por si el layout aún no está medido 
+      flatListRef.current.scrollToOffset({ offset: Number.MAX_SAFE_INTEGER, animated }); 
+    } 
+  }, [messages?.length]);
 
-  // Autoscroll al enfocar pantalla
   useEffect(() => {
-    const unsub = navigation.addListener('focus', () => {
+    if (!initialLoadRef.current) return;
+    if (!messages.length) return;
+
+    const frame = requestAnimationFrame(() => {
       scrollToBottom({ animated: false });
+      initialLoadRef.current = false;
+      setShouldMaintainPosition(false);
     });
-    return unsub;
-  }, [navigation, scrollToBottom]);
+
+    return () => cancelAnimationFrame(frame);
+  }, [messages, scrollToBottom]);
 
   useEffect(() => {
     let unsub;
@@ -204,7 +214,7 @@ export default function ConversationScreen() {
       setCurrentUser(user);
       const q = query(
         collection(db, 'conversations', conversationId, 'messages'),
-        orderBy('createdAt', 'desc')
+        orderBy('createdAt', 'asc')
       );
       unsub = onSnapshot(q, async (snap) => {
         const raw = snap.docs.map((d) => {
@@ -215,43 +225,48 @@ export default function ConversationScreen() {
             ...msg,
           };
         });
-        const processed = [];
+        const processed = []; 
         for (let i = 0; i < raw.length; i++) {
           const m = raw[i];
-          const prev = raw[i - 1]; // más nuevo (visual abajo) 
-          const next = raw[i + 1]; // más antiguo (visual arriba) 
+          const prev = raw[i - 1];   // más antiguo
+          const next = raw[i + 1];   // más nuevo
 
-          // Extremo inferior visual de la racha (donde debe ir hora y check) 
-          const tail = !prev || prev.senderId !== m.senderId;
-          processed.push({ ...m, _isTail: tail });
+          const formatDate = (entry) =>
+            entry?.createdAt?.seconds
+              ? new Date(entry.createdAt.seconds * 1000).toLocaleDateString(
+                  locale,
+                  { weekday: 'long', month: 'long', day: 'numeric' }
+                )
+              : null;
 
-          // Insertar la etiqueta de FECHA al terminar el bloque de ese día. 
-          const currDate = m.createdAt?.seconds
-            ? new Date(m.createdAt.seconds * 1000).toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' })
-            : null;
-          const nextDate = next?.createdAt?.seconds
-            ? new Date(next.createdAt.seconds * 1000).toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' })
-            : null;
-          if (currDate && currDate !== nextDate) {
-            // Al ir después en el array (desc) y la lista estar invertida, 
-            // esta etiqueta se verá ARRIBA del bloque del día. 
+          //  etiqueta de fecha ANTES del primer mensaje del día
+          const currDate = formatDate(m);
+          const prevDate = formatDate(prev);
+          const nextDate = formatDate(next);
+          if (currDate && currDate !== prevDate) {
             processed.push({ id: `label-${m.id}`, type: 'label', text: currDate });
           }
+
+          //  “cola” de racha cuando el SIGUIENTE es de otro remitente (orden ascendente)
+          const tail = !next || next.senderId !== m.senderId || nextDate !== currDate;
+          processed.push({ ...m, _isTail: tail });
         }
         setMessages(processed);
 
-        if (initialLoadRef.current) {
-          initialLoadRef.current = false;
-          setShouldMaintainPosition(true);
-          requestAnimationFrame(() => scrollToBottom({ animated: false }));
+        // Marca como leído lo que no es tuyo
+        const unreadMessages = raw.filter((m) => !m.fromMe && !m.read);
+        if (unreadMessages.length) {
+          try {
+            const batch = writeBatch(db);
+            unreadMessages.forEach((m) => {
+              batch.update(doc(db, 'conversations', conversationId, 'messages', m.id), { read: true });
+            });
+            await batch.commit();
+          } catch (err) {
+            console.error('mark as read error:', err);
+          }
         }
 
-        // Marca como leído lo que no es tuyo
-        raw.forEach(async (m) => {
-          if (!m.fromMe && !m.read) {
-            await updateDoc(doc(db, 'conversations', conversationId, 'messages', m.id), { read: true });
-          }
-        });
         await updateDoc(doc(db, 'conversations', conversationId), { readBy: arrayUnion(user.id) });
 
       });
@@ -345,14 +360,15 @@ export default function ConversationScreen() {
         const filesToUpload = currentAttachments.filter((att) => att.kind === 'file');
 
         if (imagesToUpload.length) {
-          const uploadedImages = [];
-          for (let i = 0; i < imagesToUpload.length; i++) {
-            const img = imagesToUpload[i];
-            const uniqueId = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-            const filePath = `chat/${conversationId}/${uniqueId}_${img.name}`;
-            const url = await uploadFile(img.uri, filePath, img.mime || 'image/jpeg');
-            uploadedImages.push({ uri: url, name: img.name });
-          }
+          const baseTime = Date.now();
+          const uploadedImages = await Promise.all(
+            imagesToUpload.map(async (img, idx) => {
+              const uniqueId = `${baseTime + idx}_${Math.random().toString(36).slice(2, 8)}`;
+              const filePath = `chat/${conversationId}/${uniqueId}_${img.name}`;
+              const url = await uploadFile(img.uri, filePath, img.mime || 'image/jpeg');
+              return { uri: url, name: img.name };
+            })
+          );
 
           const isGroup = uploadedImages.length > 1;
           const messageData = {
@@ -382,21 +398,28 @@ export default function ConversationScreen() {
           });
         }
 
-        for (let i = 0; i < filesToUpload.length; i++) {
-          const file = filesToUpload[i];
-          const uniqueId = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-          const filePath = `chat/${conversationId}/${uniqueId}_${file.name}`;
-          const url = await uploadFile(file.uri, filePath, file.mime || 'application/octet-stream');
+        if (filesToUpload.length) {
+          const baseTime = Date.now();
+          const uploadedFiles = await Promise.all(
+            filesToUpload.map(async (file, idx) => {
+              const uniqueId = `${baseTime + idx}_${Math.random().toString(36).slice(2, 8)}`;
+              const filePath = `chat/${conversationId}/${uniqueId}_${file.name}`;
+              const url = await uploadFile(file.uri, filePath, file.mime || 'application/octet-stream');
+              return { uri: url, name: file.name };
+            })
+          );
 
-          await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
-            senderId: userId,
-            type: 'file',
-            uri: url,
-            name: file.name,
-            createdAt: serverTimestamp(),
-            replyTo: replyData,
-            read: false,
-          });
+          for (const file of uploadedFiles) {
+            await addDoc(collection(db, 'conversations', conversationId, 'messages'), {
+              senderId: userId,
+              type: 'file',
+              uri: file.uri,
+              name: file.name,
+              createdAt: serverTimestamp(),
+              replyTo: replyData,
+              read: false,
+            });
+          }
 
           await updateDoc(doc(db, 'conversations', conversationId), {
             participants,
@@ -603,7 +626,7 @@ export default function ConversationScreen() {
   // ---------------------------------------------------------------------------
   const bubbleBase = 'rounded-2xl px-3 py-2 max-w-[70%] my-[2] flex-row items-end ';
 
-  const renderMessage = ({ item, index }) => {
+  const renderMessage = useCallback(({ item }) => {
     if (item.type === 'label') {
       return (
         <View className="justify-center items-center ">
@@ -683,7 +706,13 @@ export default function ConversationScreen() {
               hitSlop={6}
               style={{ alignSelf: 'flex-start' }}
             >
-              <Image source={{ uri: img.uri }} className="w-40 h-[170px] rounded-xl" />
+              <ExpoImage
+                source={{ uri: img.uri }}
+                style={{ width: 160, height: 170, borderRadius: 18 }}
+                contentFit="cover"
+                transition={150}
+                cachePolicy="memory-disk"
+              />
             </Pressable>
           ))}
         </View>
@@ -705,7 +734,7 @@ export default function ConversationScreen() {
                 style = { left: 44, top: 20, transform: [{ rotate: '12deg' }], zIndex: 1 };
               }
               return (
-                <Image
+                <ExpoImage
                   key={`${item.id}-stack-${idx}`}
                   source={{ uri: img.uri }}
                   style={{
@@ -717,6 +746,9 @@ export default function ConversationScreen() {
                     borderColor: colorScheme === 'dark' ? '#272626' : '#f4f4f4',
                     ...style,
                   }}
+                  contentFit="cover"
+                  transition={150}
+                  cachePolicy="memory-disk"
                 />
               );
             })}
@@ -839,7 +871,13 @@ export default function ConversationScreen() {
               hitSlop={6}                       // toque un pelín fuera del borde
               style={{ alignSelf: 'flex-start' }} // asegura que no se estire de ancho
             >
-              <Image source={{ uri: item.uri }} className="w-40 h-[170px] rounded-xl" />
+              <ExpoImage
+                source={{ uri: item.uri }}
+                style={{ width: 160, height: 170, borderRadius: 18 }}
+                contentFit="cover"
+                transition={150}
+                cachePolicy="memory-disk"
+              />
             </Pressable>
           </View>
         </Pressable>
@@ -974,7 +1012,19 @@ export default function ConversationScreen() {
         </Pressable>
       </Swipeable>
     );
-  };
+  }, [
+    bubbleBase,
+    colorScheme,
+    imageMessages,
+    navigation,
+    otherUserInfo,
+    statusReadColorStrong,
+    statusUnreadColor,
+    t,
+    userId,
+  ]);
+
+  const keyExtractor = useCallback((item) => item.id, []);
 
   // ---------------------------------------------------------------------------
   // • MAIN UI
@@ -1018,22 +1068,28 @@ export default function ConversationScreen() {
       >
         {/* Messages list ------------------------------------------------------- */}
         <View className="flex-1 px-1 bg-[#f4f4f4] dark:bg-[#272626]">
-          <FlatList
+          <FlashList
             ref={flatListRef}
             data={messages}
-            keyExtractor={(item) => item.id}
+            keyExtractor={keyExtractor}
             renderItem={renderMessage}
             contentContainerStyle={{ padding: 16 }}
-            inverted
             maintainVisibleContentPosition={
-              shouldMaintainPosition ? { minIndexForVisible: 0, autoscrollToTopThreshold: 20 } : undefined
+              shouldMaintainPosition
+                ? {
+                    startRenderingFromBottom: true, // pinta desde abajo en el primer render
+                    autoscrollToBottomThreshold: 40, // si estás “cerca” del fondo, baja solo
+                    animateAutoScrollToBottom: false,
+                  }
+                : undefined
             }
+            
             showsVerticalScrollIndicator={true}
             keyboardShouldPersistTaps="never"   // mantiene interacciones útiles
             keyboardDismissMode="none"         // al arrastrar, cierra teclado
             ListFooterComponent={<View style={{ height: 4 }} />}
-            initialNumToRender={20}
-            windowSize={10}
+            extraData={imageMessages.length}
+            
           />
         </View>
 
