@@ -112,14 +112,16 @@ const RoadmapScreen = () => {
             </Text>
             <View>
               {upcomingFeatures.map((item, index) => (
-                <View key={item.key} className="py-2">
-                  <View className="flex-row items-center space-x-3">
-                    <View className="w-10 h-10 items-center justify-center">
+                <View key={item.key} className="py-2 ">
+                  <View className="flex-row items-start">
+                    <View className="w-10 items-center justify-center ">
                       <View className='h-6 w-6 rounded-full border-2 border-[#d4d4d3] dark:border-[#474646]'/>
                     </View>
-                    <Text className="font-inter-medium text-[15px] ml-2" style={{ color: colors.secondaryText }}>
-                      {t(item.titleKey)}
-                    </Text>
+                    <View className="flex-1 pr-2 " style={{marginTop:2}}>
+                      <Text className="font-inter-medium text-[15px] leading-[20px] ml-2 " style={{ color: colors.secondaryText }}>
+                        {t(item.titleKey)}
+                      </Text>
+                    </View>
                   </View>
                 </View>
               ))}
@@ -133,16 +135,18 @@ const RoadmapScreen = () => {
             <View>
               {pastReleases.map((item, index) => (
                 <View key={item.key} className="py-2">
-                  <View className="flex-row items-center space-x-3">
-                    <View className="w-10 h-10 items-center justify-center">
+                  <View className="flex-row items-start">
+                    <View className="w-10 items-center justify-center ">
                       <SolidCheckCircleIcon size={28} color={colors.checkIcon} />
                     </View>
-                    <View className="flex-1 pr-2">
-                      <Text className="font-inter-medium text-[15px] ml-2" style={{ color: colors.secondaryText }}>
+                    <View className="flex-1 pr-2 mt-1">
+                      <Text className="font-inter-medium text-[15px] leading-[20px] ml-2" style={{ color: colors.secondaryText }}>
                         {t(item.titleKey)}
                       </Text>
                     </View>
-                    {renderBadge(item.badgeKey)}
+                    <View style={{marginTop:0.5}}> 
+                          {renderBadge(item.badgeKey)}
+                    </View>
                   </View>
                 </View>
               ))}
