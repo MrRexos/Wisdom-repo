@@ -159,12 +159,13 @@ export default function ConversationScreen() {
     return { left: 7, top: 2, transform: [{ rotate: '12deg' }], zIndex: 1 };
   }, []);
   const initialLoadRef = useRef(true);
-  const [shouldMaintainPosition, setShouldMaintainPosition] = useState(false);
+  const [shouldMaintainPosition, setShouldMaintainPosition] = useState(true);
   const locale = useMemo(() => DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en, [i18n.language]);
 
   useEffect(() => {
     initialLoadRef.current = true;
     setShouldMaintainPosition(false);
+    setShouldMaintainPosition(true);
   }, [conversationId]);
 
   useEffect(() => {
@@ -197,18 +198,11 @@ export default function ConversationScreen() {
     const frame = requestAnimationFrame(() => {
       scrollToBottom({ animated: false });
       initialLoadRef.current = false;
+      setShouldMaintainPosition(false);
     });
 
     return () => cancelAnimationFrame(frame);
   }, [messages, scrollToBottom]);
-
-  // Autoscroll al enfocar pantalla
-  useEffect(() => {
-    const unsub = navigation.addListener('focus', () => {
-      scrollToBottom({ animated: false });
-    });
-    return unsub;
-  }, [navigation, scrollToBottom]);
 
   useEffect(() => {
     let unsub;
@@ -257,10 +251,6 @@ export default function ConversationScreen() {
           processed.push({ ...m, _isTail: tail }); 
         }
         setMessages(processed);
-
-        if (initialLoadRef.current) {
-          setShouldMaintainPosition(true);
-        }
 
         // Marca como leído lo que no es tuyo
         const unreadMessages = raw.filter((m) => !m.fromMe && !m.read);
@@ -1083,11 +1073,15 @@ export default function ConversationScreen() {
             keyExtractor={keyExtractor}
             renderItem={renderMessage}
             contentContainerStyle={{ padding: 16 }}
-            maintainVisibleContentPosition={{ 
-              startRenderingFromBottom: true,      // pinta desde abajo en el primer render 
-              autoscrollToBottomThreshold: 40,     // si estás “cerca” del fondo, baja solo 
-              // animateAutoScrollToBottom: true,  // (por defecto true) 
-            }} 
+            maintainVisibleContentPosition={
+              shouldMaintainPosition
+                ? {
+                    startRenderingFromBottom: true, // pinta desde abajo en el primer render
+                    autoscrollToBottomThreshold: 40, // si estás “cerca” del fondo, baja solo
+                    animateAutoScrollToBottom: false,
+                  }
+                : undefined
+            }
             
             showsVerticalScrollIndicator={true}
             keyboardShouldPersistTaps="never"   // mantiene interacciones útiles
