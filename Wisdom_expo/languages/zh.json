@@ -35,6 +35,8 @@
     "favorites": "收藏",
     "are_you_sure_you_want_to_delete_this_list": "确定要删除此列表吗？",
     "list_will_disappear_for_everyone": "此列表删除后无法恢复，将对所有人消失。",
+    "delete_list_title": "删除此列表？",
+    "delete_list_description": "此列表及其保存的服务将对所有人删除。",
     "cancel": "取消",
     "delete": "删除",
     "delete_message": "删除消息",

@@ -35,6 +35,8 @@
     "favorites": "المفضلة",
     "are_you_sure_you_want_to_delete_this_list": "هل أنت متأكد أنك تريد حذف هذه القائمة؟",
     "list_will_disappear_for_everyone": "لن يمكن استرجاع هذه القائمة وستختفي للجميع.",
+    "delete_list_title": "حذف هذه القائمة؟",
+    "delete_list_description": "سيتم حذف هذه القائمة وخدماتها المحفوظة للجميع.",
     "cancel": "إلغاء",
     "delete": "حذف",
     "delete_message": "حذف الرسالة",

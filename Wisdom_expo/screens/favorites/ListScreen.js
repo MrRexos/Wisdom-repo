@@ -505,8 +505,8 @@ export default function ListScreen() {
       )}
       <ModalMessage
         visible={deleteModalVisible}
-        title={deleteModalData.type === 'list' ? t('are_you_sure_you_want_to_delete_this_list') : t('delete_service_from_list_title')}
-        description={deleteModalData.type === 'list' ? t('list_will_disappear_for_everyone') : t('delete_service_from_list_description')}
+        title={deleteModalData.type === 'list' ? t('delete_list_title') : t('delete_service_from_list_title')}
+        description={deleteModalData.type === 'list' ? t('delete_list_description') : t('delete_service_from_list_description')}
         confirmText={t('delete')}
         cancelText={t('cancel')}
         onConfirm={handleConfirmDelete}
