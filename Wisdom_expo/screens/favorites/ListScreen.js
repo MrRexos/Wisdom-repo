@@ -37,6 +37,9 @@ export default function ListScreen() {
   const swipeRefs = useRef({});
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [deleteModalData, setDeleteModalData] = useState({ type: null, item: null });
+  const pendingDeleteAction = useRef(null);
+  const [isOptionsSheetOpen, setIsOptionsSheetOpen] = useState(false);
+  const [isItemSheetOpen, setIsItemSheetOpen] = useState(false);
   const currentItemCount = items.length;
   const currencySymbols = {
     EUR: '€',
@@ -151,21 +154,44 @@ export default function ListScreen() {
     }, 0);
   }, []);
 
+  const showDeleteModal = useCallback((data) => {
+    setDeleteModalData(data);
+    setDeleteModalVisible(true);
+  }, []);
+
+  const flushPendingDeleteAction = useCallback(() => {
+    if (pendingDeleteAction.current) {
+      const action = pendingDeleteAction.current;
+      pendingDeleteAction.current = null;
+      showDeleteModal(action);
+    }
+  }, [showDeleteModal]);
+
   const handleItemSheetClose = useCallback(() => {
     setSelectedItem(null);
-  }, []);
+    setIsItemSheetOpen(false);
+    flushPendingDeleteAction();
+  }, [flushPendingDeleteAction]);
 
   const openDeleteModalForList = useCallback(() => {
-    sheet.current?.close();
-    setDeleteModalData({ type: 'list', item: null });
-    setDeleteModalVisible(true);
-  }, []);
+    const action = { type: 'list', item: null };
+    if (isOptionsSheetOpen) {
+      pendingDeleteAction.current = action;
+      sheet.current?.close();
+    } else {
+      showDeleteModal(action);
+    }
+  }, [isOptionsSheetOpen, showDeleteModal]);
 
   const openDeleteModalForItem = useCallback((item) => {
-    itemSheet.current?.close();
-    setDeleteModalData({ type: 'item', item });
-    setDeleteModalVisible(true);
-  }, []);
+    const action = { type: 'item', item };
+    if (isItemSheetOpen) {
+      pendingDeleteAction.current = action;
+      itemSheet.current?.close();
+    } else {
+      showDeleteModal(action);
+    }
+  }, [isItemSheetOpen, showDeleteModal]);
 
   const handleDeleteModalDismiss = useCallback(() => {
     setDeleteModalVisible(false);
@@ -356,9 +382,12 @@ export default function ListScreen() {
         height={sheetHeight}
         openDuration={300}
         closeDuration={300}
+        onOpen={() => setIsOptionsSheetOpen(true)}
         onClose={() => {
           setEditing(null);
           setSheetHeight(350);
+          setIsOptionsSheetOpen(false);
+          flushPendingDeleteAction();
         }}
         draggable={true}
         ref={sheet}
@@ -433,6 +462,7 @@ export default function ListScreen() {
         openDuration={300}
         closeDuration={300}
         onClose={handleItemSheetClose}
+        onOpen={() => setIsItemSheetOpen(true)}
         draggable={true}
         ref={itemSheet}
         customStyles={{
