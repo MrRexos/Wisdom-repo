@@ -187,6 +187,8 @@
     "spaces_not_allowed_use_underscore": "Le nom d'utilisateur ne peut pas contenir d'espaces, utilisez _",
     "upload_profile_picture": "Vous devez télécharger une photo de profil.",
     "please_select_image_first": "Veuillez d'abord sélectionner une image",
+    "user_creation_error_title": "Un problème est survenu",
+    "user_creation_error_description": "Nous n'avons pas pu créer votre compte. Veuillez réessayer.",
     "choose_version_title": "Choisir une version",
     "choose_version_subtitle": "Vous pourrez changer de version une fois votre compte créé.",
     "choose_version_client_title": "Client",

@@ -1,17 +1,15 @@
-
-import React, {useState} from 'react';
-import {View, StatusBar, Platform, Text, Alert, TouchableOpacity, ScrollView} from 'react-native';
+import React, { useState } from 'react';
+import {View, StatusBar, Platform, Text, Alert, TouchableOpacity} from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useColorScheme } from 'nativewind'
+import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage.js';
-import { ensureSupportedLanguage } from '../../utils/language';
 import {XMarkIcon} from 'react-native-heroicons/outline';
 import NotificationAskWhite from '../../assets/NotificationAskWhite.svg';
 import NotificationAskDark from '../../assets/NotificationAskDark.svg';
-import api, { setTokens } from '../../utils/api.js';
+import api from '../../utils/api.js';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   EXPO_GO_PUSH_UNAVAILABLE_MESSAGE,
@@ -24,200 +22,74 @@ import {
 
 export default function NotificationAllowScreen() {
   const insets = useSafeAreaInsets();
-    const {colorScheme, toggleColorScheme} = useColorScheme();
-    const { t, i18n } = useTranslation();
+    const {colorScheme} = useColorScheme();
+    const { t } = useTranslation();
     const navigation = useNavigation();
     const iconColor = colorScheme === 'dark' ? '#f2f2f2': '#444343';
     const route = useRoute();
-    const [apiError, setApiError] = useState('');
+    const { userId = null, isProfessional = false } = route.params || {};
+    const [isUpdating, setIsUpdating] = useState(false);
 
-    const {
-      email = '',
-      password = '',
-      firstName = '',
-      surname = '',
-      username = '',
-      image = null,
-      isProfessional = false,
-    } = route.params || {};
-
-    let user = {
-        token: null,
-        id: "", //FALTAAAA
-        email: "",
-        username: "",
-        first_name: "",
-        surname: "",
-        profile_picture: null,
-        joined_datetime: "",
-        is_professional: false,
-        language: "",
-        selectedLanguage: "",
-        allow_notis: true,
-        money_in_wallet: "0.00",
-        professional_started_datetime: null,
-        is_expert: false,
-        is_verified: false,
-        strikes_num: false,
-        hobbies: null
-    };
-  
-    console.log(email, password, firstName, surname, username, image);
-   
-    
-    const uploadImage = async () => {
-      if (!image) {
-        Alert.alert(t('please_select_image_first'));
-        return null;
-      }
-
-      const formData = new FormData();
-      formData.append('file', {
-        uri: image.uri,
-        type: image.type,
-        name: image.fileName,
-      });
-
+    const persistAllowNotis = async (value) => {
       try {
-        const res = await api.post('/api/upload-image', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        return res.data.url;
-      } catch (error) {
-        console.error(error.response.data);
-      }
-      return null;
-    };
-
-    const createUser = async (allowNotis) => {
-      try {
-        const response = await api.post('/api/signup', {
-          email: email,
-          username: username,
-          password: password,
-          first_name: firstName,
-          surname: surname,
-          language: i18n.language,
-          allow_notis: allowNotis,
-          profile_picture: null,
-          is_professional: isProfessional ? 1 : 0,
-        });
-        console.log('User created:', response.data);
-        return { 
-          id: response.data.userId, 
-          access: response.data.access_token || response.data.token, // compat 
-          refresh: response.data.refresh_token || null 
-        };
-        
-
-      } catch (error) {
-          if (error.response) {
-              console.error('Error response:', error.response.data);
-              console.error('Error status:', error.response.status);
-          } else if (error.request) {
-              console.error('Error request:', error.request);
-          } else {
-              console.error('Error message:', error.message);
-          }
-          setApiError('Failed to create user');
-      }
-    };
-
-    const updateUserProfile = async (imageURL) => {
-      try {
-        await api.put(`/api/user/${user.id}/profile`, {
-          username: username,
-          first_name: firstName,
-          surname: surname,
-          profile_picture: imageURL,
-        });
-      } catch (error) {
-        console.error('Error updating user profile:', error);
-      }
-    };
-
-    const notAllowPressed = async () => {
-      try {
-        const result = await createUser(false);
-        if (!result) return;
-    
-        user.id = result.id;
-        user.token = result.access; // compat
-        user.email = email;
-        user.first_name = firstName;
-        user.surname = surname;
-        user.username = username;
-        const resolvedLanguage = ensureSupportedLanguage(i18n.language);
-        user.language = resolvedLanguage;
-        user.selectedLanguage = resolvedLanguage;
-        user.joined_datetime = new Date().toISOString();
-        user.allow_notis = false;
-        user.profile_picture = null;
-        user.is_professional = isProfessional;
-    
-        // Guarda tokens primero (para que /api/upload-image ya vaya autenticado) 
-        await setTokens({ access: result.access, refresh: result.refresh }); 
-        await storeDataLocally('user', JSON.stringify(user))
-    
-        const imageURL = await uploadImage();
-        if (imageURL) {
-          await updateUserProfile(imageURL);
-          user.profile_picture = imageURL;
-          await storeDataLocally('user', JSON.stringify(user));
+        if (userId) {
+          await api.put(`/api/user/${userId}/allow_notis`, {
+            allow_notis: value,
+          });
         }
-    
-        if (isProfessional) {
-          navigation.navigate('Professional', { screen: 'Today' });
-        } else {
-          navigation.navigate('HomeScreen');
+
+        const storedUser = await getDataLocally('user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          parsedUser.allow_notis = value;
+          await storeDataLocally('user', JSON.stringify(parsedUser));
         }
-      } catch (e) {
-        console.error('Error en notAllowPressed:', e);
+      } catch (error) {
+        console.error('Error updating allow_notis preference:', error?.response?.data || error);
       }
     };
 
-    const allowPressed = async () =>{
-      if (!isPushNotificationsSupported()) {
-        Alert.alert('Push notifications unavailable', EXPO_GO_PUSH_UNAVAILABLE_MESSAGE);
-      }
-
-      const { status } = await requestNotificationPermissionsAsync();
-      const granted = status === 'granted';
-      const result = await createUser(granted);
-      if (!result) return;
-
-      user.id = result.id;
-      user.token = result.access; // compat
-      user.email = email;
-      user.first_name = firstName;
-      user.surname = surname;
-      user.username = username;
-      const resolvedLanguage = ensureSupportedLanguage(i18n.language);
-      user.language =  resolvedLanguage;
-      user.selectedLanguage = resolvedLanguage;
-      user.joined_datetime = new Date().toISOString();
-      user.allow_notis = granted;
-      user.profile_picture = null;
-      user.is_professional = isProfessional;
-
-      await setTokens({ access: result.access, refresh: result.refresh }); 
-      await storeDataLocally('user', JSON.stringify(user));
-
-      const imageURL = await uploadImage();
-      if (imageURL) {
-          await updateUserProfile(imageURL);
-          user.profile_picture = imageURL;
-          await storeDataLocally('user', JSON.stringify(user));
-      }
-
+    const navigateAfterChoice = () => {
       if (isProfessional) {
         navigation.navigate('Professional', { screen: 'Today' });
       } else {
         navigation.navigate('HomeScreen');
       }
+    };
 
+    const notAllowPressed = async () => {
+      if (isUpdating) return;
+
+      setIsUpdating(true);
+      try {
+        await persistAllowNotis(false);
+        navigateAfterChoice();
+      } catch (e) {
+        console.error('Error en notAllowPressed:', e);
+      } finally {
+        setIsUpdating(false);
+      }
+    };
+
+    const allowPressed = async () =>{
+      if (isUpdating) return;
+
+      setIsUpdating(true);
+      try {
+        if (!isPushNotificationsSupported()) {
+          Alert.alert('Push notifications unavailable', EXPO_GO_PUSH_UNAVAILABLE_MESSAGE);
+        }
+
+        const { status } = await requestNotificationPermissionsAsync();
+        const granted = status === 'granted';
+
+        await persistAllowNotis(granted);
+        navigateAfterChoice();
+      } catch (error) {
+        console.error('Error en allowPressed:', error);
+      } finally {
+        setIsUpdating(false);
+      }
   }
   
     return (
@@ -231,7 +103,7 @@ export default function NotificationAllowScreen() {
               <WisdomLogo color = {colorScheme === 'dark' ? '#f2f2f2' : '#444343'} width={70} height={40} />
             </View>
             <View className="flex-1 items-end opacity-50">
-              <TouchableOpacity onPress={notAllowPressed}>
+              <TouchableOpacity onPress={notAllowPressed} disabled={isUpdating}>
                 <XMarkIcon size={30} color={iconColor} strokeWidth={1.7} />
               </TouchableOpacity>
             </View>
@@ -252,8 +124,9 @@ export default function NotificationAllowScreen() {
             <Text className="font-inter-medium text-[15px] text-[#706f6e] dark:text-[#b6b5b5] text-center w-[250px] mt-4">{t('notifications_subtitle')}</Text>
           </View>
           <View className="justify-center items-center pb-4 w-full px-3 ">
-                <TouchableOpacity 
+                <TouchableOpacity
                 onPress={allowPressed}
+                disabled={isUpdating}
                 className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center" >
                     <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131] ">{t('allow')}</Text>
                 </TouchableOpacity>

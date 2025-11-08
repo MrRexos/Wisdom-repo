@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { View, StatusBar, Platform, Text, TouchableOpacity } from 'react-native';
+import { View, StatusBar, Platform, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import { useColorScheme } from 'nativewind';
@@ -8,16 +8,22 @@ import { ChevronLeftIcon } from 'react-native-heroicons/outline';
 import { UserCheck, Briefcase } from 'react-native-feather';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import OnboardingProgressDots from '../../components/OnboardingProgressDots';
+import ModalMessage from '../../components/ModalMessage';
+import api, { setTokens } from '../../utils/api';
+import { storeDataLocally } from '../../utils/asyncStorage';
+import { ensureSupportedLanguage } from '../../utils/language';
 
 export default function ChooseVersionScreen() {
   const insets = useSafeAreaInsets();
   const { colorScheme } = useColorScheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const route = useRoute();
   const { email, password, firstName, surname, username, image } = route.params;
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const [selected, setSelected] = useState('client');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const options = useMemo(
     () => [
@@ -37,16 +43,96 @@ export default function ChooseVersionScreen() {
     [t],
   );
 
-  const handleContinue = () => {
-    navigation.navigate('NotificationAllow', {
-      email,
-      password,
-      firstName,
-      surname,
-      username,
-      image,
-      isProfessional: selected === 'professional',
+  const uploadImage = async () => {
+    if (!image) return null;
+
+    const formData = new FormData();
+    formData.append('file', {
+      uri: image.uri,
+      type: image.type,
+      name: image.fileName || 'profile-picture.jpg',
     });
+
+    try {
+      const response = await api.post('/api/upload-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data.url;
+    } catch (error) {
+      console.error('Image upload failed:', error?.response?.data || error);
+      return null;
+    }
+  };
+
+  const handleContinue = async () => {
+    if (isProcessing) return;
+
+    setShowErrorModal(false);
+    setIsProcessing(true);
+
+    try {
+      const isProfessional = selected === 'professional';
+
+      let imageURL = null;
+      if (image) {
+        imageURL = await uploadImage();
+        if (!imageURL) {
+          throw new Error('Image upload failed');
+        }
+      }
+
+      const response = await api.post('/api/signup', {
+        email,
+        username,
+        password,
+        first_name: firstName,
+        surname,
+        language: i18n.language,
+        allow_notis: 1,
+        profile_picture: imageURL,
+        is_professional: isProfessional ? 1 : 0,
+      });
+
+      const access = response.data.access_token || response.data.token || null;
+      const refresh = response.data.refresh_token || null;
+      await setTokens({ access, refresh });
+
+      const resolvedLanguage = ensureSupportedLanguage(i18n.language);
+      const userData = {
+        token: access,
+        id: response.data.userId,
+        email,
+        username,
+        first_name: firstName,
+        surname,
+        profile_picture: imageURL,
+        joined_datetime: new Date().toISOString(),
+        is_professional: isProfessional,
+        language: resolvedLanguage,
+        selectedLanguage: resolvedLanguage,
+        allow_notis: true,
+        money_in_wallet: '0.00',
+        professional_started_datetime: null,
+        is_expert: false,
+        is_verified: false,
+        strikes_num: false,
+        hobbies: null,
+      };
+
+      await storeDataLocally('user', JSON.stringify(userData));
+
+      navigation.navigate('NotificationAllow', {
+        userId: response.data.userId,
+        isProfessional,
+      });
+    } catch (error) {
+      console.error('Error creating user in ChooseVersionScreen:', error?.response?.data || error);
+      setShowErrorModal(true);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -133,14 +219,29 @@ export default function ChooseVersionScreen() {
           </View>
           <TouchableOpacity
             onPress={handleContinue}
+            disabled={isProcessing}
             className="bg-[#323131] dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
           >
-            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
-              {t('create_account')}
-            </Text>
+            {isProcessing ? (
+              <ActivityIndicator color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} />
+            ) : (
+              <Text className="font-inter-semibold text-[15px] text-[#fcfcfc] dark:text-[#323131]">
+                {t('create_account')}
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>
+
+      <ModalMessage
+        visible={showErrorModal}
+        title={t('user_creation_error_title')}
+        description={t('user_creation_error_description')}
+        showCancel={false}
+        confirmText={t('ok')}
+        onConfirm={() => setShowErrorModal(false)}
+        onDismiss={() => setShowErrorModal(false)}
+      />
     </View>
   );
 }
