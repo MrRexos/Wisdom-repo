@@ -38,6 +38,7 @@
     "delete_list_title": "¿Eliminar esta lista?",
     "delete_list_description": "Esta lista y sus servicios guardados se eliminarán para todos.",
     "cancel": "Cancelar",
+    "delete_list_button": "Eliminar lista",
     "delete": "Eliminar",
     "delete_message": "Eliminar mensaje",
     "delete_chat": "Eliminar chat",

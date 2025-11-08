@@ -38,6 +38,7 @@
     "delete_list_title": "删除此列表？",
     "delete_list_description": "此列表及其保存的服务将对所有人删除。",
     "cancel": "取消",
+    "delete_list_button": "删除列表",
     "delete": "删除",
     "delete_message": "删除消息",
     "delete_chat": "删除聊天",
