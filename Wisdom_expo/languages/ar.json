@@ -187,6 +187,8 @@
     "spaces_not_allowed_use_underscore": "لا يمكن أن يحتوي اسم المستخدم على مسافات، استخدم _",
     "upload_profile_picture": "يجب تحميل صورة الملف الشخصي.",
     "please_select_image_first": "الرجاء تحديد صورة أولاً",
+    "user_creation_error_title": "حدث خطأ ما",
+    "user_creation_error_description": "تعذّر إنشاء حسابك. يرجى المحاولة مرة أخرى.",
     "choose_version_title": "اختر الإصدار",
     "choose_version_subtitle": "ستتمكن من التبديل بين الإصدارات بعد إنشاء حسابك.",
     "choose_version_client_title": "عميل",

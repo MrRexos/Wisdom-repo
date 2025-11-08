@@ -187,6 +187,8 @@
     "spaces_not_allowed_use_underscore": "用户名不能有空格，使用 _",
     "upload_profile_picture": "您必须上传个人照片。",
     "please_select_image_first": "请先选择一张图片",
+    "user_creation_error_title": "出了点问题",
+    "user_creation_error_description": "我们无法创建你的账户。请重试。",
     "choose_version_title": "选择版本",
     "choose_version_subtitle": "创建账户后，你可以在不同版本之间切换。",
     "choose_version_client_title": "客户",

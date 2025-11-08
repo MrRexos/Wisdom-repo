@@ -187,6 +187,8 @@
     "spaces_not_allowed_use_underscore": "Username can't have spaces, use _",
     "upload_profile_picture": "You must upload a profile picture.",
     "please_select_image_first": "Please select an image first",
+    "user_creation_error_title": "Something went wrong",
+    "user_creation_error_description": "We couldn't create your account. Please try again.",
     "choose_version_title": "Choose version",
     "choose_version_subtitle": "You will be able to change between versions once you have created your account.",
     "choose_version_client_title": "Client",
