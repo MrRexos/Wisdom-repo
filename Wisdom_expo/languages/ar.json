@@ -38,6 +38,7 @@
     "delete_list_title": "حذف هذه القائمة؟",
     "delete_list_description": "سيتم حذف هذه القائمة وخدماتها المحفوظة للجميع.",
     "cancel": "إلغاء",
+    "delete_list_button": "حذف القائمة",
     "delete": "حذف",
     "delete_message": "حذف الرسالة",
     "delete_chat": "حذف الدردشة",

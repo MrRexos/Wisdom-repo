@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { View, StatusBar, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert, TouchableWithoutFeedback } from 'react-native';
+import { View, StatusBar, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
@@ -37,7 +37,6 @@ export default function ListScreen() {
   const [selectedItem, setSelectedItem] = useState(null);
   const swipeRefs = useRef({});
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [deleteModalData, setDeleteModalData] = useState({ type: null, item: null });
   const pendingDeleteAction = useRef(null);
   const [isOptionsSheetOpen, setIsOptionsSheetOpen] = useState(false);
   const [isItemSheetOpen, setIsItemSheetOpen] = useState(false);
@@ -156,8 +155,7 @@ export default function ListScreen() {
     }, 0);
   }, []);
 
-  const showDeleteModal = useCallback((data) => {
-    setDeleteModalData(data);
+  const showDeleteModal = useCallback(() => {
     setDeleteModalVisible(true);
   }, []);
 
@@ -165,9 +163,9 @@ export default function ListScreen() {
     if (pendingDeleteAction.current) {
       const action = pendingDeleteAction.current;
       pendingDeleteAction.current = null;
-      showDeleteModal(action);
+      action();
     }
-  }, [showDeleteModal]);
+  }, []);
 
   const handleItemSheetClose = useCallback(() => {
     setSelectedItem(null);
@@ -176,39 +174,37 @@ export default function ListScreen() {
   }, [flushPendingDeleteAction]);
 
   const openDeleteModalForList = useCallback(() => {
-    const action = { type: 'list', item: null };
+    const action = () => showDeleteModal();
     if (isOptionsSheetOpen) {
       pendingDeleteAction.current = action;
       sheet.current?.close();
     } else {
-      showDeleteModal(action);
+      action();
     }
   }, [isOptionsSheetOpen, showDeleteModal]);
 
   const openDeleteModalForItem = useCallback((item) => {
-    const action = { type: 'item', item };
+    const action = () => {
+      swipeRefs.current[item.item_id]?.close();
+      deleteItemFromList(item.item_id);
+    };
     if (isItemSheetOpen) {
       pendingDeleteAction.current = action;
       itemSheet.current?.close();
     } else {
-      showDeleteModal(action);
+      action();
     }
-  }, [isItemSheetOpen, showDeleteModal]);
+  }, [deleteItemFromList, isItemSheetOpen]);
 
   const handleDeleteModalDismiss = useCallback(() => {
     setDeleteModalVisible(false);
-    setDeleteModalData({ type: null, item: null });
     setSelectedItem(null);
   }, []);
 
   const handleConfirmDelete = useCallback(async () => {
-    if (deleteModalData.type === 'list') {
-      await deleteListRequest();
-    } else if (deleteModalData.type === 'item' && deleteModalData.item) {
-      await deleteItemFromList(deleteModalData.item.item_id);
-    }
-  }, [deleteItemFromList, deleteListRequest, deleteModalData]);
-
+    await deleteListRequest();
+    handleDeleteModalDismiss();
+  }, [deleteListRequest, handleDeleteModalDismiss]);
   const updateListName = async (listId) => {
     try {
       await api.put(`/api/list/${listId}`,{
@@ -287,11 +283,11 @@ export default function ListScreen() {
       }
     };
 
-    const handleSwipeableOpen = (direction) => { 
-      if (direction === 'right') { 
-        // Mantén el swipe abierto y lanza el modal (no lo cierres aquí) 
-        openDeleteModalForItem(item); 
-      } 
+    const handleSwipeableOpen = (direction) => {
+      if (direction === 'right') {
+        // Elimina el servicio de la lista en cuanto se completa el gesto
+        openDeleteModalForItem(item);
+      }
     };
 
     const renderRightActions = () => ( 
@@ -463,7 +459,7 @@ export default function ListScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={openDeleteModalForList}
                 className="w-full my-2 pl-5 py-[2px] bg-[#f2f2f2] dark:bg-[#3d3d3d] flex-1 rounded-xl justify-center items-start">
-                    <Text className="font-inter-medium text-[14px] text-[#ff633e]">{t('delete')}</Text>
+                    <Text className="font-inter-medium text-[14px] text-[#ff633e]">{t('delete_list_button')}</Text>
                 </TouchableOpacity>
               </View>
             )}          
@@ -551,8 +547,8 @@ export default function ListScreen() {
       )}
       <ModalMessage
         visible={deleteModalVisible}
-        title={deleteModalData.type === 'list' ? t('delete_list_title') : t('delete_service_from_list_title')}
-        description={deleteModalData.type === 'list' ? t('delete_list_description') : t('delete_service_from_list_description')}
+        title={t('delete_list_title')}
+        description={t('delete_list_description')}
         confirmText={t('delete')}
         cancelText={t('cancel')}
         onConfirm={handleConfirmDelete}

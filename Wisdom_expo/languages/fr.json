@@ -38,6 +38,7 @@
     "delete_list_title": "Supprimer cette liste ?",
     "delete_list_description": "Cette liste et ses services enregistrés seront supprimés pour tout le monde.",
     "cancel": "Annuler",
+    "delete_list_button": "Supprimer la liste",
     "delete": "Supprimer",
     "delete_message": "Supprimer le message",
     "delete_chat": "Supprimer la discussion",

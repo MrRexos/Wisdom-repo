@@ -38,6 +38,7 @@
     "delete_list_title": "Vols eliminar aquesta llista?",
     "delete_list_description": "Aquesta llista i els serveis desats s'eliminaran per a tothom.",
     "cancel": "Cancel·lar",
+    "delete_list_button": "Eliminar llista",
     "delete": "Eliminar",
     "delete_message": "Eliminar missatge",
     "delete_chat": "Eliminar xat",
