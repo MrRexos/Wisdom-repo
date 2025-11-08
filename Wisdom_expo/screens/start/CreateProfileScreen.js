@@ -169,7 +169,6 @@ export default function CreateProfileScreen() {
                         </Text>
                         <TextInput
                             placeholder={t('username_placeholder')}
-                            autoFocus={true}
                             selectionColor={cursorColorChange}
                             placeholderTextColor={placheHolderTextColorChange}
                             onChange={inputChanged}

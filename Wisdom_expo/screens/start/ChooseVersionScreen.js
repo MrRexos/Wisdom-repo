@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { View, StatusBar, Platform, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
+import * as FileSystem from 'expo-file-system/legacy';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
@@ -43,27 +44,37 @@ export default function ChooseVersionScreen() {
     [t],
   );
 
+  const guessMime = (name, fallback = 'image/jpeg') => {
+    const ext = (name?.split('.').pop() || '').toLowerCase();
+    if (ext === 'png') return 'image/png';
+    if (ext === 'webp') return 'image/webp';
+    if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
+    return fallback;
+  };
+
   const uploadImage = async () => {
-    if (!image) return null;
-
-    const formData = new FormData();
-    formData.append('file', {
-      uri: image.uri,
-      type: image.type,
-      name: image.fileName || 'profile-picture.jpg',
+    if (!image?.uri) return null;
+  
+    const name = image.fileName || (image.uri.split('/').pop() || 'profile.jpg');
+    const type = image.type || guessMime(name);
+  
+    // tamaño para la firma
+    const info = await FileSystem.getInfoAsync(image.uri);
+    const size = Number(image.fileSize ?? image.size ?? info.size ?? 0);
+  
+    // 1) pedir firma
+    const { data } = await api.post('/api/uploads/sign', { name, type, size });
+    const { uploadUrl, publicUrl } = data;
+  
+    // 2) subir binario directo al storage (PUT)
+    await FileSystem.uploadAsync(uploadUrl, image.uri, {
+      httpMethod: 'PUT',
+      uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
+      headers: { 'Content-Type': type },
     });
-
-    try {
-      const response = await api.post('/api/upload-image', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return response.data.url;
-    } catch (error) {
-      console.error('Image upload failed:', error?.response?.data || error);
-      return null;
-    }
+  
+    // 3) devolver la URL pública (sin type assertions)
+    return publicUrl;
   };
 
   const handleContinue = async () => {
@@ -78,9 +89,7 @@ export default function ChooseVersionScreen() {
       let imageURL = null;
       if (image) {
         imageURL = await uploadImage();
-        if (!imageURL) {
-          throw new Error('Image upload failed');
-        }
+        if (!imageURL) throw new Error('Image upload failed');
       }
 
       const response = await api.post('/api/signup', {
