@@ -1,17 +1,19 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { View, StatusBar, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert, StyleSheet, RefreshControl } from 'react-native';
+import { View, StatusBar, Platform, Text, TouchableOpacity, FlatList, TextInput, Image, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind';
 import '../../languages/i18n';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { ChevronRightIcon, ChevronLeftIcon, EllipsisHorizontalIcon } from 'react-native-heroicons/outline';
+import { ChevronRightIcon, ChevronLeftIcon, EllipsisHorizontalIcon, TrashIcon } from 'react-native-heroicons/outline';
 import { BookmarkIcon } from 'react-native-heroicons/solid';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
 import api from '../../utils/api.js';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import BookMarksFillIcon from 'react-native-bootstrap-icons/icons/bookmarks-fill';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable'; 
+import Animated, { LinearTransition, SlideOutLeft } from 'react-native-reanimated';
+import ModalMessage from '../../components/ModalMessage';
 
 export default function ListScreen() {
   const insets = useSafeAreaInsets();
@@ -22,15 +24,24 @@ export default function ListScreen() {
   const placeholderTextColorChange = colorScheme === 'dark' ? '#979797' : '#979797';
   const cursorColorChange = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
   const route = useRoute();
-  const { listId, listTitle, itemCount } = route.params;
+  const { listId, listTitle } = route.params;
   const [currentTitle, setCurrentTitle] = useState(listTitle);
   const [items, setItems] = useState([]);
   const sheet = useRef();
-  const [editing, setEditing] = useState(null); 
+  const [editing, setEditing] = useState(null);
   const [sheetHeight, setSheetHeight] = useState(350);
   const [optionsText, setOptionsText] = useState('');
   const [showDone, setShowDone] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const itemSheet = useRef();
+  const [selectedItem, setSelectedItem] = useState(null);
+  const swipeRefs = useRef({});
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const pendingDeleteAction = useRef(null);
+  const [isOptionsSheetOpen, setIsOptionsSheetOpen] = useState(false);
+  const [isItemSheetOpen, setIsItemSheetOpen] = useState(false);
+  const currentItemCount = items.length;
+  const ACTION_WIDTH = 110;
   const currencySymbols = {
     EUR: '€',
     USD: '$',
@@ -113,16 +124,87 @@ export default function ListScreen() {
     }
   };
 
-  const deleteList = async (listId) => {
+  const deleteListRequest = useCallback(async () => {
     try {
       await api.delete(`/api/list/${listId}`);
+      navigation.navigate('FavoritesScreen');
     } catch (error) {
       console.log('Error al borrar la lista:', error);
     }
-    sheet.current.close();
-    navigation.navigate('FavoritesScreen');
-  };
+  }, [listId, navigation]);
 
+  const deleteItemFromList = useCallback(async (listItemId) => {
+    try {
+      await api.delete(`/api/lists/${listId}/items/${listItemId}`);
+      setItems((prevItems) => prevItems.filter((listItem) => listItem.item_id !== listItemId));
+      setNotes((prevNotes) => {
+        const updatedNotes = { ...prevNotes };
+        delete updatedNotes[listItemId];
+        return updatedNotes;
+      });
+      setSelectedItem((prevSelected) => (prevSelected?.item_id === listItemId ? null : prevSelected));
+    } catch (error) {
+      console.log('Error al borrar el item de la lista:', error);
+    }
+  }, [listId]);
+
+  const openItemSheet = useCallback((item) => {
+    setSelectedItem(item);
+    setTimeout(() => {
+      itemSheet.current?.open();
+    }, 0);
+  }, []);
+
+  const showDeleteModal = useCallback(() => {
+    setDeleteModalVisible(true);
+  }, []);
+
+  const flushPendingDeleteAction = useCallback(() => {
+    if (pendingDeleteAction.current) {
+      const action = pendingDeleteAction.current;
+      pendingDeleteAction.current = null;
+      action();
+    }
+  }, []);
+
+  const handleItemSheetClose = useCallback(() => {
+    setSelectedItem(null);
+    setIsItemSheetOpen(false);
+    flushPendingDeleteAction();
+  }, [flushPendingDeleteAction]);
+
+  const openDeleteModalForList = useCallback(() => {
+    const action = () => showDeleteModal();
+    if (isOptionsSheetOpen) {
+      pendingDeleteAction.current = action;
+      sheet.current?.close();
+    } else {
+      action();
+    }
+  }, [isOptionsSheetOpen, showDeleteModal]);
+
+  const openDeleteModalForItem = useCallback((item) => {
+    const action = () => {
+      swipeRefs.current[item.item_id]?.close();
+      deleteItemFromList(item.item_id);
+    };
+    if (isItemSheetOpen) {
+      pendingDeleteAction.current = action;
+      itemSheet.current?.close();
+    } else {
+      action();
+    }
+  }, [deleteItemFromList, isItemSheetOpen]);
+
+  const handleDeleteModalDismiss = useCallback(() => {
+    setDeleteModalVisible(false);
+    setSelectedItem(null);
+  }, []);
+
+  const handleConfirmDelete = useCallback(async () => {
+    await deleteListRequest();
+    handleDeleteModalDismiss();
+  }, [deleteListRequest, handleDeleteModalDismiss]);
   const updateListName = async (listId) => {
     try {
       await api.put(`/api/list/${listId}`,{
@@ -201,55 +283,104 @@ export default function ListScreen() {
       }
     };
 
+    const handleSwipeableOpen = (direction) => {
+      if (direction === 'right') {
+        // Elimina el servicio de la lista en cuanto se completa el gesto
+        openDeleteModalForItem(item);
+      }
+    };
+
+    const renderRightActions = () => ( 
+      <TouchableOpacity 
+        activeOpacity={0.8} 
+        onPress={() => openDeleteModalForItem(item)} 
+        className="h-full w-[80px] bg-[#ff633e] justify-center items-center" 
+      > 
+        <TrashIcon size={22} strokeWidth={1.9} color="#fcfcfc" /> 
+      </TouchableOpacity>
+    );
+    
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', {serviceId: item.service_id})} className="h-[170px]">
-        <View className="flex-row">
-          <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[85px] w-[85px] bg-[#706B5B] rounded-xl" />
-          <View className="flex-1 ">
-            <View className="flex-row justify-between">
-              <Text className="ml-4 mt-1 font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
-              <ChevronRightIcon size={23} strokeWidth={1.7} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'}  />
-            </View>
-            <Text className="ml-4 mt-1 font-inter-semibold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{item.first_name} {item.surname}</Text>
-            <View className="justify-center items-center flex-1 ">
-              <View className="pl-4 pr-9 flex-row w-full items-center  justify-between ">
-                <View className=" flex-row items-start justify-start ">
-                  <Text className="mr-4">
-                    {getFormattedPrice()}
-                  </Text>
+      <Animated.View exiting={SlideOutLeft} layout={LinearTransition}> 
+        <ReanimatedSwipeable
+          ref={(ref) => {
+            if (ref) {
+              swipeRefs.current[item.item_id] = ref;
+            } else {
+              delete swipeRefs.current[item.item_id];
+            }
+          }}
+          renderRightActions={renderRightActions}
+          overshootRight={true}
+          rightThreshold={40}       // abre con un swipe corto y se mantiene abierto 
+          friction={2} 
+          containerStyle={{ overflow: 'visible' }} // para que se vean bien los bordes redondeados del rojo
+          onSwipeableOpen={handleSwipeableOpen}
+          onSwipeableOpenStartDrag={() => { 
+            const id = String(item.item_id); 
+            Object.entries(swipeRefs.current).forEach(([k, ref]) => { 
+              if (k !== id) ref?.close(); 
+            }); 
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.service_id })}
+            onLongPress={() => openItemSheet(item)}
+            delayLongPress={250}
+            activeOpacity={1}
+            className=" bg-[#f2f2f2] dark:bg-[#272626]"
+          >
+            <>
+            <View className="flex-row">
+              <Image source={item.profile_picture ? { uri: item.profile_picture } : require('../../assets/defaultProfilePic.jpg')} className="h-[85px] w-[85px] bg-[#706B5B] rounded-xl" />
+              <View className="flex-1 ">
+                <View className="flex-row justify-between">
+                  <Text className="ml-4 mt-1 font-inter-bold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{item.service_title}</Text>
+                  <ChevronRightIcon size={23} strokeWidth={1.7} color={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'}  />
                 </View>
-                {item.review_count > 0 && (
-                  <View className="flex-row items-center justify-end ">
-                    <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.85 }] }} />
-                    <Text className="ml-[3px]">
-                      <Text className="font-inter-bold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(item.average_rating).toFixed(1)}</Text>
-                      <Text> </Text>
-                      <Text className="font-inter-medium text-[10px] text-[#706F6E] dark:text-[#B6B5B5]">({item.review_count === 1 ? `${item.review_count} ${t('review')}` : `${item.review_count} ${t('reviews')}`})</Text>
-                    </Text>
+                <Text className="ml-4 mt-1 font-inter-semibold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{item.first_name} {item.surname}</Text>
+                <View className="justify-center items-center flex-1 ">
+                  <View className="pl-4 pr-9 flex-row w-full items-center  justify-between ">
+                    <View className=" flex-row items-start justify-start ">
+                      <Text className="mr-4">
+                        {getFormattedPrice()}
+                      </Text>
+                    </View>
+                    {item.review_count > 0 && (
+                      <View className="flex-row items-center justify-end ">
+                        <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.85 }] }} />
+                        <Text className="ml-[3px]">
+                          <Text className="font-inter-bold text-[12px] text-[#444343] dark:text-[#f2f2f2]">{parseFloat(item.average_rating).toFixed(1)}</Text>
+                          <Text> </Text>
+                          <Text className="font-inter-medium text-[10px] text-[#706F6E] dark:text-[#B6B5B5]">({item.review_count === 1 ? `${item.review_count} ${t('review')}` : `${item.review_count} ${t('reviews')}`})</Text>
+                        </Text>
+                      </View>
+                    )}
                   </View>
-                )}
+                </View>
               </View>
             </View>
-          </View>
-        </View>
-        
-        <View className="">
-          <View className="px-[12px] py-4 border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{ borderBottomWidth: 1 }, index === items.length - 1 && { borderBottomWidth: 0 }]}>
-            <View className="h-9 bg-[#fcfcfc] dark:bg-[#323131] rounded-md justify-center items-start">
-            <TextInput
-              placeholder={t('add_a_note')}
-              selectionColor={cursorColorChange}
-              placeholderTextColor={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'}
-              onChangeText={(text) => handleNoteChange(item.item_id, text)}
-              value={notes[item.item_id] || ''}
-              onSubmitEditing={() => updateNote(item.item_id)}
-              keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
-              className="px-4 h-[32px] w-[300px] flex-1 text-[13px] text-[#515150] dark:text-[#d4d4d3]"
-            />
+
+            <View className="">
+              <View className="px-[12px] pt-4 ">
+                <View className="h-9 bg-[#fcfcfc] dark:bg-[#323131] rounded-md justify-center items-start">
+                  <TextInput
+                    placeholder={t('add_a_note')}
+                    selectionColor={cursorColorChange}
+                    placeholderTextColor={colorScheme === 'dark' ? '#706f6e' : '#b6b5b5'}
+                    onChangeText={(text) => handleNoteChange(item.item_id, text)}
+                    value={notes[item.item_id] || ''}
+                    onSubmitEditing={() => updateNote(item.item_id)}
+                    keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                    className="px-4 h-[32px] w-[300px] flex-1 text-[13px] text-[#515150] dark:text-[#d4d4d3]"
+                  />
+                </View>
+              </View>
             </View>
-          </View>
-        </View>
-      </TouchableOpacity>
+            </>
+          </TouchableOpacity>
+        </ReanimatedSwipeable>
+      </Animated.View>
     );
   };
 
@@ -260,9 +391,12 @@ export default function ListScreen() {
         height={sheetHeight}
         openDuration={300}
         closeDuration={300}
+        onOpen={() => setIsOptionsSheetOpen(true)}
         onClose={() => {
           setEditing(null);
           setSheetHeight(350);
+          setIsOptionsSheetOpen(false);
+          flushPendingDeleteAction();
         }}
         draggable={true}
         ref={sheet}
@@ -323,29 +457,40 @@ export default function ListScreen() {
                 <TouchableOpacity onPress={() => openSheetWithInput('changeName')} className="w-full my-2 pl-5 py-[2px] bg-[#f2f2f2] dark:bg-[#3d3d3d] flex-1 rounded-xl justify-center items-start">
                     <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('change_the_name')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={ () => Alert.alert(
-                  t('are_you_sure_you_want_to_delete_this_list'),
-                  t('list_will_disappear_for_everyone'),
-                  [
-                    {
-                      text: t('cancel'),
-                      onPress: null,
-                      style: 'cancel',
-                    },
-                    {
-                      text: t('delete'),
-                      onPress: () => deleteList(listId),                      
-                      style: 'destructive', 
-                    },
-                  ],
-                  { cancelable: false }
-                )} 
+                <TouchableOpacity onPress={openDeleteModalForList}
                 className="w-full my-2 pl-5 py-[2px] bg-[#f2f2f2] dark:bg-[#3d3d3d] flex-1 rounded-xl justify-center items-start">
-                    <Text className="font-inter-medium text-[14px] text-[#ff633e]">{t('delete')}</Text>
-                </TouchableOpacity>  
+                    <Text className="font-inter-medium text-[14px] text-[#ff633e]">{t('delete_list_button')}</Text>
+                </TouchableOpacity>
               </View>
             )}          
           
+      </RBSheet>
+
+      <RBSheet
+        height={180}
+        openDuration={300}
+        closeDuration={300}
+        onClose={handleItemSheetClose}
+        onOpen={() => setIsItemSheetOpen(true)}
+        draggable={true}
+        ref={itemSheet}
+        customStyles={{
+          container: {
+            borderTopRightRadius: 25,
+            borderTopLeftRadius: 25,
+            backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+          },
+          draggableIcon: { backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#f2f2f2' },
+        }}
+      >
+        <View className="flex-1 w-full justify-start items-center pt-3 pb-6 px-5">
+          <TouchableOpacity
+            onPress={() => selectedItem && openDeleteModalForItem(selectedItem)}
+            className="w-full mt-3 pl-5 py-[19px] bg-[#f2f2f2] dark:bg-[#3d3d3d] rounded-xl justify-center items-start"
+          >
+            <Text className="font-inter-medium text-[14px] text-[#ff633e]">{t('delete_service')}</Text>
+          </TouchableOpacity>
+        </View>
       </RBSheet>
 
       <TouchableOpacity onPress={() => navigation.goBack()} className="pl-4 pt-4">
@@ -362,7 +507,7 @@ export default function ListScreen() {
           </TouchableOpacity>
         </View>
         {!items.empty ? (
-        <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5] pt-3">{itemCount === 0 ? t('empty') : itemCount === 1 ? `${itemCount} ${t('service')}` : `${itemCount} ${t('services')}`}</Text>
+        <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#B6B5B5] pt-3">{currentItemCount === 0 ? t('empty') : currentItemCount === 1 ? `${currentItemCount} ${t('service')}` : `${currentItemCount} ${t('services')}`}</Text>
         ):null}
         <View className="pb-7"></View>
         <View className="absolute bottom-0 left-0 w-[700px] h-1 border-b-[1px] border-[#e0e0e0] dark:border-[#3d3d3d]"/>
@@ -386,18 +531,30 @@ export default function ListScreen() {
         </View>
       ) : (
         // Si la lista tiene items, renderiza el FlatList
-        <FlatList
+        <Animated.FlatList
           data={items}
           keyExtractor={(item) => item.item_id.toString()}
           renderItem={renderItem}
           refreshing={refreshing}
           onRefresh={onRefresh}
-          className='pt-9 pr-[20px] pl-6'
+          className='pt-9 pr-[20px] pl-6 '
           contentContainerStyle={{
             justifyContent: 'space-between',
           }}
+          itemLayoutAnimation={LinearTransition}
+          ItemSeparatorComponent={() => <View className="mt-4 mb-4 border-[#e0e0e0] dark:border-[#3d3d3d]" style={{ borderBottomWidth: 1 }} />}
         />
       )}
+      <ModalMessage
+        visible={deleteModalVisible}
+        title={t('delete_list_title')}
+        description={t('delete_list_description')}
+        confirmText={t('delete')}
+        cancelText={t('cancel')}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleDeleteModalDismiss}
+        onDismiss={handleDeleteModalDismiss}
+      />
     </View>
   );
 }

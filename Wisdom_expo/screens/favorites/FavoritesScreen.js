@@ -193,7 +193,7 @@ export default function FavoritesScreen() {
   };
 
   const renderItem = ({ item }) => (
-    <View className="mb-7">
+    <View className="mb-7 ">
       <TouchableOpacity
         className="mb-7"
         onPress={() => navigation.navigate('List', { listId: item.id, listTitle: item.title, itemCount: item.item_count })}
