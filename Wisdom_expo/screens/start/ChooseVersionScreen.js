@@ -3,6 +3,7 @@ import { View, StatusBar, Platform, Text, TouchableOpacity, ActivityIndicator } 
 import { useTranslation } from 'react-i18next';
 import '../../languages/i18n';
 import * as FileSystem from 'expo-file-system/legacy';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { useColorScheme } from 'nativewind';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ChevronLeftIcon } from 'react-native-heroicons/outline';
@@ -44,35 +45,66 @@ export default function ChooseVersionScreen() {
     [t],
   );
 
+  const ALLOWED_UPLOAD_TYPES = useMemo(
+    () => new Set(['image/jpeg', 'image/png', 'image/webp']),
+    [],
+  );
+
   const guessMime = (name, fallback = 'image/jpeg') => {
     const ext = (name?.split('.').pop() || '').toLowerCase();
     if (ext === 'png') return 'image/png';
     if (ext === 'webp') return 'image/webp';
     if (ext === 'jpg' || ext === 'jpeg') return 'image/jpeg';
+    if (ext === 'heic' || ext === 'heif') return 'image/heic';
     return fallback;
+  };
+
+  const ensureUploadableImage = async (img) => {
+    let name = img.fileName || img.uri.split('/').pop() || 'profile.jpg';
+    let type = img.type || guessMime(name);
+
+    if (!ALLOWED_UPLOAD_TYPES.has(type)) {
+      const manipulated = await ImageManipulator.manipulateAsync(
+        img.uri,
+        [],
+        { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG },
+      );
+
+      name = (name.replace(/\.[^.]+$/, '') || 'profile') + '.jpg';
+      type = 'image/jpeg';
+
+      return { uri: manipulated.uri, name, type };
+    }
+
+    return { uri: img.uri, name, type };
   };
 
   const uploadImage = async () => {
     if (!image?.uri) return null;
-  
-    const name = image.fileName || (image.uri.split('/').pop() || 'profile.jpg');
-    const type = image.type || guessMime(name);
-  
+
+    const normalized = await ensureUploadableImage(image);
+
     // tamaño para la firma
-    const info = await FileSystem.getInfoAsync(image.uri);
-    const size = Number(image.fileSize ?? image.size ?? info.size ?? 0);
-  
+    const info = await FileSystem.getInfoAsync(normalized.uri);
+    const size = Number(
+      info.size ?? image.fileSize ?? image.size ?? 0,
+    );
+
     // 1) pedir firma
-    const { data } = await api.post('/api/uploads/sign', { name, type, size });
+    const { data } = await api.post('/api/uploads/sign', {
+      name: normalized.name,
+      type: normalized.type,
+      size,
+    });
     const { uploadUrl, publicUrl } = data;
-  
+
     // 2) subir binario directo al storage (PUT)
-    await FileSystem.uploadAsync(uploadUrl, image.uri, {
+    await FileSystem.uploadAsync(uploadUrl, normalized.uri, {
       httpMethod: 'PUT',
       uploadType: FileSystem.FileSystemUploadType.BINARY_CONTENT,
-      headers: { 'Content-Type': type },
+      headers: { 'Content-Type': normalized.type },
     });
-  
+
     // 3) devolver la URL pública (sin type assertions)
     return publicUrl;
   };
