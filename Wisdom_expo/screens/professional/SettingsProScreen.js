@@ -18,7 +18,7 @@ import {
 
 
 import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram, Link } from "react-native-feather";
-import { KeyIcon, ChevronRightIcon, ArrowsRightLeftIcon, CheckCircleIcon } from 'react-native-heroicons/outline';
+import { KeyIcon, ChevronRightIcon, ArrowsRightLeftIcon, CheckCircleIcon, ChatBubbleBottomCenterTextIcon } from 'react-native-heroicons/outline';
 import GiftCardIcon from '../../assets/GiftCard';
 import ExpertIcon from '../../assets/Expert';
 import CashStackIcon from '../../assets/CashStack';
@@ -65,6 +65,7 @@ export default function SettingsScreen() {
     {
       items: [
         { id: 'roadmap', icon: CheckCircleIcon, label: t('roadmap'), type: 'select', link: 'Roadmap' },
+        { id: 'requestFeature', icon: ChatBubbleBottomCenterTextIcon, label: t('request_feature_or_report_issue'), type: 'link', link: 'mailto:wisdom.helpcontact@gmail.com' },
         { id: 'help', icon: Info, label: t('help'), type: 'select', link: 'Help' },
         { id: 'followInsta', icon: Instagram, label: t('follow_us_in_instagram'), type: 'link', link: 'https://www.instagram.com/wisdom__app/' },
       ]
