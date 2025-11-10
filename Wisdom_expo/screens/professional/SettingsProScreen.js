@@ -24,6 +24,7 @@ import ExpertIcon from '../../assets/Expert';
 import CashStackIcon from '../../assets/CashStack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SuticasePlusIcon from '../../assets/SuitcasePlus';
+import { Plane } from 'lucide-react-native';
 
 
 
@@ -44,33 +45,11 @@ export default function SettingsScreen() {
     notifications: false,
   });
   const [allowNotisReady, setAllowNotisReady] = useState(false);
+  const [vacationMode, setVacationMode] = useState(false);
+  const [vacationModeReady, setVacationModeReady] = useState(false);
+  const [vacationModeUpdating, setVacationModeUpdating] = useState(false);
+  const [userId, setUserId] = useState(null);
 
-  const Sections = [
-    {
-      items: [
-        { id: 'account', icon: KeyIcon, label: t('account'), type: 'select', link: 'EditAccount' },
-        { id: 'preferences', icon: Settings, label: t('preferences'), type: 'select', link: 'Preferences' },
-        { id: 'notifications', icon: Bell, label: t('notifications'), type: 'toggle' },
-        { id: 'directions', icon: MapPin, label: t('directions'), type: 'select', link: 'Directions' },
-        { id: 'payments', icon: CashStackIcon, label: t('payments_and_refunds'), type: 'select', link: 'WalletPro' },
-      ]
-    },
-    {
-      items: [
-        { id: 'provideService', icon: SuticasePlusIcon, label: t('provide_service'), type: 'select', link: 'CreateServiceStart' },
-        { id: 'switchClientVersion', icon: ArrowsRightLeftIcon, label: t('switch_to_client_version'), type: 'select', link: 'Home' },
-        // { id: 'becomeExpert', icon: ExpertIcon, label: t('become_an_expert'), type: 'select', link: 'TurnExpert' },
-      ]
-    },
-    {
-      items: [
-        { id: 'roadmap', icon: CheckCircleIcon, label: t('roadmap'), type: 'select', link: 'Roadmap' },
-        { id: 'requestFeature', icon: MessageCircle, label: t('request_feature_or_report_issue'), type: 'link', link: 'mailto:wisdom.helpcontact@gmail.com' },
-        { id: 'help', icon: Info, label: t('help'), type: 'select', link: 'Help' },
-        { id: 'followInsta', icon: Instagram, label: t('follow_us_in_instagram'), type: 'link', link: 'https://www.instagram.com/wisdom__app/' },
-      ]
-    },
-  ];
 
   useFocusEffect(
     useCallback(() => {
@@ -154,6 +133,23 @@ export default function SettingsScreen() {
     }
   };
 
+  const fetchVacationMode = async (professionalId) => {
+    if (!professionalId) {
+      setVacationModeReady(true);
+      return;
+    }
+
+    setVacationModeReady(false);
+    try {
+      const { data } = await api.get(`/api/professionals/${professionalId}/vacation-mode`);
+      setVacationMode(!!data?.vacation_mode);
+    } catch (error) {
+      console.error('Error fetching vacation mode:', error);
+    } finally {
+      setVacationModeReady(true);
+    }
+  };
+
   // Sincroniza con el permiso real del SO (llamar al entrar en Settings o al volver a la app)
   const syncAllowNotisFromOS = async () => {
     try {
@@ -209,6 +205,28 @@ export default function SettingsScreen() {
   }, []);
 
   // Handler del switch
+  const handleToggleVacationMode = async (value) => {
+    if (!userId || vacationModeUpdating) {
+      return;
+    }
+
+    const previousValue = vacationMode;
+    setVacationMode(value);
+    setVacationModeUpdating(true);
+
+    try {
+      await api.patch(`/api/professionals/${userId}/vacation-mode`, {
+        vacation_mode: value,
+      });
+    } catch (error) {
+      console.error('Error updating vacation mode:', error);
+      setVacationMode(previousValue);
+    } finally {
+      setVacationModeUpdating(false);
+      setVacationModeReady(true);
+    }
+  };
+
   const handleToggleAllowNotis = async (value) => {
     try {
       if (value) {
@@ -258,6 +276,7 @@ export default function SettingsScreen() {
 
     if (userData) {
       const user = JSON.parse(userData);
+      setUserId(user.id);
       setImage(user.profile_picture);
       setName(user.first_name);
       setSurname(user.surname);
@@ -265,7 +284,14 @@ export default function SettingsScreen() {
       setAllowNotis(user.allow_notis);
       setForm({ notifications: user.allow_notis });
       setAllowNotisReady(true);
+      await fetchVacationMode(user.id);
+      return;
     }
+
+    setAllowNotisReady(true);
+    setVacationModeReady(true);
+    setUserId(null);
+    setVacationMode(false);
   };
 
   useFocusEffect(
@@ -281,6 +307,52 @@ export default function SettingsScreen() {
     await loadUserData();
     setRefreshing(false);
   };
+
+  const Sections = [
+    {
+      items: [
+        { id: 'account', icon: KeyIcon, label: t('account'), type: 'select', link: 'EditAccount' },
+        { id: 'preferences', icon: Settings, label: t('preferences'), type: 'select', link: 'Preferences' },
+        {
+          id: 'notifications',
+          icon: Bell,
+          label: t('notifications'),
+          type: 'toggle',
+          value: !!allowNotis,
+          onToggle: handleToggleAllowNotis,
+          loading: !allowNotisReady,
+          disabled: !allowNotisReady,
+        },
+        { id: 'directions', icon: MapPin, label: t('directions'), type: 'select', link: 'Directions' },
+        { id: 'payments', icon: CashStackIcon, label: t('payments_and_refunds'), type: 'select', link: 'WalletPro' },
+      ],
+    },
+    {
+      items: [
+        { id: 'provideService', icon: SuticasePlusIcon, label: t('provide_service'), type: 'select', link: 'CreateServiceStart' },
+        {
+          id: 'vacationMode',
+          icon: Plane,
+          label: t('vacation_mode'),
+          type: 'toggle',
+          value: vacationMode,
+          onToggle: handleToggleVacationMode,
+          loading: !vacationModeReady,
+          disabled: !vacationModeReady || vacationModeUpdating,
+        },
+        { id: 'switchClientVersion', icon: ArrowsRightLeftIcon, label: t('switch_to_client_version'), type: 'select', link: 'Home' },
+        // { id: 'becomeExpert', icon: ExpertIcon, label: t('become_an_expert'), type: 'select', link: 'TurnExpert' },
+      ],
+    },
+    {
+      items: [
+        { id: 'roadmap', icon: CheckCircleIcon, label: t('roadmap'), type: 'select', link: 'Roadmap' },
+        { id: 'requestFeature', icon: MessageCircle, label: t('request_feature_or_report_issue'), type: 'link', link: 'mailto:wisdom.helpcontact@gmail.com' },
+        { id: 'help', icon: Info, label: t('help'), type: 'select', link: 'Help' },
+        { id: 'followInsta', icon: Instagram, label: t('follow_us_in_instagram'), type: 'link', link: 'https://www.instagram.com/wisdom__app/' },
+      ],
+    },
+  ];
 
 
 
@@ -326,7 +398,7 @@ export default function SettingsScreen() {
 
           {Sections.map(({ items }, sectionIndex) => (
             <View key={sectionIndex} style={{ borderRadius: 12, overflow: 'hidden' }}>
-              {items.map(({ label, id, type, link, icon: Icon }, index) => (
+              {items.map(({ label, id, type, link, icon: Icon, value, onToggle, loading, disabled }, index) => (
                 <View key={id} className="pl-5  bg-[#fcfcfc]  dark:bg-[#323131]" >
                   <TouchableOpacity
                     disabled={type === 'toggle'}
@@ -353,11 +425,12 @@ export default function SettingsScreen() {
 
                         {type === 'toggle' && (
                           <View style={{ width: 50, alignItems: 'flex-end' }}>
-                            {allowNotisReady ? (
+                            {!loading ? (
                               <Switch
                                 style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }}
-                                value={!!allowNotis}
-                                onValueChange={handleToggleAllowNotis}
+                                value={!!value}
+                                onValueChange={onToggle}
+                                disabled={disabled}
                               />
                             ) : (
                               <View style={{ width: 40, height: 24 }} />
