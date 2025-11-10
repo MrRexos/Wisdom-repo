@@ -114,6 +114,8 @@
     "total": "Total",
     "provide_service": "Provide service",
     "vacation_mode": "Vacation mode",
+    "vacation_mode_unavailable_title": "Vacation mode unavailable",
+    "vacation_mode_unavailable_description": "You must have an active professional account to change vacation mode. Switch back to the professional version to manage it.",
     "switch_to_client_version": "Switch to client version",
     "become_an_expert": "Become an expert",
     "expert_label": "Expert",

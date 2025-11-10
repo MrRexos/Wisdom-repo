@@ -114,6 +114,8 @@
     "total": "Total",
     "provide_service": "Proposer un service",
     "vacation_mode": "Mode vacances",
+    "vacation_mode_unavailable_title": "Mode vacances indisponible",
+    "vacation_mode_unavailable_description": "Vous devez avoir un compte professionnel actif pour modifier le mode vacances. Revenez à la version professionnelle pour le gérer.",
     "switch_to_client_version": "Passer à la version client",
     "become_an_expert": "Devenir un expert",
     "expert_label": "Expert",
