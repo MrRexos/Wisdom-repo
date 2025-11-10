@@ -25,6 +25,7 @@ import CashStackIcon from '../../assets/CashStack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SuticasePlusIcon from '../../assets/SuitcasePlus';
 import { Plane } from 'lucide-react-native';
+import Message from '../../components/Message';
 
 
 
@@ -49,6 +50,8 @@ export default function SettingsScreen() {
   const [vacationModeReady, setVacationModeReady] = useState(false);
   const [vacationModeUpdating, setVacationModeUpdating] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [isProfessional, setIsProfessional] = useState(false);
+  const [showVacationModeErrorModal, setShowVacationModeErrorModal] = useState(false);
 
 
   useFocusEffect(
@@ -211,6 +214,11 @@ export default function SettingsScreen() {
     }
 
     const previousValue = vacationMode;
+    if (!isProfessional) {
+      setShowVacationModeErrorModal(true);
+      return;
+    }
+
     setVacationMode(value);
     setVacationModeUpdating(true);
 
@@ -221,6 +229,16 @@ export default function SettingsScreen() {
     } catch (error) {
       console.error('Error updating vacation mode:', error);
       setVacationMode(previousValue);
+      const errorMessage = error?.response?.data?.detail || error?.response?.data?.message;
+      if (
+        !isProfessional ||
+        error?.response?.status === 403 ||
+        error?.response?.status === 404 ||
+        (typeof errorMessage === 'string' && errorMessage.toLowerCase().includes('professional'))
+      ) {
+        setIsProfessional(false);
+        setShowVacationModeErrorModal(true);
+      }
     } finally {
       setVacationModeUpdating(false);
       setVacationModeReady(true);
@@ -284,6 +302,7 @@ export default function SettingsScreen() {
       setAllowNotis(user.allow_notis);
       setForm({ notifications: user.allow_notis });
       setAllowNotisReady(true);
+      setIsProfessional(!!user.is_professional);
       await fetchVacationMode(user.id);
       return;
     }
@@ -292,6 +311,7 @@ export default function SettingsScreen() {
     setVacationModeReady(true);
     setUserId(null);
     setVacationMode(false);
+    setIsProfessional(false);
   };
 
   useFocusEffect(
@@ -359,6 +379,17 @@ export default function SettingsScreen() {
   return (
     <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + insets.top : insets.top, paddingLeft: insets.left, paddingRight: insets.right, paddingBottom: 0 }} className='flex-1 bg-[#f2f2f2] dark:bg-[#272626]'>
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
+      <Message
+        type="modal"
+        visible={showVacationModeErrorModal}
+        title={t('vacation_mode_unavailable_title')}
+        description={t('vacation_mode_unavailable_description')}
+        confirmText={t('ok')}
+        showCancel={false}
+        dismissOnBackdropPress={true}
+        onConfirm={() => setShowVacationModeErrorModal(false)}
+        onDismiss={() => setShowVacationModeErrorModal(false)}
+      />
 
       <ScrollView
         className="flex-1 px-6 pt-[55px]"
