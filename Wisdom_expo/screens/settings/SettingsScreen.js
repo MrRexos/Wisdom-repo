@@ -388,9 +388,11 @@ export default function SettingsScreen() {
                   >
                     <View className=" flex-row items-center justify-start ">
                       <Icon color={iconColor} strokeWidth={1.6} style={{ transform: [{ scale: 1 }] }} ></Icon>
-                      <View className="ml-4 py-[10px] flex-1 flex-row items-center justify-start pr-[14px] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{ borderTopWidth: 1 }, index === 0 && { borderTopWidth: 0 }]}>
-                        <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{label}</Text>
-                        <View className="flex-1" />
+                      <View className="ml-4 py-[10px] flex-1 flex-row items-center pr-[14px] border-[#e0e0e0] dark:border-[#3d3d3d]" style={[{ borderTopWidth: 1 }, index === 0 && { borderTopWidth: 0 }]}>
+                        <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2] flex-1 shrink mr-3">
+                          {label}
+                        </Text>
+
 
                         {type === 'toggle' && (
                           <View style={{ width: 50, alignItems: 'flex-end' }}>
