@@ -7,7 +7,7 @@ import '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon } from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import { Search, Sliders, Heart, Plus } from "react-native-feather";
+import { Search, Sliders, Heart, Plus, Check } from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import HeartFill from "../../assets/HeartFill.tsx"
@@ -16,6 +16,14 @@ import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
+import Slider from '@react-native-community/slider';
+import SliderThumbDark from '../../assets/SliderThumbDark.png';
+import SliderThumbLight from '../../assets/SliderThumbLight.png';
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
 
 
 const DATE_LOCALE_MAP = {
@@ -26,6 +34,10 @@ const DATE_LOCALE_MAP = {
   fr: 'fr-FR',
   zh: 'zh-CN',
 };
+
+const PRICE_RANGE_LIMITS = { MIN: 0, MAX: 200 };
+const DISTANCE_LIMITS = { MIN: 1, MAX: 50 };
+const RATING_LIMITS = { MIN: 0, MAX: 5 };
 
 export default function ResultsScreen() {
   const insets = useSafeAreaInsets();
@@ -55,6 +67,15 @@ export default function ResultsScreen() {
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
   const [searchedDirection, setSearchedDirection] = useState(null);
+  const filterSheetRef = useRef(null);
+  const filterSnapPoints = useMemo(() => ['75%'], []);
+  const [minPrice, setMinPrice] = useState(9);
+  const [maxPrice, setMaxPrice] = useState(60);
+  const [distance, setDistance] = useState(5);
+  const [rating, setRating] = useState(4.5);
+  const [companyProfile, setCompanyProfile] = useState(false);
+  const [verifiedProfile, setVerifiedProfile] = useState(true);
+  const thumbImage = colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight;
 
   useEffect(() => {
     const loadUserId = async () => {
@@ -201,6 +222,95 @@ export default function ResultsScreen() {
     }
     sheet.current.open();
   };
+
+  const serviceCount = Array.isArray(results) ? results.length : 0;
+
+  const renderFilterBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        pressBehavior="close"
+        opacity={0.4}
+      />
+    ),
+    []
+  );
+
+  const openFilterSheet = () => {
+    filterSheetRef.current?.present();
+  };
+
+  const closeFilterSheet = () => {
+    filterSheetRef.current?.dismiss();
+  };
+
+  const handleClearFilters = () => {
+    setMinPrice(9);
+    setMaxPrice(60);
+    setDistance(5);
+    setRating(4.5);
+    setCompanyProfile(false);
+    setVerifiedProfile(true);
+  };
+
+  const handleMinPriceChange = useCallback(
+    (value) => {
+      const clampedValue = Math.max(
+        PRICE_RANGE_LIMITS.MIN,
+        Math.min(value, PRICE_RANGE_LIMITS.MAX),
+      );
+      const nextValue = Math.min(clampedValue, maxPrice - 1);
+      setMinPrice(nextValue);
+    },
+    [maxPrice]
+  );
+
+  const handleMaxPriceChange = useCallback(
+    (value) => {
+      const clampedValue = Math.max(
+        PRICE_RANGE_LIMITS.MIN,
+        Math.min(value, PRICE_RANGE_LIMITS.MAX),
+      );
+      const nextValue = Math.max(clampedValue, minPrice + 1);
+      setMaxPrice(nextValue);
+    },
+    [minPrice]
+  );
+
+  const handleDistanceChange = (value) => {
+    const clampedValue = Math.max(
+      DISTANCE_LIMITS.MIN,
+      Math.min(value, DISTANCE_LIMITS.MAX),
+    );
+    setDistance(clampedValue);
+  };
+
+  const handleRatingChange = (value) => {
+    const clampedValue = Math.max(
+      RATING_LIMITS.MIN,
+      Math.min(value, RATING_LIMITS.MAX),
+    );
+    setRating(clampedValue);
+  };
+
+  const toggleCompanyProfile = () => {
+    setCompanyProfile((prev) => !prev);
+  };
+
+  const toggleVerifiedProfile = () => {
+    setVerifiedProfile((prev) => !prev);
+  };
+
+  const priceRangeSpan = PRICE_RANGE_LIMITS.MAX - PRICE_RANGE_LIMITS.MIN;
+  const priceHighlightLeft = ((minPrice - PRICE_RANGE_LIMITS.MIN) / priceRangeSpan) * 100;
+  const priceHighlightWidth = ((maxPrice - minPrice) / priceRangeSpan) * 100;
+  const maxSliderLeft = Math.min(Math.max(priceHighlightLeft, 0), 100);
+  const minSliderRight = Math.min(
+    Math.max(100 - ((maxPrice - PRICE_RANGE_LIMITS.MIN) / priceRangeSpan) * 100, 0),
+    100,
+  );
 
   const addItemList = async (listId) => {
     try {
@@ -549,9 +659,13 @@ export default function ResultsScreen() {
                   <Text numberOfLines={1} className="font-inter-medium text-center text-[11px] text-[#706F6E] dark:text-[#b6b5b5] truncate">{buildDisplayText()}</Text>
                 )}
               </View>
-              {/* DE MOMENTO ESTA BORRADO FILTERS BUTON */}
-              <TouchableOpacity className="rounded-full px-3 py-4 bg- [#fcfcfc] dark:bg- [#323131]">
-                {/*<Sliders height={17} color={iconColor} strokeWidth={1.8}/>*/}
+              <TouchableOpacity
+                onPress={openFilterSheet}
+                className="rounded-full h-[45px] w-[45px] bg-[#fcfcfc] dark:bg-[#323131] justify-center items-center"
+                style={styles.filterButtonShadow}
+                activeOpacity={0.8}
+              >
+                <Sliders height={18} color={iconColor} strokeWidth={1.8} />
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -653,7 +767,279 @@ export default function ResultsScreen() {
       )}
 
 
+      <BottomSheetModal
+        ref={filterSheetRef}
+        snapPoints={filterSnapPoints}
+        backdropComponent={renderFilterBackdrop}
+        enablePanDownToClose
+        backgroundStyle={{
+          backgroundColor: colorScheme === 'dark' ? '#1f1f1f' : '#fcfcfc',
+        }}
+        handleIndicatorStyle={{
+          backgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d3d3',
+          width: 45,
+        }}
+      >
+        <BottomSheetView style={styles.filterContent}>
+          <View className="flex-row items-center mb-6">
+            <TouchableOpacity
+              onPress={closeFilterSheet}
+              className="h-10 w-10 rounded-full bg-[#f2f2f2] dark:bg-[#2c2c2c] justify-center items-center"
+            >
+              <XMarkIcon height={18} color={iconColor} strokeWidth={2} />
+            </TouchableOpacity>
+            <View className="flex-1 items-center">
+              <Text className="font-inter-semibold text-[17px] text-[#444343] dark:text-[#f2f2f2]">
+                {t('filters_title')}
+              </Text>
+            </View>
+            <TouchableOpacity onPress={handleClearFilters} className="px-2">
+              <Text className="font-inter-semibold text-[13px] text-[#706B5B] dark:text-[#b6b5b5] uppercase">
+                {t('filters_clear')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.filterSection}>
+            <Text className="font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2] mb-4">
+              {t('filters_price_range')}
+            </Text>
+            <View className="flex-row justify-between items-center mb-3">
+              <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">
+                {`${minPrice.toFixed(0)}€`}
+              </Text>
+              <Text className="font-inter-medium text-[13px] text-[#706f6e] dark:text-[#b6b5b5]">
+                {t('filters_minimum')}
+              </Text>
+              <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">
+                {`${maxPrice.toFixed(0)}€`}
+              </Text>
+              <Text className="font-inter-medium text-[13px] text-[#706f6e] dark:text-[#b6b5b5]">
+                {t('filters_maximum')}
+              </Text>
+            </View>
+            <View style={styles.rangeSliderWrapper}>
+              <View
+                style={[
+                  styles.rangeTrack,
+                  { backgroundColor: colorScheme === 'dark' ? '#2c2c2c' : '#d4d3d3' },
+                ]}
+              />
+              <View
+                style={[
+                  styles.rangeTrackHighlight,
+                  {
+                    left: `${priceHighlightLeft}%`,
+                    width: `${priceHighlightWidth}%`,
+                    backgroundColor: '#706B5B',
+                  },
+                ]}
+              />
+              <Slider
+                style={[styles.rangeSlider, { left: `${maxSliderLeft}%` }]}
+                minimumValue={PRICE_RANGE_LIMITS.MIN}
+                maximumValue={PRICE_RANGE_LIMITS.MAX}
+                value={maxPrice}
+                onValueChange={handleMaxPriceChange}
+                minimumTrackTintColor="transparent"
+                maximumTrackTintColor="transparent"
+                thumbImage={thumbImage}
+                step={1}
+              />
+              <Slider
+                style={[styles.rangeSlider, { right: `${minSliderRight}%` }]}
+                minimumValue={PRICE_RANGE_LIMITS.MIN}
+                maximumValue={PRICE_RANGE_LIMITS.MAX}
+                value={minPrice}
+                onValueChange={handleMinPriceChange}
+                minimumTrackTintColor="transparent"
+                maximumTrackTintColor="transparent"
+                thumbImage={thumbImage}
+                step={1}
+              />
+            </View>
+          </View>
+
+          <View style={styles.filterSection}>
+            <Text className="font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2] mb-4">
+              {t('filters_distance')}
+            </Text>
+            <View className="flex-row justify-between items-center mb-3">
+              <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">
+                {`${distance.toFixed(0)} km`}
+              </Text>
+              <Text className="font-inter-medium text-[13px] text-[#706f6e] dark:text-[#b6b5b5]">
+                {t('filters_distance_hint')}
+              </Text>
+            </View>
+            <Slider
+              style={styles.singleSlider}
+              minimumValue={DISTANCE_LIMITS.MIN}
+              maximumValue={DISTANCE_LIMITS.MAX}
+              value={distance}
+              onValueChange={handleDistanceChange}
+              minimumTrackTintColor="#706B5B"
+              maximumTrackTintColor={colorScheme === 'dark' ? '#2c2c2c' : '#d4d3d3'}
+              thumbImage={thumbImage}
+              step={1}
+            />
+          </View>
+
+          <View style={styles.filterSection}>
+            <Text className="font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2] mb-4">
+              {t('filters_rating')}
+            </Text>
+            <View className="flex-row items-center mb-3">
+              <StarFillIcon height={18} width={18} color="#F1C33B" />
+              <Text className="ml-2 font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">
+                {rating.toFixed(1)}
+              </Text>
+            </View>
+            <Slider
+              style={styles.singleSlider}
+              minimumValue={RATING_LIMITS.MIN}
+              maximumValue={RATING_LIMITS.MAX}
+              value={rating}
+              onValueChange={handleRatingChange}
+              minimumTrackTintColor="#706B5B"
+              maximumTrackTintColor={colorScheme === 'dark' ? '#2c2c2c' : '#d4d3d3'}
+              thumbImage={thumbImage}
+              step={0.5}
+            />
+          </View>
+
+          <View style={styles.filterSection}>
+            <TouchableOpacity
+              onPress={toggleCompanyProfile}
+              className="flex-row justify-between items-center py-3"
+              activeOpacity={0.8}
+            >
+              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">
+                {t('filters_business_profile')}
+              </Text>
+              <View
+                style={[
+                  styles.checkbox,
+                  {
+                    borderColor: colorScheme === 'dark' ? '#706f6e' : '#b6b5b5',
+                    backgroundColor: companyProfile
+                      ? colorScheme === 'dark'
+                        ? '#fcfcfc'
+                        : '#323131'
+                      : 'transparent',
+                  },
+                ]}
+              >
+                {companyProfile && (
+                  <Check
+                    height={14}
+                    width={14}
+                    color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'}
+                    strokeWidth={3}
+                  />
+                )}
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={toggleVerifiedProfile}
+              className="flex-row justify-between items-center py-3"
+              activeOpacity={0.8}
+            >
+              <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">
+                {t('filters_verified_profile')}
+              </Text>
+              <View
+                style={[
+                  styles.checkbox,
+                  {
+                    borderColor: colorScheme === 'dark' ? '#706f6e' : '#b6b5b5',
+                    backgroundColor: verifiedProfile
+                      ? colorScheme === 'dark'
+                        ? '#fcfcfc'
+                        : '#323131'
+                      : 'transparent',
+                  },
+                ]}
+              >
+                {verifiedProfile && (
+                  <Check
+                    height={14}
+                    width={14}
+                    color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'}
+                    strokeWidth={3}
+                  />
+                )}
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity
+            onPress={closeFilterSheet}
+            activeOpacity={0.9}
+            className="mt-4 h-[54px] rounded-full bg-[#706B5B] justify-center items-center"
+          >
+            <Text className="font-inter-semibold text-[15px] text-[#fcfcfc]">
+              {t('filters_show_results', { count: serviceCount })}
+            </Text>
+          </TouchableOpacity>
+        </BottomSheetView>
+      </BottomSheetModal>
 
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  filterContent: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: 24,
+  },
+  filterSection: {
+    marginBottom: 18,
+  },
+  rangeSliderWrapper: {
+    height: 50,
+    justifyContent: 'center',
+  },
+  rangeTrack: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: 6,
+    borderRadius: 999,
+  },
+  rangeTrackHighlight: {
+    position: 'absolute',
+    height: 6,
+    borderRadius: 999,
+  },
+  rangeSlider: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  singleSlider: {
+    width: '100%',
+    height: 40,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterButtonShadow: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+});
