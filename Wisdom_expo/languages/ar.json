@@ -470,7 +470,7 @@
     "service_profile_hidden_title": "الملف الشخصي للخدمة مخفي",
     "service_profile_hidden_description": "الملف الشخصي لهذه الخدمة مخفي حاليًا.",
     "unexpected_error": "حدث خطأ غير متوقع",
-    "share_app_message": "اكتشف خدمات Wisdom Professional: {{link}}",
+    "share_app_message": "اكتشف خدمات Wisdom Professional: ",
     "cannot_open_link": "تعذر فتح الرابط. حاول مرة أخرى لاحقًا.",
     "cannot_share_app": "تعذر مشاركة التطبيق الآن. حاول مرة أخرى لاحقًا.",
     "booking_canceled": "تم إلغاء الحجز",

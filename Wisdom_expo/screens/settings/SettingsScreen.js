@@ -28,7 +28,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SuticasePlusIcon from '../../assets/SuitcasePlus';
 const IOS_APP_STORE_URL = 'https://apps.apple.com/us/app/wisdom-professional-services/id6737240739';
 const IOS_REVIEW_URL = `${IOS_APP_STORE_URL}?action=write-review`;
-const ANDROID_SHARE_URL = 'https://wisdom-web.vercel.app/';
+const ANDROID_SHARE_URL = 'https://wisdom-web.vercel.app/';  // NO DEFINITIVO !!!
 const ANDROID_PACKAGE_NAME = 'com.anonymous.Wisdom_expo';
 const ANDROID_MARKET_REVIEW_URL = `market://details?id=${ANDROID_PACKAGE_NAME}`;
 const ANDROID_WEB_REVIEW_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE_NAME}`;
@@ -121,11 +121,11 @@ export default function SettingsScreen() {
     // },
     {
       items: [
-        { id: 'roadmap', icon: CheckCircleIcon, label: t('roadmap'), type: 'select', link: 'Roadmap' },
-        { id: 'rateUs', icon: Star, label: t('rate_us'), type: 'action', action: handleRateUs },
-        { id: 'shareApp', icon: ShareIcon, label: t('share_app'), type: 'action', action: handleShareApp },
+        { id: 'roadmap', icon: CheckCircleIcon, label: t('roadmap'), type: 'select', link: 'Roadmap' },   
         { id: 'requestFeature', icon: MessageCircle, label: t('request_feature_or_report_issue'), type: 'link', link: 'mailto:wisdom.helpcontact@gmail.com' },
         { id: 'help', icon: Info, label: t('help'), type: 'select', link: 'Help' },
+        { id: 'rateUs', icon: Star, label: t('rate_us'), type: 'action', action: handleRateUs },
+        { id: 'shareApp', icon: ShareIcon, label: t('share_app'), type: 'action', action: handleShareApp },
         { id: 'followInsta', icon: Instagram, label: t('follow_us_in_instagram'), type: 'link', link: 'https://www.instagram.com/wisdom__app/' },
       ]
     },
@@ -385,7 +385,7 @@ export default function SettingsScreen() {
               {t('profile')}
             </Text>
             <TouchableOpacity onPress={() => setShowModalMessage(prev => !prev)} className="h-[43px] w-[43px] rounded-full items-center justify-center bg-[#fcfcfc] dark:bg-[#323131]">
-              <Share height={22} strokeWidth={1.7} color={iconColor} />
+              <ShareIcon height={22} strokeWidth={1.7} color={iconColor} />
             </TouchableOpacity>
           </View>
 

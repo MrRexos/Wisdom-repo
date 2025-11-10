@@ -470,7 +470,7 @@
     "service_profile_hidden_title": "Perfil del servicio oculto",
     "service_profile_hidden_description": "El perfil de este servicio está oculto actualmente.",
     "unexpected_error": "Ha ocurrido un error inesperado",
-    "share_app_message": "Descubre Wisdom Professional Services: {{link}}",
+    "share_app_message": "Descubre Wisdom Professional Services: ",
     "cannot_open_link": "No pudimos abrir el enlace. Inténtalo de nuevo más tarde.",
     "cannot_share_app": "No pudimos compartir la app en este momento. Inténtalo de nuevo más tarde.",
     "booking_canceled": "Reserva cancelada",

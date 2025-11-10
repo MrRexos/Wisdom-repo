@@ -411,10 +411,10 @@ export default function SettingsScreen() {
     {
       items: [
         { id: 'roadmap', icon: CheckCircleIcon, label: t('roadmap'), type: 'select', link: 'Roadmap' },
-        { id: 'rateUs', icon: Star, label: t('rate_us'), type: 'action', action: handleRateUs },
-        { id: 'shareApp', icon: ShareIcon, label: t('share_app'), type: 'action', action: handleShareApp },
         { id: 'requestFeature', icon: MessageCircle, label: t('request_feature_or_report_issue'), type: 'link', link: 'mailto:wisdom.helpcontact@gmail.com' },
         { id: 'help', icon: Info, label: t('help'), type: 'select', link: 'Help' },
+        { id: 'rateUs', icon: Star, label: t('rate_us'), type: 'action', action: handleRateUs },
+        { id: 'shareApp', icon: ShareIcon, label: t('share_app'), type: 'action', action: handleShareApp },
         { id: 'followInsta', icon: Instagram, label: t('follow_us_in_instagram'), type: 'link', link: 'https://www.instagram.com/wisdom__app/' },
       ],
     },
@@ -449,7 +449,7 @@ export default function SettingsScreen() {
               {t('profile')}
             </Text>
             <TouchableOpacity className="h-[43px] w-[43px] rounded-full items-center justify-center bg-[#fcfcfc] dark:bg-[#323131]">
-              <Share height={22} strokeWidth={1.7} color={iconColor} />
+              <ShareIcon height={22} strokeWidth={1.7} color={iconColor} />
             </TouchableOpacity>
           </View>
 
