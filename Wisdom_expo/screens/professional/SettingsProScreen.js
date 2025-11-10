@@ -26,6 +26,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SuticasePlusIcon from '../../assets/SuitcasePlus';
 import { Plane } from 'lucide-react-native';
 import Message from '../../components/Message';
+const IOS_APP_STORE_URL = 'https://apps.apple.com/us/app/wisdom-professional-services/id6737240739';
+const IOS_REVIEW_URL = `${IOS_APP_STORE_URL}?action=write-review`;
+const ANDROID_SHARE_URL = 'https://wisdom-web.vercel.app/';
+const ANDROID_PACKAGE_NAME = 'com.anonymous.Wisdom_expo';
+const ANDROID_MARKET_REVIEW_URL = `market://details?id=${ANDROID_PACKAGE_NAME}`;
+const ANDROID_WEB_REVIEW_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE_NAME}`;
 
 
 
@@ -52,6 +58,44 @@ export default function SettingsScreen() {
   const [userId, setUserId] = useState(null);
   const [isProfessional, setIsProfessional] = useState(false);
   const [showVacationModeErrorModal, setShowVacationModeErrorModal] = useState(false);
+
+
+  const handleShareApp = async () => {
+    const url = Platform.OS === 'ios' ? IOS_APP_STORE_URL : ANDROID_SHARE_URL;
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert(t('error'), t('cannot_open_link'));
+      }
+    } catch (error) {
+      console.error('Error opening share link:', error);
+      Alert.alert(t('error'), t('cannot_open_link'));
+    }
+  };
+
+  const handleRateUs = async () => {
+    const url = Platform.OS === 'ios' ? IOS_REVIEW_URL : ANDROID_MARKET_REVIEW_URL;
+    const fallbackUrl = Platform.OS === 'ios' ? IOS_REVIEW_URL : ANDROID_WEB_REVIEW_URL;
+
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+        return;
+      }
+    } catch (error) {
+      console.error('Error opening review link:', error);
+    }
+
+    try {
+      await Linking.openURL(fallbackUrl);
+    } catch (error) {
+      console.error('Error opening fallback review link:', error);
+      Alert.alert(t('error'), t('cannot_open_link'));
+    }
+  };
 
 
   useFocusEffect(
@@ -367,6 +411,8 @@ export default function SettingsScreen() {
     {
       items: [
         { id: 'roadmap', icon: CheckCircleIcon, label: t('roadmap'), type: 'select', link: 'Roadmap' },
+        { id: 'rateUs', icon: Star, label: t('rate_us'), type: 'action', action: handleRateUs },
+        { id: 'shareApp', icon: Share, label: t('share_app'), type: 'action', action: handleShareApp },
         { id: 'requestFeature', icon: MessageCircle, label: t('request_feature_or_report_issue'), type: 'link', link: 'mailto:wisdom.helpcontact@gmail.com' },
         { id: 'help', icon: Info, label: t('help'), type: 'select', link: 'Help' },
         { id: 'followInsta', icon: Instagram, label: t('follow_us_in_instagram'), type: 'link', link: 'https://www.instagram.com/wisdom__app/' },
@@ -429,13 +475,15 @@ export default function SettingsScreen() {
 
           {Sections.map(({ items }, sectionIndex) => (
             <View key={sectionIndex} style={{ borderRadius: 12, overflow: 'hidden' }}>
-              {items.map(({ label, id, type, link, icon: Icon, value, onToggle, loading, disabled }, index) => (
+              {items.map(({ label, id, type, link, icon: Icon, value, onToggle, loading, disabled, action }, index) => (
                 <View key={id} className="pl-5  bg-[#fcfcfc]  dark:bg-[#323131]" >
                   <TouchableOpacity
                     disabled={type === 'toggle'}
                     onPress={() => {
                       if (type === 'link' && link) {
                         Linking.openURL(link); // Reemplaza 'yourpage' por tu página de Instagram
+                      } else if (type === 'action' && action) {
+                        action();
                       } else if (type === 'select' && link) {
                         if (link === 'CreateServiceStart') {
                           navigation.navigate('CreateServiceStart', {
@@ -470,7 +518,7 @@ export default function SettingsScreen() {
                           </View>
                         )}
 
-                        {['select', 'link'].includes(type) && (
+                        {['select', 'link', 'action'].includes(type) && (
                           <ChevronRightIcon size={23} strokeWidth={1.7} color={colorScheme == 'dark' ? '#706f6e' : '#b6b5b5'} />
                         )}
                       </View>
