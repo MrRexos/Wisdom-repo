@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Text, View, AppState, Button, Switch, Platform, StatusBar, ScrollView, TouchableOpacity, Image, Linking, RefreshControl, Alert } from 'react-native';
+import { Text, View, AppState, Button, Switch, Platform, StatusBar, ScrollView, TouchableOpacity, Image, Linking, RefreshControl, Alert, Share as NativeShare } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,13 +19,19 @@ import {
 } from '../../utils/notifications';
 
 
-import { Share, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram, Link, MessageCircle } from "react-native-feather";
+import { Share as ShareIcon, Edit3, Settings, Bell, MapPin, UserPlus, Info, Star, Instagram, Link, MessageCircle } from "react-native-feather";
 import { KeyIcon, ChevronRightIcon, ArrowsRightLeftIcon, CheckCircleIcon, ChatBubbleBottomCenterTextIcon } from 'react-native-heroicons/outline';
 import GiftCardIcon from '../../assets/GiftCard';
 import ExpertIcon from '../../assets/Expert';
 import CashStackIcon from '../../assets/CashStack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SuticasePlusIcon from '../../assets/SuitcasePlus';
+const IOS_APP_STORE_URL = 'https://apps.apple.com/us/app/wisdom-professional-services/id6737240739';
+const IOS_REVIEW_URL = `${IOS_APP_STORE_URL}?action=write-review`;
+const ANDROID_SHARE_URL = 'https://wisdom-web.vercel.app/';
+const ANDROID_PACKAGE_NAME = 'com.anonymous.Wisdom_expo';
+const ANDROID_MARKET_REVIEW_URL = `market://details?id=${ANDROID_PACKAGE_NAME}`;
+const ANDROID_WEB_REVIEW_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE_NAME}`;
 
 
 
@@ -50,6 +56,44 @@ export default function SettingsScreen() {
   const [showModalMessage, setShowModalMessage] = useState(false);
   const [allowNotisReady, setAllowNotisReady] = useState(false);
 
+
+
+  const handleShareApp = async () => {
+    const link = Platform.OS === 'ios' ? IOS_APP_STORE_URL : ANDROID_SHARE_URL;
+    const shareMessage = t('share_app_message', { link });
+    const shareOptions = Platform.OS === 'ios'
+      ? { url: link, message: shareMessage }
+      : { message: shareMessage };
+
+    try {
+      await NativeShare.share(shareOptions, { dialogTitle: t('share_app') });
+    } catch (error) {
+      console.error('Error sharing app link:', error);
+      Alert.alert(t('error'), t('cannot_share_app'));
+    }
+  };
+
+  const handleRateUs = async () => {
+    const url = Platform.OS === 'ios' ? IOS_REVIEW_URL : ANDROID_MARKET_REVIEW_URL;
+    const fallbackUrl = Platform.OS === 'ios' ? IOS_REVIEW_URL : ANDROID_WEB_REVIEW_URL;
+
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+        return;
+      }
+    } catch (error) {
+      console.error('Error opening review link:', error);
+    }
+
+    try {
+      await Linking.openURL(fallbackUrl);
+    } catch (error) {
+      console.error('Error opening fallback review link:', error);
+      Alert.alert(t('error'), t('cannot_open_link'));
+    }
+  };
 
 
   const Sections = [
@@ -78,10 +122,10 @@ export default function SettingsScreen() {
     {
       items: [
         { id: 'roadmap', icon: CheckCircleIcon, label: t('roadmap'), type: 'select', link: 'Roadmap' },
+        { id: 'rateUs', icon: Star, label: t('rate_us'), type: 'action', action: handleRateUs },
+        { id: 'shareApp', icon: ShareIcon, label: t('share_app'), type: 'action', action: handleShareApp },
         { id: 'requestFeature', icon: MessageCircle, label: t('request_feature_or_report_issue'), type: 'link', link: 'mailto:wisdom.helpcontact@gmail.com' },
         { id: 'help', icon: Info, label: t('help'), type: 'select', link: 'Help' },
-        // {id: 'rateUs', icon: Star, label:'Rate us', type: 'select'},
-        // {id: 'shareApp', icon: Share, label:'Share app', type: 'select'},
         { id: 'followInsta', icon: Instagram, label: t('follow_us_in_instagram'), type: 'link', link: 'https://www.instagram.com/wisdom__app/' },
       ]
     },
@@ -367,13 +411,15 @@ export default function SettingsScreen() {
 
           {Sections.map(({ items }, sectionIndex) => (
             <View key={sectionIndex} style={{ borderRadius: 12, overflow: 'hidden' }}>
-              {items.map(({ label, id, type, link, icon: Icon }, index) => (
+              {items.map(({ label, id, type, link, icon: Icon, action }, index) => (
                 <View key={id} className="pl-5  bg-[#fcfcfc]  dark:bg-[#323131]" >
                   <TouchableOpacity
                     disabled={type === 'toggle'}
                     onPress={() => {
                       if (type === 'link' && link) {
                         Linking.openURL(link); // Reemplaza 'yourpage' por tu página de Instagram
+                      } else if (type === 'action' && action) {
+                        action();
                       } else if (type === 'select' && link) {
                         if (link === 'CreateServiceStart') {
                           navigation.navigate('CreateServiceStart', {
@@ -408,7 +454,7 @@ export default function SettingsScreen() {
                           </View>
                         )}
 
-                        {['select', 'link'].includes(type) && (
+                        {['select', 'link', 'action'].includes(type) && (
                           <ChevronRightIcon size={23} strokeWidth={1.7} color={colorScheme == 'dark' ? '#706f6e' : '#b6b5b5'} />
                         )}
                       </View>
