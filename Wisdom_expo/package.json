@@ -59,6 +59,7 @@
     "heroicons": "^2.1.5",
     "i18next": "^25.4.1",
     "lodash": "^4.17.21",
+    "lucide-react-native": "^0.553.0",
     "nativewind": "^4.2.1",
     "react": "19.1.0",
     "react-i18next": "^15.0.1",
