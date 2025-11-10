@@ -1,19 +1,24 @@
 
 import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
-import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, RefreshControl } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, RefreshControl, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
 import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { XMarkIcon, ChevronDownIcon, ChevronUpIcon, ChevronLeftIcon, ChevronRightIcon } from 'react-native-heroicons/outline';
 import StarFillIcon from 'react-native-bootstrap-icons/icons/star-fill';
-import { Search, Sliders, Heart, Plus } from "react-native-feather";
+import { Search, Sliders, Heart, Plus, Check, X } from "react-native-feather";
 import { storeDataLocally, getDataLocally } from '../../utils/asyncStorage';
 import SuitcaseFill from "../../assets/SuitcaseFill.tsx"
 import HeartFill from "../../assets/HeartFill.tsx"
 import WisdomLogo from '../../assets/wisdomLogo.tsx'
 import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import Slider from '@react-native-community/slider';
+import SliderThumbDark from '../../assets/SliderThumbDark.png';
+import SliderThumbLight from '../../assets/SliderThumbLight.png';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
 
@@ -45,6 +50,12 @@ export default function ResultsScreen() {
   const [selectedServiceId, setSelectedServiceId] = useState();
   const sheet = useRef();
   const [sheetHeight, setSheetHeight] = useState(450);
+  const filterSheetRef = useRef(null);
+  const [priceRange, setPriceRange] = useState([9, 60]);
+  const [proximity, setProximity] = useState(5);
+  const [rating, setRating] = useState(4.5);
+  const [businessProfileOnly, setBusinessProfileOnly] = useState(false);
+  const [verifiedProfileOnly, setVerifiedProfileOnly] = useState(false);
   const [addedServices, setAddedServices] = useState([]);
   const route = useRoute();
   const [categoryId, setCategoryId] = useState();
@@ -55,6 +66,12 @@ export default function ResultsScreen() {
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedDay, setSelectedDay] = useState(null);
   const [searchedDirection, setSearchedDirection] = useState(null);
+  const { width: windowWidth } = useWindowDimensions();
+  const filterSnapPoints = useMemo(() => ['82%'], []);
+  const thumbImage = useMemo(() => (colorScheme === 'dark' ? SliderThumbDark : SliderThumbLight), [colorScheme]);
+  const numberLocale = DATE_LOCALE_MAP[i18n.language] || DATE_LOCALE_MAP.en;
+  const sliderLength = useMemo(() => Math.min(Math.max(windowWidth - 80, 200), 420), [windowWidth]);
+  const mockResultsCount = 34;
 
   useEffect(() => {
     const loadUserId = async () => {
@@ -191,6 +208,67 @@ export default function ResultsScreen() {
     await loadResults();
     setRefreshing(false);
   };
+
+  const handlePriceRangeChange = useCallback((values) => {
+    if (!Array.isArray(values) || values.length < 2) return;
+    const [minValue, maxValue] = values;
+    setPriceRange([Math.round(minValue), Math.round(maxValue)]);
+  }, []);
+
+  const handleProximityChange = useCallback((value) => {
+    setProximity(Math.round(value));
+  }, []);
+
+  const handleRatingChange = useCallback((value) => {
+    const roundedValue = Math.round(value * 2) / 2;
+    setRating(roundedValue);
+  }, []);
+
+  const handleToggleBusinessProfile = useCallback(() => {
+    setBusinessProfileOnly((prev) => !prev);
+  }, []);
+
+  const handleToggleVerifiedProfile = useCallback(() => {
+    setVerifiedProfileOnly((prev) => !prev);
+  }, []);
+
+  const handleClearFilters = useCallback(() => {
+    setPriceRange([9, 60]);
+    setProximity(5);
+    setRating(4.5);
+    setBusinessProfileOnly(false);
+    setVerifiedProfileOnly(false);
+  }, []);
+
+  const handleOpenFilters = useCallback(() => {
+    filterSheetRef.current?.present();
+  }, []);
+
+  const handleCloseFilters = useCallback(() => {
+    filterSheetRef.current?.dismiss();
+  }, []);
+
+  const renderFilterBackdrop = useCallback(
+    (props) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        pressBehavior="close"
+        opacity={0.3}
+      />
+    ),
+    []
+  );
+
+  const formattedRating = useMemo(
+    () =>
+      new Intl.NumberFormat(numberLocale, {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      }).format(rating),
+    [rating, numberLocale]
+  );
 
   const heartClicked = async (serviceId) => {
     console.log(serviceId);
@@ -549,9 +627,12 @@ export default function ResultsScreen() {
                   <Text numberOfLines={1} className="font-inter-medium text-center text-[11px] text-[#706F6E] dark:text-[#b6b5b5] truncate">{buildDisplayText()}</Text>
                 )}
               </View>
-              {/* DE MOMENTO ESTA BORRADO FILTERS BUTON */}
-              <TouchableOpacity className="rounded-full px-3 py-4 bg- [#fcfcfc] dark:bg- [#323131]">
-                {/*<Sliders height={17} color={iconColor} strokeWidth={1.8}/>*/}
+              <TouchableOpacity
+                onPress={handleOpenFilters}
+                activeOpacity={0.8}
+                className="ml-2 h-[45px] w-[45px] rounded-full bg-[#fcfcfc] dark:bg-[#323131] justify-center items-center"
+              >
+                <Sliders height={17} color={iconColor} strokeWidth={1.8} />
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
@@ -654,6 +735,224 @@ export default function ResultsScreen() {
 
 
 
+      <BottomSheetModal
+        ref={filterSheetRef}
+        snapPoints={filterSnapPoints}
+        index={0}
+        backdropComponent={renderFilterBackdrop}
+        handleIndicatorStyle={{
+          backgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d3d3',
+          width: 60,
+        }}
+        backgroundStyle={{
+          backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
+          borderTopLeftRadius: 28,
+          borderTopRightRadius: 28,
+        }}
+      >
+        <BottomSheetView style={[styles.filterContent, { paddingBottom: insets.bottom + 24 }]}>
+          <View className="px-6">
+            <View className="flex-row items-center pt-5 pb-6">
+              <TouchableOpacity
+                onPress={handleCloseFilters}
+                activeOpacity={0.8}
+                className="mr-4 h-10 w-10 rounded-full bg-[#E0E0E0] dark:bg-[#3D3D3D] justify-center items-center"
+              >
+                <X height={18} width={18} strokeWidth={1.8} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+              </TouchableOpacity>
+              <View className="flex-1 items-center">
+                <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('filter_title')}</Text>
+              </View>
+              <TouchableOpacity onPress={handleClearFilters} activeOpacity={0.8} className="ml-4">
+                <Text className="font-inter-semibold text-[12px] text-[#979797] dark:text-[#b6b5b5] uppercase">{t('filter_clear')}</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.filterSection}>
+              <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('filter_price_range')}</Text>
+              <View className="flex-row justify-between items-end pt-4">
+                <Text className="font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{priceRange[0]}€</Text>
+                <Text className="font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{priceRange[1]}€</Text>
+              </View>
+              <View style={styles.multiSliderContainer}>
+                <MultiSlider
+                  values={priceRange}
+                  min={0}
+                  max={120}
+                  step={1}
+                  sliderLength={sliderLength}
+                  onValuesChange={handlePriceRangeChange}
+                  selectedStyle={{
+                    backgroundColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
+                    height: 4,
+                    borderRadius: 999,
+                  }}
+                  unselectedStyle={{
+                    backgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d3d3',
+                    height: 4,
+                    borderRadius: 999,
+                  }}
+                  containerStyle={{
+                    alignSelf: 'center',
+                  }}
+                  trackStyle={{
+                    height: 4,
+                    borderRadius: 999,
+                  }}
+                  customMarkerLeft={() => <Image source={thumbImage} style={styles.filterThumb} />}
+                  customMarkerRight={() => <Image source={thumbImage} style={styles.filterThumb} />}
+                  allowOverlap={false}
+                  snapped
+                  minMarkerOverlapDistance={20}
+                />
+              </View>
+              <View className="flex-row justify-between pt-2">
+                <Text className="font-inter-medium text-[11px] uppercase text-[#979797] dark:text-[#b6b5b5]">{t('filter_minimum')}</Text>
+                <Text className="font-inter-medium text-[11px] uppercase text-[#979797] dark:text-[#b6b5b5]">{t('filter_maximum')}</Text>
+              </View>
+            </View>
+
+            <View style={styles.filterSection}>
+              <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('filter_proximity')}</Text>
+              <Text className="pt-3 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('filter_distance_label', { distance: proximity })}</Text>
+              <View style={styles.singleSliderContainer}>
+                <Slider
+                  value={proximity}
+                  onValueChange={handleProximityChange}
+                  minimumValue={0}
+                  maximumValue={30}
+                  step={1}
+                  minimumTrackTintColor={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}
+                  maximumTrackTintColor={colorScheme === 'dark' ? '#474646' : '#d4d3d3'}
+                  thumbImage={thumbImage}
+                  thumbTintColor={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}
+                  style={styles.slider}
+                />
+              </View>
+            </View>
+
+            <View style={styles.filterSection}>
+              <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('filter_rating')}</Text>
+              <View className="flex-row items-center pt-3">
+                <StarFillIcon height={18} width={18} color="#F5C443" />
+                <Text className="ml-2 font-inter-bold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{formattedRating}</Text>
+              </View>
+              <View style={styles.singleSliderContainer}>
+                <Slider
+                  value={rating}
+                  onValueChange={handleRatingChange}
+                  minimumValue={0}
+                  maximumValue={5}
+                  step={0.5}
+                  minimumTrackTintColor={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}
+                  maximumTrackTintColor={colorScheme === 'dark' ? '#474646' : '#d4d3d3'}
+                  thumbImage={thumbImage}
+                  thumbTintColor={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}
+                  style={styles.slider}
+                />
+              </View>
+            </View>
+
+            <View style={styles.toggleSection}>
+              <TouchableOpacity
+                onPress={handleToggleBusinessProfile}
+                activeOpacity={0.8}
+                className="flex-row items-center justify-between py-3"
+              >
+                <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('filter_business_profile')}</Text>
+                <View
+                  style={[
+                    styles.checkbox,
+                    {
+                      borderColor: businessProfileOnly
+                        ? colorScheme === 'dark' ? '#f2f2f2' : '#444343'
+                        : colorScheme === 'dark' ? '#706f6e' : '#b6b5b5',
+                      backgroundColor: businessProfileOnly
+                        ? colorScheme === 'dark' ? '#f2f2f2' : '#444343'
+                        : 'transparent',
+                    },
+                  ]}
+                >
+                  {businessProfileOnly && (
+                    <Check height={12} width={12} color={colorScheme === 'dark' ? '#323131' : '#f2f2f2'} strokeWidth={2} />
+                  )}
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={handleToggleVerifiedProfile}
+                activeOpacity={0.8}
+                className="flex-row items-center justify-between py-3"
+              >
+                <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('filter_verified_profile')}</Text>
+                <View
+                  style={[
+                    styles.checkbox,
+                    {
+                      borderColor: verifiedProfileOnly
+                        ? colorScheme === 'dark' ? '#f2f2f2' : '#444343'
+                        : colorScheme === 'dark' ? '#706f6e' : '#b6b5b5',
+                      backgroundColor: verifiedProfileOnly
+                        ? colorScheme === 'dark' ? '#f2f2f2' : '#444343'
+                        : 'transparent',
+                    },
+                  ]}
+                >
+                  {verifiedProfileOnly && (
+                    <Check height={12} width={12} color={colorScheme === 'dark' ? '#323131' : '#f2f2f2'} strokeWidth={2} />
+                  )}
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              onPress={handleCloseFilters}
+              activeOpacity={0.9}
+              className="mt-5 rounded-full bg-[#444343] dark:bg-[#f2f2f2] py-4"
+            >
+              <Text className="text-center font-inter-semibold text-[14px] text-[#f2f2f2] dark:text-[#272626]">
+                {t('filter_show_results', { count: mockResultsCount })}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </BottomSheetView>
+      </BottomSheetModal>
+
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  filterContent: {
+    flex: 1,
+  },
+  filterSection: {
+    marginBottom: 28,
+  },
+  toggleSection: {
+    marginTop: 4,
+  },
+  multiSliderContainer: {
+    marginTop: 16,
+  },
+  singleSliderContainer: {
+    marginTop: 16,
+  },
+  slider: {
+    width: '100%',
+    height: 40,
+  },
+  filterThumb: {
+    height: 24,
+    width: 24,
+    resizeMode: 'contain',
+  },
+  checkbox: {
+    height: 22,
+    width: 22,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+  },
+});
