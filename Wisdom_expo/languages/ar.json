@@ -115,7 +115,7 @@
     "provide_service": "تقديم خدمة",
     "vacation_mode": "وضع الإجازة",
     "vacation_mode_unavailable_title": "وضع الإجازة غير متاح",
-    "vacation_mode_unavailable_description": "يجب أن يكون لديك حساب مهني نشط لتغيير وضع الإجازة. ارجع إلى الإصدار المهني لإدارته.",
+    "vacation_mode_unavailable_description": "يجب أن يكون لديك حساب مهني نشط لتغيير وضع الإجازة.",
     "switch_to_client_version": "التبديل إلى نسخة العميل",
     "become_an_expert": "كن خبيراً",
     "expert_label": "خبير",

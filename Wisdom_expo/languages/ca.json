@@ -115,7 +115,7 @@
     "provide_service": "Oferir servei",
     "vacation_mode": "Mode vacances",
     "vacation_mode_unavailable_title": "Mode vacances no disponible",
-    "vacation_mode_unavailable_description": "Has de tenir un compte professional actiu per canviar el mode vacances. Torna a la versió professional per gestionar-ho.",
+    "vacation_mode_unavailable_description": "Has de tenir un compte professional actiu per canviar el mode vacances.",
     "switch_to_client_version": "Canviar a la versió client",
     "become_an_expert": "Fes-te expert",
     "expert_label": "Expert",

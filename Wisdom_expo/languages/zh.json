@@ -115,7 +115,7 @@
     "provide_service": "提供服务",
     "vacation_mode": "休假模式",
     "vacation_mode_unavailable_title": "无法使用休假模式",
-    "vacation_mode_unavailable_description": "您需要拥有激活的专业账户才能更改休假模式。请切换回专业版以进行管理。",
+    "vacation_mode_unavailable_description": "您需要拥有激活的专业账户才能更改休假模式。",
     "switch_to_client_version": "切换到客户端版本",
     "become_an_expert": "成为专家",
     "expert_label": "专家",
