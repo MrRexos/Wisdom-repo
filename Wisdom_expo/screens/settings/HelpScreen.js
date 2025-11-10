@@ -31,7 +31,7 @@ export default function HelpScreen() {
         {id: 'bookings', label: t('faq'), type: 'select', link: 'FAQ'},
         {id: 'terms', label: t('terms'), type: 'select', link: 'Terms'},
         {id: 'privacyPolicy', label: t('privacy_policy_title'), type: 'select', link: 'PrivacyPolicy'},
-        {id: 'writeUs', label: t('write_us'), type: 'link', link: 'mailto:wisdom.helpcontact@gmail.com'},
+        {id: 'writeUs', label: t('support'), type: 'link', link: 'mailto:wisdom.helpcontact@gmail.com'},
       ]
     },
   ];
