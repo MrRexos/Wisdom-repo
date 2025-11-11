@@ -65,7 +65,7 @@ export default function ResultsScreen() {
   const [ratingValue, setRatingValue] = useState(4.5);
   const [businessProfileOnly, setBusinessProfileOnly] = useState(false);
   const [verifiedProfileOnly, setVerifiedProfileOnly] = useState(true);
-  const sliderWidth = useMemo(() => Math.max(Dimensions.get('window').width - 120, 160), []);
+  const sliderWidth = useMemo(() => Math.max(Dimensions.get('window').width - 90, 160), []);
 
   const renderFilterBackdrop = useCallback(
     (props) => (
@@ -608,137 +608,158 @@ export default function ResultsScreen() {
         backdropComponent={renderFilterBackdrop}
       >
         <BottomSheetView style={{ flex: 1 }}>
-          <ScrollView contentContainerStyle={{ paddingHorizontal: 28, paddingBottom: 36, paddingTop: 24 }}>
-            <View className="flex-row items-center justify-between mb-7">
-              <TouchableOpacity onPress={handleCloseFilters} accessibilityRole="button" className="pr-4">
-                <XMarkIcon height={20} width={20} strokeWidth={2.4} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
-              </TouchableOpacity>
-              <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_title')}</Text>
-              <TouchableOpacity onPress={handleClearFilters} accessibilityRole="button" className="pl-4">
-                <Text className="font-inter-medium text-[12px] text-[#979797] uppercase">{t('filters_clear')}</Text>
-              </TouchableOpacity>
-            </View>
+          <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 36, paddingTop: 24 }}>
 
-            <View className="mb-8">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_price_range')}</Text>
-              <View className="flex-row justify-between mt-4">
-                <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{priceRange[0]}€</Text>
-                <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{priceRange[1]}€</Text>
-              </View>
-              <View style={{ alignItems: 'center', marginTop: 16 }}>
-                <MultiSlider
-                  values={priceRange}
-                  min={0}
-                  max={120}
-                  step={1}
-                  sliderLength={sliderWidth}
-                  onValuesChange={(values) => setPriceRange(values)}
-                  selectedStyle={{ backgroundColor: '#444343' }}
-                  unselectedStyle={{ backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#d4d4d4' }}
-                  containerStyle={{ alignItems: 'center' }}
-                  trackStyle={{ height: 4, borderRadius: 2 }}
-                  markerStyle={{
-                    height: 20,
-                    width: 20,
-                    borderRadius: 10,
-                    backgroundColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
-                    borderWidth: 3,
-                    borderColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
-                  }}
-                  pressedMarkerStyle={{
-                    height: 22,
-                    width: 22,
-                    borderRadius: 11,
-                    backgroundColor: colorScheme === 'dark' ? '#f2f2f2' : '#444343',
-                    borderWidth: 3,
-                    borderColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc',
-                  }}
-                />
-              </View>
-              <View className="flex-row justify-between mt-4">
-                <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{t('filters_min_label')}</Text>
-                <Text className="font-inter-medium text-[12px] text-[#706F6E] dark:text-[#b6b5b5]">{t('filters_max_label')}</Text>
-              </View>
-            </View>
+            <View style={{ paddingHorizontal: 8}}>
 
-            <View className="mb-8">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_distance')}</Text>
-              <Text className="mt-3 font-inter-medium text-[13px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_distance_value', { distance: Math.round(distanceValue) })}</Text>
-              <Slider
-                style={{ width: '100%', marginTop: 12 }}
-                minimumValue={0}
-                maximumValue={30}
-                step={1}
-                minimumTrackTintColor={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}
-                maximumTrackTintColor={colorScheme === 'dark' ? '#3d3d3d' : '#d4d4d4'}
-                thumbTintColor={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}
-                value={distanceValue}
-                onValueChange={(value) => setDistanceValue(value)}
-              />
-            </View>
-
-            <View className="mb-8">
-              <Text className="font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_rating')}</Text>
-              <View className="flex-row items-center mt-4">
-                <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 0.9 }] }} />
-                <Text className="ml-2 font-inter-semibold text-[14px] text-[#444343] dark:text-[#f2f2f2]">{ratingValue.toFixed(1)}</Text>
-              </View>
-              <Slider
-                style={{ width: '100%', marginTop: 12 }}
-                minimumValue={0}
-                maximumValue={5}
-                step={0.5}
-                minimumTrackTintColor={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}
-                maximumTrackTintColor={colorScheme === 'dark' ? '#3d3d3d' : '#d4d4d4'}
-                thumbTintColor={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}
-                value={ratingValue}
-                onValueChange={(value) => setRatingValue(value)}
-              />
-            </View>
-
-            <View className="mb-5">
-              <View className="flex-row items-center justify-between mb-4">
-                <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_business_profile')}</Text>
-                <TouchableOpacity
-                  onPress={() => setBusinessProfileOnly(!businessProfileOnly)}
-                  activeOpacity={0.8}
-                  className="ml-4"
-                >
-                  <View
-                    className="h-[24px] w-[24px] rounded-md border-[1.5px] justify-center items-center"
-                    style={{
-                      borderColor: businessProfileOnly ? '#444343' : '#b6b5b5',
-                      backgroundColor: businessProfileOnly ? '#444343' : colorScheme === 'dark' ? '#3d3d3d' : '#fcfcfc',
-                    }}
-                  >
-                    {businessProfileOnly && <Check height={14} width={14} color={colorScheme === 'dark' ? '#f2f2f2' : '#fcfcfc'} strokeWidth={2.2} />}
-                  </View>
+              <View className="flex-row items-center justify-between mb-[50px]">
+                <TouchableOpacity onPress={handleCloseFilters} accessibilityRole="button" className="pr-4">
+                  <XMarkIcon height={20} width={20} strokeWidth={2.4} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+                </TouchableOpacity>
+                <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_title')}</Text>
+                <TouchableOpacity onPress={handleClearFilters} accessibilityRole="button" className="px-3 py-1 bg-[#f2f2f2] dark:bg-[#3d3d3d] rounded-full items-center justify-center">
+                  <Text className="font-inter-semibold text-[10px] text-[#706F6E] dark:text-[#b6b5b5 ] uppercase">{t('filters_clear')}</Text>
                 </TouchableOpacity>
               </View>
 
-              <View className="flex-row items-center justify-between">
-                <Text className="font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_verified_profile')}</Text>
-                <TouchableOpacity
-                  onPress={() => setVerifiedProfileOnly(!verifiedProfileOnly)}
-                  activeOpacity={0.8}
-                  className="ml-4"
-                >
-                  <View
-                    className="h-[24px] w-[24px] rounded-md border-[1.5px] justify-center items-center"
-                    style={{
-                      borderColor: verifiedProfileOnly ? '#444343' : '#b6b5b5',
-                      backgroundColor: verifiedProfileOnly ? '#444343' : colorScheme === 'dark' ? '#3d3d3d' : '#fcfcfc',
+              <View className="mb-8 mt-1">
+
+                <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_price_range')}</Text>
+
+                <View style={{ alignItems: 'center', marginTop: 16 }}>
+
+                  <MultiSlider
+                    values={priceRange}
+                    min={0}
+                    max={120}
+                    step={1}
+                    sliderLength={sliderWidth}
+                    onValuesChange={(values) => setPriceRange(values)}
+                    selectedStyle={{ backgroundColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E' }}
+                    unselectedStyle={{ backgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3' }}
+                    containerStyle={{ alignItems: 'center' }}
+                    trackStyle={{ height: 4, borderRadius: 2 }}
+                    markerStyle={{
+                      height: 22,
+                      width: 22,
+                      backgroundColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                      borderWidth:0,
                     }}
-                  >
-                    {verifiedProfileOnly && <Check height={14} width={14} color={colorScheme === 'dark' ? '#f2f2f2' : '#fcfcfc'} strokeWidth={2.2} />}
+                    pressedMarkerStyle={{
+                      height: 22,
+                      width: 22,
+                      backgroundColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                    }}
+                  />
+
+                  <View className="flex-row justify-between mt-4">
+                    <Text className="font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">{priceRange[0]}€</Text>
+                    <Text className="mx-8 font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">-</Text>
+                    <Text className="font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">{priceRange[1]}€</Text>
                   </View>
-                </TouchableOpacity>
+                
+                </View>
+
+                <View className="flex-row justify-center items-center mt-1">
+                  <Text style={{marginRight:20}} className="font-inter-medium text-[13px] text-[#b6b5b5] dark:text-[#706F6E]">{t('filters_min_label')}</Text>
+                  <Text style={{marginLeft:20}} className="font-inter-medium text-[13px] text-[#b6b5b5] dark:text-[#706F6E]">{t('filters_max_label')}</Text>
+                </View>
+
               </View>
+
+              <View className="mb-8">
+
+                <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_distance')}</Text>
+                <View className="px-5 items-center justify-center">   
+                  <Slider
+                    style={{ width: '100%', marginTop: 16 }}
+                    minimumValue={0}
+                    maximumValue={30}
+                    step={1}
+                    minimumTrackTintColor={colorScheme === 'dark' ? '#b6b5b5' : '#706F6E'}
+                    maximumTrackTintColor={colorScheme === 'dark' ? '#474646' : '#d4d4d3'}
+                    thumbTintColor={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}
+                    value={distanceValue}
+                    onValueChange={(value) => setDistanceValue(value)}
+                  />
+                  <Text className="mt-2 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('filters_distance_value', { distance: Math.round(distanceValue) })}</Text>
+                </View> 
+                
+                
+              
+              </View>
+
+              <View className="mb-8">
+                <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_rating')}</Text>
+                <View className="px-5">
+                  <Slider
+                    style={{ width: '100%', marginTop: 16 }}
+                    minimumValue={0}
+                    maximumValue={5}
+                    step={0.5}
+                    minimumTrackTintColor={colorScheme === 'dark' ? '#b6b5b5' : '#706F6E'}
+                    maximumTrackTintColor={colorScheme === 'dark' ? '#474646' : '#d4d4d3'}
+                    thumbTintColor={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}
+                    value={ratingValue}
+                    onValueChange={(value) => setRatingValue(value)}
+                  />
+                </View>
+                <View className="flex-row items-center w-full justify-center mt-2">
+                  <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 1.3 }] }} />
+                  <Text className="ml-2 font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">{ratingValue.toFixed(1)}</Text>
+                </View>
+              </View>
+
+              <View className="mb-5">
+                <View className="flex-row items-center justify-between mb-4">
+                  <Text className="font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_business_profile')}</Text>
+                  <TouchableOpacity
+                    onPress={() => setBusinessProfileOnly(!businessProfileOnly)}
+                    activeOpacity={0.8}
+                    className="ml-4"
+                  >
+                    <View
+                      className="h-[24px] w-[24px] border-[1px] justify-center items-center"
+                      style={{
+                        borderColor: businessProfileOnly ? colorScheme === 'dark' ? '#fcfcfc' : '#323131' : colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                        backgroundColor: businessProfileOnly ? colorScheme === 'dark' ? '#fcfcfc' : '#323131' : '',
+                        borderRadius:4,
+                        marginRight:23
+                      }}
+                    >
+                      {businessProfileOnly && <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5} />}
+                    </View>
+                  </TouchableOpacity>
+                </View>
+
+                <View className="flex-row items-center justify-between">
+                  <Text className="font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_verified_profile')}</Text>
+                  <TouchableOpacity
+                    onPress={() => setVerifiedProfileOnly(!verifiedProfileOnly)}
+                    activeOpacity={0.8}
+                    className="ml-4"
+                  >
+                    <View
+                      className="h-[24px] w-[24px] border-[1px] justify-center items-center"
+                      style={{
+                        borderColor: verifiedProfileOnly ? colorScheme === 'dark' ? '#fcfcfc' : '#323131' : colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                        backgroundColor: verifiedProfileOnly ? colorScheme === 'dark' ? '#fcfcfc' : '#323131' : '',
+                        borderRadius:4,
+                        marginRight:23
+                      }}
+                    >
+                      {verifiedProfileOnly && <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5} />}
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
             </View>
 
-            <TouchableOpacity activeOpacity={0.9} className="mt-8 rounded-full py-4 bg-[#444343]" onPress={handleCloseFilters}>
-              <Text className="text-center font-inter-semibold text-[15px] text-[#f2f2f2]">{t('filters_show_results', { count: 34 })}</Text>
+            <TouchableOpacity className="h-[55px] items-center justify-center rounded-full py-4 dark:bg-[#fcfcfc] bg-[#323131]" onPress={handleCloseFilters}>
+              <Text className="text-center font-inter-semibold text-[15px] text-[#f2f2f2] dark:text-[#3d3d3d] ">{t('filters_show_results', { count: 34 })}</Text>
             </TouchableOpacity>
+
           </ScrollView>
         </BottomSheetView>
       </BottomSheetModal>
@@ -833,8 +854,6 @@ export default function ResultsScreen() {
           />
         </View>
       )}
-
-
 
     </View>
   );
