@@ -104,7 +104,10 @@ export default function HomeScreen() {
   );
 
   useEffect(() => {
-    if (!isFocused && isSearchOptionsVisible) setSearchOptionsVisible(false);
+    if (!isFocused && isSearchOptionsVisible && !preserveSearchOptionsOnBlur.current) {
+      setSearchOptionsVisible(false);
+      preserveSearchOptionsOnBlur.current = false;
+    }
   }, [isFocused, isSearchOptionsVisible]);
 
   useFocusEffect(
