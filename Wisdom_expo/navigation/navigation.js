@@ -232,7 +232,6 @@ function TabNavigator({ route }) {
   const { colorScheme, toggleColorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const [profileImage, setProfileImage] = useState(null);
-  const [showTabs, setShowTabs] = useState(true);
   const navigation = useNavigation();
   const lastTapRef = useRef(null);
 
@@ -300,10 +299,16 @@ function TabNavigator({ route }) {
 
   return (
     <>
-      {showTabs ? (
-        <Tab.Navigator initialRouteName="Home" screenOptions={({ route }) => ({
+      
+        <Tab.Navigator id="MainTabs" initialRouteName="Home" screenOptions={({ route }) => ({
           headerShown: false,
           tabBarLabelPosition: 'below-icon',
+          tabBarBackground: () => ( 
+            <View style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? '#323131' : '#fcfcfc' }} /> 
+          ), 
+          sceneContainerStyle: { 
+            backgroundColor: colorScheme === 'dark' ? '#272626' : '#f2f2f2', 
+          },
           tabBarIcon: ({ focused, color, size }) => {
             let IconName;
             switch (route.name) {
@@ -398,7 +403,7 @@ function TabNavigator({ route }) {
             }}
           />
         </Tab.Navigator>
-      ) : null}
+      
     </>
 
   );

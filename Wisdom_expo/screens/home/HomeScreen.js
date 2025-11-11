@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
-import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, ImageBackground, Button, TouchableWithoutFeedback, RefreshControl } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, ImageBackground, Button, TouchableWithoutFeedback, RefreshControl, Modal } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -34,7 +34,7 @@ const DATE_LOCALE_MAP = {
 export default function HomeScreen() {
 
   const insets = useSafeAreaInsets();
-  const { colorScheme, toggleColorScheme } = useColorScheme();
+  const { colorScheme } = useColorScheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const iconColor = colorScheme === 'dark' ? '#f2f2f2' : '#444343';
@@ -57,7 +57,6 @@ export default function HomeScreen() {
   const [duration, setDuration] = useState();
   const [sliderValue, setSliderValue] = useState();
   const sliderTimeoutId = useRef(null);
-  const [showTab, setShowTab] = useState(true);
 
   const [searchedDirection, setSearchedDirection] = useState();
   const [searchedService, setSearchedService] = useState();
@@ -82,13 +81,25 @@ export default function HomeScreen() {
     }
   };
 
-  const toggleTabs = () => {
-    setShowTab(false); // Solo cambia el estado local
-  };
+  useFocusEffect(
+    useCallback(() => {
+      // Al enfocar no hacemos nada especial
+      return () => {
+        // Al desenfocar: cierra y limpia params para que no se reabra al volver
+        setSearchOptionsVisible(false);
+        resetSearchParameters();
+        navigation.setParams({
+          blurVisible: false,
+          selectedDirection: undefined,
+          selectedService: undefined,
+        });
+      };
+    }, [navigation])
+  );
 
   useEffect(() => {
-    navigation.setParams({ showTab });
-  }, [showTab]);
+    if (!isFocused && isSearchOptionsVisible) setSearchOptionsVisible(false);
+  }, [isFocused, isSearchOptionsVisible]);
 
   useFocusEffect(
     useCallback(() => {
@@ -353,7 +364,7 @@ export default function HomeScreen() {
             <Text className="mb-3 font-inter-medium text-[10px] text-[#706F6E] dark:text-[#b6b5b5]">{item.first_name} {item.surname}</Text>
           </TouchableOpacity>
           <View className="justify-center items-center">
-            <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.best_dservice_id })} className="py-2 px-5 justify-center items-center bg-[#444343] dark:bg-[#f2f2f2] rounded-lg" >
+            <TouchableOpacity onPress={() => navigation.navigate('ServiceProfile', { serviceId: item.best_service_id })} className="py-2 px-5 justify-center items-center bg-[#444343] dark:bg-[#f2f2f2] rounded-lg" >
               <Text className="font-inter-semibold text-[13px] text-[#f2f2f2] dark:text-[#272626]">{t('visit')}</Text>
             </TouchableOpacity>
           </View>
@@ -592,14 +603,30 @@ export default function HomeScreen() {
       <StatusBar style={colorScheme == 'dark' ? 'light' : 'dark'} />
 
 
-      {isSearchOptionsVisible && (
-        <View className="absolute top-0 left-0 right-0 bottom-0 flex-1 z-10">
+      <Modal 
+        visible={isSearchOptionsVisible && isFocused} 
+        transparent 
+        statusBarTranslucent 
+        animationType="none" 
+        onRequestClose={closeSearchOverlay}  // back en Android 
+      >
+        <View style={{ flex: 1 }}> 
+          {/* Backdrop clicable para cerrar */} 
+          <TouchableWithoutFeedback onPress={closeSearchOverlay}> 
+            <View style={StyleSheet.absoluteFillObject}> 
+              {/* Fondo inmediato para evitar cualquier flash previo al blur */} 
+              <View 
+                style={[ 
+                  StyleSheet.absoluteFillObject, 
+                  { backgroundColor: colorScheme === 'dark' ? 'rgba(0,0,0,0.55)' : 'rgba(0,0,0,0.12)' }, 
+                ]} 
+              /> 
+              {/* Difuminado por encima del fondo */} 
+              <BlurView style={StyleSheet.absoluteFillObject} intensity={70} /> 
+            </View> 
+          </TouchableWithoutFeedback>
 
-          <View style={{ flex: 1, backgroundColor: colorScheme === 'dark' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.1)' }}>
-
-            <TouchableWithoutFeedback onPress={() => { closeSearchOverlay(); }}>
-              <BlurView style={styles.blur} blurType="light" blurAmount={10} intensity={70} />
-            </TouchableWithoutFeedback>
+          <View style={{ flex: 1 }} pointerEvents="box-none">
 
             <View className="flex-1 w-full justify-between items-center ">
               <View className="flex-1 w-full justify-start items-center ">
@@ -630,7 +657,7 @@ export default function HomeScreen() {
 
                   {searchOption === 'service' ? (
 
-                    <TouchableOpacity onPress={() => navigation.navigate('SearchService', { blurVisible: true, prevScreen: 'HomeScreen' })} className="mt-8 mb-7 w-full justify-center items-center ">
+                    <TouchableOpacity onPress={() => { closeSearchOverlay(); navigation.navigate('SearchService', { prevScreen: 'HomeScreen' }); }} className="mt-8 mb-7 w-full justify-center items-center ">
                       <View className="py-[20px] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
                         <Search height={19} color={iconColor} strokeWidth={2} />
                         <Text className="ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">{searchedService ? getValue(searchedService) : t('search_a_service')}</Text>
@@ -673,7 +700,7 @@ export default function HomeScreen() {
 
                     <View className="w-full justify-start items-center">
 
-                      <TouchableOpacity onPress={() => navigation.navigate('SearchDirection', { blurVisible: true, prevScreen: 'HomeScreen' })} className="mt-8 mb-6 w-full justify-center items-center ">
+                      <TouchableOpacity onPress={() => { closeSearchOverlay(); navigation.navigate('SearchDirection', { prevScreen: 'HomeScreen' }); }} className="mt-8 mb-6 w-full justify-center items-center ">
                         <View className="py-[20px] pl-5 pr-3 w-full flex-row justify-start items-center rounded-full bg-[#f2f2f2] dark:bg-[#3D3D3D]">
                           <Search height={19} color={iconColor} strokeWidth={2} />
                           <Text numberOfLines={1} className="truncate flex-1 ml-2 font-inter-medium text-[14px] text-[#444343] dark:text-[#f2f2f2]">
@@ -849,11 +876,11 @@ export default function HomeScreen() {
 
               {/* Button book */}
               {!(searchOption === 'date' && searchDateOptionSelected === 'frequency') && (
-                <View className="flex-row justify-center items-center pb-5 px-6">
+                <View className="flex-row justify-center items-center pb-12 px-6">
 
                   <TouchableOpacity
                     disabled={!searchedService}
-                    onPress={() => { navigation.navigate('Results', { searchedService: searchedService, duration, selectedTime, selectedDay, searchedDirection }) }}
+                    onPress={() => { closeSearchOverlay(); navigation.navigate('Results', { searchedService, duration, selectedTime, selectedDay, searchedDirection }); }}
                     style={{ opacity: searchedService ? 1 : 0.3 }}
                     className="bg-[#323131] mt-3 dark:bg-[#fcfcfc] w-full h-[55px] rounded-full items-center justify-center"
                   >
@@ -868,20 +895,15 @@ export default function HomeScreen() {
                 </View>
               )}
 
-
             </View>
 
-
-
-          </View>
-
-        </View>
-      )}
+          </View> 
+        </View> 
+      </Modal> 
 
       <TouchableOpacity
         onPress={() => {
           setSearchOptionsVisible(true);
-          toggleTabs();
         }}
         className="justify-center items-center pt-8 px-10"
       >
