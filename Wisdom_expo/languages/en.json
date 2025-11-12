@@ -596,6 +596,8 @@
     "filters_max_label": "Maximum",
     "filters_distance": "Proximity",
     "filters_distance_value": "{{distance}} km around",
+    "filters_distance_value_distance": "{{distance}} km",
+    "filters_distance_suffix": "around",
     "filters_rating": "Rating",
     "filters_business_profile": "Business profile",
     "filters_verified_profile": "Verified profile",

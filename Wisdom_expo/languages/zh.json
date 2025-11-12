@@ -596,6 +596,8 @@
     "filters_max_label": "最高",
     "filters_distance": "距离",
     "filters_distance_value": "{{distance}} 公里范围内",
+    "filters_distance_value_distance": "{{distance}} 公里",
+    "filters_distance_suffix": "范围内",
     "filters_rating": "评分",
     "filters_business_profile": "企业资料",
     "filters_verified_profile": "已验证资料",

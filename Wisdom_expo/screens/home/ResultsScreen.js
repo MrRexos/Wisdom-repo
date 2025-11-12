@@ -100,12 +100,61 @@ export default function ResultsScreen() {
     selectedCategories: Number.isFinite(initialCategoryIdRef.current) ? [initialCategoryIdRef.current] : [],
   }));
   const sliderWidth = useMemo(() => Math.max(Dimensions.get('window').width - 90, 160), []);
+  const [activeSliderInteractions, setActiveSliderInteractions] = useState(0);
+
+  const beginSliderInteraction = useCallback(() => {
+    setActiveSliderInteractions((count) => count + 1);
+  }, []);
+
+  const endSliderInteraction = useCallback(() => {
+    setActiveSliderInteractions((count) => (count > 0 ? count - 1 : 0));
+  }, []);
+
+  const formatRatingValue = useCallback((value) => {
+    const rounded = Math.round(value * 10) / 10;
+    if (Number.isInteger(rounded)) {
+      return String(rounded);
+    }
+    return rounded.toFixed(1);
+  }, []);
 
   const renderFilterBackdrop = useCallback(
     (props) => (
       <BottomSheetBackdrop {...props} appearsOnIndex={0} disappearsOnIndex={-1} pressBehavior="close" />
     ),
     []
+  );
+
+  const renderFilterFooter = useCallback(
+    (props) => (
+      <BottomSheetFooter {...props} bottomInset={insets.bottom + 12}>
+        <View
+          style={{
+            paddingHorizontal: 20,
+            paddingTop: 8,
+          }}
+        >
+          <TouchableOpacity
+            className="h-[55px] items-center justify-center rounded-full py-4 dark:bg-[#fcfcfc] bg-[#323131]"
+            onPress={handleApplyFilters}
+            disabled={isApplyingFilters}
+            style={{ opacity: isApplyingFilters ? 0.6 : 1 }}
+          >
+            <Text className="text-center font-inter-semibold text-[15px] text-[#f2f2f2] dark:text-[#3d3d3d] ">
+              {t('filters_show_results', { count: isCountingFilters ? '…' : (filtersCount ?? '—') })}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheetFooter>
+    ),
+    [
+      insets.bottom,
+      handleApplyFilters,
+      isApplyingFilters,
+      t,
+      isCountingFilters,
+      filtersCount,
+    ]
   );
 
   const syncControlsWithFilters = useCallback(
@@ -154,6 +203,7 @@ export default function ResultsScreen() {
     setIsFilterSheetOpen(false);
     setFiltersCount(null);
     setIsCountingFilters(false);
+    setActiveSliderInteractions(0);
     filterSheetModalRef.current?.dismiss();
   }, [appliedFilters, syncControlsWithFilters]);
 
@@ -476,7 +526,9 @@ export default function ResultsScreen() {
   }, [isFilterSheetOpen, getPendingFiltersSnapshot, buildParamsFromFilters]);
 
   useEffect(() => {
-    if (!isFilterSheetOpen) return;
+    if (!isFilterSheetOpen || activeSliderInteractions > 0) {
+      return undefined;
+    }
     const timeoutId = setTimeout(() => {
       fetchFiltersCount();
     }, COUNT_DEBOUNCE_MS);
@@ -489,6 +541,7 @@ export default function ResultsScreen() {
     businessProfileOnly,
     verifiedProfileOnly,
     selectedCategories,
+    activeSliderInteractions,
     fetchFiltersCount
   ]);
 
@@ -972,28 +1025,32 @@ export default function ResultsScreen() {
         }}
         handleIndicatorStyle={{ backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#e0e0e0' }}
         backdropComponent={renderFilterBackdrop}
-      >
-        
-          <BottomSheetScrollView 
-            keyboardShouldPersistTaps="handled" 
-            contentContainerStyle={{ 
-              paddingHorizontal: 20, 
-              paddingTop: 24, 
-              // deja hueco para el footer fijo: 
-              paddingBottom: 24 + insets.bottom + 72, 
-            }} 
+        footerComponent={renderFilterFooter}
+        >
+  
+          <BottomSheetScrollView
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{
+              paddingHorizontal: 20,
+              paddingTop: 24,
+              paddingBottom: 24,
+            }}
+            showsVerticalScrollIndicator={false}
           >
 
             <View style={{ paddingHorizontal: 8 }}>
 
-              <View className="flex-row items-center justify-between mb-[50px]">
-                <TouchableOpacity onPress={handleCloseFilters} accessibilityRole="button" className="pr-4">
-                  <XMarkIcon height={20} width={20} strokeWidth={2.4} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
-                </TouchableOpacity>
-                <Text className="font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_title')}</Text>
-                <TouchableOpacity onPress={handleClearFilters} accessibilityRole="button" className="px-3 py-1 bg-[#f2f2f2] dark:bg-[#3d3d3d] rounded-full items-center justify-center">
-                  <Text className="font-inter-semibold text-[10px] text-[#706F6E] dark:text-[#b6b5b5 ] uppercase">{t('filters_clear')}</Text>
-                </TouchableOpacity>
+              <View className="flex-row items-center justify-center mb-[50px]">
+                <View className="flex-1"></View>
+                <View className="flex-1 items-center justify-center">
+                  <Text className="flex-1 font-inter-semibold text-[16px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_title')}</Text>
+                </View>
+                <View className="flex-1 items-end justify-center">
+                  <TouchableOpacity onPress={handleClearFilters} accessibilityRole="button" className="px-3 py-[6px] bg-[#f2f2f2] dark:bg-[#3d3d3d] rounded-full items-center justify-center">
+                    <Text className="font-inter-semibold text-[10px] text-[#706F6E] dark:text-[#b6b5b5 ] uppercase">{t('filters_clear')}</Text>
+                  </TouchableOpacity>
+                </View>
+                
               </View>
 
               <View className="mb-8 mt-1">
@@ -1008,7 +1065,12 @@ export default function ResultsScreen() {
                     max={120}
                     step={1}
                     sliderLength={sliderWidth}
+                    onValuesChangeStart={beginSliderInteraction}
                     onValuesChange={(values) => setPriceRange(values)}
+                    onValuesChangeFinish={(values) => {
+                      setPriceRange(values);
+                      endSliderInteraction();
+                    }}
                     selectedStyle={{ backgroundColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E' }}
                     unselectedStyle={{ backgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3' }}
                     containerStyle={{ alignItems: 'center' }}
@@ -1045,49 +1107,91 @@ export default function ResultsScreen() {
               <View className="mb-8">
 
                 <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_distance')}</Text>
-                <View className="px-5 items-center justify-center">
-                  <Slider
-                    style={{ width: '100%', marginTop: 16 }}
-                    minimumValue={0}
-                    maximumValue={30}
+                <View className="items-center justify-center px-5">
+                  <MultiSlider
+                    values={[distanceValue]}
+                    min={0}
+                    max={30}
                     step={1}
-                    minimumTrackTintColor={colorScheme === 'dark' ? '#b6b5b5' : '#706F6E'}
-                    maximumTrackTintColor={colorScheme === 'dark' ? '#474646' : '#d4d4d3'}
-                    thumbTintColor={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}
-                    value={distanceValue}
-                    onValueChange={(value) => setDistanceValue(value)}
+                    sliderLength={sliderWidth}
+                    onValuesChangeStart={beginSliderInteraction}
+                    onValuesChange={(values) => setDistanceValue(values[0])}
+                    onValuesChangeFinish={(values) => {
+                      setDistanceValue(values[0]);
+                      endSliderInteraction();
+                    }}
+                    selectedStyle={{ backgroundColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E' }}
+                    unselectedStyle={{ backgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3' }}
+                    containerStyle={{ alignItems: 'center', marginTop: 16 }}
+                    trackStyle={{ height: 4, borderRadius: 2 }}
+                    markerStyle={{
+                      height: 22,
+                      width: 22,
+                      backgroundColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                      borderWidth: 0,
+                    }}
+                    pressedMarkerStyle={{
+                      height: 22,
+                      width: 22,
+                      backgroundColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                    }}
                   />
-                  <Text className="mt-2 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('filters_distance_value', { distance: Math.round(distanceValue) })}</Text>
+                  <View className="mt-2 flex-row items-end">
+                    <Text className="font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">
+                      {t('filters_distance_value_distance', { distance: Math.round(distanceValue) })}
+                    </Text>
+                    <Text
+                      className="font-inter-medium text-[16px] text-[#b6b5b5] dark:text-[#706F6E]"
+                      style={{ marginStart: 6 }}
+                    >
+                      {t('filters_distance_suffix')}
+                    </Text>
+                  </View>
                 </View>
-
-
 
               </View>
 
               <View className="mb-8">
                 <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_rating')}</Text>
-                <View className="px-5">
-                  <Slider
-                    style={{ width: '100%', marginTop: 16 }}
-                    minimumValue={0}
-                    maximumValue={5}
+                <View className="items-center justify-center px-5">
+                  <MultiSlider
+                    values={[ratingValue]}
+                    min={0}
+                    max={5}
                     step={0.5}
-                    minimumTrackTintColor={colorScheme === 'dark' ? '#b6b5b5' : '#706F6E'}
-                    maximumTrackTintColor={colorScheme === 'dark' ? '#474646' : '#d4d4d3'}
-                    thumbTintColor={colorScheme === 'dark' ? '#f2f2f2' : '#444343'}
-                    value={ratingValue}
-                    onValueChange={(value) => setRatingValue(value)}
+                    sliderLength={sliderWidth}
+                    onValuesChangeStart={beginSliderInteraction}
+                    onValuesChange={(values) => setRatingValue(values[0])}
+                    onValuesChangeFinish={(values) => {
+                      setRatingValue(values[0]);
+                      endSliderInteraction();
+                    }}
+                    selectedStyle={{ backgroundColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E' }}
+                    unselectedStyle={{ backgroundColor: colorScheme === 'dark' ? '#474646' : '#d4d4d3' }}
+                    containerStyle={{ alignItems: 'center', marginTop: 16 }}
+                    trackStyle={{ height: 4, borderRadius: 2 }}
+                    markerStyle={{
+                      height: 22,
+                      width: 22,
+                      backgroundColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                      borderWidth: 0,
+                    }}
+                    pressedMarkerStyle={{
+                      height: 22,
+                      width: 22,
+                      backgroundColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
+                    }}
                   />
                 </View>
                 <View className="flex-row items-center w-full justify-center mt-2">
                   <StarFillIcon color='#F4B618' style={{ transform: [{ scale: 1.3 }] }} />
-                  <Text className="ml-2 font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">{ratingValue.toFixed(1)}</Text>
+                  <Text className="ml-2 font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">{formatRatingValue(ratingValue)}</Text>
                 </View>
               </View>
 
-              <View className="mb-5">
+              <View className="mb-8">
                 <View className="flex-row items-center justify-between mb-4">
-                  <Text className="font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_business_profile')}</Text>
+                  <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_business_profile')}</Text>
                   <TouchableOpacity
                     onPress={() => setBusinessProfileOnly(!businessProfileOnly)}
                     activeOpacity={0.8}
@@ -1108,7 +1212,7 @@ export default function ResultsScreen() {
                 </View>
 
                 <View className="flex-row items-center justify-between">
-                  <Text className="font-inter-semibold text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_verified_profile')}</Text>
+                  <Text className="font-inter-medium text-[15px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_verified_profile')}</Text>
                   <TouchableOpacity
                     onPress={() => setVerifiedProfileOnly(!verifiedProfileOnly)}
                     activeOpacity={0.8}
@@ -1132,7 +1236,7 @@ export default function ResultsScreen() {
               {availableCategories.length > 0 && (
                 <View className="mb-8">
                   <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_categories')}</Text>
-                  <View className="flex-row flex-wrap mt-4">
+                  <View className="flex-row flex-wrap mt-6">
                     {availableCategories.map((category) => {
                       const id = Number(category.service_category_id);
                       const isSelected = selectedCategories.includes(id);
@@ -1155,20 +1259,7 @@ export default function ResultsScreen() {
 
             </View>
 
-            
-
-            </BottomSheetScrollView>
-
-            <TouchableOpacity
-              className="h-[55px] mx-6 mb-10 mt-2 items-center justify-center rounded-full py-4 dark:bg-[#fcfcfc] bg-[#323131]"
-              onPress={handleApplyFilters}
-              disabled={isApplyingFilters}
-              style={{ opacity: isApplyingFilters ? 0.6 : 1 }}
-            >
-              <Text className="text-center font-inter-semibold text-[15px] text-[#f2f2f2] dark:text-[#3d3d3d] ">
-                {t('filters_show_results', { count: isCountingFilters ? '…' : (filtersCount ?? '—') })}
-              </Text>
-            </TouchableOpacity>
+          </BottomSheetScrollView>
         
       </BottomSheetModal>
 

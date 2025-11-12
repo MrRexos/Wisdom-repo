@@ -595,6 +595,8 @@
     "filters_max_label": "الحد الأقصى",
     "filters_distance": "القرب",
     "filters_distance_value": "{{distance}} كم حولك",
+    "filters_distance_value_distance": "{{distance}} كم",
+    "filters_distance_suffix": "حولك",
     "filters_rating": "التقييم",
     "filters_business_profile": "ملف الشركة",
     "filters_verified_profile": "ملف موثق",

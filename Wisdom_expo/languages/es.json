@@ -596,6 +596,8 @@
     "filters_max_label": "Máximo",
     "filters_distance": "Cercanía",
     "filters_distance_value": "{{distance}} km a la redonda",
+    "filters_distance_value_distance": "{{distance}} km",
+    "filters_distance_suffix": "a la redonda",
     "filters_rating": "Valoración",
     "filters_business_profile": "Perfil de empresa",
     "filters_verified_profile": "Perfil verificado",

@@ -596,6 +596,8 @@
     "filters_max_label": "Màxim",
     "filters_distance": "Cercania",
     "filters_distance_value": "{{distance}} km a la rodona",
+    "filters_distance_value_distance": "{{distance}} km",
+    "filters_distance_suffix": "a la rodona",
     "filters_rating": "Valoració",
     "filters_business_profile": "Perfil d'empresa",
     "filters_verified_profile": "Perfil verificat",
