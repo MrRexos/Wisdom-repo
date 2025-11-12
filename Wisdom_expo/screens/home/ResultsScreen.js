@@ -973,7 +973,7 @@ export default function ResultsScreen() {
         handleIndicatorStyle={{ backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#e0e0e0' }}
         backdropComponent={renderFilterBackdrop}
       >
-        <BottomSheetView style={{ flex: 1 }}> 
+        
           <BottomSheetScrollView 
             keyboardShouldPersistTaps="handled" 
             contentContainerStyle={{ 
@@ -1041,29 +1041,7 @@ export default function ResultsScreen() {
 
               </View>
 
-              {availableCategories.length > 0 && (
-                <View className="mb-8">
-                  <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_categories')}</Text>
-                  <View className="flex-row flex-wrap mt-4">
-                    {availableCategories.map((category) => {
-                      const id = Number(category.service_category_id);
-                      const isSelected = selectedCategories.includes(id);
-                      return (
-                        <TouchableOpacity
-                          key={category.service_category_id}
-                          onPress={() => toggleCategory(id)}
-                          className={`mr-2 mb-2 px-4 py-2 rounded-full ${isSelected ? 'bg-[#444343] dark:bg-[#f2f2f2]' : 'bg-[#E0E0E0] dark:bg-[#3D3D3D]'}`}
-                        >
-                          <Text className={`font-inter-medium text-[12px] ${isSelected ? 'text-[#f2f2f2] dark:text-[#272626]' : 'text-[#444343] dark:text-[#f2f2f2]'}`}>
-                            {category.service_category_name}
-                          </Text>
-                        </TouchableOpacity>
-                      );
-                    })}
-                  </View>
-                </View>
-              )}
-
+              
               <View className="mb-8">
 
                 <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_distance')}</Text>
@@ -1151,10 +1129,38 @@ export default function ResultsScreen() {
                 </View>
               </View>
 
+              {availableCategories.length > 0 && (
+                <View className="mb-8">
+                  <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_categories')}</Text>
+                  <View className="flex-row flex-wrap mt-4">
+                    {availableCategories.map((category) => {
+                      const id = Number(category.service_category_id);
+                      const isSelected = selectedCategories.includes(id);
+                      return (
+                        <TouchableOpacity
+                          key={category.service_category_id}
+                          onPress={() => toggleCategory(id)}
+                          className={`mr-2 mb-2 px-4 py-2 rounded-full ${isSelected ? 'bg-[#444343] dark:bg-[#f2f2f2]' : 'bg-[#E0E0E0] dark:bg-[#3D3D3D]'}`}
+                        >
+                          <Text className={`font-inter-medium text-[12px] ${isSelected ? 'text-[#f2f2f2] dark:text-[#272626]' : 'text-[#444343] dark:text-[#f2f2f2]'}`}>
+                            {category.service_category_name}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                </View>
+              )}
+
+
             </View>
 
+            
+
+            </BottomSheetScrollView>
+
             <TouchableOpacity
-              className="h-[55px] items-center justify-center rounded-full py-4 dark:bg-[#fcfcfc] bg-[#323131]"
+              className="h-[55px] mx-6 mb-10 mt-2 items-center justify-center rounded-full py-4 dark:bg-[#fcfcfc] bg-[#323131]"
               onPress={handleApplyFilters}
               disabled={isApplyingFilters}
               style={{ opacity: isApplyingFilters ? 0.6 : 1 }}
@@ -1163,9 +1169,7 @@ export default function ResultsScreen() {
                 {t('filters_show_results', { count: isCountingFilters ? '…' : (filtersCount ?? '—') })}
               </Text>
             </TouchableOpacity>
-
-            </BottomSheetScrollView>
-        </BottomSheetView>
+        
       </BottomSheetModal>
 
       {/* Contenedor del botón "Order by" */}
