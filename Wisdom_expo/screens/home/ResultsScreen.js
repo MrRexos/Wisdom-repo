@@ -1018,6 +1018,7 @@ export default function ResultsScreen() {
         index={0}
         snapPoints={filterSnapPoints}
         enablePanDownToClose
+        enableContentPanningGesture={activeSliderInteractions === 0}
         backgroundStyle={{
           borderTopLeftRadius: 25,
           borderTopRightRadius: 25,
@@ -1036,6 +1037,7 @@ export default function ResultsScreen() {
               paddingBottom: 24,
             }}
             showsVerticalScrollIndicator={false}
+            scrollEnabled={activeSliderInteractions === 0}
           >
 
             <View style={{ paddingHorizontal: 8 }}>
