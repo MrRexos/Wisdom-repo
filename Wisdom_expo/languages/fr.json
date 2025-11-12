@@ -591,6 +591,7 @@
     "filters_title": "Filtres",
     "filters_clear": "Nettoyer",
     "filters_price_range": "Fourchette de prix",
+    "filters_categories": "Catégories",
     "filters_min_label": "Minimum",
     "filters_max_label": "Maximum",
     "filters_distance": "Proximité",

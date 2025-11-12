@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
-import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, RefreshControl, Dimensions } from 'react-native';
+import { View, StatusBar, Platform, TouchableOpacity, Text, TextInput, StyleSheet, FlatList, ScrollView, Image, KeyboardAvoidingView, RefreshControl, Dimensions, ActivityIndicator } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useColorScheme } from 'nativewind'
 import '../../languages/i18n';
@@ -16,9 +16,16 @@ import api from '../../utils/api.js';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useRefreshOnFocus from '../../utils/useRefreshOnFocus';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView, BottomSheetScrollView, BottomSheetFooter } from '@gorhom/bottom-sheet';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import Slider from '@react-native-community/slider';
+
+const DEFAULT_PRICE_RANGE = [0, 120];
+const DEFAULT_DISTANCE = 30;
+const DEFAULT_RATING = 0;
+const DEFAULT_COMPANY_ONLY = false;
+const DEFAULT_VERIFIED_ONLY = false;
+const COUNT_DEBOUNCE_MS = 350;
 
 
 const DATE_LOCALE_MAP = {
@@ -60,11 +67,38 @@ export default function ResultsScreen() {
   const [searchedDirection, setSearchedDirection] = useState(null);
   const filterSheetModalRef = useRef(null);
   const filterSnapPoints = useMemo(() => ['75%'], []);
-  const [priceRange, setPriceRange] = useState([9, 60]);
-  const [distanceValue, setDistanceValue] = useState(5);
-  const [ratingValue, setRatingValue] = useState(4.5);
-  const [businessProfileOnly, setBusinessProfileOnly] = useState(false);
-  const [verifiedProfileOnly, setVerifiedProfileOnly] = useState(true);
+  const initialCategoryIdRef = useRef(
+    route.params?.category !== null &&
+      route.params?.category !== undefined &&
+      Number.isFinite(Number(route.params?.category))
+      ? Number(route.params?.category)
+      : null
+  );
+  const [priceRange, setPriceRange] = useState([...DEFAULT_PRICE_RANGE]);
+  const [distanceValue, setDistanceValue] = useState(DEFAULT_DISTANCE);
+  const [ratingValue, setRatingValue] = useState(DEFAULT_RATING);
+  const [businessProfileOnly, setBusinessProfileOnly] = useState(DEFAULT_COMPANY_ONLY);
+  const [verifiedProfileOnly, setVerifiedProfileOnly] = useState(DEFAULT_VERIFIED_ONLY);
+  const [selectedCategories, setSelectedCategories] = useState(() => {
+    const initial = initialCategoryIdRef.current;
+    return Number.isFinite(initial) ? [initial] : [];
+  });
+  const [availableCategories, setAvailableCategories] = useState([]);
+  const [activeFamilyId, setActiveFamilyId] = useState(null);
+  const [filtersCount, setFiltersCount] = useState(null);
+  const [isCountingFilters, setIsCountingFilters] = useState(false);
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+  const [isApplyingFilters, setIsApplyingFilters] = useState(false);
+  const hasLoadedRef = useRef(false);
+  const [appliedFilters, setAppliedFilters] = useState(() => ({
+    minPrice: null,
+    maxPrice: null,
+    distanceKm: null,
+    minRating: null,
+    requireCompany: DEFAULT_COMPANY_ONLY,
+    requireVerified: DEFAULT_VERIFIED_ONLY,
+    selectedCategories: Number.isFinite(initialCategoryIdRef.current) ? [initialCategoryIdRef.current] : [],
+  }));
   const sliderWidth = useMemo(() => Math.max(Dimensions.get('window').width - 90, 160), []);
 
   const renderFilterBackdrop = useCallback(
@@ -74,21 +108,68 @@ export default function ResultsScreen() {
     []
   );
 
+  const syncControlsWithFilters = useCallback(
+    (filtersSnapshot) => {
+      if (!filtersSnapshot) {
+        setPriceRange([...DEFAULT_PRICE_RANGE]);
+        setDistanceValue(DEFAULT_DISTANCE);
+        setRatingValue(DEFAULT_RATING);
+        setBusinessProfileOnly(DEFAULT_COMPANY_ONLY);
+        setVerifiedProfileOnly(DEFAULT_VERIFIED_ONLY);
+        setSelectedCategories(Number.isFinite(initialCategoryIdRef.current) ? [initialCategoryIdRef.current] : []);
+        return;
+      }
+
+      const nextMinPrice = Number.isFinite(filtersSnapshot.minPrice) ? Number(filtersSnapshot.minPrice) : DEFAULT_PRICE_RANGE[0];
+      const nextMaxPrice = Number.isFinite(filtersSnapshot.maxPrice) ? Number(filtersSnapshot.maxPrice) : DEFAULT_PRICE_RANGE[1];
+      setPriceRange([nextMinPrice, nextMaxPrice]);
+      setDistanceValue(Number.isFinite(filtersSnapshot.distanceKm) ? Number(filtersSnapshot.distanceKm) : DEFAULT_DISTANCE);
+      setRatingValue(Number.isFinite(filtersSnapshot.minRating) ? Number(filtersSnapshot.minRating) : DEFAULT_RATING);
+      setBusinessProfileOnly(Boolean(filtersSnapshot.requireCompany));
+      setVerifiedProfileOnly(Boolean(filtersSnapshot.requireVerified));
+
+      if (Array.isArray(filtersSnapshot.selectedCategories) && filtersSnapshot.selectedCategories.length > 0) {
+        const normalized = Array.from(new Set(
+          filtersSnapshot.selectedCategories
+            .map((id) => Number(id))
+            .filter((id) => Number.isFinite(id))
+        ));
+        setSelectedCategories(normalized);
+      } else {
+        setSelectedCategories(Number.isFinite(initialCategoryIdRef.current) ? [initialCategoryIdRef.current] : []);
+      }
+    },
+    [initialCategoryIdRef]
+  );
+
   const handleOpenFilters = useCallback(() => {
+    syncControlsWithFilters(appliedFilters);
+    setFiltersCount(null);
+    setIsFilterSheetOpen(true);
     filterSheetModalRef.current?.present();
-  }, []);
+  }, [appliedFilters, syncControlsWithFilters]);
+
+  const closeFiltersSheet = useCallback((filtersSnapshot) => {
+    syncControlsWithFilters(filtersSnapshot ?? appliedFilters);
+    setIsFilterSheetOpen(false);
+    setFiltersCount(null);
+    setIsCountingFilters(false);
+    filterSheetModalRef.current?.dismiss();
+  }, [appliedFilters, syncControlsWithFilters]);
 
   const handleCloseFilters = useCallback(() => {
-    filterSheetModalRef.current?.dismiss();
-  }, []);
+    closeFiltersSheet();
+  }, [closeFiltersSheet]);
 
   const handleClearFilters = useCallback(() => {
-    setPriceRange([9, 60]);
-    setDistanceValue(5);
-    setRatingValue(4.5);
-    setBusinessProfileOnly(false);
-    setVerifiedProfileOnly(true);
-  }, []);
+    setPriceRange([...DEFAULT_PRICE_RANGE]);
+    setDistanceValue(DEFAULT_DISTANCE);
+    setRatingValue(DEFAULT_RATING);
+    setBusinessProfileOnly(DEFAULT_COMPANY_ONLY);
+    setVerifiedProfileOnly(DEFAULT_VERIFIED_ONLY);
+    setSelectedCategories(Number.isFinite(initialCategoryIdRef.current) ? [initialCategoryIdRef.current] : []);
+    setFiltersCount(null);
+  }, [initialCategoryIdRef]);
 
   useEffect(() => {
     const loadUserId = async () => {
@@ -110,19 +191,68 @@ export default function ResultsScreen() {
 
   useEffect(() => {
     if (route.params?.category !== undefined) {
-      setCategoryId(route.params.category);
+      const categoryParam = route.params.category;
+      const numericCategory = Number(categoryParam);
+      setCategoryId(Number.isFinite(numericCategory) ? numericCategory : undefined);
       setCategoryName(route.params.category_name);
-      fetchResultsByCategory(route.params.category);
+      setSearchedService(undefined);
+      setDuration(null);
+      setSelectedTime(null);
+      setSelectedDay(null);
+      setSearchedDirection(null);
+
+      const categoriesSelection = Number.isFinite(numericCategory) ? [numericCategory] : [];
+      setSelectedCategories(categoriesSelection);
+
+      setAppliedFilters((prev) => {
+        const next = { ...prev, selectedCategories: categoriesSelection };
+        loadResults(next);
+        return next;
+      });
     } else if (route.params?.searchedService !== undefined) {
-      const { duration, selectedTime, selectedDay, searchedDirection } = route.params;
+      const {
+        duration: durationParam,
+        selectedTime: selectedTimeParam,
+        selectedDay: selectedDayParam,
+        searchedDirection: directionParam,
+      } = route.params;
+      setCategoryId(undefined);
+      setCategoryName(undefined);
       setSearchedService(route.params.searchedService);
-      setDuration(duration);
-      setSelectedTime(selectedTime);
-      setSelectedDay(selectedDay);
-      setSearchedDirection(searchedDirection);
-      fetchResultsBySearch(route.params.searchedService);
+      setDuration(durationParam);
+      setSelectedTime(selectedTimeParam);
+      setSelectedDay(selectedDayParam);
+      setSearchedDirection(directionParam);
+      setSelectedCategories([]);
+
+      setAppliedFilters((prev) => {
+        const next = { ...prev, selectedCategories: [] };
+        loadResults(next);
+        return next;
+      });
+    } else if (!hasLoadedRef.current) {
+      loadResults();
     }
-  }, [route.params?.category, route.params?.searchedService, userId]);
+  }, [
+    route.params?.category,
+    route.params?.category_name,
+    route.params?.searchedService,
+    route.params?.duration,
+    route.params?.selectedTime,
+    route.params?.selectedDay,
+    route.params?.searchedDirection,
+    loadResults
+  ]);
+
+  useEffect(() => {
+    if (!hasLoadedRef.current) return;
+    loadResults();
+  }, [selectedOrderBy, loadResults]);
+
+  useEffect(() => {
+    if (!userId || !hasLoadedRef.current) return;
+    loadResults();
+  }, [userId, loadResults]);
 
   const orderByOptions = useMemo(() => ([
     { label: t('order_option_recommend'), type: 'recommend' },
@@ -148,77 +278,311 @@ export default function ResultsScreen() {
     setListName('');
   };
 
-  const fetchResultsByCategory = async (categoryId, viewerIdParam = userId) => {
-    try {
-      const params = {};
-      if (viewerIdParam) {
-        params.viewer_id = viewerIdParam;
-      }
-      const response = await api.get(`/api/category/${categoryId}/services`, { params });
-      setResults(response.data);
-      if (Array.isArray(response.data)) {
-        const likedIds = response.data
-          .filter((service) => service?.is_liked === 1)
-          .map((service) => service.service_id);
-        setAddedServices(likedIds);
-      } else {
-        setAddedServices([]);
-      }
-    } catch (error) {
-      console.error('Error al obtener los items:', error);
-    }
-  };
-
   const getValue = (arr) => {
-    const key = Object.keys(arr[0])[0];
-    return arr[0][key]
+    if (!Array.isArray(arr) || arr.length === 0) {
+      return '';
+    }
+    const first = arr[0] ?? {};
+    const key = Object.keys(first)[0];
+    return first?.[key] ?? '';
   };
 
-  const fetchResultsBySearch = async (searchQuery, viewerIdParam = userId) => {
-    try {
-      // Añadir el parámetro query a la URL
-      const params = { query: getValue(searchQuery) };
-      if (viewerIdParam) {
-        params.viewer_id = viewerIdParam;
+  const getPendingFiltersSnapshot = useCallback(() => {
+    const rawMin = Number(priceRange?.[0]);
+    const rawMax = Number(priceRange?.[1]);
+    const rawDistance = Number(distanceValue);
+    const rawRating = Number(ratingValue);
+
+    const sanitizedCategories = Array.from(new Set(
+      selectedCategories
+        .map((id) => Number(id))
+        .filter((id) => Number.isFinite(id))
+    ));
+
+    return {
+      minPrice: Number.isFinite(rawMin) && rawMin !== DEFAULT_PRICE_RANGE[0] ? rawMin : null,
+      maxPrice: Number.isFinite(rawMax) && rawMax !== DEFAULT_PRICE_RANGE[1] ? rawMax : null,
+      distanceKm: Number.isFinite(rawDistance) && rawDistance !== DEFAULT_DISTANCE ? rawDistance : null,
+      minRating: Number.isFinite(rawRating) && rawRating > 0 ? rawRating : null,
+      requireCompany: businessProfileOnly,
+      requireVerified: verifiedProfileOnly,
+      selectedCategories: sanitizedCategories,
+    };
+  }, [priceRange, distanceValue, ratingValue, businessProfileOnly, verifiedProfileOnly, selectedCategories]);
+
+  const buildParamsFromFilters = useCallback((filtersSnapshot = appliedFilters, extra = {}) => {
+    const params = {};
+
+    if (searchedService) {
+      const queryValue = getValue(searchedService);
+      if (queryValue) {
+        params.query = queryValue;
       }
-      const response = await api.get(`/api/services`, {
-        params,
-      });
-      setResults(response.data);
-      if (Array.isArray(response.data)) {
-        const likedIds = response.data
+    }
+
+    if (userId) {
+      params.viewer_id = userId;
+    }
+
+    if (Number.isFinite(Number(duration))) {
+      params.duration_minutes = Number(duration);
+    }
+
+    if (selectedOrderBy) {
+      params.order_by = selectedOrderBy;
+    }
+
+    let categoryIds = Array.isArray(filtersSnapshot.selectedCategories)
+      ? filtersSnapshot.selectedCategories
+        .map((id) => Number(id))
+        .filter((id) => Number.isFinite(id))
+      : [];
+
+    if (!categoryIds.length && Number.isFinite(categoryId)) {
+      categoryIds = [Number(categoryId)];
+    }
+
+    if (availableCategories.length > 0) {
+      const allowed = new Set(
+        availableCategories
+          .map((cat) => Number(cat?.service_category_id))
+          .filter((id) => Number.isFinite(id))
+      );
+      const filtered = categoryIds.filter((id) => allowed.has(id));
+      if (filtered.length > 0) {
+        categoryIds = filtered;
+      }
+    }
+
+    if (categoryIds.length > 0) {
+      params.category_ids = categoryIds.join(',');
+    }
+
+    if (Number.isFinite(filtersSnapshot.minPrice)) {
+      params.min_price = Number(filtersSnapshot.minPrice);
+    }
+
+    if (Number.isFinite(filtersSnapshot.maxPrice)) {
+      params.max_price = Number(filtersSnapshot.maxPrice);
+    }
+
+    if (Number.isFinite(filtersSnapshot.minRating)) {
+      params.min_rating = Number(filtersSnapshot.minRating);
+    }
+
+    if (filtersSnapshot.requireCompany) {
+      params.require_company = 1;
+    }
+
+    if (filtersSnapshot.requireVerified) {
+      params.require_verified = 1;
+    }
+
+    const hasLocation =
+      searchedDirection?.location?.lat !== undefined &&
+      searchedDirection?.location?.lng !== undefined;
+
+    if (hasLocation && Number.isFinite(filtersSnapshot.distanceKm)) {
+      params.max_distance_km = Number(filtersSnapshot.distanceKm);
+      params.origin_lat = searchedDirection.location.lat;
+      params.origin_lng = searchedDirection.location.lng;
+    }
+
+    return { ...params, ...extra };
+  }, [appliedFilters, searchedService, userId, duration, selectedOrderBy, availableCategories, categoryId, searchedDirection, getValue]);
+
+  const fetchCategoriesForFamily = useCallback(async (familyId) => {
+    if (!Number.isFinite(familyId)) {
+      return [];
+    }
+    try {
+      const response = await api.get(`/api/service-family/${familyId}/categories`);
+      return Array.isArray(response.data) ? response.data : [];
+    } catch (error) {
+      console.error('Error al obtener las categorías:', error);
+      return [];
+    }
+  }, []);
+
+  const loadResults = useCallback(async (filtersOverride) => {
+    const filtersToUse = filtersOverride ?? appliedFilters;
+    try {
+      const params = buildParamsFromFilters(filtersToUse);
+      const response = await api.get(`/api/services`, { params });
+      const data = response.data;
+
+      if (Array.isArray(data)) {
+        const parseCollection = (value, fallback = []) => {
+          if (Array.isArray(value)) return value;
+          if (typeof value === 'string') {
+            try {
+              const parsed = JSON.parse(value);
+              return Array.isArray(parsed) ? parsed : fallback;
+            } catch {
+              return fallback;
+            }
+          }
+          return fallback;
+        };
+
+        const normalized = data.map((service) => ({
+          ...service,
+          tags: parseCollection(service.tags),
+          images: parseCollection(service.images),
+          languages: parseCollection(service.languages),
+          distance_km: service?.distance_km !== undefined && service?.distance_km !== null
+            ? Number(service.distance_km)
+            : null,
+        }));
+
+        setResults(normalized);
+
+        const likedIds = normalized
           .filter((service) => service?.is_liked === 1)
           .map((service) => service.service_id);
         setAddedServices(likedIds);
+
+        const familyCandidate = normalized.find((service) => Number.isFinite(service?.service_family_id));
+        setActiveFamilyId(familyCandidate ? Number(familyCandidate.service_family_id) : null);
       } else {
+        setResults(data);
         setAddedServices([]);
+        setActiveFamilyId(null);
       }
+
+      hasLoadedRef.current = true;
     } catch (error) {
       console.error('Error al obtener los resultados:', error);
+      setResults([]);
+      setAddedServices([]);
+      setActiveFamilyId(null);
     }
-  };
+  }, [appliedFilters, buildParamsFromFilters]);
+
+  const fetchFiltersCount = useCallback(async (filtersSnapshot) => {
+    if (!isFilterSheetOpen) return;
+    const snapshot = filtersSnapshot ?? getPendingFiltersSnapshot();
+    try {
+      setIsCountingFilters(true);
+      const params = buildParamsFromFilters(snapshot);
+      const response = await api.get('/api/services/count', { params });
+      const total = response.data?.count;
+      setFiltersCount(Number.isFinite(total) ? Number(total) : 0);
+    } catch (error) {
+      console.error('Error al contar los resultados:', error);
+    } finally {
+      setIsCountingFilters(false);
+    }
+  }, [isFilterSheetOpen, getPendingFiltersSnapshot, buildParamsFromFilters]);
+
+  useEffect(() => {
+    if (!isFilterSheetOpen) return;
+    const timeoutId = setTimeout(() => {
+      fetchFiltersCount();
+    }, COUNT_DEBOUNCE_MS);
+    return () => clearTimeout(timeoutId);
+  }, [
+    isFilterSheetOpen,
+    priceRange,
+    distanceValue,
+    ratingValue,
+    businessProfileOnly,
+    verifiedProfileOnly,
+    selectedCategories,
+    fetchFiltersCount
+  ]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const run = async () => {
+      if (!Number.isFinite(activeFamilyId)) {
+        setAvailableCategories([]);
+        return;
+      }
+
+      const categories = await fetchCategoriesForFamily(activeFamilyId);
+      if (cancelled) return;
+      setAvailableCategories(categories);
+
+      if (categories.length) {
+        const allowed = new Set(
+          categories
+            .map((cat) => Number(cat?.service_category_id))
+            .filter((id) => Number.isFinite(id))
+        );
+
+        setSelectedCategories((prev) => {
+          if (!prev.length) return prev;
+          const filtered = prev.filter((id) => allowed.has(Number(id)));
+          if (filtered.length === prev.length) return prev;
+          return filtered.length ? filtered : prev;
+        });
+
+        setAppliedFilters((prev) => {
+          if (!Array.isArray(prev.selectedCategories) || !prev.selectedCategories.length) {
+            return prev;
+          }
+          const filtered = prev.selectedCategories.filter((id) => allowed.has(Number(id)));
+          if (filtered.length === prev.selectedCategories.length) {
+            return prev;
+          }
+          return { ...prev, selectedCategories: filtered };
+        });
+      }
+    };
+
+    run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeFamilyId, fetchCategoriesForFamily]);
+
+  const handleApplyFilters = useCallback(async () => {
+    const nextFilters = getPendingFiltersSnapshot();
+    setIsApplyingFilters(true);
+    try {
+      await loadResults(nextFilters);
+      setAppliedFilters(nextFilters);
+      closeFiltersSheet(nextFilters);
+    } catch (error) {
+      console.error('Error al aplicar los filtros:', error);
+    } finally {
+      setIsApplyingFilters(false);
+    }
+  }, [getPendingFiltersSnapshot, loadResults, closeFiltersSheet]);
+
+  const toggleCategory = useCallback((categoryToToggle) => {
+    const numericId = Number(categoryToToggle);
+    if (!Number.isFinite(numericId)) return;
+    setSelectedCategories((prev) => {
+      const exists = prev.includes(numericId);
+      if (exists) {
+        return prev.filter((id) => id !== numericId);
+      }
+      return [...prev, numericId];
+    });
+  }, []);
 
   const fetchLists = async () => {
-    const userData = await getDataLocally('user');
-    const user = JSON.parse(userData);
-    setUserId(user.id);
     try {
-      const response = await api.get(`/api/user/${user.id}/lists`);
-      return response.data;
+      const userData = await getDataLocally('user');
+      const user = userData ? JSON.parse(userData) : null;
+      if (user?.id) {
+        setUserId(user.id);
+        const response = await api.get(`/api/user/${user.id}/lists`);
+        return response.data;
+      }
     } catch (error) {
       console.error('Error fetching lists:', error);
     }
+    return null;
   };
 
-  const loadResults = useCallback(async () => {
-    if (route.params?.category !== undefined) {
-      await fetchResultsByCategory(route.params.category);
-    } else if (route.params?.searchedService !== undefined) {
-      await fetchResultsBySearch(route.params.searchedService);
-    }
-  }, [route.params?.category, route.params?.searchedService, userId]);
+  const refreshResults = useCallback(() => loadResults(), [loadResults]);
 
-  useRefreshOnFocus(loadResults);
+  useRefreshOnFocus(refreshResults);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -289,6 +653,8 @@ export default function ResultsScreen() {
 
   const renderItem = ({ item, index }) => {
     const isServiceAdded = addedServices.includes(item.service_id) || item.is_liked === 1;
+    const tags = Array.isArray(item.tags) ? item.tags : [];
+    const images = Array.isArray(item.images) ? item.images : [];
     const getFormattedPrice = () => {
       const numericPrice = parseFloat(item.price);
       const formattedPrice = numericPrice % 1 === 0 ? numericPrice.toFixed(0) : numericPrice.toFixed(1);
@@ -330,9 +696,9 @@ export default function ResultsScreen() {
 
           <Text className="ml-5 mr-5">{getFormattedPrice()}</Text>
 
-          {item.tags && (
+          {tags.length > 0 && (
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="flex-1">
-              {item.tags.map((tag, index) => (
+              {tags.map((tag, index) => (
                 <View key={index} className="pr-[6px]">
                   <TouchableOpacity className='px-3 py-1 rounded-full bg-[#f2f2f2] dark:bg-[#272626]'>
                     <Text className='font-inter-medium text-[12px] text-[#979797] '>
@@ -369,10 +735,10 @@ export default function ResultsScreen() {
 
         </View>
 
-        {item.images && (
+        {images.length > 0 && (
           <View className="px-6 pb-6">
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} className="flex-1 roundex-lg">
-              {item.images.map((image, index) => (
+              {images.map((image, index) => (
                 <View key={index} className="pr-[6px]">
 
                   <TouchableOpacity activeOpacity={1} className='ml-1'>
@@ -584,7 +950,7 @@ export default function ResultsScreen() {
                 )}
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleOpenFilters} activeOpacity={0.9} className="ml-2 h-[40px] w-[40px] rounded-full bg-[#fcfcfc] dark:bg-[#323131] items-center justify-center">
+            <TouchableOpacity onPress={handleOpenFilters} activeOpacity={0.9} className="ml-2 mr-1 h-[40px] w-[40px] rounded-full bg-[#fcfcfc] dark:bg-[#323131] items-center justify-center">
               <Sliders height={17} color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} strokeWidth={1.8} />
             </TouchableOpacity>
           </View>
@@ -607,10 +973,18 @@ export default function ResultsScreen() {
         handleIndicatorStyle={{ backgroundColor: colorScheme === 'dark' ? '#3d3d3d' : '#e0e0e0' }}
         backdropComponent={renderFilterBackdrop}
       >
-        <BottomSheetView style={{ flex: 1 }}>
-          <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 36, paddingTop: 24 }}>
+        <BottomSheetView style={{ flex: 1 }}> 
+          <BottomSheetScrollView 
+            keyboardShouldPersistTaps="handled" 
+            contentContainerStyle={{ 
+              paddingHorizontal: 20, 
+              paddingTop: 24, 
+              // deja hueco para el footer fijo: 
+              paddingBottom: 24 + insets.bottom + 72, 
+            }} 
+          >
 
-            <View style={{ paddingHorizontal: 8}}>
+            <View style={{ paddingHorizontal: 8 }}>
 
               <View className="flex-row items-center justify-between mb-[50px]">
                 <TouchableOpacity onPress={handleCloseFilters} accessibilityRole="button" className="pr-4">
@@ -643,7 +1017,7 @@ export default function ResultsScreen() {
                       height: 22,
                       width: 22,
                       backgroundColor: colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
-                      borderWidth:0,
+                      borderWidth: 0,
                     }}
                     pressedMarkerStyle={{
                       height: 22,
@@ -657,20 +1031,43 @@ export default function ResultsScreen() {
                     <Text className="mx-8 font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">-</Text>
                     <Text className="font-inter-bold text-[20px] text-[#444343] dark:text-[#f2f2f2]">{priceRange[1]}€</Text>
                   </View>
-                
+
                 </View>
 
                 <View className="flex-row justify-center items-center mt-1">
-                  <Text style={{marginRight:20}} className="font-inter-medium text-[13px] text-[#b6b5b5] dark:text-[#706F6E]">{t('filters_min_label')}</Text>
-                  <Text style={{marginLeft:20}} className="font-inter-medium text-[13px] text-[#b6b5b5] dark:text-[#706F6E]">{t('filters_max_label')}</Text>
+                  <Text style={{ marginRight: 20 }} className="font-inter-medium text-[13px] text-[#b6b5b5] dark:text-[#706F6E]">{t('filters_min_label')}</Text>
+                  <Text style={{ marginLeft: 20 }} className="font-inter-medium text-[13px] text-[#b6b5b5] dark:text-[#706F6E]">{t('filters_max_label')}</Text>
                 </View>
 
               </View>
 
+              {availableCategories.length > 0 && (
+                <View className="mb-8">
+                  <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_categories')}</Text>
+                  <View className="flex-row flex-wrap mt-4">
+                    {availableCategories.map((category) => {
+                      const id = Number(category.service_category_id);
+                      const isSelected = selectedCategories.includes(id);
+                      return (
+                        <TouchableOpacity
+                          key={category.service_category_id}
+                          onPress={() => toggleCategory(id)}
+                          className={`mr-2 mb-2 px-4 py-2 rounded-full ${isSelected ? 'bg-[#444343] dark:bg-[#f2f2f2]' : 'bg-[#E0E0E0] dark:bg-[#3D3D3D]'}`}
+                        >
+                          <Text className={`font-inter-medium text-[12px] ${isSelected ? 'text-[#f2f2f2] dark:text-[#272626]' : 'text-[#444343] dark:text-[#f2f2f2]'}`}>
+                            {category.service_category_name}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                </View>
+              )}
+
               <View className="mb-8">
 
                 <Text className="font-inter-semibold text-[18px] text-[#444343] dark:text-[#f2f2f2]">{t('filters_distance')}</Text>
-                <View className="px-5 items-center justify-center">   
+                <View className="px-5 items-center justify-center">
                   <Slider
                     style={{ width: '100%', marginTop: 16 }}
                     minimumValue={0}
@@ -683,10 +1080,10 @@ export default function ResultsScreen() {
                     onValueChange={(value) => setDistanceValue(value)}
                   />
                   <Text className="mt-2 font-inter-medium text-[14px] text-[#b6b5b5] dark:text-[#706F6E]">{t('filters_distance_value', { distance: Math.round(distanceValue) })}</Text>
-                </View> 
-                
-                
-              
+                </View>
+
+
+
               </View>
 
               <View className="mb-8">
@@ -723,8 +1120,8 @@ export default function ResultsScreen() {
                       style={{
                         borderColor: businessProfileOnly ? colorScheme === 'dark' ? '#fcfcfc' : '#323131' : colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
                         backgroundColor: businessProfileOnly ? colorScheme === 'dark' ? '#fcfcfc' : '#323131' : '',
-                        borderRadius:4,
-                        marginRight:23
+                        borderRadius: 4,
+                        marginRight: 23
                       }}
                     >
                       {businessProfileOnly && <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5} />}
@@ -744,8 +1141,8 @@ export default function ResultsScreen() {
                       style={{
                         borderColor: verifiedProfileOnly ? colorScheme === 'dark' ? '#fcfcfc' : '#323131' : colorScheme === 'dark' ? '#b6b5b5' : '#706F6E',
                         backgroundColor: verifiedProfileOnly ? colorScheme === 'dark' ? '#fcfcfc' : '#323131' : '',
-                        borderRadius:4,
-                        marginRight:23
+                        borderRadius: 4,
+                        marginRight: 23
                       }}
                     >
                       {verifiedProfileOnly && <Check height={14} width={14} color={colorScheme === 'dark' ? '#323131' : '#fcfcfc'} strokeWidth={3.5} />}
@@ -756,11 +1153,18 @@ export default function ResultsScreen() {
 
             </View>
 
-            <TouchableOpacity className="h-[55px] items-center justify-center rounded-full py-4 dark:bg-[#fcfcfc] bg-[#323131]" onPress={handleCloseFilters}>
-              <Text className="text-center font-inter-semibold text-[15px] text-[#f2f2f2] dark:text-[#3d3d3d] ">{t('filters_show_results', { count: 34 })}</Text>
+            <TouchableOpacity
+              className="h-[55px] items-center justify-center rounded-full py-4 dark:bg-[#fcfcfc] bg-[#323131]"
+              onPress={handleApplyFilters}
+              disabled={isApplyingFilters}
+              style={{ opacity: isApplyingFilters ? 0.6 : 1 }}
+            >
+              <Text className="text-center font-inter-semibold text-[15px] text-[#f2f2f2] dark:text-[#3d3d3d] ">
+                {t('filters_show_results', { count: isCountingFilters ? '…' : (filtersCount ?? '—') })}
+              </Text>
             </TouchableOpacity>
 
-          </ScrollView>
+            </BottomSheetScrollView>
         </BottomSheetView>
       </BottomSheetModal>
 
@@ -826,8 +1230,11 @@ export default function ResultsScreen() {
         </TouchableOpacity>
       </View>
 
-      {!results || results.notFound ? (
-
+      {!hasLoadedRef.current && results === undefined ? (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={colorScheme === 'dark' ? '#f2f2f2' : '#444343'} />
+        </View>
+      ) : (!results || results?.notFound || (Array.isArray(results) && results.length === 0)) ? (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <SuitcaseFill height={60} width={60} color={colorScheme === 'dark' ? '#474646' : '#d4d3d3'} />
           <Text className="mt-7 font-inter-bold text-[20px] text-[#706F6E] dark:text-[#B6B5B5]">
@@ -840,8 +1247,8 @@ export default function ResultsScreen() {
       ) : (
         <View style={{ zIndex: 1 }}>
           <FlatList
-            data={results}
-            keyExtractor={(item, index) => index.toString()}
+            data={Array.isArray(results) ? results : []}
+            keyExtractor={(item, index) => (item?.service_id ? `${item.service_id}` : `${index}`)}
             renderItem={renderItem}
             refreshing={refreshing}
             onRefresh={onRefresh}

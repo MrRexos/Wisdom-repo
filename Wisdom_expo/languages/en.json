@@ -591,6 +591,7 @@
     "filters_title": "Filters",
     "filters_clear": "Clear",
     "filters_price_range": "Price range",
+    "filters_categories": "Categories",
     "filters_min_label": "Minimum",
     "filters_max_label": "Maximum",
     "filters_distance": "Proximity",

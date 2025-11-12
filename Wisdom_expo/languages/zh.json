@@ -591,6 +591,7 @@
     "filters_title": "筛选",
     "filters_clear": "清除",
     "filters_price_range": "价格范围",
+    "filters_categories": "分类",
     "filters_min_label": "最低",
     "filters_max_label": "最高",
     "filters_distance": "距离",

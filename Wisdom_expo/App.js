@@ -1,5 +1,5 @@
-import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import 'react-native-reanimated';
 import './polyfills';
 import React, { useEffect, useMemo, useState } from 'react';
 import Navigation from './navigation/navigation';
