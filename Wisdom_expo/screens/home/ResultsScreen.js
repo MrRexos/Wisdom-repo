@@ -1037,7 +1037,6 @@ export default function ResultsScreen() {
               paddingBottom: 24,
             }}
             showsVerticalScrollIndicator={false}
-            scrollEnabled={activeSliderInteractions === 0}
           >
 
             <View style={{ paddingHorizontal: 8 }}>
